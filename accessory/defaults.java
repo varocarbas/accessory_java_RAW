@@ -6,7 +6,25 @@ import java.util.HashMap;
 
 public class defaults 
 {	
-	public static <Any> Any get_generic()
+	static { _ini.load(); }
+	
+	static final String CREDENTIALS_WHERE = keys.FILE;
+	static final boolean CREDENTIALS_ENCRYPTED = false;
+	
+	static final String DIR_APP = paths.get_default_dir(keys.APP);
+	static final String DIR_CREDENTIALS = paths.get_default_dir(keys.CREDENTIALS);
+	static final String DIR_INI = paths.get_default_dir(keys.INI);
+	static final String DIR_ERRORS = paths.get_default_dir(keys.ERRORS);
+	
+	static final String SQL_TYPE = types.SQL_MYSQL;
+	static final String SQL_MAX_POOL = "500";
+	static final String SQL_HOST = "localhost";
+	static final boolean SQL_ERROR_EXIT = true;
+	static final String SQL_CREDENTIALS_TYPE = SQL_TYPE;
+	static final String SQL_CREDENTIALS_WHERE = CREDENTIALS_WHERE;
+	static final boolean SQL_CREDENTIALS_ENCRYPTED = false;
+	
+	public static <x> x get_generic()
 	{
 		return null;
 	}

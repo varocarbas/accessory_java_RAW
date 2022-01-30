@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 public class io 
 {	
+	static { _ini.load(); }
+	
 	public static void array_to_file
 	(
 		String path_, ArrayList<String> vals_, boolean append_, boolean errors_to_file_
@@ -79,7 +81,7 @@ public class io
 	
 	public static HashMap<String, String> ini_to_array(String path_)
 	{
-		if (!strings.contains_end(paths.EXT_INI, path_, true)) return arrays.get_default();
+		if (!strings.contains_end(paths.EXTENSION_INI, path_, true)) return arrays.get_default();
 	
 		String[] lines = file_to_array(path_, true);
 		if (!arrays.is_ok(lines)) return arrays.get_default();

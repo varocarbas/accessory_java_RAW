@@ -1,70 +1,118 @@
 package accessory;
 
-public class credentials 
-{
-	private static String dir = get_defaultault_dir();
-	private static String file_heading = strings.get_default();
-	private static String file_heading_passw = file_heading;
-	
-    public static void update_dir(String dir_)
-    {
-    	if (!strings.is_ok(dir_)) return;
-    	
-    	dir = dir_;
-    }
+import java.util.HashMap;
 
-    public static void update_file_heading(String file_heading_, String what_)
+public class credentials 
+{   
+	static { _ini.load(); }
+	
+	private static final String FILE_SEPARATOR = misc.SEPARATOR_NAME;
+	private static final String FILE_EXTENSION = strings.get_default();
+	private static final String FILE_ADDITION_USERNAME = keys.USERNAME;
+	private static final String FILE_ADDITION_PASSWORD = keys.PASSWORD;
+	private static final String FILE_ADDITION_ENCRYPTED = keys.ENCRYPT;
+	
+	public static HashMap<String, String> get(String type_, String user_, boolean encrypted_, String where_)
     {
-    	if (!strings.is_ok(file_heading_)) return;
-    
-    	if (strings.are_equivalent(what_, keys.PASSWORD)) file_heading_passw = file_heading_;
-    	else file_heading = file_heading_;
+		HashMap<String, String> credentials = arrays.get_default();
+		if (!strings.are_ok(new String[] { type_, user_})) return credentials;
+		
+		String username = get_username_password(type_, user_, encrypted_, where_, true);
+		String password = get_username_password(type_, user_, encrypted_, where_, false);
+		if (!strings.are_ok(new String[] { username, password })) return credentials;
+		
+		credentials = new HashMap<String, String>();
+		credentials.put(keys.USERNAME, username);
+		credentials.put(keys.PASSWORD, password);
+		
+		return credentials;
+    }
+	
+    public static String get_username(String type_, String user_, boolean encrypted_, String where_)
+    {
+		if (!strings.are_ok(new String[] { type_, user_})) return arrays.get_default();
+		
+    	return get_username_password(type_, user_, encrypted_, where_, true);
+    }
+	
+    public static String get_username_file(String type_, String user_, boolean encrypted_)
+    {
+		if (!strings.are_ok(new String[] { type_, user_})) return arrays.get_default();
+		
+    	return get_username_password(type_, user_, encrypted_, keys.FILE, true);
     }
     
-    public static String get_password(String user_, boolean encrypted_, String what_)
+    public static String get_path_username(String type_, String user_, boolean encrypted_)
     {
-    	String password = strings.get_default();
-    	if (!strings.is_ok(user_)) return password;
+		if (!strings.are_ok(new String[] { type_, user_})) return arrays.get_default();
+		
+    	return get_path_username_password(type_, user_, encrypted_, true);
+    }
+	
+    public static String get_password(String type_, String user_, boolean encrypted_, String where_)
+    {
+		if (!strings.are_ok(new String[] { type_, user_})) return arrays.get_default();
+		
+    	return get_username_password(type_, user_, encrypted_, where_, false);
+    }
+	
+    public static String get_password_file(String type_, String user_, boolean encrypted_)
+    {
+		if (!strings.are_ok(new String[] { type_, user_})) return arrays.get_default();
+		
+    	return get_username_password(type_, user_, encrypted_, keys.FILE, false);
+    }
+        
+    public static String get_path_password(String type_, String user_, boolean encrypted_)
+    {
+		if (!strings.are_ok(new String[] { type_, user_})) return arrays.get_default();
+		
+    	return get_path_username_password(type_, user_, encrypted_, false);    	
+    }
+    
+	private static String get_username_password
+    (
+    	String type_, String user_, boolean encrypted_, String where_, boolean is_username_
+    )
+    {
+    	String output = strings.get_default();
+
+		String where = (strings.is_ok(where_) ? where_ : defaults.CREDENTIALS_WHERE);
     	
-    	String what = (strings.is_ok(what_) ? what_ : keys.FILE);
-    	
-    	if (strings.are_equivalent(what, keys.FILE)) 
+    	if (strings.are_equivalent(where, keys.FILE)) 
     	{
-    		password = get_password_file(user_, encrypted_);
+    		output = get_username_password_file(type_, user_, encrypted_, is_username_);
     	}
     	
-    	return password;
+    	return output;
     }
     
-    public static String get_password_file(String user_, boolean encrypted_)
+    private static String get_username_password_file
+    (
+    	String type_, String user_, boolean encrypted_, boolean is_username_
+    )
     {   
-    	if (!strings.is_ok(user_)) return strings.get_default();
-
-    	String path = get_path(user_ + paths.EXT_TEXT, keys.PASSWORD);
+    	String path = get_path_username_password(type_, user_, encrypted_, is_username_);
     	
     	String[] lines = io.file_to_array(path, true);
     	if (!arrays.is_ok(lines) || !strings.is_ok(lines[0])) return strings.get_default();
     
-    	String password = lines[0];     	 
-    	if (encrypted_) password = encryption.decrypt(password);
+    	String output = lines[0];     	 
+    	if (encrypted_) output = encryption.decrypt(output);
     	
-    	return password;
+    	return output;
     }
     
-    private static String get_defaultault_dir()
-    {
-    	return paths.get_default_dir(keys.CREDENTIALS);
-    }
-   
-    private static String get_path(String file_, String what_)
-    {
-    	String file = file_;
-    	if (!strings.is_ok(file)) return strings.get_default();
+    private static String get_path_username_password(String type_, String user_, boolean encrypted_, boolean is_username_)
+    {    
+    	String file = type_ + FILE_SEPARATOR + user_;
+    	file += FILE_SEPARATOR + (is_username_ ? FILE_ADDITION_USERNAME : FILE_ADDITION_PASSWORD); 
+    	if (encrypted_) file += FILE_SEPARATOR + FILE_ADDITION_ENCRYPTED;
+    	if (strings.is_ok(FILE_EXTENSION)) file += FILE_EXTENSION;
     	
-    	String heading = file_heading;
-    	if (strings.are_equivalent(what_, keys.PASSWORD)) heading = file_heading_passw;
-    	if (strings.is_ok(heading)) file = heading + file;
-    	
-    	return paths.build(new String[] { dir, file }, true);
+    	return paths.build
+    	(
+    		new String[] { _config.get_basic(types._CONFIG_BASIC_DIR_CREDENTIALS), file }, true
+    	);
     }
 }

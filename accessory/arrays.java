@@ -7,45 +7,57 @@ import java.util.Map.Entry;
 
 public class arrays 
 {
-	public static <Any> boolean is_ok(Any[] input_)
+	static { _ini.load(); }
+	
+	public static <x> boolean is_ok(x[] input_)
 	{
 		return (get_size(input_) > 0);
 	}
 	
-	public static <Any> boolean is_ok(ArrayList<Any> input_)
+	public static <x> boolean is_ok(ArrayList<x> input_)
 	{
 		return (get_size(input_) > 0);
 	}
 	
-	public static <Any> boolean is_ok(HashMap<Any, Any> input_)
+	public static <x> boolean is_ok(HashMap<x, x> input_)
 	{
 		return (get_size(input_) > 0);
 	}
 	
-	public static <Any> int get_size(Any[] input_)
+	public static <x, y> boolean is_ok2(HashMap<x, y> input_)
+	{
+		return (get_size2(input_) > 0);
+	}
+	
+	public static <x> int get_size(x[] input_)
 	{
 		return (input_ == null ? 0 : input_.length);
 	}
 	
-	public static <Any> int get_size(ArrayList<Any> input_)
+	public static <x> int get_size(ArrayList<x> input_)
 	{
 		return (input_ == null ? 0 : input_.size());
 	}
 	
-	public static <Any> int get_size(HashMap<Any, Any> input_)
+	public static <x> int get_size(HashMap<x, x> input_)
+	{
+		return (input_ == null ? 0 : input_.size());
+	}
+	
+	public static <x, y> int get_size2(HashMap<x, y> input_)
 	{
 		return (input_ == null ? 0 : input_.size());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <Any> Any[] to_array(ArrayList<Any> input_)
+	public static <x> x[] to_array(ArrayList<x> input_)
 	{
-		return (is_ok(input_) ? (Any[])input_.toArray(new String[input_.size()]) : get_default());
+		return (is_ok(input_) ? (x[])input_.toArray(new String[input_.size()]) : get_default());
 	}
 	
-	public static <Any> ArrayList<Any> to_arraylist(Any[] input_)
+	public static <x> ArrayList<x> to_arraylist(x[] input_)
 	{
-		return (is_ok(input_) ? new ArrayList<Any>(Arrays.asList(input_)) : get_default());
+		return (is_ok(input_) ? new ArrayList<x>(Arrays.asList(input_)) : get_default());
 	}
 	
 	public static ArrayList<String> clean(ArrayList<String> input_, boolean trim_, boolean remove_wrong_)
@@ -92,7 +104,7 @@ public class arrays
 		return output_;
 	}
 	
-	public static <Any> Any[] get_range(Any[] input_, int start_i, int size_)
+	public static <x> x[] get_range(x[] input_, int start_i, int size_)
 	{
 		int size0 = get_size(input_);
 		int size = (size_ <= 0 ? size0 : start_i + size_);
@@ -105,20 +117,20 @@ public class arrays
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <Any> Any get_value(HashMap<Any, Any> array_, Any key_)
+	public static <x> x get_value(HashMap<x, x> array_, x key_)
 	{
 		return 
 		(
 			key_exists(array_, key_) ? array_.get(key_) : 
-			(Any)defaults.get_type(null, true)
+			(x)defaults.get_type(null, true)
 		);
 	}
 	
-	public static <Any> boolean keys_exist(HashMap<Any, Any> array_, Any[] keys_)
+	public static <x> boolean keys_exist(HashMap<x, x> array_, x[] keys_)
 	{
 		if (!arrays.is_ok(array_) || !arrays.is_ok(keys_)) return false;
 		
-		for (Any key: keys_)
+		for (x key: keys_)
 		{
 			if (!key_exists(array_, key)) return false;
 		}
@@ -126,34 +138,36 @@ public class arrays
 		return true;	
 	}
 	
-	public static <Any> boolean key_exists(HashMap<Any, Any> array_, Any key_)
+	public static <x> boolean key_exists(HashMap<x, x> array_, x key_)
 	{
 		return key_value_exists(array_, key_, true);	
 	}
 	
-	public static <Any> boolean value_exists(HashMap<Any, Any> array_, Any value_)
+	public static <x> boolean value_exists(HashMap<x, x> array_, x value_)
 	{
 		return key_value_exists(array_, value_, false);
 	}
 	
-	public static <Any> boolean key_value_exists(HashMap<Any, Any> array_, Any target_, boolean is_key_)
+	public static <x> boolean value_exists(x[] array_, x value_)
 	{
-		if (target_ == null || !is_ok(array_)) return false;
+		if (value_ == null || !is_ok(array_)) return false;
 		
-		boolean is_string = (target_ instanceof String);
+		boolean is_string = (value_ instanceof String);
 		
-		for (Entry<Any, Any> item: array_.entrySet())
+		for (x val2: array_)
 		{
-			Any target2 = (is_key_ ? item.getKey() : item.getValue());
-			if (target2 == null) continue;
-			
-			if (is_string && target2.equals(target_)) return true;
+			if 
+			(
+				(is_string && val2.equals(value_)) || 
+				(!is_string && val2 == value_)
+			) 
+			{ return true; }
 		}
 		
 		return false;
 	}
 	
-	public static <Any> Any get_default()
+	public static <x> x get_default()
 	{
 		return defaults.get_generic();
 	}
@@ -164,7 +178,7 @@ public class arrays
 	
 		String output = "";
 		String separator = (strings.is_ok(separator_) ? separator_ : ", ");
-		
+
 		for (String item: input_)
 		{
 			if (!strings.is_ok(item)) continue;
@@ -175,8 +189,12 @@ public class arrays
 		
 		return output;
 	}	
-	
-	public static String to_string(HashMap<String, String> input_, String separator1_, String separator2_)
+
+	public static String to_string
+	(
+		HashMap<String, String> input_, String separator1_, 
+		String separator2_, String[] keys_ignore_
+	)
 	{
 		if (!arrays.is_ok(input_)) return strings.get_default();
 		
@@ -188,7 +206,12 @@ public class arrays
 		{
 			String key = item.getKey();
 			String value = item.getValue();
-			if (!strings.is_ok(key) || !strings.is_ok(value)) continue;
+			if 
+			(
+				!strings.is_ok(key) || !strings.is_ok(value) || 
+				value_exists(keys_ignore_, key)
+			) 
+			{ continue; }
 			
 			if (output != "") output += separator1;
 			output += (key + separator2 + value);
@@ -196,4 +219,27 @@ public class arrays
 		
 		return output;
 	}
+	
+	private static <x> boolean key_value_exists(HashMap<x, x> array_, x target_, boolean is_key_)
+	{
+		if (target_ == null || !is_ok(array_)) return false;
+		
+		boolean is_string = (target_ instanceof String);
+		
+		for (Entry<x, x> item: array_.entrySet())
+		{
+			x target2 = (is_key_ ? item.getKey() : item.getValue());
+			if (target2 == null) continue;
+			
+			if 
+			(
+				(is_string && target2.equals(target_)) || 
+				(!is_string && target2 == target_)
+			) 
+			{ return true; }
+		}
+		
+		return false;
+	}
+
 }

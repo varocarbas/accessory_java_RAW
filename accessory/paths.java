@@ -5,14 +5,15 @@ import java.util.ArrayList;
 
 public class paths 
 {
-	public static final String EXT_TEXT = ".txt";
-	public static final String EXT_JAR = ".jar";
-	public static final String EXT_INI = ".ini";
+	static { _ini.load(); }
 	
-	public static final String sep_dir = misc.SEPARATOR_DIR;
+	public static final String SEPARATOR_DIR = get_dir_separator();
+	public static final String HOME = get_home_dir();
 	
-	private static String cur_dir = null;
-	
+	public static final String EXTENSION_TEXT = ".txt";
+	public static final String EXTENSION_JAR = ".jar";
+	public static final String EXTENSION_INI = ".ini";
+
 	public static boolean exists(String path_)
 	{
 		return (strings.is_ok(path_) && (new File(path_)).exists());
@@ -43,42 +44,7 @@ public class paths
 
 		return dir;
 	}
-	
-	public static String get_home_dir()
-	{
-		return normalise_dir(System.getProperty("user.home"));
-	}
-	
-	public static void update_cur_dir(String dir_)
-	{
-		if (paths.exists(dir_)) cur_dir = paths.normalise_dir(dir_);
-	}
-	
-	public static String get_default_dir(String what_)
-	{
-		if (!strings.is_ok(what_)) return strings.get_default();
-
-		String[] targets = new String[] 
-		{
-			keys.CREDENTIALS, keys.INI	
-		};
 		
-		for (String target: targets)
-		{
-			if (strings.are_equivalent(what_, target))
-			{
-		    	return build(new String[] { get_home_dir(), target }, false);
-			}
-		}
-		
-		return strings.get_default();
-	}
-	
-	public static String get_cur_dir()
-	{
-		return (strings.is_ok(cur_dir) ? cur_dir : normalise_dir(System.getProperty("user.dir")));
-	}
-	
 	public static String normalise_dir(String dir_)
 	{
 		String dir = dir_;
@@ -86,11 +52,74 @@ public class paths
 		
 		dir = dir.trim();
 	
-		if (dir.substring(dir.length() - 1) != sep_dir) 
+		if (dir.substring(dir.length() - 1) != SEPARATOR_DIR) 
 		{
-			dir += sep_dir;
+			dir += SEPARATOR_DIR;
 		}
 		
 		return dir;
+	}
+
+	public static String get_cur_dir(String what_)
+	{
+		String key = strings.get_default();
+		
+		if (!strings.is_ok(what_) || strings.are_equivalent(what_, keys.APP)) 
+		{
+			key = types._CONFIG_BASIC_DIR_APP;
+		}
+		else if (strings.are_equivalent(what_, keys.CREDENTIALS)) 
+		{
+			key = types._CONFIG_BASIC_DIR_CREDENTIALS;
+		}
+		else if (strings.are_equivalent(what_, keys.INI)) 
+		{
+			key = types._CONFIG_BASIC_DIR_INI;
+		}
+		else if (strings.are_equivalent(what_, keys.ERRORS)) 
+		{
+			key = types._CONFIG_BASIC_DIR_ERRORS;
+		}
+
+		return (strings.is_ok(key) ? _config.get_basic(key) : strings.get_default());
+	}
+	
+	static String get_default_dir(String what_)
+	{
+		if (!strings.is_ok(what_)) return strings.get_default();
+		if (strings.are_equivalent(what_, keys.APP)) return get_dir_app_default();
+		
+		String[] targets = new String[] 
+		{
+			keys.CREDENTIALS, keys.INI, keys.ERRORS	
+		};
+		
+		for (String target: targets)
+		{
+			if (strings.are_equivalent(what_, target))
+			{
+				String[] parts = new String[] { HOME, target };
+				if (target == keys.ERRORS) parts = new String[] { get_dir_app_default() };
+				
+		    	return build(parts, false);
+			}
+		}
+		
+		return strings.get_default();
+	}
+
+	private static String get_dir_separator()
+	{
+		return (strings.contains("win", System.getProperty("os.name"), true) ? "\\" : "/");
+	}
+	
+	private static String get_dir_app_default()
+	{
+		return normalise_dir(System.getProperty("user.dir"));
+	}
+	
+	private static String get_home_dir()
+	{
+		return normalise_dir(System.getProperty("user.home"));
 	}
 }

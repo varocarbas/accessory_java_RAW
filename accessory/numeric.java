@@ -2,6 +2,8 @@ package accessory;
 
 public class numeric 
 {
+	static { _ini.load(); }
+	
 	public static boolean is_ok(double input_, double min_, double max_)
 	{
 		return

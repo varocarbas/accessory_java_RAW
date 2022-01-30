@@ -6,6 +6,8 @@ import java.time.format.DateTimeFormatter;
 
 public class time 
 {
+	static { _ini.load(); }
+	
 	public static final String FORMAT_TIME_SHORT = "time_short";
 	public static final String FORMAT_TIME_FULL = "time_full";
 	public static final String FORMAT_DATE_TIME = "date_time";
