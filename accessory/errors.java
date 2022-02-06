@@ -6,15 +6,7 @@ import java.util.Map.Entry;
 public class errors 
 {	
 	static { _ini.load(); }
-	
-	public static String check(String type_, String[] types_)
-	{
-		return types.check_subtype
-		(
-			type_, (arrays.is_ok(types_) ? types_ : types.get_all_subtypes()), null, null
-		);
-	}
-	
+		
 	public static void manage(HashMap<String, String> info_, boolean to_file_, boolean exit_)
 	{		
 		String message = get_message(info_);
@@ -41,16 +33,15 @@ public class errors
 	{
 		manage
 		(
-			get_info_sql(type_, query_, e_, message_), to_file_, strings.to_boolean
-			(
-				_config.get_sql(types._CONFIG_SQL_ERROR_EXIT), defaults.SQL_ERROR_EXIT
-			)
+			get_info_sql(type_, query_, e_, message_), to_file_, 
+			strings.to_boolean(_config.get_sql(types._CONFIG_SQL_ERROR_EXIT))
 		);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<String, String> get_info_sql(String type_, String query_, Exception e_, String message_)
 	{
-		if (!strings.is_ok(type_)) return arrays.get_default();
+		if (!strings.is_ok(type_)) return (HashMap<String, String>)arrays.DEFAULT;
 		
 		HashMap<String, String> info = new HashMap<String, String>();
 		
@@ -82,9 +73,10 @@ public class errors
 		return info;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<String, String> get_info_io(String type_, String path_, Exception e_)
 	{
-		if (!strings.is_ok(type_)) return arrays.get_default();
+		if (!strings.is_ok(type_)) return (HashMap<String, String>)arrays.DEFAULT;
 		
 		HashMap<String, String> info = new HashMap<String, String>();
 		info.put(keys.LOG, get_log_path());

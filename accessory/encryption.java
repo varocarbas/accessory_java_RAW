@@ -6,7 +6,7 @@ public class encryption
 	
 	public static String decrypt(String input_)
 	{
-		if (!strings.is_ok(input_)) return strings.get_default();
+		if (!strings.is_ok(input_)) return strings.DEFAULT;
 		
 		String output = input_;
 		
@@ -15,7 +15,7 @@ public class encryption
 	
 	public static String encrypt(String input_)
 	{
-		if (!strings.is_ok(input_)) return strings.get_default();
+		if (!strings.is_ok(input_)) return strings.DEFAULT;
 		
 		String output = input_;
 		

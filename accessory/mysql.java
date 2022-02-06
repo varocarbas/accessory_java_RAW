@@ -46,7 +46,7 @@ class mysql
         	}      		
     	}  
     	
-    	return (is_ok ? query : strings.get_default());
+    	return (is_ok ? query : strings.DEFAULT);
     }
 
     static String get_query_update(String table_, HashMap<String, String> vals_, String where_)
@@ -61,7 +61,7 @@ class mysql
     		is_ok = true;     		
     	} 
     	
-    	return (is_ok ? query : strings.get_default());    	
+    	return (is_ok ? query : strings.DEFAULT);    	
     }
         
     static String get_query_delete(String table_, String where_)
@@ -94,7 +94,7 @@ class mysql
     {   
     	String db = _config.get_sql(types._CONFIG_SQL_DB);
     	String host = _config.get_sql(types._CONFIG_SQL_HOST);
-    	if (!strings.is_ok(db) || !strings.is_ok(host)) return strings.get_default();
+    	if (!strings.is_ok(db) || !strings.is_ok(host)) return strings.DEFAULT;
     	
     	String url = "jdbc:mysql://" + host + ":3306/" + db;
     	url += "?useUnicode=true&useJDBCCompliantTimezoneShift=true";

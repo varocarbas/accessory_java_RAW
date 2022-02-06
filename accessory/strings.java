@@ -5,13 +5,10 @@ import java.util.ArrayList;
 
 public class strings 
 {
+	public static final String DEFAULT = (String)defaults.get_class(String.class);
+	
 	static { _ini.load(); }
-	
-	public static <x> boolean is_ok(x input_)
-	{
-		return (input_ instanceof String ? is_ok((String)input_) : false);
-	}
-	
+
 	public static boolean is_ok(String string_)
 	{
 		return (get_length(string_, true) > 0);
@@ -43,15 +40,20 @@ public class strings
 	{
 		String string = string_;
 		
-		if (!is_ok(string_)) string = get_default();
+		if (!is_ok(string_)) string = DEFAULT;
 		else string = string.trim().toLowerCase();
 		
 		return string;
 	}
 	
-	public static String get_default()
+	public static boolean matches_all(String string_, String[] targets_, boolean normalise_)
 	{
-		return (String)defaults.get_type(String.class, false);
+		return matches(string_, targets_, normalise_, true);
+	}
+	
+	public static boolean matches_any(String string_, String[] targets_, boolean normalise_)
+	{
+		return matches(string_, targets_, normalise_, false);
 	}
 	
 	public static boolean are_equal(String string1_, String string2_)
@@ -92,7 +94,7 @@ public class strings
 	public static String substring(String string_, int start_, int length_)
 	{
 		int length0 = get_length(string_, false);
-		if (length0 < 1 || start_ < 0 || start_ + length_ > length0) return get_default();
+		if (length0 < 1 || start_ < 0 || start_ + length_ > length0) return DEFAULT;
 		
 		return (length_ > 0 ? string_.substring(start_, start_ + length_) : string_.substring(start_));
 	}
@@ -105,7 +107,7 @@ public class strings
 	{
 		String haystack = haystack_;
 		String regex = regex_;
-		if (!strings.is_ok(haystack) || !strings.is_ok(regex)) return arrays.get_default();
+		if (!strings.is_ok(haystack) || !strings.is_ok(regex)) return (String[])arrays.DEFAULT;
 		
 		if (normalise_)
 		{
@@ -115,7 +117,7 @@ public class strings
 		
 		String[] output = haystack.split(regex);
 		int size = arrays.get_size(output);
-		if (size < 1) return arrays.get_default();
+		if (size < 1) return (String[])arrays.DEFAULT;
 		
 		if (trim_ || remove_wrong_) output = arrays.clean(output, trim_, remove_wrong_);
 		
@@ -131,6 +133,16 @@ public class strings
 		}
 		
 		return output;
+	}	
+	
+	public static String substring_before(String string_, String target_, int count_, boolean normalise_)
+	{
+		return substring_before_after(string_, target_, count_, normalise_, true);
+	}
+	
+	public static String substring_after(String string_, String target_, int count_, boolean normalise_)
+	{
+		return substring_before_after(string_, target_, count_, normalise_, false);
 	}	
 	
 	public static int index_of(String needle_, String haystack_, boolean normalise_)
@@ -150,17 +162,42 @@ public class strings
 	
 	public static boolean is_integer(String string_)
 	{
-		return is_numeric_internal(string_, true);
+		return is_number_internal(string_, true);
 	}
 	
 	public static boolean is_decimal(String string_)
 	{
-		return is_numeric_internal(string_, false);		
+		return is_number_internal(string_, false);		
 	}
 	
-	public static boolean is_numeric(String string_)
+	public static boolean is_number(String string_)
 	{
-		return is_numeric_internal(string_, false);	
+		return is_number_internal(string_, false);	
+	}
+
+	public static boolean is_boolean(String string_)
+	{
+		return (are_equivalent(string_, keys.TRUE) || are_equivalent(string_, keys.FALSE));
+	}
+	
+	public static String from_number_decimal(double input_)
+	{
+		return Double.toString(input_);
+	}
+	
+	public static double to_number_decimal(String string_)
+	{
+		return (is_decimal(string_) ? Double.parseDouble(string_) : numbers.DEFAULT_DEC);
+	}
+	
+	public static String from_number_int(int input_)
+	{
+		return Integer.toString(input_);
+	}
+	
+	public static int to_number_int(String string_)
+	{
+		return (is_integer(string_) ? Integer.parseInt(string_) : numbers.DEFAULT_INT);
 	}
 
 	public static String from_boolean(boolean input_)
@@ -168,17 +205,69 @@ public class strings
 		return (input_ ? keys.TRUE : keys.FALSE);
 	}
 	
-	public static boolean to_boolean(String string_, boolean default_)
+	public static boolean to_boolean(String string_)
 	{
-		boolean output = default_;
+		boolean output = false;
 		
 		if (are_equivalent(string_, keys.TRUE)) output = true;
 		else if (are_equivalent(string_, keys.FALSE)) output = false;
 
 		return output;
 	}
+
+	@SuppressWarnings("rawtypes")
+	public static <x> String to_string(x input_)
+	{
+		String output = DEFAULT;
+		if (input_ == null) return output;
+		
+		Class type = input_.getClass();
+		
+		if (type == Double.class) output = from_number_decimal((Double)input_);
+		else if (type == Integer.class) output = from_number_int((Integer)input_);
+		else if (type == Boolean.class) output = from_boolean((Boolean)input_);
+		
+		return output;
+	}
 	
-	private static boolean is_numeric_internal(String string_, boolean integer_)
+	@SuppressWarnings("rawtypes")
+	public static Object from_string(String string_, Class type_)
+	{
+		Object output = generic.DEFAULT;
+		if (!is_ok(string_)) return output;
+
+		Class type = type_;
+		if (type == null)
+		{
+			if (is_decimal(string_)) type = Double.class;
+			else if (is_integer(string_)) type = Integer.class;
+			else if (is_boolean(string_)) type = Boolean.class;
+			else return output;
+		}
+		
+		if (type_ == Double.class) output = to_number_decimal(string_);
+		else if (type_ == Integer.class) output = to_number_int(string_);
+		else if (type_ == Boolean.class) output = to_boolean(string_);
+		
+		return output;
+	}
+	
+	private static boolean matches(String string_, String[] targets_, boolean normalise_, boolean all_)
+	{
+		if (!strings.is_ok(string_) || !arrays.is_ok(targets_)) return false;
+		
+		boolean is_ok = true;
+		
+		for (String target: targets_)
+		{
+			is_ok = (normalise_ ? are_equivalent(string_, target) : are_equal(string_, target));
+			if ((all_ && !is_ok) || (!all_ && is_ok)) break;
+		}
+		
+		return is_ok;
+	}
+	
+	private static boolean is_number_internal(String string_, boolean integer_)
 	{
 		if (!is_ok(string_)) return false;
 		
@@ -193,6 +282,8 @@ public class strings
 		int group_max = 3;
 		int group_count = -1;
 		boolean decimal_found = false;
+
+		int digit_count = 0;
 		
 		for (int i = 0; i <= last_i; i++)
 		{
@@ -231,11 +322,28 @@ public class strings
 				if (i != 0) return false;
 			}
 			else if (!Character.isDigit(chars[i])) return false;
+			
+			if (!decimal_found && Character.isDigit(chars[i])) digit_count++;
 		}
 		
 		if (group_count != group_no && group_count != group_max) return false;
 		
-		return true;
+		int digit_limit = (integer_ ? numbers.MAX_DIGITS_INT : numbers.MAX_DIGITS_DEC);
+		if (digit_count > digit_limit) return false;
+		
+		boolean is_ok = true;
+		
+		if (digit_count == digit_limit) 
+		{
+			try
+			{
+				if (integer_) Integer.parseInt(string_);
+				else Double.parseDouble(string_);
+			}
+			catch (Exception e) { is_ok = false; }
+		}
+
+		return is_ok;
 	}
 	
 	private static boolean contains_start_end(String needle_, String haystack_, boolean normalise_, boolean first_)
@@ -251,5 +359,24 @@ public class strings
 		else contains = (i == (length - length2));
 		
 		return contains;
+	}
+
+	private static String substring_before_after(String string_, String target_, int count_, boolean normalise_, boolean is_before_)
+	{
+		String output = strings.DEFAULT;
+		
+		String[] temp = split(string_, target_, normalise_, 0, false, false);
+		if (arrays.get_size(temp) <= count_) return output;
+		
+		int start_i = 0;
+		int size = count_;
+		
+		if (!is_before_)
+		{
+			start_i = count_;
+			size = 0;		
+		}
+		
+		return String.join(target_, arrays.get_range(temp, start_i, size));
 	}
 }

@@ -19,7 +19,9 @@ public class io
 		(
 			path_, 
 			(
-				!arrays.is_ok(vals_) ? arrays.get_default() : arrays.to_array(vals_)
+				!arrays.is_ok(vals_) ? 
+				(String[])arrays.DEFAULT : 
+				arrays.to_array(vals_)
 			), 
 			append_, errors_to_file_
 		);
@@ -79,14 +81,16 @@ public class io
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<String, String> ini_to_array(String path_)
 	{
-		if (!strings.contains_end(paths.EXTENSION_INI, path_, true)) return arrays.get_default();
+		HashMap<String, String> ini = (HashMap<String, String>)arrays.DEFAULT;
+		if (!strings.contains_end(paths.EXTENSION_INI, path_, true)) return ini;
 	
 		String[] lines = file_to_array(path_, true);
-		if (!arrays.is_ok(lines)) return arrays.get_default();
+		if (!arrays.is_ok(lines)) return ini;
 		
-		HashMap<String, String> ini = new HashMap<String, String>();
+		ini = new HashMap<String, String>();
 		
 		for (String line: lines)
 		{
@@ -105,7 +109,7 @@ public class io
 	
 	public static String[] file_to_array(String path_, boolean errors_to_file_)
 	{
-		if (!paths.exists(path_)) return arrays.get_default();
+		if (!paths.exists(path_)) return (String[])arrays.DEFAULT;
 		
 		ArrayList<String> lines = new ArrayList<>();
 
@@ -122,6 +126,6 @@ public class io
 			errors.manage_io(types.ERROR_FILE_READ, path_, e, errors_to_file_, false);
 		}
 		
-		return (arrays.is_ok(lines) ? arrays.to_array(lines) : arrays.get_default());
+		return (arrays.is_ok(lines) ? arrays.to_array(lines) : (String[])arrays.DEFAULT);
 	}
 }

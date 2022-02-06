@@ -5,24 +5,41 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class defaults 
-{	
-	static { _ini.load(); }
+{
+	@SuppressWarnings("rawtypes")
+	static final Class CLASS_NUMBERS = Double.class; 
+	@SuppressWarnings("rawtypes")
+	static final Class CLASS_ARRAYS = ArrayList.class;
 	
-	static final String CREDENTIALS_WHERE = keys.FILE;
-	static final boolean CREDENTIALS_ENCRYPTED = false;
+	static final String TIME_DATE = keys.TIME; 
 	
+	static final String APP_NAME = keys.APP;
 	static final String DIR_APP = paths.get_default_dir(keys.APP);
-	static final String DIR_CREDENTIALS = paths.get_default_dir(keys.CREDENTIALS);
 	static final String DIR_INI = paths.get_default_dir(keys.INI);
 	static final String DIR_ERRORS = paths.get_default_dir(keys.ERRORS);
+
+	static final boolean CREDENTIALS_ENCRYPTED = false;
+	static final String CREDENTIALS_WHERE = keys.FILE;
+	static final String CREDENTIALS_FILE_DIR = paths.get_default_dir(keys.CREDENTIALS);
+	static final String CREDENTIALS_FILE_EXTENSION = strings.DEFAULT;
+	static final String CREDENTIALS_FILE_SEPARATOR = misc.SEPARATOR_NAME;
+	static final String CREDENTIALS_FILE_USERNAME = keys.USERNAME;
+	static final String CREDENTIALS_FILE_PASSWORD = keys.PASSWORD;
+	static final String CREDENTIALS_FILE_ENCRYPTED = keys.ENCRYPT;
 	
 	static final String SQL_TYPE = types.SQL_MYSQL;
 	static final String SQL_MAX_POOL = "500";
+	static final String SQL_DB = strings.DEFAULT;
 	static final String SQL_HOST = "localhost";
-	static final boolean SQL_ERROR_EXIT = true;
+	static final String SQL_USER = strings.DEFAULT;
 	static final String SQL_CREDENTIALS_TYPE = SQL_TYPE;
 	static final String SQL_CREDENTIALS_WHERE = CREDENTIALS_WHERE;
-	static final boolean SQL_CREDENTIALS_ENCRYPTED = false;
+	static final String SQL_CREDENTIALS_USERNAME = strings.DEFAULT;
+	static final String SQL_CREDENTIALS_PASSWORD = strings.DEFAULT;
+	static final boolean SQL_CREDENTIALS_ENCRYPTED = CREDENTIALS_ENCRYPTED;
+	static final boolean SQL_ERROR_EXIT = true;
+	
+	static { _ini.load(); }
 	
 	public static <x> x get_generic()
 	{
@@ -30,10 +47,11 @@ public class defaults
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public static Object get(Object var_, boolean max_)
+	public static Object get(Object var_)
 	{
+		if (var_ == null) return get_generic();
+
 		Class type = null;
-		if (var_ == null) return type;
 		
 		if (var_ instanceof String) type = String.class;
 		else if (var_ instanceof Integer) type = Integer.class;
@@ -43,24 +61,18 @@ public class defaults
 		else if (var_ instanceof ArrayList) type = ArrayList.class;
 		else if (var_ instanceof Array) type = Array.class;
 		
-		return get_type(type, max_);	
+		return get_class(type);	
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public static Object get_type(Class type_, boolean max_)
+	public static Object get_class(Class type_)
 	{
-		Object output = null;
+		Object output = get_generic();
 		if (type_ == null) return output;
 		
 		if (type_ == String.class) output = "";
-		else if (type_ == Integer.class) 
-		{
-			output = (max_ ? Integer.MAX_VALUE : Integer.MIN_VALUE);
-		}
-		else if (type_ == Double.class) 
-		{
-			output = (max_ ? Double.MAX_VALUE : Double.MIN_VALUE);
-		}
+		else if (type_ == Integer.class) output = (Integer)0;
+		else if (type_ == Double.class) output = (Double)0.0;
 		else if (type_ == Boolean.class) output = false;
 		
 		return output;	

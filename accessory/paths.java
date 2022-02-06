@@ -4,9 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class paths 
-{
-	static { _ini.load(); }
-	
+{	
 	public static final String SEPARATOR_DIR = get_dir_separator();
 	public static final String HOME = get_home_dir();
 	
@@ -14,6 +12,8 @@ public class paths
 	public static final String EXTENSION_JAR = ".jar";
 	public static final String EXTENSION_INI = ".ini";
 
+	static { _ini.load(); }
+	
 	public static boolean exists(String path_)
 	{
 		return (strings.is_ok(path_) && (new File(path_)).exists());
@@ -21,12 +21,12 @@ public class paths
 	
 	public static String build(ArrayList<String> pieces, boolean last_file_)
 	{
-		return (!arrays.is_ok(pieces) ? arrays.get_default() : build(arrays.to_array(pieces), last_file_));
+		return (!arrays.is_ok(pieces) ? strings.DEFAULT : build(arrays.to_array(pieces), last_file_));
 	}
 	
 	public static String build(String[] pieces, boolean last_file_)
 	{
-		if (!arrays.is_ok(pieces)) return strings.get_default();
+		if (!arrays.is_ok(pieces)) return strings.DEFAULT;
 		
 		String dir = "";
 		int last_i = pieces.length - 1;
@@ -62,15 +62,12 @@ public class paths
 
 	public static String get_cur_dir(String what_)
 	{
-		String key = strings.get_default();
+		String type = types._CONFIG_BASIC;
+		String key = strings.DEFAULT;
 		
 		if (!strings.is_ok(what_) || strings.are_equivalent(what_, keys.APP)) 
 		{
 			key = types._CONFIG_BASIC_DIR_APP;
-		}
-		else if (strings.are_equivalent(what_, keys.CREDENTIALS)) 
-		{
-			key = types._CONFIG_BASIC_DIR_CREDENTIALS;
 		}
 		else if (strings.are_equivalent(what_, keys.INI)) 
 		{
@@ -80,13 +77,26 @@ public class paths
 		{
 			key = types._CONFIG_BASIC_DIR_ERRORS;
 		}
+		else if (strings.are_equivalent(what_, keys.CREDENTIALS)) 
+		{
+			type = types._CONFIG_CREDENTIALS;
+			key = types._CONFIG_CREDENTIALS_FILE_DIR;
+		}
 
-		return (strings.is_ok(key) ? _config.get_basic(key) : strings.get_default());
+		String output = strings.DEFAULT;
+		
+		if (strings.is_ok(key))
+		{
+			if (type.equals(types._CONFIG_BASIC)) output = _config.get_basic(key);
+			else if (type.equals(types._CONFIG_CREDENTIALS)) output = _config.get_credentials(key);
+		}
+		
+		return output;
 	}
 	
 	static String get_default_dir(String what_)
 	{
-		if (!strings.is_ok(what_)) return strings.get_default();
+		if (!strings.is_ok(what_)) return strings.DEFAULT;
 		if (strings.are_equivalent(what_, keys.APP)) return get_dir_app_default();
 		
 		String[] targets = new String[] 
@@ -105,7 +115,7 @@ public class paths
 			}
 		}
 		
-		return strings.get_default();
+		return strings.DEFAULT;
 	}
 
 	private static String get_dir_separator()

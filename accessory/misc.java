@@ -1,9 +1,7 @@
 package accessory;
 
 public class misc 
-{
-	static { _ini.load(); }
-	
+{	
 	public static final String SEPARATOR_CONTENT = " --- ";
 	public static final String SEPARATOR_SCREEN = SEPARATOR_CONTENT;
 	public static final String SEPARATOR_FILE = System.lineSeparator();	
@@ -12,7 +10,9 @@ public class misc
 	public static final String SEPARATOR_ITEM = ", ";
 	
 	public static final String SEPARATOR_DIR = paths.SEPARATOR_DIR;
-		
+
+	static { _ini.load(); }
+	
 	public static void pause_min()
 	{
 		pause_milli(50);

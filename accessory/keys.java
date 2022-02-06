@@ -1,9 +1,7 @@
 package accessory;
 
 public class keys 
-{
-	static { _ini.load(); }
-	
+{	
 	public static final String MAX = "max";
 	public static final String MIN = "min";
 	public static final String KEY = "key";
@@ -15,6 +13,7 @@ public class keys
 	public static final String ERRORS = "errors";
 	public static final String LOG = "log";
 	public static final String TIME = "time";
+	public static final String DATE = "date";
 	public static final String USER = "user";
 	public static final String USERNAME = "username";
 	public static final String PASSWORD = "password";
@@ -40,4 +39,10 @@ public class keys
 	public static final String SERVER = "server";
 	public static final String ENCRYPT = "enc";
 	public static final String DECRYPT = "dec";
+	public static final String SEPARATOR = "separator";
+	public static final String EXTENSION = "extension";
+	public static final String CONN = "conn";
+	public static final String FLAG = "flag";
+	
+	static { _ini.load(); }
 }

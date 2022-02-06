@@ -3,24 +3,27 @@ package accessory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
 
 public class sql 
-{
-	static { _ini.load(); }
-	
+{	
 	public static final String SELECT = "select";
 	public static final String INSERT = "insert";
 	public static final String UPDATE = "update";
 	public static final String DELETE = "delete";
 	public static final String TRUNCATE = "truncate";
-    
-    public static HashMap<String, Boolean> change_conn_info(HashMap<String, String> params)
+
+	static { _ini.load(); }
+	
+    @SuppressWarnings("unchecked")
+	public static HashMap<String, Boolean> change_conn_info(HashMap<String, String> params)
     {
-    	if (!arrays.is_ok(params)) return arrays.get_default();
+    	if (!arrays.is_ok(params)) return (HashMap<String, Boolean>)arrays.DEFAULT;
     	
     	HashMap<String, String[]> items = new HashMap<String, String[]>();
     	items.put(types._CONFIG_SQL_DB, new String[] { keys.DB });
@@ -36,7 +39,7 @@ public class sql
     		String key = param.getKey();
     		String val = param.getValue();
     		
-    		String key2 = strings.get_default();
+    		String key2 = strings.DEFAULT;
     		
     		for (Entry<String, String[]> item: items.entrySet())
     		{
@@ -90,7 +93,7 @@ public class sql
     
     public static void truncate_table(String table_)
     {
-    	String query = strings.get_default();
+    	String query = strings.DEFAULT;
 
     	if (strings.is_ok(table_))
     	{
@@ -103,11 +106,12 @@ public class sql
     	execute_query_common(query, TRUNCATE);
     }    
     
-    public static HashMap<String, String>[] select(String table_, String[] cols_, String where_, int limit_)
+    @SuppressWarnings("unchecked")
+	public static ArrayList<HashMap<String, String>> select(String table_, String[] cols_, String where_, int limit_)
     {
-    	HashMap<String, String>[] output = arrays.get_default();
+    	ArrayList<HashMap<String, String>> output = (ArrayList<HashMap<String, String>>)arrays.DEFAULT;
     	
-    	String query = strings.get_default();
+    	String query = strings.DEFAULT;
 
     	if (strings.is_ok(table_))
     	{
@@ -116,8 +120,8 @@ public class sql
     			query = mysql.get_query_select(table_, cols_, where_, limit_);
     		}
     	}
-
-    	if (strings.is_ok(query)) output = execute_query(query, null);
+    	
+    	if (strings.is_ok(query)) output = execute_query(query, true, cols_);
     	else manage_error(types.ERROR_SQL_QUERY, query, null, "Wrong SELECT query");
     	
     	return output;
@@ -125,7 +129,7 @@ public class sql
 
     public static void insert(String table_, HashMap<String, String> vals_)
     {
-    	String query = strings.get_default();
+    	String query = strings.DEFAULT;
     	
     	if (strings.is_ok(table_) && arrays.is_ok(vals_))
     	{
@@ -152,7 +156,7 @@ public class sql
     
     public static void delete(String table_, String where_)
     {
-    	String query = strings.get_default();
+    	String query = strings.DEFAULT;
     	
     	if (strings.is_ok(table_) && strings.is_ok(where_)) 
     	{
@@ -169,7 +173,7 @@ public class sql
     
     private static void execute_query_common(String query_, String what_)
     {
-    	if (strings.is_ok(query_)) execute_query(query_, null);
+    	if (strings.is_ok(query_)) execute_query(query_, false, null);
     	else 
     	{
     		manage_error
@@ -246,8 +250,7 @@ public class sql
     	String user = _config.get_sql(types._CONFIG_SQL_USER);
     	String username = _config.get_sql(types._CONFIG_SQL_CREDENTIALS_USERNAME);
     	String password = _config.get_sql(types._CONFIG_SQL_CREDENTIALS_PASSWORD);
-    	System.out.println(username);
-    	System.out.println(password);
+
     	if (strings.is_ok(username) && strings.is_ok(password))
     	{
     		output.put(keys.USERNAME, username);
@@ -257,11 +260,8 @@ public class sql
     	{
         	output = credentials.get
 	    	(
-	    		_config.get_sql(types._CONFIG_SQL_CREDENTIALS_TYPE), user, strings.to_boolean
-	    		(
-	    			_config.get_sql(types._CONFIG_SQL_CREDENTIALS_ENCRYPTED), 
-	    			defaults.SQL_CREDENTIALS_ENCRYPTED
-	    		),
+	    		_config.get_sql(types._CONFIG_SQL_CREDENTIALS_TYPE), user, 
+	    		strings.to_boolean(_config.get_sql(types._CONFIG_SQL_CREDENTIALS_ENCRYPTED)),
 	    		_config.get_sql(types._CONFIG_SQL_CREDENTIALS_WHERE)
 	    	);
     	}
@@ -285,28 +285,29 @@ public class sql
         }
     }
     
-	private static HashMap<String, String>[] execute_query(String query_, String[] out_cols_)
+	@SuppressWarnings("unchecked")
+	private static ArrayList<HashMap<String, String>> execute_query(String query_, boolean return_data_, String[] cols_)
 	{
+		ArrayList<HashMap<String, String>> output = (ArrayList<HashMap<String, String>>)arrays.DEFAULT;
 		if (!strings.is_ok(query_)) 
 		{
-			manage_error(types.ERROR_SQL_QUERY, strings.get_default(), null, "No query");
+			manage_error(types.ERROR_SQL_QUERY, strings.DEFAULT, null, "No query");
 			
-			return arrays.get_default();
+			return output;
 		}
 
 		Connection conn = connect();
-		if (conn == null) return arrays.get_default();
-
-		ArrayList<HashMap<String, String>> output = null;
+		if (conn == null) return output;
+		
 		try 
 		{
 		    PreparedStatement statement = conn.prepareStatement(query_);
 
-		    if (!arrays.is_ok(out_cols_)) 
+		    if (!return_data_) 
 		    {
 		    	statement.executeUpdate();
 
-		    	return arrays.get_default();
+		    	return output;
 		    }
 		    
 		    output = new ArrayList<HashMap<String, String>>();
@@ -314,14 +315,15 @@ public class sql
 		    try
 		    {
 			    ResultSet data = statement.executeQuery();
-			    
-			    String wrong = strings.get_default();
-			    
+
+			    String[] cols = execute_query_get_cols(data, cols_);
+			    if (!arrays.is_ok(cols)) return output;
+
 	            while (data.next()) 
 	            { 
 	            	HashMap<String, String> row = new HashMap<String, String>();
 	            	
-	            	for (String col : out_cols_)
+	            	for (String col : cols)
 	            	{
 	            		String val = 
 	            		(
@@ -329,9 +331,9 @@ public class sql
 	            				strings.is_ok(col) && 
 	            				data.findColumn(col) > -1
 	            			) 
-	            			? data.getString(col) : wrong
+	            			? data.getString(col) : strings.DEFAULT
 	            		);
-	            		if (!strings.is_ok(val)) val = wrong;
+	            		if (!strings.is_ok(val)) val = strings.DEFAULT;
 	            		
 	            		row.put(col, val);
 	            	}
@@ -350,6 +352,36 @@ public class sql
 		} 
 		finally { disconnect(conn); }
 		
-		return (!arrays.is_ok(output) ? arrays.get_default() : arrays.to_array(output));
+		return output;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static String[] execute_query_get_cols(ResultSet data_, String[] cols_)
+	{
+		if (arrays.is_ok(cols_)) return cols_;
+
+		ArrayList<String> cols = new ArrayList<String>();
+		
+		try 
+		{
+			ResultSetMetaData info = data_.getMetaData();
+			
+			for (int i = 1; i <= info.getColumnCount(); i++)
+			{
+				cols.add(info.getColumnName(i));
+			}
+		} 
+		catch (SQLException e) 
+		{
+			cols = (ArrayList<String>)arrays.DEFAULT;
+			
+			manage_error
+			(
+				types.ERROR_SQL_QUERY, strings.DEFAULT, e, 
+				"Impossible to retrieve the table's columns"
+			);
+		}
+		
+		return arrays.to_array(cols);
 	}
 }
