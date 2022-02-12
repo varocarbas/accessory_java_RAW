@@ -21,7 +21,7 @@ public class time
 
 		return 
 		(
-			formatter == null ? null : formatter.format
+			!generic.is_ok(formatter) ? strings.DEFAULT : formatter.format
 			(
 				get_current_time(0)
 			)
@@ -30,20 +30,20 @@ public class time
 	
 	public static Boolean time_is_ok(LocalTime start_, LocalTime end_, int offset_)
 	{
+		if (!generic.is_ok(start_) || !generic.is_ok(end_)) return false;
+			
 		int offset = offset_;
 		if (offset < 0) offset = 0;
 		
 		LocalTime current = get_current_time(offset).toLocalTime();
 
-		return
-		(
-			current.compareTo(start_) >= 0 &&
-			current.compareTo(end_) < 0			
-		);	
+		return (current.compareTo(start_) >= 0 && current.compareTo(end_) < 0);	
 	}
 	
 	public static String add_timestamp(String input_, String format_, Boolean is_content_)
 	{
+		if (!strings.is_ok(input_) || !strings.is_ok(format_)) return strings.DEFAULT;
+		
 		String sep = misc.SEPARATOR_CONTENT;
 		String timestamp = get_current_time(format_, 0);
 		
@@ -58,7 +58,7 @@ public class time
 
 	public static long get_elapsed(long start_)
 	{
-		return get_elapsed_sec(start_);
+		return (start_ < 0 ? 0 : get_elapsed_sec(start_));
 	}
 
 	public static long get_elapsed_sec(long start_)
@@ -78,7 +78,7 @@ public class time
 	
 	private static String get_format_time_pattern(String format_)
 	{
-		String pattern = null;
+		String pattern = strings.DEFAULT;
 
 		String format = format_;
 		if (!strings.is_ok(format)) format = DEFAULT;
@@ -95,10 +95,6 @@ public class time
 	{
 		String pattern = get_format_time_pattern(format_);
 
-		return 
-		(
-			!strings.is_ok(pattern) ? null : 
-			DateTimeFormatter.ofPattern(pattern)  
-		);
+		return (!strings.is_ok(pattern) ? (DateTimeFormatter)generic.DEFAULT : DateTimeFormatter.ofPattern(pattern));
 	} 
 }

@@ -8,14 +8,17 @@ public class credentials
 	
 	@SuppressWarnings("unchecked")
 	public static HashMap<String, String> get(String type_, String user_, boolean encrypted_, String where_)
-    {
+    {		
 		HashMap<String, String> credentials = (HashMap<String, String>)arrays.DEFAULT;
 		if (!strings.are_ok(new String[] { type_, user_})) return credentials;
 		
-		String username = get_username_password(type_, user_, encrypted_, where_, true);
-		String password = get_username_password(type_, user_, encrypted_, where_, false);
+    	String type = types.check_aliases(type_);
+    	String where = types.check_aliases(where_);
+    	
+		String username = get_username_password(type, user_, encrypted_, where, true);
+		String password = get_username_password(type, user_, encrypted_, where, false);
 		if (!strings.are_ok(new String[] { username, password })) return credentials;
-		
+	
 		credentials = new HashMap<String, String>();
 		credentials.put(keys.USERNAME, username);
 		credentials.put(keys.PASSWORD, password);
@@ -27,42 +30,56 @@ public class credentials
     {
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 		
-    	return get_username_password(type_, user_, encrypted_, where_, true);
+    	String type = types.check_aliases(type_);
+    	String where = types.check_aliases(where_);
+    	
+    	return get_username_password(type, user_, encrypted_, where, true);
     }
 	
     public static String get_username_file(String type_, String user_, boolean encrypted_)
     {
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
-		
-    	return get_username_password(type_, user_, encrypted_, keys.FILE, true);
+	
+    	String type = types.check_aliases(type_);
+    	
+    	return get_username_password(type, user_, encrypted_, types._CONFIG_CREDENTIALS_WHERE_FILE, true);
     }
     
     public static String get_path_username(String type_, String user_, boolean encrypted_)
     {
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 		
-    	return get_path_username_password(type_, user_, encrypted_, true);
+    	String type = types.check_aliases(type_);
+		
+    	return get_path_username_password(type, user_, encrypted_, true);
     }
 	
     public static String get_password(String type_, String user_, boolean encrypted_, String where_)
     {
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 		
-    	return get_username_password(type_, user_, encrypted_, where_, false);
+    	String type = types.check_aliases(type_);
+    	String where = types.check_aliases(where_);
+    	
+    	return get_username_password(type, user_, encrypted_, where, false);
     }
 	
     public static String get_password_file(String type_, String user_, boolean encrypted_)
     {
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 		
-    	return get_username_password(type_, user_, encrypted_, keys.FILE, false);
+    	String type = types.check_aliases(type_);
+    	
+    	return get_username_password(type, user_, encrypted_, types._CONFIG_CREDENTIALS_WHERE_FILE, false);
     }
         
     public static String get_path_password(String type_, String user_, boolean encrypted_)
     {
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 		
-    	return get_path_username_password(type_, user_, encrypted_, false);    	
+    	String type = types.check_aliases(type_);
+    	
+    	return get_path_username_password(type, user_, encrypted_, false);    	
     }
     
 	private static String get_username_password
@@ -73,8 +90,8 @@ public class credentials
     	String output = strings.DEFAULT;
 
 		String where = (strings.is_ok(where_) ? where_ : defaults.CREDENTIALS_WHERE);
-    	
-    	if (strings.are_equivalent(where, keys.FILE)) 
+		
+    	if (strings.are_equivalent(where, types._CONFIG_CREDENTIALS_WHERE_FILE)) 
     	{
     		output = get_username_password_file(type_, user_, encrypted_, is_username_);
     	}
@@ -82,10 +99,7 @@ public class credentials
     	return output;
     }
     
-    private static String get_username_password_file
-    (
-    	String type_, String user_, boolean encrypted_, boolean is_username_
-    )
+    private static String get_username_password_file(String type_, String user_, boolean encrypted_, boolean is_username_)
     {   
     	String path = get_path_username_password(type_, user_, encrypted_, is_username_);
 

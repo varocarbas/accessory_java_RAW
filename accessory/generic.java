@@ -59,6 +59,17 @@ public class generic
 		return false;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public static <x> boolean are_equal(x input1_, x input2_)
+	{
+		if (!is_ok(input1_) || !is_ok(input2_)) return false;
+		
+		Class type1 = get_class(input1_);
+		Class type2 = get_class(input2_);
+		
+		return (!type1.equals(DEFAULT) && type1.equals(type2) && input1_.equals(input2_));
+	}
+	
 	//It has to be synced with get_all_classes().
 	@SuppressWarnings("rawtypes")
 	public static <x> Class get_class(x input_)
@@ -80,7 +91,7 @@ public class generic
 	@SuppressWarnings("rawtypes")
 	public static <x> boolean is_instance(x input_, Class class_)
 	{
-		return (class_ == get_class(input_));
+		return (class_ != null && class_.equals(get_class(input_)));
 	}
 	
 	//It has to be synced with get_class().

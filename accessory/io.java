@@ -10,10 +10,7 @@ public class io
 {	
 	static { _ini.load(); }
 	
-	public static void array_to_file
-	(
-		String path_, ArrayList<String> vals_, boolean append_, boolean errors_to_file_
-	)
+	public static void array_to_file(String path_, ArrayList<String> vals_, boolean append_, boolean errors_to_file_)
 	{
 		array_to_file
 		(
@@ -27,10 +24,7 @@ public class io
 		);
 	}
 	
-	public static void array_to_file
-	(
-		String path_, String[] vals_, boolean append_, boolean errors_to_file_
-	)
+	public static void array_to_file(String path_, String[] vals_, boolean append_, boolean errors_to_file_)
 	{
 		if (!strings.is_ok(path_) || !arrays.is_ok(vals_)) return;
 		
@@ -51,10 +45,7 @@ public class io
 		}
 	}
 	
-	public static void line_to_file
-	(
-		String path_, String line_, boolean append_, FileWriter writer_, boolean errors_to_file_
-	)
+	public static void line_to_file(String path_, String line_, boolean append_, FileWriter writer_, boolean errors_to_file_)
 	{
 		if (!strings.is_ok(path_) || !strings.is_ok(line_)) return;
 		

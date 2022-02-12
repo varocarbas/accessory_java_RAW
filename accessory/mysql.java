@@ -20,7 +20,7 @@ class mysql
     	String query = "SELECT ";
     	query += (arrays.is_ok(cols_) ? get_query_cols(cols_) : "*");     	
     	query += " FROM " + get_variable(table_);
-    	
+
     	if (strings.is_ok(where_)) query += " WHERE " + where_;
     	if (limit_ > 0) query += " LIMIT " + limit_;
 

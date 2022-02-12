@@ -10,7 +10,7 @@ public class keys
 	public static final String TYPE = "type";
 	public static final String PATH = "path";
 	public static final String EXCEPTION = "exception";
-	public static final String ERRORS = "errors";
+	public static final String ERROR = "error";
 	public static final String LOG = "log";
 	public static final String TIME = "time";
 	public static final String DATE = "date";
@@ -43,6 +43,10 @@ public class keys
 	public static final String EXTENSION = "extension";
 	public static final String CONN = "conn";
 	public static final String FLAG = "flag";
+	public static final String SYMBOL = "symbol";
+	public static final String PRICE = "price";
+	public static final String QUANTITY = "quantity";
+	public static final String CONSOLE = "console";
 	
 	static { _ini.load(); }
 }

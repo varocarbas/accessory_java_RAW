@@ -36,6 +36,6 @@ public class misc
 		{
 			Thread.sleep(milli_);
 		} 
-		catch (InterruptedException e) { }		
+		catch (Exception e) { }		
 	}
 }

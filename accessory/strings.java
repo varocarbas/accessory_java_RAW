@@ -218,14 +218,17 @@ public class strings
 	@SuppressWarnings("rawtypes")
 	public static <x> String to_string(x input_)
 	{
+		if (generic.is_string(input_)) return (String)input_;
+		
 		String output = DEFAULT;
-		if (input_ == null) return output;
+		if (!generic.is_ok(input_)) return output;
 		
 		Class type = input_.getClass();
+		if (type == generic.DEFAULT) return output;
 		
-		if (type == Double.class) output = from_number_decimal((Double)input_);
-		else if (type == Integer.class) output = from_number_int((Integer)input_);
-		else if (type == Boolean.class) output = from_boolean((Boolean)input_);
+		if (type.equals(Double.class)) output = from_number_decimal((Double)input_);
+		else if (type.equals(Integer.class)) output = from_number_int((Integer)input_);
+		else if (type.equals(Boolean.class)) output = from_boolean((Boolean)input_);
 		
 		return output;
 	}
@@ -237,7 +240,7 @@ public class strings
 		if (!is_ok(string_)) return output;
 
 		Class type = type_;
-		if (type == null)
+		if (!generic.is_ok(type))
 		{
 			if (is_decimal(string_)) type = Double.class;
 			else if (is_integer(string_)) type = Integer.class;
@@ -245,9 +248,9 @@ public class strings
 			else return output;
 		}
 		
-		if (type_ == Double.class) output = to_number_decimal(string_);
-		else if (type_ == Integer.class) output = to_number_int(string_);
-		else if (type_ == Boolean.class) output = to_boolean(string_);
+		if (type.equals(Double.class)) output = to_number_decimal(string_);
+		else if (type.equals(Integer.class)) output = to_number_int(string_);
+		else if (type.equals(Boolean.class)) output = to_boolean(string_);
 		
 		return output;
 	}
@@ -325,7 +328,6 @@ public class strings
 			
 			if (!decimal_found && Character.isDigit(chars[i])) digit_count++;
 		}
-		
 		if (group_count != group_no && group_count != group_max) return false;
 		
 		int digit_limit = (integer_ ? numbers.MAX_DIGITS_INT : numbers.MAX_DIGITS_DEC);

@@ -2,6 +2,7 @@ package accessory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class paths 
 {	
@@ -11,7 +12,8 @@ public class paths
 	public static final String EXTENSION_TEXT = ".txt";
 	public static final String EXTENSION_JAR = ".jar";
 	public static final String EXTENSION_INI = ".ini";
-
+	public static final String EXTENSION_LOG = ".log";
+	
 	static { _ini.load(); }
 	
 	public static boolean exists(String path_)
@@ -28,21 +30,25 @@ public class paths
 	{
 		if (!arrays.is_ok(pieces)) return strings.DEFAULT;
 		
-		String dir = "";
+		String path = "";
 		int last_i = pieces.length - 1;
+		int tot = 0;
 		
 		for (int i = 0; i <= last_i; i++)
 		{
 			String piece = pieces[i];
 			if (!strings.is_ok(piece)) continue;
 			
+			tot++;
 			if (!last_file_ || i != last_i) piece = normalise_dir(piece);	
-			dir += piece;	
+			path += piece;	
 		}
+		if (tot < 1) return strings.DEFAULT;
 		
-		if (!last_file_) dir = normalise_dir(dir);
+		if (last_file_ && tot == 1) path = HOME + normalise_file(path);
+		if (!last_file_) path = normalise_dir(path);
 
-		return dir;
+		return path;
 	}
 		
 	public static String normalise_dir(String dir_)
@@ -51,47 +57,54 @@ public class paths
 		if (!strings.is_ok(dir)) dir = "";
 		
 		dir = dir.trim();
-	
-		if (dir.substring(dir.length() - 1) != SEPARATOR_DIR) 
-		{
-			dir += SEPARATOR_DIR;
-		}
+		if (dir.substring(dir.length() - 1) != SEPARATOR_DIR) dir += SEPARATOR_DIR;
 		
 		return dir;
 	}
 
-	public static String get_cur_dir(String what_)
+	public static String normalise_file(String file_)
 	{
-		String type = types._CONFIG_BASIC;
-		String key = strings.DEFAULT;
+		String file = file_;
+		if (!strings.is_ok(file)) return strings.DEFAULT;
 		
-		if (!strings.is_ok(what_) || strings.are_equivalent(what_, keys.APP)) 
-		{
-			key = types._CONFIG_BASIC_DIR_APP;
+		file = file.trim();
+		if (strings.get_start(file, 1).equals(SEPARATOR_DIR))
+		{ 
+			file = strings.get_end(file, 1);
+			if (!strings.is_ok(file)) return strings.DEFAULT;
+			
+			file = file.trim();
 		}
-		else if (strings.are_equivalent(what_, keys.INI)) 
-		{
-			key = types._CONFIG_BASIC_DIR_INI;
-		}
-		else if (strings.are_equivalent(what_, keys.ERRORS)) 
-		{
-			key = types._CONFIG_BASIC_DIR_ERRORS;
-		}
-		else if (strings.are_equivalent(what_, keys.CREDENTIALS)) 
-		{
-			type = types._CONFIG_CREDENTIALS;
-			key = types._CONFIG_CREDENTIALS_FILE_DIR;
-		}
+		
+		return file;
+	}
 
-		String output = strings.DEFAULT;
+	public static String get_main_dir(String what_)
+	{
+		String what = types.check_aliases(what_);
+		HashMap<String, String> params = get_update_main_dir_params(what);
 		
-		if (strings.is_ok(key))
-		{
-			if (type.equals(types._CONFIG_BASIC)) output = _config.get_basic(key);
-			else if (type.equals(types._CONFIG_CREDENTIALS)) output = _config.get_credentials(key);
-		}
+		return 
+		(
+			!arrays.is_ok(params) ? strings.DEFAULT : _config.get
+			(
+				params.get(keys.TYPE), params.get(keys.KEY)
+			)
+		);
+	}
+	
+	public static <x> boolean update_main_dir(String what_, x val_)
+	{
+		String what = types.check_aliases(what_);
+		HashMap<String, String> params = get_update_main_dir_params(what);
 		
-		return output;
+		return 
+		(
+			!arrays.is_ok(params) ? false : _config.update
+			(
+				params.get(keys.TYPE), params.get(keys.KEY), val_
+			)
+		);
 	}
 	
 	static String get_default_dir(String what_)
@@ -99,17 +112,14 @@ public class paths
 		if (!strings.is_ok(what_)) return strings.DEFAULT;
 		if (strings.are_equivalent(what_, keys.APP)) return get_dir_app_default();
 		
-		String[] targets = new String[] 
-		{
-			keys.CREDENTIALS, keys.INI, keys.ERRORS	
-		};
+		String[] targets = new String[] { keys.CREDENTIALS, keys.INI, keys.LOG };
 		
 		for (String target: targets)
 		{
 			if (strings.are_equivalent(what_, target))
 			{
 				String[] parts = new String[] { HOME, target };
-				if (target == keys.ERRORS) parts = new String[] { get_dir_app_default() };
+				if (target.equals(keys.LOG)) parts = new String[] { get_dir_app_default() };
 				
 		    	return build(parts, false);
 			}
@@ -131,5 +141,20 @@ public class paths
 	private static String get_home_dir()
 	{
 		return normalise_dir(System.getProperty("user.home"));
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static HashMap<String, String> get_update_main_dir_params(String key_)
+	{
+		if (!strings.is_ok(key_)) return (HashMap<String, String>)arrays.DEFAULT;
+		
+		String type = types._CONFIG_BASIC;
+		if (key_.equals(types._CONFIG_CREDENTIALS_FILE_DIR)) type = types._CONFIG_CREDENTIALS;
+		
+		HashMap<String, String> output = new HashMap<String, String>();
+		output.put(keys.KEY, key_);
+		output.put(keys.TYPE, type);
+		
+		return output;
 	}
 }
