@@ -234,11 +234,11 @@ public class sql
 		else if (strings.is_ok(user))
 		{
 			output = credentials.get
-					(
-							_config.get(config_type, types._CONFIG_SQL_CREDENTIALS_TYPE), user, 
-							strings.to_boolean(_config.get(config_type, types._CONFIG_SQL_CREDENTIALS_ENCRYPTED)),
-							_config.get(config_type, types._CONFIG_SQL_CREDENTIALS_WHERE)
-							);
+			(
+				_config.get(config_type, types._CONFIG_SQL_CREDENTIALS_TYPE), user, 
+				strings.to_boolean(_config.get(config_type, types._CONFIG_SQL_CREDENTIALS_ENCRYPTED)),
+				_config.get(config_type, types._CONFIG_SQL_CREDENTIALS_WHERE)
+			);
 		}
 
 		return output;
@@ -300,13 +300,13 @@ public class sql
 					for (String col : cols)
 					{
 						String val = 
-								(
-										(
-												strings.is_ok(col) && 
-												data.findColumn(col) > -1
-												) 
-										? data.getString(col) : strings.DEFAULT
-										);
+						(
+							(
+								strings.is_ok(col) && 
+								data.findColumn(col) > -1
+							) 
+							? data.getString(col) : strings.DEFAULT
+						);
 						if (!strings.is_ok(val)) val = strings.DEFAULT;
 
 						row.put(col, val);
@@ -351,9 +351,9 @@ public class sql
 
 			manage_error
 			(
-					types.ERROR_SQL_QUERY, strings.DEFAULT, e, 
-					"Impossible to retrieve the table's columns"
-					);
+				types.ERROR_SQL_QUERY, strings.DEFAULT, e, 
+				"Impossible to retrieve the table's columns"
+			);
 		}
 
 		return arrays.to_array(cols);
