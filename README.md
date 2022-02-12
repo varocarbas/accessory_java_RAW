@@ -1,7 +1,7 @@
 # accessory_java
 Miscellaneous resources accessorily used by most of my Java code.
 
-External dependencies:
+Required external dependencies:
 - MySQL Java connector (v. 8.0.21).
 
 # \_RAW repositories
