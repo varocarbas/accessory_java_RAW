@@ -1,6 +1,9 @@
 # accessory_java
 Miscellaneous resources accessorily used by most of my Java code.
 
+External dependencies:
+- MySQL Java connector (v. 8.0.21).
+
 # \_RAW repositories
 All the \_RAW repositories include code which I use for personal purposes. The overall structure and used conventions are assumed to be more than enough for an experienced programmer to adequately understand and appreciate everything. 
 
