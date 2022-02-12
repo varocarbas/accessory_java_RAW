@@ -20,9 +20,9 @@ public class logs
 	}
 	
 	public static HashMap<String, Boolean> change_conn_info(HashMap<String, String> params_)
-    {
+	{
     	return _config.update_conn_info(params_, types._CONFIG_LOGS_SQL);
-    }
+	}
 	
 	private static void update_console(String message_, boolean is_error_)
 	{

@@ -8,12 +8,12 @@ public class credentials
 	
 	@SuppressWarnings("unchecked")
 	public static HashMap<String, String> get(String type_, String user_, boolean encrypted_, String where_)
-    {		
+	{		
 		HashMap<String, String> credentials = (HashMap<String, String>)arrays.DEFAULT;
 		if (!strings.are_ok(new String[] { type_, user_})) return credentials;
 		
-    	String type = types.check_aliases(type_);
-    	String where = types.check_aliases(where_);
+		String type = types.check_aliases(type_);
+		String where = types.check_aliases(where_);
     	
 		String username = get_username_password(type, user_, encrypted_, where, true);
 		String password = get_username_password(type, user_, encrypted_, where, false);
@@ -28,7 +28,7 @@ public class credentials
 	
     public static String get_username(String type_, String user_, boolean encrypted_, String where_)
     {
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
+    	if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 		
     	String type = types.check_aliases(type_);
     	String where = types.check_aliases(where_);
@@ -38,7 +38,7 @@ public class credentials
 	
     public static String get_username_file(String type_, String user_, boolean encrypted_)
     {
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
+    	if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 	
     	String type = types.check_aliases(type_);
     	
@@ -47,7 +47,7 @@ public class credentials
     
     public static String get_path_username(String type_, String user_, boolean encrypted_)
     {
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
+    	if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 		
     	String type = types.check_aliases(type_);
 		
@@ -56,7 +56,7 @@ public class credentials
 	
     public static String get_password(String type_, String user_, boolean encrypted_, String where_)
     {
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
+    	if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 		
     	String type = types.check_aliases(type_);
     	String where = types.check_aliases(where_);
@@ -66,7 +66,7 @@ public class credentials
 	
     public static String get_password_file(String type_, String user_, boolean encrypted_)
     {
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
+    	if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 		
     	String type = types.check_aliases(type_);
     	
@@ -75,21 +75,21 @@ public class credentials
         
     public static String get_path_password(String type_, String user_, boolean encrypted_)
     {
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
+    	if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 		
     	String type = types.check_aliases(type_);
     	
     	return get_path_username_password(type, user_, encrypted_, false);    	
     }
     
-	private static String get_username_password
+    private static String get_username_password
     (
     	String type_, String user_, boolean encrypted_, String where_, boolean is_username_
     )
     {
     	String output = strings.DEFAULT;
 
-		String where = (strings.is_ok(where_) ? where_ : defaults.CREDENTIALS_WHERE);
+    	String where = (strings.is_ok(where_) ? where_ : defaults.CREDENTIALS_WHERE);
 		
     	if (strings.are_equivalent(where, types._CONFIG_CREDENTIALS_WHERE_FILE)) 
     	{

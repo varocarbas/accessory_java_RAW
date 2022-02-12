@@ -99,11 +99,7 @@ public class strings
 		return (length_ > 0 ? string_.substring(start_, start_ + length_) : string_.substring(start_));
 	}
 	
-	public static String[] split
-	(
-		String haystack_, String regex_, boolean normalise_, 
-		int max_size_, boolean trim_, boolean remove_wrong_
-	)
+	public static String[] split(String haystack_, String regex_, boolean normalise_, int max_size_, boolean trim_, boolean remove_wrong_)
 	{
 		String haystack = haystack_;
 		String regex = regex_;
