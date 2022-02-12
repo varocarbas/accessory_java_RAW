@@ -160,9 +160,9 @@ public class sql
 		{
 			manage_error
 			(
-					types.ERROR_SQL_QUERY, query_, null, 
-					"Wrong " + what_.toUpperCase() + " query"
-					);
+				types.ERROR_SQL_QUERY, query_, null, 
+				"Wrong " + what_.toUpperCase() + " query"
+			);
 		}
 	}
 
