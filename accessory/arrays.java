@@ -286,7 +286,7 @@ public class arrays
 	private static <x> Object key_value_get_exists(Object array_, x target_, boolean is_key_, boolean get_)
 	{
 		Class type = generic.get_class(array_);
-		if (generic.is_ok(type)) return false;
+		if (!generic.is_ok(type)) return (get_ ? null : false);
 		
 		if (type.equals(HashMap.class))
 		{
@@ -310,6 +310,6 @@ public class arrays
 			}		
 		}
 
-		return false;
+		return (get_ ? null : false);
 	}
 }
