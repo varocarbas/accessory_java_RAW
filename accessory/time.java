@@ -95,6 +95,6 @@ public class time
 	{
 		String pattern = get_format_time_pattern(format_);
 
-		return (!strings.is_ok(pattern) ? (DateTimeFormatter)generic.DEFAULT : DateTimeFormatter.ofPattern(pattern));
+		return (!strings.is_ok(pattern) ? null : DateTimeFormatter.ofPattern(pattern));
 	} 
 }

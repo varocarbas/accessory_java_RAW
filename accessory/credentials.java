@@ -6,10 +6,9 @@ public class credentials
 {   	
 	static { _ini.load(); }
 
-	@SuppressWarnings("unchecked")
 	public static HashMap<String, String> get(String type_, String user_, boolean encrypted_, String where_)
 	{		
-		HashMap<String, String> credentials = (HashMap<String, String>)arrays.DEFAULT;
+		HashMap<String, String> credentials = null;
 		if (!strings.are_ok(new String[] { type_, user_})) return credentials;
 
 		String type = types.check_aliases(type_);
@@ -82,10 +81,7 @@ public class credentials
 		return get_path_username_password(type, user_, encrypted_, false);    	
 	}
 
-	private static String get_username_password
-	(
-			String type_, String user_, boolean encrypted_, String where_, boolean is_username_
-			)
+	private static String get_username_password(String type_, String user_, boolean encrypted_, String where_, boolean is_username_)
 	{
 		String output = strings.DEFAULT;
 
@@ -118,19 +114,19 @@ public class credentials
 		String extension = _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_EXTENSION);
 
 		String file = type_ + separator + user_;
-
+		
 		file += separator + 
-				(
-						is_username_ ? _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_USERNAME) : 
-							_config.get_credentials(types._CONFIG_CREDENTIALS_FILE_PASSWORD)
-						);
+		(
+			is_username_ ? _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_USERNAME) : 
+			_config.get_credentials(types._CONFIG_CREDENTIALS_FILE_PASSWORD)
+		);
 
 		if (encrypted_) file += separator + _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_ENCRYPTED);  	
 		if (strings.is_ok(extension)) file += extension;
 
 		return paths.build
-				(
-						new String[] { _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_DIR), file }, true
-						);
+		(
+			new String[] { _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_DIR), file }, true
+		);
 	}
 }

@@ -13,23 +13,21 @@ public class numbers
 	public static final int MAX_DIGITS_INT = 10;
 	
 	static { _ini.load(); }
+
+	@SuppressWarnings("rawtypes")
+	public static final Class[] get_all_classes()
+	{
+		return new Class[] { Integer.class, Double.class };
+	}
 	
 	public static boolean is_ok(double input_, double min_, double max_)
 	{
-		return
-		(
-			(input_ >= min_ || min_ == MIN_DEC) &&
-			(input_ <= max_ || max_ == MAX_DEC)				
-		);
+		return ((input_ >= min_ || min_ == MIN_DEC) && (input_ <= max_ || max_ == MAX_DEC));
 	}
 	
 	public static boolean is_ok(int input_, int min_, int max_)
 	{
-		return
-		(
-			(input_ >= min_ || min_ == MIN_INT) && 
-			(input_ <= max_ || max_ == MAX_INT)				
-		);
+		return ((input_ >= min_ || min_ == MIN_INT) && (input_ <= max_ || max_ == MAX_INT));
 	}
 	
 	public static <x> boolean is_ok(x input_)
@@ -40,11 +38,5 @@ public class numbers
 	public static Object get_default()
 	{
 		return 0;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public static final Class[] get_all_classes()
-	{
-		return new Class[] { Integer.class, Double.class };
 	}
 }

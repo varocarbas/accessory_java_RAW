@@ -47,6 +47,8 @@ public class keys
 	public static final String PRICE = "price";
 	public static final String QUANTITY = "quantity";
 	public static final String CONSOLE = "console";
+	public static final String WHERE = "where";
+	public static final String ORDER = "order";
 	
 	static { _ini.load(); }
 }

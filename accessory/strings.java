@@ -103,7 +103,7 @@ public class strings
 	{
 		String haystack = haystack_;
 		String regex = regex_;
-		if (!strings.is_ok(haystack) || !strings.is_ok(regex)) return (String[])arrays.DEFAULT;
+		if (!strings.is_ok(haystack) || !strings.is_ok(regex)) return null;
 		
 		if (normalise_)
 		{
@@ -113,7 +113,7 @@ public class strings
 		
 		String[] output = haystack.split(regex);
 		int size = arrays.get_size(output);
-		if (size < 1) return (String[])arrays.DEFAULT;
+		if (size < 1) return null;
 		
 		if (trim_ || remove_wrong_) output = arrays.clean(output, trim_, remove_wrong_);
 		
@@ -220,7 +220,7 @@ public class strings
 		if (!generic.is_ok(input_)) return output;
 		
 		Class type = input_.getClass();
-		if (type == generic.DEFAULT) return output;
+		if (type == null) return output;
 		
 		if (type.equals(Double.class)) output = from_number_decimal((Double)input_);
 		else if (type.equals(Integer.class)) output = from_number_int((Integer)input_);
@@ -232,7 +232,7 @@ public class strings
 	@SuppressWarnings("rawtypes")
 	public static Object from_string(String string_, Class type_)
 	{
-		Object output = generic.DEFAULT;
+		Object output = null;
 		if (!is_ok(string_)) return output;
 
 		Class type = type_;

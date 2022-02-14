@@ -48,15 +48,10 @@ public class defaults
 	
 	static { _ini.load(); }
 	
-	public static <x> x get_generic()
-	{
-		return null;
-	}
-	
 	@SuppressWarnings("rawtypes")
 	public static Object get(Object var_)
 	{
-		if (var_ == null) return get_generic();
+		if (var_ == null) return null;
 
 		Class type = null;
 		
@@ -74,7 +69,7 @@ public class defaults
 	@SuppressWarnings("rawtypes")
 	public static Object get_class(Class type_)
 	{
-		Object output = get_generic();
+		Object output = null;
 		if (type_ == null) return output;
 		
 		if (type_.equals(String.class)) output = "";

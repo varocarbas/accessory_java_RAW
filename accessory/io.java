@@ -12,16 +12,7 @@ public class io
 	
 	public static void array_to_file(String path_, ArrayList<String> vals_, boolean append_, boolean errors_to_file_)
 	{
-		array_to_file
-		(
-			path_, 
-			(
-				!arrays.is_ok(vals_) ? 
-				(String[])arrays.DEFAULT : 
-				arrays.to_array(vals_)
-			), 
-			append_, errors_to_file_
-		);
+		array_to_file(path_, (!arrays.is_ok(vals_) ? null : arrays.to_array(vals_)), append_, errors_to_file_);
 	}
 	
 	public static void array_to_file(String path_, String[] vals_, boolean append_, boolean errors_to_file_)
@@ -72,10 +63,9 @@ public class io
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static HashMap<String, String> ini_to_array(String path_)
 	{
-		HashMap<String, String> ini = (HashMap<String, String>)arrays.DEFAULT;
+		HashMap<String, String> ini = null;
 		if (!strings.contains_end(paths.EXTENSION_INI, path_, true)) return ini;
 	
 		String[] lines = file_to_array(path_, true);
@@ -100,7 +90,7 @@ public class io
 	
 	public static String[] file_to_array(String path_, boolean errors_to_file_)
 	{
-		if (!paths.exists(path_)) return (String[])arrays.DEFAULT;
+		if (!paths.exists(path_)) return null;
 		
 		ArrayList<String> lines = new ArrayList<>();
 
@@ -117,6 +107,6 @@ public class io
 			errors.manage_io(types.ERROR_FILE_READ, path_, e, errors_to_file_, false);
 		}
 		
-		return (arrays.is_ok(lines) ? arrays.to_array(lines) : (String[])arrays.DEFAULT);
+		return (arrays.is_ok(lines) ? arrays.to_array(lines) : null);
 	}
 }

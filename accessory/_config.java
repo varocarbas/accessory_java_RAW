@@ -7,9 +7,9 @@ import java.util.Map.Entry;
 public class _config 
 {	
 	//--- Initialiased via _ini.load().
-	private static HashMap<String, HashMap<String, String>> info = new HashMap<String, HashMap<String, String>>();
-	private static HashMap<String, String[]> subtypes = new HashMap<String, String[]>();
-	private static HashMap<String, String[]> linked = new HashMap<String, String[]>();
+	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
+	private static HashMap<String, String[]> _subtypes = new HashMap<String, String[]>();
+	private static HashMap<String, String[]> _linked = new HashMap<String, String[]>();
 	//------
 
 	static { _ini.load(); }
@@ -95,11 +95,11 @@ public class _config
 		String type = types.check_aliases(type_);
 		String key = types.check_aliases(key_);
 		
-		x output = (x)generic.DEFAULT;
+		x output = null;
 
-		if (strings.is_ok(key) && info.containsKey(type) && info.get(type).containsKey(key)) 
+		if (strings.is_ok(key) && _info.containsKey(type) && _info.get(type).containsKey(key)) 
 		{
-			output = (x)info.get(type).get(key);
+			output = (x)_info.get(type).get(key);
 		}
 
 		return output;
@@ -118,8 +118,8 @@ public class _config
 		
 		for (String sec: secs)
 		{
-			x val2 = get(sec, key);
-			if (generic.is_ok(val2)) continue;
+			x val = get(sec, key);
+			if (generic.is_ok(val)) continue;
 			
 			update(sec, key, val_);
 		}
@@ -132,10 +132,9 @@ public class _config
 		return update_matches(type_, key_, val_, false, false);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static HashMap<String, Boolean> update_conn_info(HashMap<String, String> params_, String type_)
 	{
-		HashMap<String, Boolean> output = (HashMap<String, Boolean>)arrays.DEFAULT;
+		HashMap<String, Boolean> output = null;
 		if (!arrays.is_ok(params_)) return output;
 
 		String type = types.check_aliases(type_);
@@ -164,11 +163,7 @@ public class _config
 	{
 		String main = types.check_aliases(main_);
 		
-		return 
-		(
-			(strings.is_ok(main) && linked.containsKey(main)) ?
-			linked.get(main) : (String[])arrays.DEFAULT
-		);
+		return ((strings.is_ok(main) && _linked.containsKey(main)) ? _linked.get(main) : null);
 	}
 	
 	public static String get_linked_main(String type_)
@@ -176,9 +171,9 @@ public class _config
 		String type = types.check_aliases(type_);
 		
 		String output = strings.DEFAULT;
-		if (!strings.is_ok(type) || !arrays.is_ok(linked)) return output;
+		if (!strings.is_ok(type) || !arrays.is_ok(_linked)) return output;
 		
-		for (Entry<String, String[]> item: linked.entrySet())
+		for (Entry<String, String[]> item: _linked.entrySet())
 		{
 			String key = item.getKey();
 			key = types.check_aliases(key);
@@ -195,7 +190,7 @@ public class _config
 		String main = types.check_aliases(main_);
 		if (!strings.is_ok(main) || !arrays.is_ok(secs_)) return false;
 		
-		linked.put(main, secs_);
+		_linked.put(main, secs_);
 		
 		return true;
 	}
@@ -205,7 +200,7 @@ public class _config
 		String main = types.check_aliases(main_);
 		if (!strings.is_ok(main) || !arrays.is_ok(subtypes_)) return false;
 		
-		subtypes.put(main, arrays.new_instance(subtypes_));
+		_subtypes.put(main, arrays.new_instance(subtypes_));
 		
 		return true;
 	}
@@ -225,32 +220,31 @@ public class _config
 		if (!strings.is_ok(type) || !strings.is_ok(key)) return is_ok;
 		if (!generic.is_string(val_)) return is_ok;
 
-		HashMap<String, String> local = new HashMap<String, String>();
-		if (info.containsKey(type)) local = new HashMap<String, String>(info.get(type));
+		HashMap<String, String> info = new HashMap<String, String>();
+		if (_info.containsKey(type)) info = new HashMap<String, String>(_info.get(type));
 		else if (!ini_) return is_ok; 
 
 		is_ok = true;
 		String val = strings.to_string(val_);
 
-		local = update_matches_internal
+		info = update_matches_internal
 		(
-			local, update_matches_get_keys_all(key, ini_, type), val, update_, ini_
+			info, update_matches_get_keys_all(key, ini_, type), val, update_, ini_
 		);
 
-		if (!arrays.is_ok(local)) is_ok = false;
-		else if (update_) info.put(type, new HashMap<String, String>(local));
+		if (!arrays.is_ok(info)) is_ok = false;
+		else if (update_) _info.put(type, new HashMap<String, String>(info));
 
 		return is_ok;
 	}
 
 	private static String[] update_matches_get_keys_all(String key_, boolean ini_, String type_)
 	{
-		String[] local = (subtypes.containsKey(type_) ? subtypes.get(key_) : (String[])arrays.DEFAULT);
+		String[] subtypes = (_subtypes.containsKey(type_) ? _subtypes.get(key_) : null);
 		
-		return update_matches_get_keys(key_, ini_, type_, local);
+		return update_matches_get_keys(key_, ini_, type_, subtypes);
 	}
 
-	@SuppressWarnings("unchecked")
 	private static HashMap<String, String> update_matches_internal(HashMap<String, String> info_, String[] keys_, String val_, boolean update_, boolean ini_)
 	{
 		HashMap<String, String> info = new HashMap<String, String>(info_);
@@ -276,7 +270,7 @@ public class _config
 			}
 		}
 
-		return (update_ ? info : (HashMap<String, String>)arrays.DEFAULT);	
+		return (update_ ? info : null);	
 	}
 
 	private static String[] update_matches_get_keys(String key_, boolean ini_, String type_, String[] subtypes_)

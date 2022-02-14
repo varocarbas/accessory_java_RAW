@@ -8,9 +8,13 @@ import java.util.Map.Entry;
 
 public class arrays 
 {
-	public static final Object DEFAULT = defaults.get_generic();
-	
 	static { _ini.load(); }
+	
+	@SuppressWarnings("rawtypes")
+	public static final Class[] get_all_classes()
+	{
+		return new Class[] { HashMap.class, ArrayList.class, Array.class };
+	}
 	
 	public static boolean is_ok(Object input_)
 	{
@@ -45,11 +49,11 @@ public class arrays
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <x> x[] to_array(ArrayList<x> input_)
 	{
-		x[] output = (x[])DEFAULT;
+		x[] output = null;
 		if (!is_ok(input_)) return output;
 		
 		Class type = generic.get_class(input_.get(0));
-		if (type.equals(generic.DEFAULT)) return output;
+		if (type == null) return output;
 		
 		int size = input_.size();
 		if (type.equals(String.class)) output = (x[])input_.toArray(new String[size]);
@@ -70,10 +74,9 @@ public class arrays
 		return to_array(to_arraylist(input_));
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static ArrayList<String> clean(ArrayList<String> input_, boolean trim_, boolean remove_wrong_)
 	{
-		if (!is_ok(input_)) return (ArrayList<String>)DEFAULT;
+		if (!is_ok(input_)) return null;
 		
 		ArrayList<String> output = new ArrayList<String>();
 		
@@ -87,7 +90,7 @@ public class arrays
 	
 	public static String[] clean(String[] input_, boolean trim_, boolean remove_wrong_)
 	{
-		if (!is_ok(input_)) return (String[])DEFAULT;
+		if (!is_ok(input_)) return null;
 		
 		ArrayList<String> output = new ArrayList<String>();
 		
@@ -99,7 +102,6 @@ public class arrays
 		return to_array(output);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static <x> x[] get_range(x[] input_, int start_i, int size_)
 	{
 		int size0 = get_size(input_);
@@ -107,7 +109,7 @@ public class arrays
 		
 		return 
 		(
-			(start_i < 0 || size > size0) ? (x[])DEFAULT : 
+			(start_i < 0 || size > size0) ? null : 
 			Arrays.copyOfRange(input_, start_i, size)
 		);
 	}
@@ -115,21 +117,13 @@ public class arrays
 	@SuppressWarnings("unchecked")
 	public static <x, y> y get_value(HashMap<x, y> array_, x key_)
 	{
-		return (y)
-		(
-			!arrays.is_ok(array_) ? generic.DEFAULT : 
-			key_value_get_exists(array_, key_, null, true, true)
-		);
+		return (y)(!arrays.is_ok(array_) ? null : key_value_get_exists(array_, key_, null, true, true));
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <x> x get_value(Object array_, x key_)
 	{
-		return (x)
-		(
-			!arrays.is_ok(array_) ? generic.DEFAULT : 
-			key_value_get_exists(array_, key_, false, true)
-		);
+		return (x)(!arrays.is_ok(array_) ? null : key_value_get_exists(array_, key_, false, true));
 	}
 	
 	public static <x, y> boolean keys_exist(HashMap<x, y> array_, x[] keys_)
@@ -210,11 +204,7 @@ public class arrays
 		return output;
 	}	
 
-	public static String to_string
-	(
-		HashMap<String, String> input_, String separator1_, 
-		String separator2_, String[] keys_ignore_
-	)
+	public static String to_string(HashMap<String, String> input_, String separator1_, String separator2_, String[] keys_ignore_)
 	{
 		if (!arrays.is_ok(input_)) return strings.DEFAULT;
 		
@@ -238,12 +228,6 @@ public class arrays
 		}
 		
 		return output;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public static final Class[] get_all_classes()
-	{
-		return new Class[] { HashMap.class, ArrayList.class, Array.class };
 	}
 
 	private static <x> int get_size_array(x[] input_)
@@ -295,7 +279,7 @@ public class arrays
 			}
 		}
 
-		return (get_ ? generic.DEFAULT : false);
+		return (get_ ? null : false);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

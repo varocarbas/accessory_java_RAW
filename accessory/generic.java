@@ -6,8 +6,6 @@ import java.util.HashMap;
 
 public class generic 
 {
-	public static final Object DEFAULT = defaults.get_generic();
-
 	static { _ini.load(); }
 	
 	public static <x> boolean is_ok(x input_)
@@ -67,14 +65,14 @@ public class generic
 		Class type1 = get_class(input1_);
 		Class type2 = get_class(input2_);
 		
-		return (!type1.equals(DEFAULT) && type1.equals(type2) && input1_.equals(input2_));
+		return (type1 != null && type1.equals(type2) && input1_.equals(input2_));
 	}
 	
 	//It has to be synced with get_all_classes().
 	@SuppressWarnings("rawtypes")
 	public static <x> Class get_class(x input_)
 	{
-		Class type = (Class)DEFAULT;
+		Class type = null;
 		
 		if (input_ instanceof String) type = String.class;
 		else if (input_ instanceof Boolean) type = Boolean.class;

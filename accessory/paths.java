@@ -85,12 +85,12 @@ public class paths
 		HashMap<String, String> params = get_update_main_dir_params(what);
 
 		return 
-				(
-						!arrays.is_ok(params) ? strings.DEFAULT : _config.get
-								(
-										params.get(keys.TYPE), params.get(keys.KEY)
-										)
-						);
+		(
+			!arrays.is_ok(params) ? strings.DEFAULT : _config.get
+			(
+				params.get(keys.TYPE), params.get(keys.KEY)
+			)
+		);
 	}
 
 	public static <x> boolean update_main_dir(String what_, x val_)
@@ -99,12 +99,12 @@ public class paths
 		HashMap<String, String> params = get_update_main_dir_params(what);
 
 		return 
-				(
-						!arrays.is_ok(params) ? false : _config.update
-								(
-										params.get(keys.TYPE), params.get(keys.KEY), val_
-										)
-						);
+		(
+			!arrays.is_ok(params) ? false : _config.update
+			(
+				params.get(keys.TYPE), params.get(keys.KEY), val_
+			)
+		);
 	}
 
 	static String get_default_dir(String what_)
@@ -143,10 +143,9 @@ public class paths
 		return normalise_dir(System.getProperty("user.home"));
 	}
 
-	@SuppressWarnings("unchecked")
 	private static HashMap<String, String> get_update_main_dir_params(String key_)
 	{
-		if (!strings.is_ok(key_)) return (HashMap<String, String>)arrays.DEFAULT;
+		if (!strings.is_ok(key_)) return null;
 
 		String type = types._CONFIG_BASIC;
 		if (key_.equals(types._CONFIG_CREDENTIALS_FILE_DIR)) type = types._CONFIG_CREDENTIALS;

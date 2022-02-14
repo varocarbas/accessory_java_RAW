@@ -10,7 +10,7 @@ public class errors
 	public static void manage(HashMap<String, String> info_, boolean exit_)
 	{		
 		String message = get_message(info_);
-		logs.update(message, arrays.get_value(info_, keys.ID), true);
+		logs.update(message, arrays.get_value(info_, keys.ID));
 		
 		if (exit_) System.exit(1);
 	}
@@ -46,10 +46,9 @@ public class errors
 		);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static HashMap<String, String> get_info_sql(String type_, String query_, Exception e_, String message_)
 	{
-		if (!strings.is_ok(type_)) return (HashMap<String, String>)arrays.DEFAULT;
+		if (!strings.is_ok(type_)) return null;
 		
 		String type = types.check_aliases(type_);
 		
@@ -81,10 +80,9 @@ public class errors
 		return info;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static HashMap<String, String> get_info_io(String type_, String path_, Exception e_)
 	{
-		if (!strings.is_ok(type_)) return (HashMap<String, String>)arrays.DEFAULT;
+		if (!strings.is_ok(type_)) return null;
 		
 		String type = types.check_aliases(type_);
 		
@@ -99,10 +97,14 @@ public class errors
 	
 	private static String get_message(HashMap<String, String> info_)
 	{
-		String message = "ERROR --- ";
+		String separator = misc.SEPARATOR_CONTENT;
+		
+		String message = (info_.containsKey(keys.TYPE) ? info_.get(keys.TYPE) : keys.ERROR).toUpperCase();
+		message += separator;
+		
 		if (!arrays.is_ok(info_)) return message;
 			
-		message += arrays.to_string(info_, " --- ", ": ", new String[] { keys.LOG });
+		message += arrays.to_string(info_, separator, ": ", new String[] { keys.LOG });
 		
 		return message;
 	}
