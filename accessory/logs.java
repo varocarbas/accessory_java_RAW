@@ -21,7 +21,7 @@ public class logs
 
 	public static HashMap<String, Boolean> change_conn_info(HashMap<String, String> params_)
 	{
-		return _config.update_conn_info(params_, types._CONFIG_LOGS_SQL);
+		return _config.update_db_conn_info(params_, types._CONFIG_LOGS_DB);
 	}
 
 	private static void update_console(String message_)
@@ -47,16 +47,16 @@ public class logs
 		String message = message_;
 		if (!strings.is_ok(message)) return;
 
-		String table = _config.get_logs(types._CONFIG_LOGS_SQL_TABLE);
-		String col_id = _config.get_logs(types._CONFIG_LOGS_SQL_COL_ID);
-		String col_message = _config.get_logs(types._CONFIG_LOGS_SQL_COL_MESSAGE);
+		String table = _config.get_logs(types._CONFIG_LOGS_DB_TABLE);
+		String col_id = _config.get_logs(types._CONFIG_LOGS_DB_COL_ID);
+		String col_message = _config.get_logs(types._CONFIG_LOGS_DB_COL_MESSAGE);
 		if (!strings.is_ok(table) || !strings.is_ok(col_id) || !strings.is_ok(col_message)) return;
 
 		HashMap<String, String> vals = new HashMap<String, String>();
 		vals.put(col_id, id_);
 		vals.put(col_message, message);
 
-		sql.insert(table, vals);
+		db.insert(table, vals);
 	}
 
 	private static String get_path(String id_)

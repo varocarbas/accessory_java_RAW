@@ -29,19 +29,19 @@ public class _config
 		return matches(types._CONFIG_BASIC, key_, val_);
 	}
 
-	public static String get_sql(String key_)
+	public static String get_db(String key_)
 	{
-		return get(types._CONFIG_SQL, key_);
+		return get(types._CONFIG_DB, key_);
 	}
 
-	public static <x> boolean update_sql(String key_, x val_)
+	public static <x> boolean update_db(String key_, x val_)
 	{
-		return update(types._CONFIG_SQL, key_, val_);
+		return update(types._CONFIG_DB, key_, val_);
 	}
 
-	public static <x> boolean matches_sql(String key_, x val_)
+	public static <x> boolean matches_db(String key_, x val_)
 	{
-		return matches(types._CONFIG_SQL, key_, val_);
+		return matches(types._CONFIG_DB, key_, val_);
 	}
 
 	public static String get_credentials(String key_)
@@ -74,27 +74,27 @@ public class _config
 		return matches(types._CONFIG_LOGS, key_, val_);
 	}
 
-	public static String get_logs_sql(String key_)
+	public static String get_logs_db(String key_)
 	{
-		return get(types._CONFIG_LOGS_SQL, key_);
+		return get(types._CONFIG_LOGS_DB, key_);
 	}
 
-	public static <x> boolean update_logs_sql(String key_, x val_)
+	public static <x> boolean update_logs_db(String key_, x val_)
 	{
-		return update(types._CONFIG_LOGS_SQL, key_, val_);
+		return update(types._CONFIG_LOGS_DB, key_, val_);
 	}
 
-	public static <x> boolean matches_logs_sql(String key_, x val_)
+	public static <x> boolean matches_logs_db(String key_, x val_)
 	{
-		return matches(types._CONFIG_LOGS_SQL, key_, val_);
+		return matches(types._CONFIG_LOGS_DB, key_, val_);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <x> x get(String type_, String key_)
 	{		
 		String type = types.check_aliases(type_);
 		String key = types.check_aliases(key_);
-		
+
 		x output = null;
 
 		if (strings.is_ok(key) && _info.containsKey(type) && _info.get(type).containsKey(key)) 
@@ -112,15 +112,15 @@ public class _config
 
 		boolean is_ok = update_matches(type, key, val_, true, false);
 		if (!is_ok) return is_ok;
-		
+
 		String[] secs = get_linked(type);
 		if (!arrays.is_ok(secs)) return is_ok;
-		
+
 		for (String sec: secs)
 		{
 			x val = get(sec, key);
 			if (generic.is_ok(val)) continue;
-			
+
 			update(sec, key, val_);
 		}
 
@@ -130,15 +130,66 @@ public class _config
 	public static <x> boolean matches(String type_, String key_, x val_)
 	{
 		return update_matches(type_, key_, val_, false, false);
+	}	
+
+	public static String[] get_linked(String main_)
+	{
+		String main = types.check_aliases(main_);
+
+		return ((strings.is_ok(main) && _linked.containsKey(main)) ? _linked.get(main) : null);
 	}
-	
-	public static HashMap<String, Boolean> update_conn_info(HashMap<String, String> params_, String type_)
+
+	public static String get_linked_main(String type_)
+	{
+		String type = types.check_aliases(type_);
+
+		String output = strings.DEFAULT;
+		if (!strings.is_ok(type) || !arrays.is_ok(_linked)) return output;
+
+		for (Entry<String, String[]> item: _linked.entrySet())
+		{
+			String key = item.getKey();
+			key = types.check_aliases(key);
+
+			if (strings.are_equal(type, key)) return key;
+			else if (arrays.value_exists(item.getValue(), type)) return type;
+		}
+
+		return output;
+	}
+
+	public static <x> boolean update_linked(String main_, String[] secs_)
+	{
+		String main = types.check_aliases(main_);
+		if (!strings.is_ok(main) || !arrays.is_ok(secs_)) return false;
+
+		_linked.put(main, secs_);
+
+		return true;
+	}
+
+	public static <x> boolean update_subtypes(String main_, String[] subtypes_)
+	{
+		String main = types.check_aliases(main_);
+		if (!strings.is_ok(main) || !arrays.is_ok(subtypes_)) return false;
+
+		_subtypes.put(main, arrays.new_instance(subtypes_));
+
+		return true;
+	}
+
+	public static <x> boolean update_ini(String type_, String key_, x val_)
+	{
+		return update_matches(type_, key_, val_, true, true);
+	}
+
+	static HashMap<String, Boolean> update_db_conn_info(HashMap<String, String> params_, String type_)
 	{
 		HashMap<String, Boolean> output = null;
 		if (!arrays.is_ok(params_)) return output;
 
 		String type = types.check_aliases(type_);
-		if (!strings.are_equal(get_linked_main(type), types._CONFIG_SQL)) return output;
+		if (!strings.are_equal(get_linked_main(type), types._CONFIG_DB)) return output;
 
 		output = new HashMap<String, Boolean>();
 
@@ -146,12 +197,12 @@ public class _config
 		{
 			String key = param.getKey();
 			key = types.check_aliases(key);
-			
+
 			String val = param.getValue();
 
 			boolean is_ok = false;
-			if (type.equals(types._CONFIG_SQL)) is_ok = _config.update_sql(key, val);
-			else if (type.equals(types._CONFIG_LOGS_SQL)) is_ok = _config.update_logs_sql(key, val);
+			if (type.equals(types._CONFIG_DB)) is_ok = update_db(key, val);
+			else if (type.equals(types._CONFIG_LOGS_DB)) is_ok = update_logs_db(key, val);
 
 			output.put(key, is_ok);
 		}
@@ -159,61 +210,10 @@ public class _config
 		return output;
 	}
 
-	public static String[] get_linked(String main_)
-	{
-		String main = types.check_aliases(main_);
-		
-		return ((strings.is_ok(main) && _linked.containsKey(main)) ? _linked.get(main) : null);
-	}
-	
-	public static String get_linked_main(String type_)
-	{
-		String type = types.check_aliases(type_);
-		
-		String output = strings.DEFAULT;
-		if (!strings.is_ok(type) || !arrays.is_ok(_linked)) return output;
-		
-		for (Entry<String, String[]> item: _linked.entrySet())
-		{
-			String key = item.getKey();
-			key = types.check_aliases(key);
-			
-			if (strings.are_equal(type, key)) return key;
-			else if (arrays.value_exists(item.getValue(), type)) return type;
-		}
-		
-		return output;
-	}
-	
-	public static <x> boolean update_linked(String main_, String[] secs_)
-	{
-		String main = types.check_aliases(main_);
-		if (!strings.is_ok(main) || !arrays.is_ok(secs_)) return false;
-		
-		_linked.put(main, secs_);
-		
-		return true;
-	}
-	
-	public static <x> boolean update_subtypes(String main_, String[] subtypes_)
-	{
-		String main = types.check_aliases(main_);
-		if (!strings.is_ok(main) || !arrays.is_ok(subtypes_)) return false;
-		
-		_subtypes.put(main, arrays.new_instance(subtypes_));
-		
-		return true;
-	}
-	
-	public static <x> boolean update_ini(String type_, String key_, x val_)
-	{
-		return update_matches(type_, key_, val_, true, true);
-	}
-	
 	private static <x> boolean update_matches(String type_, String key_, x val_, boolean update_, boolean ini_)
 	{
 		boolean is_ok = false;
-		
+
 		String type = types.check_aliases(type_);
 		String key = types.check_aliases(key_);
 
@@ -241,7 +241,7 @@ public class _config
 	private static String[] update_matches_get_keys_all(String key_, boolean ini_, String type_)
 	{
 		String[] subtypes = (_subtypes.containsKey(type_) ? _subtypes.get(key_) : null);
-		
+
 		return update_matches_get_keys(key_, ini_, type_, subtypes);
 	}
 
@@ -250,7 +250,7 @@ public class _config
 		HashMap<String, String> info = new HashMap<String, String>(info_);
 
 		boolean val_is_ok = strings.is_ok(val_);
-		
+
 		for (String key: keys_)
 		{
 			boolean key_is_ok = info.containsKey(key);
@@ -260,7 +260,7 @@ public class _config
 				if ((!ini_ && key_is_ok && val_is_ok) || (ini_ && !key_is_ok)) 
 				{ 
 					info.put(key, (val_is_ok ? val_ : strings.DEFAULT)); 
-					
+
 					break;
 				}
 			}

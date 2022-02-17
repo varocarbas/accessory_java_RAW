@@ -8,116 +8,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-public class sql 
+class sql 
 {
-	public static boolean _is_ok = true;
-
 	public static final String SELECT = "select";
 	public static final String INSERT = "insert";
 	public static final String UPDATE = "update";
 	public static final String DELETE = "delete";
 	public static final String TRUNCATE = "truncate";
 
-	private static String _config_type = types._CONFIG_SQL;
-
 	static { _ini.load(); }
 
-	public static boolean update_config_type(String type_)
-	{
-		String type = types.check_aliases(type_);
-		boolean is_ok = strings.are_equal(_config.get_linked_main(type), types._CONFIG_SQL);
-
-		if (is_ok) _config_type = type;
-
-		return is_ok;
-	}
-
-	public static HashMap<String, Boolean> update_conn_info(HashMap<String, String> params_)
-	{
-		return _config.update_conn_info(params_, _config_type);
-	}
-
-	public static boolean change_host(String host_)
-	{
-		return _config.update(_config_type, types._CONFIG_SQL_HOST, host_);
-	}
-
-	public static boolean change_user(String user_)
-	{
-		return _config.update(_config_type, types._CONFIG_SQL_USER, user_);
-	}
-
-	public static boolean change_error_exit(boolean error_exit_)
-	{
-		return _config.update(_config_type, types._CONFIG_SQL_ERROR_EXIT, error_exit_);
-	}
-
-	public static void truncate_table(String table_)
-	{
-		String query = get_query(TRUNCATE, table_, null, null, null, 0, null);
-		if (!strings.is_ok(query)) return;
-
-		execute_query(query, false, null);
-	}    
-
-	public static ArrayList<HashMap<String, String>> select(String table_, String[] cols_, String where_, int max_rows_, String order_)
-	{
-		String query = get_query(SELECT, table_, cols_, null, where_, max_rows_, order_);
-		if (!strings.is_ok(query)) return null;
-
-		return execute_query(query, true, cols_);
-	}
-
-	public static void insert(String table_, HashMap<String, String> vals_)
-	{
-		String query = get_query(INSERT, table_, null, vals_, null, 0, null);
-		if (!strings.is_ok(query)) return;
-
-		execute_query(query, false, null);
-	}
-
-	public static void update(String table_, HashMap<String, String> vals_, String where_)
-	{
-		String query = get_query(UPDATE, table_, null, vals_, where_, 0, null);
-		if (!strings.is_ok(query)) return;
-
-		execute_query(query, false, null);
-	}
-
-	public static void delete(String table_, String where_)
-	{
-		String query = get_query(DELETE, table_, null, null, where_, 0, null);
-		if (!strings.is_ok(query)) return;
-
-		execute_query(query, false, null);
-	}
-
-	public static void manage_error(String type_, String query_, Exception e_, String message_)
-	{
-		_is_ok = false;
-
-		String type = types.check_aliases(type_);
-
-		errors.manage_sql(type, query_, e_, message_);
-	}
-
-	private static String get_query(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_)
-	{
-		_is_ok = false;
-
-		String query = strings.DEFAULT;
-		if (!get_query_is_ok(what_, table_, cols_, vals_, where_, max_rows_, order_)) return query;
-
-		if (_config.matches(_config_type, types._CONFIG_SQL_TYPE, types.SQL_MYSQL))
-		{
-			query = mysql.get_query(what_, table_, cols_, vals_, where_, max_rows_, order_);
-		}
-		else manage_error(types.ERROR_SQL_TYPE, null, null, null); 
-
-		return query;
-	}
-
-	private static boolean get_query_is_ok(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_)
+	public static boolean params_are_ok(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_)
 	{
 		boolean is_ok = true;
 
@@ -136,121 +37,21 @@ public class sql
 		if (arrays.is_ok(cols_)) items.put(keys.COL, arrays.to_string(cols_, null));
 		if (arrays.is_ok(vals_)) items.put(keys.VALUE, arrays.to_string(vals_, null, null, null));
 		if (strings.is_ok(where_)) items.put(keys.WHERE, where_);
-		if (max_rows_ > 0) items.put(keys.ORDER, strings.from_number_int(max_rows_));
+		if (max_rows_ > 0) items.put(keys.MAX, strings.from_number_int(max_rows_));
 		if (strings.is_ok(order_)) items.put(keys.ORDER, order_);
 
 		String message = "Wrong " + what_.toUpperCase() + " query" + misc.SEPARATOR_CONTENT;
 		String temp = arrays.to_string(items, null, null, null);
 		if (strings.is_ok(temp)) message += temp;
 
-		manage_error(types.ERROR_SQL_QUERY, null, null, message);
+		db.manage_error(types.ERROR_DB_QUERY, null, null, message);
 
 		return is_ok;
 	}
 
-	private static Connection connect() 
+	static ArrayList<HashMap<String, String>> execute_query(String query_, boolean return_data_, String[] cols_)
 	{
-		Properties properties = get_properties();
-		if (properties == null) return null;
-
-		return connect_type(properties);
-	}
-
-	private static Connection connect_type(Properties properties) 
-	{
-		Connection conn = null; 
-
-		if (_config.matches(_config_type, types._CONFIG_SQL_TYPE, types.SQL_MYSQL))
-		{
-			conn = mysql.connect(properties);
-		}
-		else manage_error(types.ERROR_SQL_TYPE, null, null, null);
-
-		return conn;
-	}
-
-	private static Properties get_properties() 
-	{	
-		HashMap<String, String> credentials = get_credentials();
-
-		String username = arrays.get_value(credentials, keys.USERNAME);
-		String password = arrays.get_value(credentials, keys.PASSWORD);
-		String max_pool = _config.get(_config_type, types._CONFIG_SQL_MAX_POOL);
-
-		String type = null;
-		String message = ""; 
-
-		if (!strings.is_integer(max_pool))
-		{
-			type = types.ERROR_SQL_INFO;
-			message = "MaxPooledStatements";
-		}
-		else if (!strings.is_ok(username) || !strings.is_ok(password))
-		{
-			type = types.ERROR_SQL_CREDENTIALS;
-			message = "credentials";
-		}
-
-		if (type != null)
-		{
-			message = "Wrong " + message;
-			sql.manage_error(type, null, null, message);
-
-			return null;
-		}
-
-		Properties properties = new Properties();	
-		properties.setProperty("user", username);
-		properties.setProperty("password", password);
-		properties.setProperty("MaxPooledStatements", max_pool);
-
-		return properties;
-	}
-
-	private static HashMap<String, String> get_credentials()
-	{
-		HashMap<String, String> output = new HashMap<String, String>();
-
-		String user = _config.get(_config_type, types._CONFIG_SQL_USER);
-		String username = _config.get(_config_type, types._CONFIG_SQL_CREDENTIALS_USERNAME);
-		String password = _config.get(_config_type, types._CONFIG_SQL_CREDENTIALS_PASSWORD);
-
-		if (strings.is_ok(username) && strings.is_ok(password))
-		{
-			output.put(keys.USERNAME, username);
-			output.put(keys.PASSWORD, password);
-		}
-		else if (strings.is_ok(user))
-		{
-			output = credentials.get
-			(
-				_config.get(_config_type, types._CONFIG_SQL_CREDENTIALS_TYPE), user, 
-				strings.to_boolean(_config.get(_config_type, types._CONFIG_SQL_CREDENTIALS_ENCRYPTED)),
-				_config.get(_config_type, types._CONFIG_SQL_CREDENTIALS_WHERE)
-			);
-		}
-
-		return output;
-	}
-
-	private static void disconnect(Connection conn_) 
-	{
-		if (conn_ == null) return; 
-
-		try 
-		{
-			conn_.close();
-			conn_ = null;
-		} 
-		catch (Exception e) 
-		{
-			manage_error(types.ERROR_SQL_CONN, null, e, null);
-		}
-	}
-
-	private static ArrayList<HashMap<String, String>> execute_query(String query_, boolean return_data_, String[] cols_)
-	{
-		_is_ok = false;
+		db._is_ok = false;
 
 		ArrayList<HashMap<String, String>> output = null;
 
@@ -265,7 +66,7 @@ public class sql
 			{
 				statement.executeUpdate();
 
-				_is_ok = true;
+				db._is_ok = true;
 
 				return output;
 			}
@@ -301,20 +102,94 @@ public class sql
 					output.add(row);
 				}	
 
-				_is_ok = true;
+				db._is_ok = true;
 			}
 			catch (Exception e) 
 			{
-				manage_error(types.ERROR_SQL_QUERY, query_, e, null);
+				db.manage_error(types.ERROR_DB_QUERY, query_, e, null);
 			}
 		} 
 		catch (Exception e) 
 		{
-			manage_error(types.ERROR_SQL_QUERY, query_, e, null);
+			db.manage_error(types.ERROR_DB_QUERY, query_, e, null);
 		} 
 		finally { disconnect(conn); }
 
 		return output;
+	}
+
+	private static Connection connect() 
+	{
+		Properties properties = get_properties();
+		if (properties == null) return null;
+
+		return connect_type(properties);
+	}
+
+	private static Connection connect_type(Properties properties) 
+	{
+		Connection conn = null; 
+
+		if (_config.matches(db._config_type, types._CONFIG_DB_TYPE, types.DB_MYSQL))
+		{
+			conn = mysql.connect(properties);
+		}
+		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
+
+		return conn;
+	}
+
+	private static Properties get_properties() 
+	{	
+		HashMap<String, String> credentials = db.get_credentials();
+
+		String username = arrays.get_value(credentials, keys.USERNAME);
+		String password = arrays.get_value(credentials, keys.PASSWORD);
+		String max_pool = _config.get(db._config_type, types._CONFIG_DB_MAX_POOL);
+
+		String type = null;
+		String message = ""; 
+
+		if (!strings.is_integer(max_pool))
+		{
+			type = types.ERROR_DB_INFO;
+			message = "MaxPooledStatements";
+		}
+		else if (!strings.is_ok(username) || !strings.is_ok(password))
+		{
+			type = types.ERROR_DB_CREDENTIALS;
+			message = "credentials";
+		}
+
+		if (type != null)
+		{
+			message = "Wrong " + message;
+			db.manage_error(type, null, null, message);
+
+			return null;
+		}
+
+		Properties properties = new Properties();	
+		properties.setProperty("user", username);
+		properties.setProperty("password", password);
+		properties.setProperty("MaxPooledStatements", max_pool);
+
+		return properties;
+	}
+
+	private static void disconnect(Connection conn_) 
+	{
+		if (conn_ == null) return; 
+
+		try 
+		{
+			conn_.close();
+			conn_ = null;
+		} 
+		catch (Exception e) 
+		{
+			db.manage_error(types.ERROR_DB_CONN, null, e, null);
+		}
 	}
 
 	private static String[] execute_query_get_cols(ResultSet data_, String[] cols_)
@@ -336,7 +211,7 @@ public class sql
 		{
 			cols = null;
 
-			manage_error(types.ERROR_SQL_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns");
+			db.manage_error(types.ERROR_DB_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns");
 		}
 
 		return arrays.to_array(cols);

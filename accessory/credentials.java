@@ -114,7 +114,7 @@ public class credentials
 		String extension = _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_EXTENSION);
 
 		String file = type_ + separator + user_;
-		
+
 		file += separator + 
 		(
 			is_username_ ? _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_USERNAME) : 
