@@ -127,7 +127,7 @@ class _ini
 
 		vals.put(types._CONFIG_DB_TYPE, defaults.DB_TYPE);
 		vals.put(types._CONFIG_DB_MAX_POOL, defaults.DB_MAX_POOL);
-		vals.put(types._CONFIG_DB_NAME, defaults.DB_DB);
+		vals.put(types._CONFIG_DB_NAME, defaults.DB_NAME);
 		vals.put(types._CONFIG_DB_HOST, defaults.DB_HOST);
 		vals.put(types._CONFIG_DB_USER, defaults.DB_USER);
 		vals.put(types._CONFIG_DB_ERROR_EXIT, strings.from_boolean(defaults.DB_ERROR_EXIT));

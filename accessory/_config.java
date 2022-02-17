@@ -224,6 +224,8 @@ public class _config
 		if (_info.containsKey(type)) info = new HashMap<String, String>(_info.get(type));
 		else if (!ini_) return is_ok; 
 
+		if (!ini_ && !info.containsKey(key_)) return is_ok;
+
 		is_ok = true;
 		String val = strings.to_string(val_);
 

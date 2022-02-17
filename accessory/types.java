@@ -14,7 +14,7 @@ public class types
 	public static final String _CONFIG_DB = "_config_db";
 	public static final String _CONFIG_DB_TYPE = "_config_db_type";
 	public static final String _CONFIG_DB_MAX_POOL = "_config_db_max_pool";
-	public static final String _CONFIG_DB_NAME = "_config_db_db";
+	public static final String _CONFIG_DB_NAME = "_config_db_name";
 	public static final String _CONFIG_DB_HOST = "_config_db_host";
 	public static final String _CONFIG_DB_USER = "_config_db_user";
 	public static final String _CONFIG_DB_ERROR_EXIT = "_config_db_error_exit";
