@@ -24,7 +24,7 @@ public class logs
 		return _config.update_db_conn_info(params_, types._CONFIG_LOGS_DB);
 	}
 
-	private static void update_console(String message_)
+	public static void update_console(String message_)
 	{
 		String message = message_;
 		if (!strings.is_ok(message)) return;
@@ -32,7 +32,7 @@ public class logs
 		System.out.println(message);
 	}
 
-	private static void update_file(String message_, String id_)
+	public static void update_file(String message_, String id_)
 	{
 		String message = message_;
 		if (!strings.is_ok(message)) return;
@@ -42,7 +42,7 @@ public class logs
 		io.line_to_file(path, message, true, null, false);
 	}
 
-	private static void update_db(String message_, String id_)
+	public static void update_db(String message_, String id_)
 	{
 		String message = message_;
 		if (!strings.is_ok(message)) return;

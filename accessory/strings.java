@@ -350,7 +350,7 @@ public class strings
 
 		int length = get_length(haystack_, normalise_);
 		int length2 = get_length(needle_, normalise_);
-		if (length < 0 || length2 < 0) return contains;
+		if (length <= 0 || length2 <= 0) return contains;
 
 		int i = index_of(needle_, haystack_, normalise_);		
 		if (first_) contains = (i == 0);

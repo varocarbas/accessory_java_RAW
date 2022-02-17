@@ -20,6 +20,12 @@ public class generic
 		return is_ok;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public static <x> boolean is_ok(Class input_)
+	{
+		return (input_ != null);
+	}
+	
 	public static <x, y> boolean is_ok(HashMap<x, y> input_)
 	{
 		return arrays.is_ok(input_);

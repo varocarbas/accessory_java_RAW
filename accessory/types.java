@@ -172,7 +172,7 @@ public class types
 		for (String subtype: (arrays.is_ok(all_) ? all_ : get_all_subtypes()))
 		{
 			String subtype2 = check_aliases(subtype);
-			if (strings.contains_start(heading, subtype2, false)) subtypes.add(subtype2);
+			if (!strings.is_ok(heading) || strings.contains_start(heading, subtype2, false)) subtypes.add(subtype2);
 		}
 
 		return arrays.to_array(subtypes);
