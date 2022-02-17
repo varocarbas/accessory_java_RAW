@@ -33,9 +33,9 @@ public class defaults
 	static final boolean DB_CREDENTIALS_ENCRYPTED = CREDENTIALS_ENCRYPTED;
 	static final boolean DB_ERROR_EXIT = true;
 
-	static final String _CONFIG_LOGS_DB_TABLE = keys.LOG;
-	static final String _CONFIG_LOGS_DB_COL_ID = keys.ID;
-	static final String _CONFIG_LOGS_DB_COL_MESSAGE = keys.MESSAGE;
+	static final String LOGS_DB_TABLE = keys.LOG;
+	static final String LOGS_DB_COL_ID = keys.ID;
+	static final String LOGS_DB_COL_MESSAGE = keys.MESSAGE;
 
 	static final boolean LOGS_CONSOLE = true;
 	static final boolean LOGS_FILE = true;

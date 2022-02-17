@@ -20,16 +20,14 @@ class sql
 
 	public static boolean params_are_ok(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_)
 	{
-		boolean is_ok = true;
-
 		if 
 		(
-			!strings.is_ok(table_) || (what_.equals(DELETE) && !strings.is_ok(where_)) ||
-			((what_.equals(INSERT) || what_.equals(UPDATE)) && !arrays.is_ok(vals_))
+			!(
+				!strings.is_ok(table_) || (what_.equals(DELETE) && !strings.is_ok(where_)) ||
+				((what_.equals(INSERT) || what_.equals(UPDATE)) && !arrays.is_ok(vals_))					
+			)
 		)
-		{ is_ok = false; }
-
-		if (is_ok) return is_ok;
+		{ return true; }
 
 		HashMap<String, String> items = new HashMap<String, String>();
 
@@ -46,7 +44,7 @@ class sql
 
 		db.manage_error(types.ERROR_DB_QUERY, null, null, message);
 
-		return is_ok;
+		return false;
 	}
 
 	static ArrayList<HashMap<String, String>> execute_query(String query_, boolean return_data_, String[] cols_)

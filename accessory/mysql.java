@@ -23,7 +23,7 @@ class mysql
 
 	public static void insert(String table_, HashMap<String, String> vals_)
 	{
-		execute(sql.INSERT, table_, null, null, null, 0, null);
+		execute(sql.INSERT, table_, null, vals_, null, 0, null);
 	}
 
 	public static void update(String table_, HashMap<String, String> vals_, String where_)
@@ -49,7 +49,7 @@ class mysql
 	private static String get_query(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_)
 	{	
 		String query = strings.DEFAULT;
-		if (!sql.params_are_ok(what_, table_, null, null, null, 0, null)) return query;
+		if (!sql.params_are_ok(what_, table_, cols_, vals_, where_, max_rows_, order_)) return query;
 
 		boolean is_ok = false;
 

@@ -83,9 +83,9 @@ class _ini
 
 	private static void load_config_logs_db(String type_)
 	{
-		_config.update_ini(type_, types._CONFIG_LOGS_DB_TABLE, defaults._CONFIG_LOGS_DB_TABLE);
-		_config.update_ini(type_, types._CONFIG_LOGS_DB_COL_ID, defaults._CONFIG_LOGS_DB_COL_ID);
-		_config.update_ini(type_, types._CONFIG_LOGS_DB_COL_MESSAGE, defaults._CONFIG_LOGS_DB_COL_MESSAGE);
+		_config.update_ini(type_, types._CONFIG_LOGS_DB_TABLE, defaults.LOGS_DB_TABLE);
+		_config.update_ini(type_, types._CONFIG_LOGS_DB_COL_ID, defaults.LOGS_DB_COL_ID);
+		_config.update_ini(type_, types._CONFIG_LOGS_DB_COL_MESSAGE, defaults.LOGS_DB_COL_MESSAGE);
 	}
 
 	private static void load_config_subtypes()
