@@ -28,14 +28,25 @@ class mysql
 
 	public static void update(String table_, HashMap<String, String> vals_, String where_)
 	{
-		execute(sql.UPDATE, table_, null, null, where_, 0, null);
+		execute(sql.UPDATE, table_, null, vals_, where_, 0, null);
 	}
 
 	public static void delete(String table_, String where_)
 	{
 		execute(sql.DELETE, table_, null, null, where_, 0, null);
 	}
+	
+	public static String sanitise_string(String input_)
+	{
+		String output = input_;
+		if (!strings.is_ok(output)) return output;
 
+		output = output.replace("'", "\\'");
+		output = output.replace("\"", "\\\"");
+
+		return output; 
+	}
+	
 	private static ArrayList<HashMap<String, String>> execute(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_)
 	{
 		String query = get_query(what_, table_, cols_, vals_, where_, max_rows_, order_);
@@ -89,12 +100,16 @@ class mysql
 		}
 		else if (what_.equals(sql.UPDATE))
 		{
+			query = "UPDATE " + get_variable(table_); 
+			
 			String temp = get_query_cols(vals_, keys.ALL);
 			if (strings.is_ok(temp)) 
 			{
 				query += " SET " + temp;
 				is_ok = true;     		
-			} 			
+			}
+			
+			if (strings.is_ok(where_)) query += " WHERE " + where_;
 		}
 		else if (what_.equals(sql.DELETE))
 		{

@@ -14,9 +14,16 @@ public class logs
 		String id = id_;
 		if (!strings.is_ok(id)) id = _config.get_basic(types._CONFIG_BASIC_NAME);
 
-		if (out_is_ok(types._CONFIG_LOGS_OUT_CONSOLE)) update_console(message_);
+		if (out_is_ok(types._CONFIG_LOGS_OUT_SCREEN)) update_screen(message_);
+		
 		if (out_is_ok(types._CONFIG_LOGS_OUT_FILE)) update_file(message_, id);
-		if (out_is_ok(types._CONFIG_LOGS_OUT_DB)) update_db(message_, id);
+		
+		if (out_is_ok(types._CONFIG_LOGS_OUT_DB)) 
+		{
+			db.update_config_type(types._CONFIG_LOGS);
+			update_db(message_, id);
+			db.update_config_type(types._CONFIG_DB);
+		}
 	}
 
 	public static HashMap<String, Boolean> change_conn_info(HashMap<String, String> params_)
@@ -24,7 +31,7 @@ public class logs
 		return _config.update_db_conn_info(params_, types._CONFIG_LOGS_DB);
 	}
 
-	public static void update_console(String message_)
+	public static void update_screen(String message_)
 	{
 		String message = message_;
 		if (!strings.is_ok(message)) return;
@@ -47,16 +54,14 @@ public class logs
 		String message = message_;
 		if (!strings.is_ok(message)) return;
 
-		String table = _config.get_logs(types._CONFIG_LOGS_DB_TABLE);
-		String col_id = _config.get_logs(types._CONFIG_LOGS_DB_COL_ID);
-		String col_message = _config.get_logs(types._CONFIG_LOGS_DB_COL_MESSAGE);
-		if (!strings.is_ok(table) || !strings.is_ok(col_id) || !strings.is_ok(col_message)) return;
-
-		HashMap<String, String> vals = new HashMap<String, String>();
-		vals.put(col_id, id_);
-		vals.put(col_message, message);
-
-		db.insert(table, vals);
+		String table = types._CONFIG_LOGS_DB_TABLE;
+		HashMap<String, String> vals = db.get_table_vals(table, null, types._CONFIG_LOGS_DB_COL_ID, id_);
+		if (!arrays.is_ok(vals)) return;
+		
+		vals = db.get_table_vals(table, vals, types._CONFIG_LOGS_DB_COL_MESSAGE, message);
+		if (!arrays.is_ok(vals)) return;
+		
+		db.insert(db.get_table_name(table), vals);
 	}
 
 	private static String get_path(String id_)

@@ -5,14 +5,39 @@ import java.util.Map.Entry;
 
 class _ini 
 {
-	//This method is expected to be called every time a class is loaded.
+	//This method is expected to be called every time a static class is loaded.
 	public static void load() 
 	{
 		load_types();
+		load_tables();
+	}
+	
+	private static void load_tables()
+	{
+		load_tables_logs();
+	}
+	
+	private static void load_tables_logs()
+	{
+		String table = types._CONFIG_LOGS_DB_TABLE;
+		if (db.table_exists(table)) return;
+		
+		db.add_table_type(table, types._CONFIG_LOGS);
+		
+		HashMap<String, col> cols = db.get_default_cols();
+		cols.put(types._CONFIG_LOGS_DB_COL_ID, new col(new data(types.DATA_INTEGER, null), null));
+		cols.put(types._CONFIG_LOGS_DB_COL_MESSAGE, new col(new data(types.DATA_STRING, null), null));
+		
+		db.add_table(table, cols);
+	}
+	
+	private static void load_types()
+	{
+		load_aliases();
 		load_config();
 	}
-
-	private static void load_types()
+	
+	private static void load_aliases()
 	{
 		types.update_aliases(keys.APP, types._CONFIG_BASIC_NAME);
 		types.update_aliases(keys.DIR, types._CONFIG_BASIC_DIR_APP);
@@ -25,7 +50,7 @@ class _ini
 		types.update_aliases(keys.USERNAME, types._CONFIG_DB_CREDENTIALS_USERNAME);
 		types.update_aliases(keys.PASSWORD, types._CONFIG_DB_CREDENTIALS_PASSWORD);
 
-		types.update_aliases(keys.CONSOLE, types._CONFIG_LOGS_OUT_CONSOLE);
+		types.update_aliases(keys.SCREEN, types._CONFIG_LOGS_OUT_SCREEN);
 		types.update_aliases(keys.FILE, types._CONFIG_LOGS_OUT_FILE);
 	}
 
@@ -74,7 +99,7 @@ class _ini
 		String type = types._CONFIG_LOGS;
 
 		_config.update_ini(type, types._CONFIG_LOGS_DIR, defaults.DIR_LOGS);
-		_config.update_ini(type, types._CONFIG_LOGS_OUT_CONSOLE, strings.from_boolean(defaults.LOGS_CONSOLE));
+		_config.update_ini(type, types._CONFIG_LOGS_OUT_SCREEN, strings.from_boolean(defaults.LOGS_SCREEN));
 		_config.update_ini(type, types._CONFIG_LOGS_OUT_FILE, strings.from_boolean(defaults.LOGS_FILE));
 		_config.update_ini(type, types._CONFIG_LOGS_OUT_DB, strings.from_boolean(defaults.LOGS_DB));
 
@@ -130,6 +155,8 @@ class _ini
 		vals.put(types._CONFIG_DB_NAME, defaults.DB_NAME);
 		vals.put(types._CONFIG_DB_HOST, defaults.DB_HOST);
 		vals.put(types._CONFIG_DB_USER, defaults.DB_USER);
+		vals.put(types._CONFIG_DB_COLS_DEFAULT_ID, defaults.DB_COLS_DEFAULT_ID);
+		vals.put(types._CONFIG_DB_COLS_DEFAULT_TIMESTAMP, defaults.DB_COLS_DEFAULT_TIMESTAMP);
 		vals.put(types._CONFIG_DB_ERROR_EXIT, strings.from_boolean(defaults.DB_ERROR_EXIT));
 		vals.put(types._CONFIG_DB_CREDENTIALS_TYPE, defaults.DB_CREDENTIALS_TYPE);
 		vals.put(types._CONFIG_DB_CREDENTIALS_WHERE, defaults.DB_CREDENTIALS_WHERE);

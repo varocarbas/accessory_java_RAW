@@ -3,7 +3,7 @@ package accessory;
 public class numbers 
 {
 	public static final double DEFAULT_DEC = (double)defaults.get_class(Double.class);
-	public static final double MIN_DEC = Double.MIN_VALUE;
+	public static final double MIN_DEC = -1 * Double.MAX_VALUE; //!!!
 	public static final double MAX_DEC = Double.MAX_VALUE;
 	public static final int MAX_DIGITS_DEC = 308;
 

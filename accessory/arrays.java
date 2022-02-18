@@ -50,9 +50,8 @@ public class arrays
 	public static <x> x[] to_array(ArrayList<x> input_)
 	{
 		x[] output = null;
-		if (!is_ok(input_)) return output;
 
-		Class type = generic.get_class(input_.get(0));
+		Class type = get_class(input_);
 		if (type == null) return output;
 
 		int size = input_.size();
@@ -63,7 +62,24 @@ public class arrays
 
 		return output;
 	}
+	
+	public static <x> x[] get_new(x[] input_)
+	{
+		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
+	}
+			
+	@SuppressWarnings("rawtypes")
+	public static <x> Class get_class(ArrayList<x> input_)
+	{
+		return (!is_ok(input_) ? null : generic.get_class(input_.get(0)));
+	}
 
+	@SuppressWarnings("rawtypes")
+	public static <x> Class get_class(x[] input_)
+	{
+		return (!is_ok(input_) ? null : generic.get_class(input_[0]));
+	}
+	
 	public static <x> ArrayList<x> to_arraylist(x[] input_)
 	{
 		return (is_ok(input_) ? new ArrayList<x>(Arrays.asList(input_)) : new ArrayList<x>());

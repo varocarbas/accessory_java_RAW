@@ -40,7 +40,7 @@ public class strings
 	{
 		String string = string_;
 
-		if (!is_ok(string_)) string = DEFAULT;
+		if (!is_ok(string_)) string = (String)defaults.get_class(String.class);
 		else string = string.trim().toLowerCase();
 
 		return string;
@@ -63,7 +63,7 @@ public class strings
 
 	public static boolean are_equivalent(String string1_, String string2_)
 	{
-		return (normalise(string1_).equals(normalise(string2_)));
+		return are_equal(normalise(string1_), normalise(string2_));
 	}
 
 	public static boolean contains(String needle_, String haystack_, boolean normalise_)
@@ -94,7 +94,7 @@ public class strings
 	public static String substring(String string_, int start_, int length_)
 	{
 		int length0 = get_length(string_, false);
-		if (length0 < 1 || start_ < 0 || start_ + length_ > length0) return DEFAULT;
+		if (length0 < 1 || start_ < 0 || start_ + length_ > length0) return (String)defaults.get_class(String.class);
 
 		return (length_ > 0 ? string_.substring(start_, start_ + length_) : string_.substring(start_));
 	}
@@ -216,7 +216,7 @@ public class strings
 	{
 		if (generic.is_string(input_)) return (String)input_;
 
-		String output = DEFAULT;
+		String output = (String)defaults.get_class(String.class);
 		if (!generic.is_ok(input_)) return output;
 
 		Class type = input_.getClass();
@@ -361,7 +361,7 @@ public class strings
 
 	private static String substring_before_after(String string_, String target_, int count_, boolean normalise_, boolean is_before_)
 	{
-		String output = strings.DEFAULT;
+		String output = (String)defaults.get_class(String.class);
 
 		String[] temp = split(string_, target_, normalise_, 0, false, false);
 		if (arrays.get_size(temp) <= count_) return output;

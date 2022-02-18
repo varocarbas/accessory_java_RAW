@@ -19,7 +19,7 @@ public class time
 	{
 		DateTimeFormatter formatter = get_formatter(format_);
 
-		return (!generic.is_ok(formatter) ? strings.DEFAULT : formatter.format(get_current_time(0)));	
+		return (formatter == null ? strings.DEFAULT : formatter.format(get_current_time(0)));	
 	}
 
 	public static Boolean time_is_ok(LocalTime start_, LocalTime end_, int offset_)
@@ -61,7 +61,22 @@ public class time
 
 		return (start_ == 0 ? current : ((current - start_) / 1000));
 	}
+	
+	public static String get_time_pattern(String format_)
+	{
+		String pattern = strings.DEFAULT;
 
+		String format = format_;
+		if (!strings.is_ok(format)) format = DEFAULT;
+
+		if (format.equals(TIME_FULL) || format.equals(TIME)) pattern = "HH:mm:ss";
+		if (format.equals(TIME_SHORT)) pattern = "HH:mm";
+		if (format.equals(DATE_TIME)) pattern = "yyyy-MM-dd HH:mm:ss";
+		if (format.equals(DATE)) pattern = "yyyy-MM-dd";
+
+		return pattern;
+	} 
+	
 	private static LocalDateTime get_current_time(int offset_)
 	{
 		int offset = offset_;
@@ -69,25 +84,10 @@ public class time
 
 		return LocalDateTime.now().plusHours(offset);
 	}
-
-	private static String get_format_time_pattern(String format_)
-	{
-		String pattern = strings.DEFAULT;
-
-		String format = format_;
-		if (!strings.is_ok(format)) format = DEFAULT;
-
-		if (format.equals(TIME_SHORT)) pattern = "HH:mm";
-		if (format.equals(TIME_FULL)) pattern = "HH:mm:ss";
-		if (format.equals(DATE_TIME)) pattern = "yyyy-MM-dd HH:mm:ss";
-		if (format.equals(DATE)) pattern = "yyyy-MM-dd";
-
-		return pattern;
-	} 
-
+	
 	private static DateTimeFormatter get_formatter(String format_)
 	{
-		String pattern = get_format_time_pattern(format_);
+		String pattern = get_time_pattern(format_);
 
 		return (!strings.is_ok(pattern) ? null : DateTimeFormatter.ofPattern(pattern));
 	} 

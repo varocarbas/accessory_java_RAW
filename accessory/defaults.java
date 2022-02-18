@@ -26,18 +26,20 @@ public class defaults
 	static final String DB_NAME = (String)defaults.get_class(String.class);
 	static final String DB_HOST = "localhost";
 	static final String DB_USER = (String)defaults.get_class(String.class);
+	static final String DB_COLS_DEFAULT_ID = "_id";
+	static final String DB_COLS_DEFAULT_TIMESTAMP = "_timestamp";
 	static final String DB_CREDENTIALS_TYPE = types.remove_type(types._CONFIG_DB_TYPE, types._CONFIG_DB);
 	static final String DB_CREDENTIALS_WHERE = CREDENTIALS_WHERE;
 	static final String DB_CREDENTIALS_USERNAME = (String)defaults.get_class(String.class);
 	static final String DB_CREDENTIALS_PASSWORD = (String)defaults.get_class(String.class);
 	static final boolean DB_CREDENTIALS_ENCRYPTED = CREDENTIALS_ENCRYPTED;
 	static final boolean DB_ERROR_EXIT = true;
-
+	
 	static final String LOGS_DB_TABLE = keys.LOG;
 	static final String LOGS_DB_COL_ID = keys.ID;
 	static final String LOGS_DB_COL_MESSAGE = keys.MESSAGE;
 
-	static final boolean LOGS_CONSOLE = true;
+	static final boolean LOGS_SCREEN = true;
 	static final boolean LOGS_FILE = true;
 	static final boolean LOGS_DB = false;
 

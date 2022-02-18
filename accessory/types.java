@@ -24,7 +24,10 @@ public class types
 	public static final String _CONFIG_DB_CREDENTIALS_ENCRYPTED = "_config_db_credentials_encrypted";
 	public static final String _CONFIG_DB_CREDENTIALS_USERNAME = "_config_db_credentials_username";
 	public static final String _CONFIG_DB_CREDENTIALS_PASSWORD = "_config_db_credentials_password";
-
+	public static final String _CONFIG_DB_COLS_DEFAULT = "_config_db_cols_default";
+	public static final String _CONFIG_DB_COLS_DEFAULT_ID = "_config_db_cols_default_id";
+	public static final String _CONFIG_DB_COLS_DEFAULT_TIMESTAMP = "_config_db_cols_default_timestamp";
+	
 	public static final String _CONFIG_CREDENTIALS = "_config_credentials";
 	public static final String _CONFIG_CREDENTIALS_ENCRYPTED = "_config_credentials_encrypted";
 	public static final String _CONFIG_CREDENTIALS_WHERE = "_config_credentials_where";
@@ -50,7 +53,7 @@ public class types
 	public static final String _CONFIG_LOGS_DB_COL_ID = "_config_logs_db_col_id";
 	public static final String _CONFIG_LOGS_DB_COL_MESSAGE = "_config_logs_db_col_message";
 	public static final String _CONFIG_LOGS_OUT = "_config_logs_out";
-	public static final String _CONFIG_LOGS_OUT_CONSOLE = "_config_logs_out_console";
+	public static final String _CONFIG_LOGS_OUT_SCREEN = "_config_logs_out_screen";
 	public static final String _CONFIG_LOGS_OUT_FILE = "_config_logs_out_file";
 	public static final String _CONFIG_LOGS_OUT_DB = "_config_logs_out_db";
 	//------
@@ -58,6 +61,12 @@ public class types
 	public static final String DB = "db";
 	public static final String DB_MYSQL = "db_mysql";
 
+	public static final String DATA = "data";
+	public static final String DATA_STRING = "data_string";
+	public static final String DATA_INTEGER = "data_integer";
+	public static final String DATA_DECIMAL = "data_decimal";
+	public static final String DATA_BOOLEAN = "data_boolean";
+	
 	public static final String ERROR_DB = "error_db";
 	public static final String ERROR_DB_INFO = "error_db_info";
 	public static final String ERROR_DB_CREDENTIALS = "error_db_credentials";
@@ -100,7 +109,7 @@ public class types
 	{
 		String subtype0 = check_aliases(subtype_);
 		String type_add_remove = check_aliases(type_add_remove_);
-
+		
 		for (String subtype: get_subtypes(strings.DEFAULT, subtypes_))
 		{
 			String output = subtype0;
@@ -189,7 +198,9 @@ public class types
 			_CONFIG_DB_CREDENTIALS_TYPE, _CONFIG_DB_CREDENTIALS_ENCRYPTED, 
 			_CONFIG_DB_CREDENTIALS_USERNAME, _CONFIG_DB_CREDENTIALS_PASSWORD,
 			_CONFIG_DB_CREDENTIALS_WHERE,
-
+			//_CONFIG_DB_COLS_DEFAULT 
+			_CONFIG_DB_COLS_DEFAULT_ID, _CONFIG_DB_COLS_DEFAULT_TIMESTAMP, 
+			
 			//_CONFIG_CREDENTIALS
 			_CONFIG_CREDENTIALS_ENCRYPTED, 
 			//_CONFIG_CREDENTIALS_WHERE
@@ -205,13 +216,16 @@ public class types
 			//_CONFIG_LOGS
 			_CONFIG_LOGS_DIR, 
 			//_CONFIG_LOGS_OUT
-			_CONFIG_LOGS_OUT_CONSOLE, _CONFIG_LOGS_OUT_FILE, _CONFIG_LOGS_OUT_DB,
+			_CONFIG_LOGS_OUT_SCREEN, _CONFIG_LOGS_OUT_FILE, _CONFIG_LOGS_OUT_DB,
 			//_CONFIG_LOGS_DB
 			_CONFIG_LOGS_DB_TABLE, _CONFIG_LOGS_DB_COL_ID, _CONFIG_LOGS_DB_COL_MESSAGE,
 
 			//DB
 			DB_MYSQL,
 
+			//DATA
+			DATA_STRING, DATA_INTEGER, DATA_DECIMAL, DATA_BOOLEAN,
+			
 			//ERROR_DB
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,
 

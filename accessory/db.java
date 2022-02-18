@@ -2,13 +2,19 @@ package accessory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class db 
 {
 	public static boolean _is_ok = true;
-
+	
 	static String _config_type = types._CONFIG_DB;
 
+	//--- Populated via the corresponding _ini method (e.g., _ini.load_tables()).
+	private static HashMap<String, HashMap<String, col>> _tables = new HashMap<String, HashMap<String, col>>();
+	private static HashMap<String, String> _table_types = new HashMap<String, String>();
+	//------
+	
 	static { _ini.load(); }
 
 	public static boolean update_config_type(String type_)
@@ -109,13 +115,158 @@ public class db
 
 		if (_config.matches(_config_type, types._CONFIG_DB_TYPE, types.DB_MYSQL))
 		{
-			variable = mysql.get_value(input_);
+			variable = mysql.get_variable(input_);
 		}
 		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
 
 		return variable; 	
 	} 
 
+	public static boolean table_exists(String id_)
+	{
+		return (strings.is_ok(id_) && _tables.containsKey(id_));
+	}
+	
+	public static void remove_table(String id_)
+	{
+		if (!table_exists(id_)) return;
+		
+		_tables.remove(id_);
+	}
+
+	public static HashMap<String, col> get_table_cols(String id_)
+	{
+		return (table_exists(id_) ? _tables.get(id_) : null);
+	}
+	
+	public static HashMap<String, col> get_default_cols()
+	{
+		HashMap<String, col> cols = new HashMap<String, col>();
+
+		size temp = new size(0.0, time.get_time_pattern(time.DATE_TIME).length());
+		cols.put(types._CONFIG_DB_COLS_DEFAULT_TIMESTAMP, new col(new data(accessory.types.DATA_STRING, temp), null));
+		cols.put(types._CONFIG_DB_COLS_DEFAULT_ID, new col(new data(accessory.types.DATA_INTEGER, null), null));
+
+		return cols;
+	}
+	
+	public static String get_col_name(String table_, String col_)
+	{
+		String table = types.check_aliases(table_); 
+		String col = types.check_aliases(col_);
+		
+		return _config.get(get_table_type(table), col);
+	}
+	
+	public static String get_table_name(String table_)
+	{
+		String table = types.check_aliases(table_); 
+		
+		return _config.get(get_table_type(table), table);
+	}
+	
+	public static HashMap<String, String> get_table_vals(String table_, HashMap<String, String> old_, String col_, double val_)
+	{
+		return get_table_vals_common(table_, old_, col_, val_);
+	}
+
+	public static HashMap<String, String> get_table_vals(String table_, HashMap<String, String> old_, String col_, int val_)
+	{
+		return get_table_vals_common(table_, old_, col_, val_);
+	}
+
+	public static HashMap<String, String> get_table_vals(String table_, HashMap<String, String> old_, String col_, String val_)
+	{
+		return get_table_vals_common(table_, old_, col_, val_);
+	}
+
+	public static <x> HashMap<String, String> get_table_vals_common(String table_, HashMap<String, String> old_, String col_, x val_)
+	{
+		String table = types.check_aliases(table_);
+		String col = types.check_aliases(col_);
+		
+		HashMap<String, col> cols = get_table_cols(table);
+		if (!arrays.is_ok(cols) || !strings.is_ok(col)) return null;
+
+		return get_table_val(table_, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), col, val_, cols);
+	}
+	
+	public static <x> HashMap<String, String> get_table_vals(String table_, HashMap<String, String> old_, HashMap<String, x> new_)
+	{
+		String table = types.check_aliases(table_);
+		if (!strings.is_ok(table) || !arrays.is_ok(new_)) return null;
+		
+		HashMap<String, col> cols = get_table_cols(table);
+		if (!arrays.is_ok(cols)) return null;
+		
+		HashMap<String, String> output = (arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>());
+		
+		for (Entry<String, x> item: new_.entrySet())
+		{
+			output = get_table_val(table_, output, item.getKey(), item.getValue(), cols);
+
+			if (!arrays.is_ok(output)) return null;
+		}
+		
+		return output;
+	}
+
+	public static <x> HashMap<String, String> get_table_val(String table_, HashMap<String, String> sofar_, String col_, x val_, HashMap<String, col> cols_)
+	{
+		HashMap<String, String> output = new HashMap<String, String>(sofar_);
+
+		String id = types.check_aliases(col_);
+		if (!cols_.containsKey(id) || !col.complies(val_, cols_.get(id))) return null;
+		
+		String val = sanitise_string(strings.to_string(val_));
+		if (!strings.is_ok(val)) return null;
+
+		String col = get_col_name(table_, id);
+		if (!strings.is_ok(col)) return null;
+		
+		output.put(col, val);
+
+		return output;
+	}
+	
+	public static String sanitise_string(String input_)
+	{
+		String output = input_;
+		if (!strings.is_ok(output)) return output;
+		
+		if (_config.matches(_config_type, types._CONFIG_DB_TYPE, types.DB_MYSQL))
+		{
+			output = mysql.sanitise_string(output);
+		}
+		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
+
+		return output; 
+	}
+	
+	public static void add_table(String id_, HashMap<String, col> cols_)
+	{
+		HashMap<String, col> cols = new HashMap<String, col>();
+		
+		for (Entry<String, col> item: cols_.entrySet())
+		{
+			cols.put(item.getKey(), new col(item.getValue()));
+		}
+		
+		_tables.put(id_, cols);
+	}
+	
+	public static void add_table_type(String table_, String type_)
+	{
+		if (!strings.are_ok(new String[] { table_, type_ })) return;
+		
+		_table_types.put(table_, type_);
+	}
+	
+	public static String get_table_type(String table_)
+	{
+		return ((strings.is_ok(table_) && _table_types.containsKey(table_)) ? db._table_types.get(table_) : strings.DEFAULT);
+	}
+	
 	static HashMap<String, String> get_credentials()
 	{
 		HashMap<String, String> output = new HashMap<String, String>();
