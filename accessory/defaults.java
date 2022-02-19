@@ -21,13 +21,14 @@ public class defaults
 	static final String CREDENTIALS_FILE_PASSWORD = keys.PASSWORD;
 	static final String CREDENTIALS_FILE_ENCRYPTED = keys.ENCRYPT;
 
-	static final String DB_TYPE = types.DB_MYSQL;
+	static final String DB_TYPE = types._CONFIG_DB_TYPE_MYSQL;
+	static final String DB_SETUP = types._CONFIG_DB_SETUP_MAIN;
 	static final String DB_MAX_POOL = "500";
 	static final String DB_NAME = (String)defaults.get_class(String.class);
 	static final String DB_HOST = "localhost";
 	static final String DB_USER = (String)defaults.get_class(String.class);
-	static final String DB_COLS_DEFAULT_ID = "_id";
-	static final String DB_COLS_DEFAULT_TIMESTAMP = "_timestamp";
+	static final String DB_FIELDS_DEFAULT_ID = "_id";
+	static final String DB_FIELDS_DEFAULT_TIMESTAMP = "_timestamp";
 	static final String DB_CREDENTIALS_TYPE = types.remove_type(types._CONFIG_DB_TYPE, types._CONFIG_DB);
 	static final String DB_CREDENTIALS_WHERE = CREDENTIALS_WHERE;
 	static final String DB_CREDENTIALS_USERNAME = (String)defaults.get_class(String.class);
@@ -35,9 +36,9 @@ public class defaults
 	static final boolean DB_CREDENTIALS_ENCRYPTED = CREDENTIALS_ENCRYPTED;
 	static final boolean DB_ERROR_EXIT = true;
 	
-	static final String LOGS_DB_TABLE = keys.LOG;
-	static final String LOGS_DB_COL_ID = keys.ID;
-	static final String LOGS_DB_COL_MESSAGE = keys.MESSAGE;
+	static final String LOGS_DB_SOURCE = keys.LOG;
+	static final String LOGS_DB_FIELD_ID = keys.ID;
+	static final String LOGS_DB_FIELD_MESSAGE = keys.MESSAGE;
 
 	static final boolean LOGS_SCREEN = true;
 	static final boolean LOGS_FILE = true;

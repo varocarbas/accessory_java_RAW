@@ -1,23 +1,23 @@
 package accessory;
 
-public class col 
+public class field 
 {
 	public data _data = null;
 	public String[] _further = null;
 
-	public static boolean is_ok(col input_)
+	public static boolean is_ok(field input_)
 	{
 		if (input_ == null) return false;
 
 		return is_ok(input_._data, input_._further);
 	}
 
-	public static <x> boolean complies(x val_, col col_)
+	public static <x> boolean complies(x val_, field field_)
 	{
-		return ((!generic.is_ok(val_) || !is_ok(col_)) ? false : data.complies(val_, col_._data));
+		return ((!generic.is_ok(val_) || !is_ok(field_)) ? false : data.complies(val_, field_._data));
 	}
 
-	public col(col input_)
+	public field(field input_)
 	{
 		if (!is_ok(input_)) return;
 
@@ -25,7 +25,7 @@ public class col
 		_further = arrays.get_new(input_._further);
 	}
 
-	public col(data data_, String[] further_)
+	public field(data data_, String[] further_)
 	{
 		if (!is_ok(data_, further_)) return;
 

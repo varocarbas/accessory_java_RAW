@@ -19,6 +19,8 @@ public class keys
 	public static final String PASSWORD = "password";
 	public static final String HOST = "host";
 	public static final String DB = "db";
+	public static final String SOURCE = "source";
+	public static final String FIELD = "field";
 	public static final String TABLE = "table";
 	public static final String COL = "col";
 	public static final String QUERY = "query";

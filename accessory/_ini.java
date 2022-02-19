@@ -9,26 +9,26 @@ class _ini
 	public static void load() 
 	{
 		load_types();
-		load_tables();
+		load_sources();
 	}
 	
-	private static void load_tables()
+	private static void load_sources()
 	{
-		load_tables_logs();
+		load_sources_logs();
 	}
 	
-	private static void load_tables_logs()
+	private static void load_sources_logs()
 	{
-		String table = types._CONFIG_LOGS_DB_TABLE;
-		if (db.table_exists(table)) return;
+		String source = types._CONFIG_LOGS_DB_SOURCE;
+		if (db.source_exists(source)) return;
 		
-		db.add_table_type(table, types._CONFIG_LOGS);
+		db.add_source_main(source, types._CONFIG_LOGS);
 		
-		HashMap<String, col> cols = db.get_default_cols();
-		cols.put(types._CONFIG_LOGS_DB_COL_ID, new col(new data(types.DATA_INTEGER, null), null));
-		cols.put(types._CONFIG_LOGS_DB_COL_MESSAGE, new col(new data(types.DATA_STRING, null), null));
+		HashMap<String, field> fields = db.get_default_fields();
+		fields.put(types._CONFIG_LOGS_DB_FIELD_ID, new field(new data(types.DATA_INTEGER, null), null));
+		fields.put(types._CONFIG_LOGS_DB_FIELD_MESSAGE, new field(new data(types.DATA_STRING, null), null));
 		
-		db.add_table(table, cols);
+		db.add_source(source, fields);
 	}
 	
 	private static void load_types()
@@ -108,9 +108,9 @@ class _ini
 
 	private static void load_config_logs_db(String type_)
 	{
-		_config.update_ini(type_, types._CONFIG_LOGS_DB_TABLE, defaults.LOGS_DB_TABLE);
-		_config.update_ini(type_, types._CONFIG_LOGS_DB_COL_ID, defaults.LOGS_DB_COL_ID);
-		_config.update_ini(type_, types._CONFIG_LOGS_DB_COL_MESSAGE, defaults.LOGS_DB_COL_MESSAGE);
+		_config.update_ini(type_, types._CONFIG_LOGS_DB_SOURCE, defaults.LOGS_DB_SOURCE);
+		_config.update_ini(type_, types._CONFIG_LOGS_DB_FIELD_ID, defaults.LOGS_DB_FIELD_ID);
+		_config.update_ini(type_, types._CONFIG_LOGS_DB_FIELD_MESSAGE, defaults.LOGS_DB_FIELD_MESSAGE);
 	}
 
 	private static void load_config_subtypes()
@@ -151,12 +151,13 @@ class _ini
 		HashMap<String, String> vals = new HashMap<String, String>();
 
 		vals.put(types._CONFIG_DB_TYPE, defaults.DB_TYPE);
+		vals.put(types._CONFIG_DB_SETUP, defaults.DB_SETUP);
 		vals.put(types._CONFIG_DB_MAX_POOL, defaults.DB_MAX_POOL);
 		vals.put(types._CONFIG_DB_NAME, defaults.DB_NAME);
 		vals.put(types._CONFIG_DB_HOST, defaults.DB_HOST);
 		vals.put(types._CONFIG_DB_USER, defaults.DB_USER);
-		vals.put(types._CONFIG_DB_COLS_DEFAULT_ID, defaults.DB_COLS_DEFAULT_ID);
-		vals.put(types._CONFIG_DB_COLS_DEFAULT_TIMESTAMP, defaults.DB_COLS_DEFAULT_TIMESTAMP);
+		vals.put(types._CONFIG_DB_FIELDS_DEFAULT_ID, defaults.DB_FIELDS_DEFAULT_ID);
+		vals.put(types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, defaults.DB_FIELDS_DEFAULT_TIMESTAMP);
 		vals.put(types._CONFIG_DB_ERROR_EXIT, strings.from_boolean(defaults.DB_ERROR_EXIT));
 		vals.put(types._CONFIG_DB_CREDENTIALS_TYPE, defaults.DB_CREDENTIALS_TYPE);
 		vals.put(types._CONFIG_DB_CREDENTIALS_WHERE, defaults.DB_CREDENTIALS_WHERE);

@@ -20,9 +20,14 @@ public class logs
 		
 		if (out_is_ok(types._CONFIG_LOGS_OUT_DB)) 
 		{
-			db.update_config_type(types._CONFIG_LOGS);
+			String type = types._CONFIG_DB_SETUP;
+			
+			String current = _config.get_db(type);
+			_config.update_db(type, types._CONFIG_DB_SETUP_LOGS);
+			
 			update_db(message_, id);
-			db.update_config_type(types._CONFIG_DB);
+			
+			_config.update_db(type, current);
 		}
 	}
 
@@ -51,17 +56,17 @@ public class logs
 
 	public static void update_db(String message_, String id_)
 	{
-		String message = message_;
+		String message = strings.remove_escape_many(new String[] { "'", "\"" }, message_, true);
 		if (!strings.is_ok(message)) return;
-
-		String table = types._CONFIG_LOGS_DB_TABLE;
-		HashMap<String, String> vals = db.get_table_vals(table, null, types._CONFIG_LOGS_DB_COL_ID, id_);
+		
+		String source = types._CONFIG_LOGS_DB_SOURCE;
+		HashMap<String, String> vals = db.adapt_inputs(source, null, types._CONFIG_LOGS_DB_FIELD_ID, id_);
 		if (!arrays.is_ok(vals)) return;
 		
-		vals = db.get_table_vals(table, vals, types._CONFIG_LOGS_DB_COL_MESSAGE, message);
+		vals = db.adapt_inputs(source, vals, types._CONFIG_LOGS_DB_FIELD_MESSAGE, message);
 		if (!arrays.is_ok(vals)) return;
 		
-		db.insert(db.get_table_name(table), vals);
+		db.insert(db.get_table(source), vals);
 	}
 
 	private static String get_path(String id_)

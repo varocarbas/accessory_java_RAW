@@ -128,7 +128,7 @@ class sql
 	{
 		Connection conn = null; 
 
-		if (_config.matches(db._config_type, types._CONFIG_DB_TYPE, types.DB_MYSQL))
+		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
 			conn = mysql.connect(properties);
 		}
@@ -143,7 +143,7 @@ class sql
 
 		String username = arrays.get_value(credentials, keys.USERNAME);
 		String password = arrays.get_value(credentials, keys.PASSWORD);
-		String max_pool = _config.get(db._config_type, types._CONFIG_DB_MAX_POOL);
+		String max_pool = _config.get(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_MAX_POOL);
 
 		String type = null;
 		String message = ""; 

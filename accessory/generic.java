@@ -16,6 +16,7 @@ public class generic
 		if (is_string(input_)) is_ok = strings.is_ok((String)input_);
 		else if (is_array(input_)) is_ok = arrays.is_ok(input_);
 		else if (is_boolean(input_) || is_number(input_)) is_ok = true;
+		else is_ok = true;
 
 		return is_ok;
 	}

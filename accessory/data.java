@@ -1,6 +1,7 @@
 package accessory;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class data 
 {
@@ -20,14 +21,19 @@ public class data
 	public static <x> boolean complies(x val_, data data_)
 	{
 		boolean is_ok = false;
-		if (!generic.is_ok(val_) || !is_ok(data_) || !val_.getClass().equals(data_._class)) return is_ok;
+		if (!generic.is_ok(val_) || !is_ok(data_) || !class_complies(val_.getClass(), data_._class)) return is_ok;
 
 		if (data_._class.equals(Boolean.class)) is_ok = true;
 		else 
 		{
 			double size = 0;
+			
 			if (data_._class.equals(String.class)) size = ((String)val_).length();
-			else if (is_numeric(data_._class)) size = (double)val_;
+			else if (is_numeric(data_._class)) 
+			{
+				if (val_.getClass().equals(Integer.class)) size = (double)((int)val_); //!!!
+				else size = (double)val_;
+			}
 			else return false;
 
 			is_ok = numbers.is_ok(size, data_._size._min, data_._size._max);
@@ -125,6 +131,27 @@ public class data
 		return (class_ != null && _all_classes.containsValue(class_));
 	}
 
+	@SuppressWarnings("rawtypes")
+	private static boolean class_complies(Class input_, Class target_)
+	{
+		if (input_ == null || target_ == null) return false;
+		
+		if (input_.equals(target_)) return true;
+		
+		HashMap<Class, Class> compatible = new HashMap<Class, Class>();
+		compatible.put(Double.class, Integer.class);
+		
+		for (Entry<Class, Class> item: compatible.entrySet())
+		{
+			Class main = item.getKey();
+			Class sec = item.getValue();
+			
+			if (target_.equals(main) && input_.equals(sec)) return true;
+		}
+		
+		return false;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	private static Class get_class(String type_)
 	{

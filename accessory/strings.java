@@ -251,6 +251,32 @@ public class strings
 		return output;
 	}
 
+	public static String remove_escape_many(String[] needles_, String haystack_, boolean remove_)
+	{
+		if (!arrays.is_ok(needles_) || !is_ok(haystack_)) return DEFAULT;
+		
+		String output = haystack_;
+		
+		for (String needle: needles_)
+		{
+			output = remove_escape(needle, output, remove_);
+		}
+		
+		return output;
+	}
+	
+	public static String remove_escape(String needle_, String haystack_, boolean remove_)
+	{
+		if (!is_ok(needle_) || !is_ok(haystack_)) return DEFAULT;
+		
+		String output = haystack_;
+		String replacement = (remove_ ? "" : "\\" + needle_);
+		
+		output = output.replace(needle_, replacement);
+		
+		return output;
+	}
+	
 	private static boolean matches(String string_, String[] targets_, boolean normalise_, boolean all_)
 	{
 		if (!strings.is_ok(string_) || !arrays.is_ok(targets_)) return false;

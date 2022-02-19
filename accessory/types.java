@@ -11,23 +11,6 @@ public class types
 	//--- To be synced with get_all_subtypes().
 
 	//--- To be synced with the corresponding _ini and _config methods/variables.
-	public static final String _CONFIG_DB = "_config_db";
-	public static final String _CONFIG_DB_TYPE = "_config_db_type";
-	public static final String _CONFIG_DB_MAX_POOL = "_config_db_max_pool";
-	public static final String _CONFIG_DB_NAME = "_config_db_name";
-	public static final String _CONFIG_DB_HOST = "_config_db_host";
-	public static final String _CONFIG_DB_USER = "_config_db_user";
-	public static final String _CONFIG_DB_ERROR_EXIT = "_config_db_error_exit";
-	public static final String _CONFIG_DB_CREDENTIALS = "_config_db_credentials";
-	public static final String _CONFIG_DB_CREDENTIALS_TYPE = "_config_db_credentials_type";
-	public static final String _CONFIG_DB_CREDENTIALS_WHERE = "_config_db_credentials_where";
-	public static final String _CONFIG_DB_CREDENTIALS_ENCRYPTED = "_config_db_credentials_encrypted";
-	public static final String _CONFIG_DB_CREDENTIALS_USERNAME = "_config_db_credentials_username";
-	public static final String _CONFIG_DB_CREDENTIALS_PASSWORD = "_config_db_credentials_password";
-	public static final String _CONFIG_DB_COLS_DEFAULT = "_config_db_cols_default";
-	public static final String _CONFIG_DB_COLS_DEFAULT_ID = "_config_db_cols_default_id";
-	public static final String _CONFIG_DB_COLS_DEFAULT_TIMESTAMP = "_config_db_cols_default_timestamp";
-	
 	public static final String _CONFIG_CREDENTIALS = "_config_credentials";
 	public static final String _CONFIG_CREDENTIALS_ENCRYPTED = "_config_credentials_encrypted";
 	public static final String _CONFIG_CREDENTIALS_WHERE = "_config_credentials_where";
@@ -49,17 +32,35 @@ public class types
 	public static final String _CONFIG_LOGS = "_config_logs";
 	public static final String _CONFIG_LOGS_DIR = "_config_logs_dir";
 	public static final String _CONFIG_LOGS_DB = "_config_logs_db";
-	public static final String _CONFIG_LOGS_DB_TABLE = "_config_logs_db_table";
-	public static final String _CONFIG_LOGS_DB_COL_ID = "_config_logs_db_col_id";
-	public static final String _CONFIG_LOGS_DB_COL_MESSAGE = "_config_logs_db_col_message";
+	public static final String _CONFIG_LOGS_DB_SOURCE = "_config_logs_db_source";
+	public static final String _CONFIG_LOGS_DB_FIELD_ID = "_config_logs_db_field_id";
+	public static final String _CONFIG_LOGS_DB_FIELD_MESSAGE = "_config_logs_db_field_message";
 	public static final String _CONFIG_LOGS_OUT = "_config_logs_out";
 	public static final String _CONFIG_LOGS_OUT_SCREEN = "_config_logs_out_screen";
 	public static final String _CONFIG_LOGS_OUT_FILE = "_config_logs_out_file";
 	public static final String _CONFIG_LOGS_OUT_DB = "_config_logs_out_db";
-	//------
 
-	public static final String DB = "db";
-	public static final String DB_MYSQL = "db_mysql";
+	public static final String _CONFIG_DB = "_config_db";
+	public static final String _CONFIG_DB_MAX_POOL = "_config_db_max_pool";
+	public static final String _CONFIG_DB_NAME = "_config_db_name";
+	public static final String _CONFIG_DB_HOST = "_config_db_host";
+	public static final String _CONFIG_DB_USER = "_config_db_user";
+	public static final String _CONFIG_DB_ERROR_EXIT = "_config_db_error_exit";
+	public static final String _CONFIG_DB_SETUP = "_config_db_setup";
+	public static final String _CONFIG_DB_SETUP_MAIN = _CONFIG_DB;
+	public static final String _CONFIG_DB_SETUP_LOGS = _CONFIG_LOGS;
+	public static final String _CONFIG_DB_TYPE = "_config_db_type";
+	public static final String _CONFIG_DB_TYPE_MYSQL = "_config_db_type_mysql";
+	public static final String _CONFIG_DB_CREDENTIALS = "_config_db_credentials";
+	public static final String _CONFIG_DB_CREDENTIALS_TYPE = "_config_db_credentials_type";
+	public static final String _CONFIG_DB_CREDENTIALS_WHERE = "_config_db_credentials_where";
+	public static final String _CONFIG_DB_CREDENTIALS_ENCRYPTED = "_config_db_credentials_encrypted";
+	public static final String _CONFIG_DB_CREDENTIALS_USERNAME = "_config_db_credentials_username";
+	public static final String _CONFIG_DB_CREDENTIALS_PASSWORD = "_config_db_credentials_password";
+	public static final String _CONFIG_DB_FIELDS_DEFAULT = "_config_db_fields_default";
+	public static final String _CONFIG_DB_FIELDS_DEFAULT_ID = "_config_db_fields_default_id";
+	public static final String _CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP = "_config_db_fields_default_timestamp";
+	//------
 
 	public static final String DATA = "data";
 	public static final String DATA_STRING = "data_string";
@@ -190,17 +191,7 @@ public class types
 	private static String[] get_all_subtypes()
 	{
 		return new String[]
-		{			
-			//_CONFIG_DB
-			_CONFIG_DB_MAX_POOL, _CONFIG_DB_NAME, _CONFIG_DB_HOST,  
-			_CONFIG_DB_USER, _CONFIG_DB_ERROR_EXIT, _CONFIG_DB_TYPE,
-			//_CONFIG_DB_CREDENTIALS
-			_CONFIG_DB_CREDENTIALS_TYPE, _CONFIG_DB_CREDENTIALS_ENCRYPTED, 
-			_CONFIG_DB_CREDENTIALS_USERNAME, _CONFIG_DB_CREDENTIALS_PASSWORD,
-			_CONFIG_DB_CREDENTIALS_WHERE,
-			//_CONFIG_DB_COLS_DEFAULT 
-			_CONFIG_DB_COLS_DEFAULT_ID, _CONFIG_DB_COLS_DEFAULT_TIMESTAMP, 
-			
+		{						
 			//_CONFIG_CREDENTIALS
 			_CONFIG_CREDENTIALS_ENCRYPTED, 
 			//_CONFIG_CREDENTIALS_WHERE
@@ -218,10 +209,21 @@ public class types
 			//_CONFIG_LOGS_OUT
 			_CONFIG_LOGS_OUT_SCREEN, _CONFIG_LOGS_OUT_FILE, _CONFIG_LOGS_OUT_DB,
 			//_CONFIG_LOGS_DB
-			_CONFIG_LOGS_DB_TABLE, _CONFIG_LOGS_DB_COL_ID, _CONFIG_LOGS_DB_COL_MESSAGE,
+			_CONFIG_LOGS_DB_SOURCE, _CONFIG_LOGS_DB_FIELD_ID, _CONFIG_LOGS_DB_FIELD_MESSAGE,
 
-			//DB
-			DB_MYSQL,
+			//_CONFIG_DB
+			_CONFIG_DB_MAX_POOL, _CONFIG_DB_NAME, _CONFIG_DB_HOST,  
+			_CONFIG_DB_USER, _CONFIG_DB_ERROR_EXIT, _CONFIG_DB_TYPE,
+			//_CONFIG_DB_SETUP
+			_CONFIG_DB_SETUP_MAIN, _CONFIG_DB_SETUP_LOGS,
+			//_CONFIG_DB_TYPE
+			_CONFIG_DB_TYPE_MYSQL,
+			//_CONFIG_DB_CREDENTIALS
+			_CONFIG_DB_CREDENTIALS_TYPE, _CONFIG_DB_CREDENTIALS_ENCRYPTED, 
+			_CONFIG_DB_CREDENTIALS_USERNAME, _CONFIG_DB_CREDENTIALS_PASSWORD,
+			_CONFIG_DB_CREDENTIALS_WHERE,
+			//_CONFIG_DB_FIELDS_DEFAULT 
+			_CONFIG_DB_FIELDS_DEFAULT_ID, _CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, 
 
 			//DATA
 			DATA_STRING, DATA_INTEGER, DATA_DECIMAL, DATA_BOOLEAN,

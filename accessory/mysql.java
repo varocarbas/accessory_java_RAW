@@ -38,13 +38,7 @@ class mysql
 	
 	public static String sanitise_string(String input_)
 	{
-		String output = input_;
-		if (!strings.is_ok(output)) return output;
-
-		output = output.replace("'", "\\'");
-		output = output.replace("\"", "\\\"");
-
-		return output; 
+		return strings.remove_escape_many(new String[] { "'", "\"" }, input_, false);
 	}
 	
 	private static ArrayList<HashMap<String, String>> execute(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_)
