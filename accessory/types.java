@@ -8,9 +8,13 @@ public class types
 {
 	public static final String SEPARATOR = misc.SEPARATOR_NAME;
 
-	//--- To be synced with get_all_subtypes().
+	//------ To be synced with get_all_subtypes().
 
 	//--- To be synced with the corresponding _ini and _config methods/variables.
+
+	//Note for DB types: the sources/fields are the types/ids, constant, used in most of the code. 
+	//The tables/cols are the values, variable, only used when performing the corresponding query.
+	
 	public static final String _CONFIG_CREDENTIALS = "_config_credentials";
 	public static final String _CONFIG_CREDENTIALS_ENCRYPTED = "_config_credentials_encrypted";
 	public static final String _CONFIG_CREDENTIALS_WHERE = "_config_credentials_where";

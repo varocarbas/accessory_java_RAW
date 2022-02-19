@@ -21,8 +21,8 @@ public class logs
 		if (out_is_ok(types._CONFIG_LOGS_OUT_DB)) 
 		{
 			String type = types._CONFIG_DB_SETUP;
-			
 			String current = _config.get_db(type);
+			
 			_config.update_db(type, types._CONFIG_DB_SETUP_LOGS);
 			
 			update_db(message_, id);
