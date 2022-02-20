@@ -5,13 +5,11 @@ import java.util.Map.Entry;
 
 public class data 
 {
-	@SuppressWarnings("rawtypes")
-	public Class _class = null;
+	public Class<?> _class = null;
 	public String _type = null;
 	public size _size = null;
 
-	@SuppressWarnings("rawtypes")
-	private static HashMap<String, Class> _all_classes = new HashMap<String, Class>();
+	private static HashMap<String, Class<?>> _all_classes = new HashMap<String, Class<?>>();
 
 	public static boolean is_ok(data input_)
 	{
@@ -51,11 +49,10 @@ public class data
 		_size = update_size(_class, input_._size);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public data(String type_, size size_)
 	{
 		String type = check_type(type_);
-		Class temp = get_class(type);
+		Class<?> temp = get_class(type);
 		if (!is_ok(type_, temp, size_, false)) return;
 
 		_type = type;
@@ -63,8 +60,7 @@ public class data
 		_size = update_size(_class, size_);
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static boolean is_ok(String type_, Class class_, size size_, boolean check_size_)
+	private static boolean is_ok(String type_, Class<?> class_, size size_, boolean check_size_)
 	{
 		return 
 		(
@@ -73,24 +69,21 @@ public class data
 		);
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static size update_size(Class class_, size size_)
+	private static size update_size(Class<?> class_, size size_)
 	{
 		size boundaries = get_boundaries(class_);
 
 		return new size(size.complies(size_, boundaries) ? size_ : boundaries);
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static boolean size_is_ok(Class class_, size size_)
+	private static boolean size_is_ok(Class<?> class_, size size_)
 	{
 		return size.complies(size_, get_boundaries(class_));
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static boolean is_numeric(Class class_)
+	private static boolean is_numeric(Class<?> class_)
 	{
-		for (Class item: numbers.get_all_classes())
+		for (Class<?> item: numbers.get_all_classes())
 		{
 			if (item.equals(class_)) return true;
 		}
@@ -98,8 +91,7 @@ public class data
 		return false;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static size get_boundaries(Class class_)
+	private static size get_boundaries(Class<?> class_)
 	{
 		size boundaries = new size(0.0, 0.0);
 
@@ -123,49 +115,47 @@ public class data
 		return boundaries;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static boolean class_is_ok(Class class_)
+	private static boolean class_is_ok(Class<?> class_)
 	{
 		populate_all_classes();
 
 		return (class_ != null && _all_classes.containsValue(class_));
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static boolean class_complies(Class input_, Class target_)
+	private static boolean class_complies(Class<?> input_, Class<?> target_)
 	{
 		if (input_ == null || target_ == null) return false;
-		
 		if (input_.equals(target_)) return true;
 		
-		HashMap<Class, Class> compatible = new HashMap<Class, Class>();
-		compatible.put(Double.class, Integer.class);
-		
-		for (Entry<Class, Class> item: compatible.entrySet())
+		for (Entry<Class<?>, Class<?>> item: class_complies_get_compatible().entrySet())
 		{
-			Class main = item.getKey();
-			Class sec = item.getValue();
-			
-			if (target_.equals(main) && input_.equals(sec)) return true;
+			if (target_.equals(item.getKey()) && input_.equals(item.getValue())) return true;
 		}
 		
 		return false;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	private static Class get_class(String type_)
+	private static HashMap<Class<?>, Class<?>> class_complies_get_compatible()
+	{
+		HashMap<Class<?>, Class<?>> output = new HashMap<Class<?>, Class<?>>();
+		
+		output.put(Double.class, Integer.class);
+		
+		return output;
+	}
+	
+	private static Class<?> get_class(String type_)
 	{
 		populate_all_classes();
 
 		return (_all_classes.containsKey(type_) ? _all_classes.get(type_) : null);
 	}
 
-	@SuppressWarnings("rawtypes")
 	private static void populate_all_classes()
 	{
 		if (arrays.is_ok(_all_classes)) return;
 
-		_all_classes = new HashMap<String, Class>();
+		_all_classes = new HashMap<String, Class<?>>();
 		_all_classes.put(types.DATA_STRING, String.class);
 		_all_classes.put(types.DATA_INTEGER, Integer.class);
 		_all_classes.put(types.DATA_DECIMAL, Double.class);

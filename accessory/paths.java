@@ -112,13 +112,13 @@ public class paths
 		if (!strings.is_ok(what_)) return strings.DEFAULT;
 		if (strings.are_equivalent(what_, keys.APP)) return get_dir_app_default();
 
-		String[] targets = new String[] { keys.CREDENTIALS, keys.INI, keys.LOG };
+		String[] targets = { keys.CREDENTIALS, keys.INI, keys.LOG };
 
 		for (String target: targets)
 		{
 			if (strings.are_equivalent(what_, target))
 			{
-				String[] parts = new String[] { HOME, target };
+				String[] parts = { HOME, target };
 				if (target.equals(keys.LOG)) parts = new String[] { get_dir_app_default() };
 
 				return build(parts, false);

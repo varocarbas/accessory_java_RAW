@@ -10,9 +10,27 @@ public class errors
 	public static void manage(HashMap<String, String> info_, boolean exit_)
 	{		
 		String message = get_message(info_);
+
 		logs.update(message, arrays.get_value(info_, keys.ID));
 
 		if (exit_) System.exit(1);
+	}
+
+	public static void manage(String type_, Exception e_, String[] further_)
+	{		
+		String message = (strings.is_ok(type_) ? type_ : keys.ERROR) + misc.SEPARATOR_CONTENT;
+
+		if (generic.is_ok(e_)) message += keys.EXCEPTION + ": " + e_.getMessage() + misc.SEPARATOR_CONTENT; 
+
+		if (arrays.is_ok(further_))
+		{
+			for (String val: further_)
+			{
+				message += val + misc.SEPARATOR_CONTENT;
+			}
+		}
+
+		logs.update(message, null);
 	}
 
 	public static void manage_io(String type_, String path_, Exception e_, boolean errors_to_file_, boolean exit_)
@@ -33,20 +51,20 @@ public class errors
 		if (changed) _config.update_logs(types._CONFIG_LOGS_OUT_FILE, strings.from_boolean(true));
 	}
 
-	public static void manage_sql(String type_, String query_, Exception e_, String message_)
+	public static void manage_db(String type_, String query_, Exception e_, String message_)
 	{
 		String type = types.check_aliases(type_);
 
 		manage
 		(
-			get_info_sql(type, query_, e_, message_), strings.to_boolean
+			get_info_db(type, query_, e_, message_), strings.to_boolean
 			(
 				_config.get_db(types._CONFIG_DB_ERROR_EXIT)
 			)
 		);
 	}
 
-	public static HashMap<String, String> get_info_sql(String type_, String query_, Exception e_, String message_)
+	public static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_)
 	{
 		if (!strings.is_ok(type_)) return null;
 
@@ -56,7 +74,7 @@ public class errors
 		info.put(keys.TYPE, type);
 
 		String message = message_;
-		if (e_ != null && e_ instanceof Exception) message = e_.getMessage();
+		if (generic.is_ok(e_)) message = e_.getMessage();
 		else if (!strings.is_ok(message)) 
 		{
 			message = ("Wrong " + types.remove_type(type, types.ERROR_DB));

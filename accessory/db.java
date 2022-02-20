@@ -269,7 +269,7 @@ public class db
 
 		String type = types.check_aliases(type_);
 
-		errors.manage_sql(type, query_, e_, message_);
+		errors.manage_db(type, query_, e_, message_);
 	}
 	
 	private static <x> HashMap<String, String> adapt_inputs_input(String source_, HashMap<String, String> old_, String field_, x val_)

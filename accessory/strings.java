@@ -211,7 +211,21 @@ public class strings
 		return output;
 	}
 
-	@SuppressWarnings("rawtypes")
+	public static <x> String[] to_strings(x[] inputs_)
+	{
+		if (!arrays.is_ok(inputs_)) return null;
+		
+		ArrayList<String> output = new ArrayList<String>();
+		
+		for (x input: inputs_)
+		{
+			String temp = to_string(input);
+			if (is_ok(temp)) output.add(temp);
+		}
+		
+		return arrays.to_array(output);
+	}
+	
 	public static <x> String to_string(x input_)
 	{
 		if (generic.is_string(input_)) return (String)input_;
@@ -219,7 +233,7 @@ public class strings
 		String output = (String)defaults.get_class(String.class);
 		if (!generic.is_ok(input_)) return output;
 
-		Class type = input_.getClass();
+		Class<?> type = input_.getClass();
 		if (type == null) return output;
 
 		if (type.equals(Double.class)) output = from_number_decimal((Double)input_);
@@ -229,13 +243,12 @@ public class strings
 		return output;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public static Object from_string(String string_, Class type_)
+	public static Object from_string(String string_, Class<?> type_)
 	{
 		Object output = null;
 		if (!is_ok(string_)) return output;
 
-		Class type = type_;
+		Class<?> type = type_;
 		if (!generic.is_ok(type))
 		{
 			if (is_decimal(string_)) type = Double.class;

@@ -14,10 +14,9 @@ public class numbers
 
 	static { _ini.load(); }
 
-	@SuppressWarnings("rawtypes")
-	public static final Class[] get_all_classes()
+	public static final Class<?>[] get_all_classes()
 	{
-		return new Class[] { Integer.class, Double.class };
+		return new Class<?>[] { Integer.class, Double.class };
 	}
 
 	public static boolean is_ok(double input_, double min_, double max_)

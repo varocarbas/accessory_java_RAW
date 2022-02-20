@@ -44,19 +44,16 @@ public class defaults
 	static final boolean LOGS_FILE = true;
 	static final boolean LOGS_DB = false;
 
-	@SuppressWarnings("rawtypes")
-	static final Class CLASS_NUMBERS = Double.class; 
-	@SuppressWarnings("rawtypes")
-	static final Class CLASS_ARRAYS = ArrayList.class;
+	static final Class<?> CLASS_NUMBERS = Double.class; 
+	static final Class<?> CLASS_ARRAYS = ArrayList.class;
 
 	static { _ini.load(); }
 
-	@SuppressWarnings("rawtypes")
 	public static Object get(Object var_)
 	{
 		if (var_ == null) return null;
 
-		Class type = null;
+		Class<?> type = null;
 
 		if (var_ instanceof String) type = String.class;
 		else if (var_ instanceof Integer) type = Integer.class;
@@ -69,8 +66,7 @@ public class defaults
 		return get_class(type);	
 	}
 
-	@SuppressWarnings("rawtypes")
-	public static Object get_class(Class type_)
+	public static Object get_class(Class<?> type_)
 	{
 		Object output = null;
 		if (type_ == null) return output;

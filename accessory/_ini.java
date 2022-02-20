@@ -116,7 +116,7 @@ class _ini
 	private static void load_config_subtypes()
 	{	
 		String type = types._CONFIG_DB;
-		String[] subtypes = new String[] { types._CONFIG_DB_CREDENTIALS };
+		String[] subtypes = { types._CONFIG_DB_CREDENTIALS };
 		_config.update_subtypes(type, subtypes);
 
 		type = types._CONFIG_LOGS_DB;
@@ -139,7 +139,7 @@ class _ini
 	private static void load_config_linked_db()
 	{
 		String main = types._CONFIG_DB;
-		String[] secs = new String[] { types._CONFIG_LOGS_DB };
+		String[] secs = { types._CONFIG_LOGS_DB };
 
 		HashMap<String, String> vals = load_config_linked_common_db_vals();
 

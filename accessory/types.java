@@ -71,7 +71,7 @@ public class types
 	public static final String DATA_INTEGER = "data_integer";
 	public static final String DATA_DECIMAL = "data_decimal";
 	public static final String DATA_BOOLEAN = "data_boolean";
-	
+
 	public static final String ERROR_DB = "error_db";
 	public static final String ERROR_DB_INFO = "error_db_info";
 	public static final String ERROR_DB_CREDENTIALS = "error_db_credentials";
@@ -83,6 +83,11 @@ public class types
 	public static final String ERROR_FILE_WRITE = "error_file_write";
 	public static final String ERROR_FILE_READ = "error_file_read";
 
+	public static final String ERROR_GENERIC = "error_generic";
+	public static final String ERROR_GENERIC_METHOD = "error_generic_method";	
+	public static final String ERROR_GENERIC_METHOD_GET = "error_generic_method_get";
+	public static final String ERROR_GENERIC_METHOD_CALL = "error_generic_method_call";
+	
 	//---------------------------
 
 	private static HashMap<String, String> aliases = new HashMap<String, String>();
@@ -236,7 +241,11 @@ public class types
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,
 
 			//ERROR_FILE
-			ERROR_FILE_WRITE, ERROR_FILE_READ
+			ERROR_FILE_WRITE, ERROR_FILE_READ,
+
+			//ERROR_GENERIC
+			//ERROR_GENERIC_METHOD
+			ERROR_GENERIC_METHOD_GET, ERROR_GENERIC_METHOD_CALL
 		};		
 	}
-}
+}	

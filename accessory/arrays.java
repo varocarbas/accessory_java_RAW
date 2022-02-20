@@ -1,6 +1,7 @@
 package accessory;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,10 +11,9 @@ public class arrays
 {
 	static { _ini.load(); }
 
-	@SuppressWarnings("rawtypes")
-	public static final Class[] get_all_classes()
+	public static final Class<?>[] get_all_classes()
 	{
-		return new Class[] { HashMap.class, ArrayList.class, Array.class };
+		return new Class<?>[] { HashMap.class, ArrayList.class, Array.class };
 	}
 
 	public static boolean is_ok(Object input_)
@@ -26,13 +26,13 @@ public class arrays
 		return (get_size(input_) > 0);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	public static <x> int get_size(Object input_)
 	{
 		int size = 0;
 		if (input_ == null || !generic.is_array(input_)) return size;
 
-		Class type = generic.get_class(input_);
+		Class<?> type = generic.get_class(input_);
 
 		if (type.equals(Array.class)) size = get_size_array((x[])input_);
 		else if (type.equals(ArrayList.class)) size = get_size_arraylist((ArrayList<x>)input_);
@@ -46,12 +46,13 @@ public class arrays
 		return (input_ == null ? 0 : get_size_hashmap_xy(input_));		
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	//To be synced with generic.get_class().
+	@SuppressWarnings("unchecked")
 	public static <x> x[] to_array(ArrayList<x> input_)
 	{
 		x[] output = null;
 
-		Class type = get_class(input_);
+		Class<?> type = get_class(input_);
 		if (type == null) return output;
 
 		int size = input_.size();
@@ -59,7 +60,10 @@ public class arrays
 		else if (type.equals(Integer.class)) output = (x[])input_.toArray(new Integer[size]);
 		else if (type.equals(Double.class)) output = (x[])input_.toArray(new Double[size]);
 		else if (type.equals(Boolean.class)) output = (x[])input_.toArray(new Boolean[size]);
-
+		else if (type.equals(Class.class)) output = (x[])input_.toArray(new Class<?>[size]);
+		else if (type.equals(Method.class)) output = (x[])input_.toArray(new Method[size]);
+		else if (type.equals(Exception.class)) output = (x[])input_.toArray(new Exception[size]);
+		
 		return output;
 	}
 	
@@ -68,14 +72,12 @@ public class arrays
 		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
 	}
 			
-	@SuppressWarnings("rawtypes")
-	public static <x> Class get_class(ArrayList<x> input_)
+	public static <x> Class<?> get_class(ArrayList<x> input_)
 	{
 		return (!is_ok(input_) ? null : generic.get_class(input_.get(0)));
 	}
 
-	@SuppressWarnings("rawtypes")
-	public static <x> Class get_class(x[] input_)
+	public static <x> Class<?> get_class(x[] input_)
 	{
 		return (!is_ok(input_) ? null : generic.get_class(input_[0]));
 	}
@@ -298,10 +300,10 @@ public class arrays
 		return (get_ ? null : false);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	private static <x> Object key_value_get_exists(Object array_, x target_, boolean is_key_, boolean get_)
 	{
-		Class type = generic.get_class(array_);
+		Class<?> type = generic.get_class(array_);
 		if (!generic.is_ok(type)) return (get_ ? null : false);
 
 		if (type.equals(HashMap.class))
