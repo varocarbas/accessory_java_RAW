@@ -170,23 +170,23 @@ public class strings
 	public static String get_random(int length_, boolean upper_, boolean numbers_, boolean symbols_)
 	{
 		if (length_ < 1) return DEFAULT;
-		
+
 		String haystack = "abcdefghijklmnopqrstuvwxyz";
-	    if (upper_) haystack += haystack.toUpperCase();
-	    if (numbers_) haystack += "0123456789";
-	    if (symbols_) haystack += "~!@#$%^&*()-_=+[]{}|;:,.<>?";
+		if (upper_) haystack += haystack.toUpperCase();
+		if (numbers_) haystack += "0123456789";
+		if (symbols_) haystack += "~!@#$%^&*()-_=+[]{}|;:,.<>?";
 
 		String output = "";
-	    int max = haystack.length() - 1;
-	    int count = 0;
+		int max = haystack.length() - 1;
+		int count = 0;
 
-	    while (count < length_)
-	    {
-	    	count++;
-	    	output += substring(haystack, numbers.get_random_index(max), 1);
-	    }
-	    
-	    return output;
+		while (count < length_)
+		{
+			count++;
+			output += substring(haystack, numbers.get_random_index(max), 1);
+		}
+
+		return output;
 	}
 	
 	public static int index_of(String needle_, String haystack_, boolean normalise_)
