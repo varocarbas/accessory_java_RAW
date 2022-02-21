@@ -73,6 +73,7 @@ public class defaults
 
 		if (generic.classes_are_equal(type_, String.class)) output = "";
 		else if (generic.classes_are_equal(type_, Integer.class)) output = (Integer)0;
+		else if (generic.classes_are_equal(type_, Long.class)) output = (Long)0l;
 		else if (generic.classes_are_equal(type_, Double.class)) output = (Double)0.0;
 		else if (generic.classes_are_equal(type_, Boolean.class)) output = false;
 
