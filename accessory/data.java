@@ -21,15 +21,16 @@ public class data
 		boolean is_ok = false;
 		if (!generic.is_ok(val_) || !is_ok(data_) || !class_complies(val_.getClass(), data_._class)) return is_ok;
 
-		if (data_._class.equals(Boolean.class)) is_ok = true;
+		if (generic.classes_are_equal(data_._class, Boolean.class)) is_ok = true;
 		else 
 		{
 			double size = 0;
 			
-			if (data_._class.equals(String.class)) size = ((String)val_).length();
+			if (generic.classes_are_equal(data_._class, String.class)) size = ((String)val_).length();
 			else if (is_numeric(data_._class)) 
 			{
-				if (val_.getClass().equals(Integer.class)) size = (double)((int)val_); //!!!
+				if (generic.classes_are_equal(data_._class, Integer.class)) size = (double)((int)val_); //!!!
+				else if (generic.classes_are_equal(data_._class, Long.class)) size = (double)((long)val_); //!!!
 				else size = (double)val_;
 			}
 			else return false;
@@ -85,7 +86,7 @@ public class data
 	{
 		for (Class<?> item: numbers.get_all_classes())
 		{
-			if (item.equals(class_)) return true;
+			if (generic.classes_are_equal(class_, item)) return true;
 		}
 
 		return false;
@@ -95,18 +96,23 @@ public class data
 	{
 		size boundaries = new size(0.0, 0.0);
 
-		if (class_.equals(String.class)) boundaries._max = (double)Integer.MAX_VALUE;
-		else if (class_.equals(Integer.class))
+		if (generic.classes_are_equal(class_, String.class)) boundaries._max = (double)Integer.MAX_VALUE;
+		else if (generic.classes_are_equal(class_, Integer.class))
 		{
 			boundaries._min = (double)numbers.MIN_INT;
 			boundaries._max = (double)numbers.MAX_INT;
 		}
-		else if (class_.equals(Double.class))
+		else if (generic.classes_are_equal(class_, Long.class))
+		{
+			boundaries._min = (double)numbers.MIN_LONG;
+			boundaries._max = (double)numbers.MAX_LONG;
+		}
+		else if (generic.classes_are_equal(class_, Double.class))
 		{
 			boundaries._min = (double)numbers.MIN_DEC;
 			boundaries._max = (double)numbers.MAX_DEC;
 		}
-		else if (class_.equals(Boolean.class)) 
+		else if (generic.classes_are_equal(class_, Boolean.class)) 
 		{
 			boundaries._min = 2.0;
 			boundaries._max = 2.0;	
@@ -140,6 +146,8 @@ public class data
 		HashMap<Class<?>, Class<?>> output = new HashMap<Class<?>, Class<?>>();
 		
 		output.put(Double.class, Integer.class);
+		output.put(Double.class, Long.class);
+		output.put(Long.class, Integer.class);
 		
 		return output;
 	}
@@ -158,6 +166,7 @@ public class data
 		_all_classes = new HashMap<String, Class<?>>();
 		_all_classes.put(types.DATA_STRING, String.class);
 		_all_classes.put(types.DATA_INTEGER, Integer.class);
+		_all_classes.put(types.DATA_LONG, Long.class);
 		_all_classes.put(types.DATA_DECIMAL, Double.class);
 		_all_classes.put(types.DATA_BOOLEAN, Boolean.class);
 	}

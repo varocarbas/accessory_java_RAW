@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class generic 
 {
@@ -71,7 +72,28 @@ public class generic
 
 		return (type1 != null && type1.equals(type2) && input1_.equals(input2_));
 	}
+	
+	public static boolean classes_are_equal(Class<?> class1_, Class<?> class2_)
+	{
+		if (!is_ok(class1_) || !is_ok(class2_)) return false;
+		if (class1_.equals(class2_)) return true;
 
+		for (Entry<Class<?>, Class<?>> equivalent: classes_are_equal_equivalents().entrySet())
+		{
+			Class<?> key = equivalent.getKey();
+			Class<?> val = equivalent.getValue();
+			
+			if 
+			(
+				(class1_.equals(key) && class2_.equals(val)) || 
+				(class2_.equals(key) && class1_.equals(val))
+			)
+			{ return true; }
+		}
+		
+		return false;
+	}
+	
 	//It has to be synced with get_all_classes().
 	public static <x> Class<?> get_class(x input_)
 	{
@@ -80,6 +102,7 @@ public class generic
 		if (input_ instanceof String) type = String.class;
 		else if (input_ instanceof Boolean) type = Boolean.class;
 		else if (input_ instanceof Integer) type = Integer.class;
+		else if (input_ instanceof Long) type = Long.class;
 		else if (input_ instanceof Double) type = Double.class;
 		else if (input_ instanceof Class<?>) type = Class.class;
 		else if (input_ instanceof Method) type = Method.class;
@@ -87,7 +110,7 @@ public class generic
 		else if (input_ instanceof HashMap<?, ?>) type = HashMap.class;
 		else if (input_ instanceof ArrayList<?>) type = ArrayList.class;
 		else if (input_ instanceof Object[]) type = Array.class;
-
+		
 		return type;
 	}
 
@@ -122,14 +145,14 @@ public class generic
 		return classes.toArray(new Class<?>[classes.size()]);
 	}
 
-	public static ArrayList<Method> get_all_methods(Class<?> class_, ArrayList<String> skip_)
+	public static Method[] get_all_methods(Class<?> class_, String[] skip_)
 	{
 		if (!is_ok(class_)) return null;
 
 		ArrayList<Method> methods = new ArrayList<Method>();
 
 		ArrayList<String> skip = arrays.to_arraylist(get_default_method_names());
-		if (arrays.is_ok(skip_)) skip.addAll(skip_);
+		skip.addAll(arrays.to_arraylist(skip_));
 
 		for (Method method: class_.getMethods())
 		{
@@ -138,10 +161,10 @@ public class generic
 			methods.add(method);
 		}
 
-		return methods;
+		return arrays.to_array(methods);
 	}
 
-	public static Method get_method(Class<?> class_, String name_, Class<?>[] params_)
+	public static Method get_method(Class<?> class_, String name_, Class<?>[] params_, boolean error_exit_)
 	{
 		Method output = null;
 		if (!is_ok(class_) || !strings.is_ok(name_)) return output;
@@ -152,14 +175,14 @@ public class generic
 		} 
 		catch (Exception e) 
 		{ 
-			errors.manage(types.ERROR_GENERIC_METHOD_GET, e, new String[] { name_ }); 
+			errors.manage(types.ERROR_GENERIC_METHOD_GET, e, new String[] { name_ }, error_exit_); 
 		}
 
 		return output;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <x> x call_static_method(Method method_, Object[] args_)
+	public static <x> x call_static_method(Method method_, Object[] args_, boolean error_exit_)
 	{
 		x output = null;
 		if (!is_ok(method_)) return output;
@@ -175,7 +198,8 @@ public class generic
 				types.ERROR_GENERIC_METHOD_CALL, e, new String[] 
 				{ 
 					method_.getName(), arrays.to_string(strings.to_strings(args_), null) 
-				}
+				},
+				error_exit_
 			); 
 		}
 
@@ -189,5 +213,17 @@ public class generic
 			"wait", "equals", "toString", "hashCode", 
 			"getClass", "notify", "notifyAll"
 		};
+	}
+
+	private static HashMap<Class<?>, Class<?>> classes_are_equal_equivalents()
+	{
+		HashMap<Class<?>, Class<?>> equivalents = new HashMap<Class<?>, Class<?>>();
+		
+		equivalents.put(Double.class, double.class);
+		equivalents.put(Long.class, long.class);
+		equivalents.put(Integer.class, int.class);
+		equivalents.put(Boolean.class, boolean.class);
+		
+		return equivalents;
 	}
 }

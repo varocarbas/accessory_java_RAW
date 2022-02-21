@@ -71,10 +71,10 @@ public class defaults
 		Object output = null;
 		if (type_ == null) return output;
 
-		if (type_.equals(String.class)) output = "";
-		else if (type_.equals(Integer.class)) output = (Integer)0;
-		else if (type_.equals(Double.class)) output = (Double)0.0;
-		else if (type_.equals(Boolean.class)) output = false;
+		if (generic.classes_are_equal(type_, String.class)) output = "";
+		else if (generic.classes_are_equal(type_, Integer.class)) output = (Integer)0;
+		else if (generic.classes_are_equal(type_, Double.class)) output = (Double)0.0;
+		else if (generic.classes_are_equal(type_, Boolean.class)) output = false;
 
 		return output;	
 	}

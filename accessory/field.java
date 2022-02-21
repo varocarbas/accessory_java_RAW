@@ -22,7 +22,7 @@ public class field
 		if (!is_ok(input_)) return;
 
 		_data = new data(input_._data);
-		_further = arrays.get_new(input_._further);
+		_further = (String[])arrays.get_new(input_._further);
 	}
 
 	public field(data data_, String[] further_)
@@ -30,7 +30,7 @@ public class field
 		if (!is_ok(data_, further_)) return;
 
 		_data = new data(data_);
-		_further = arrays.get_new(further_);
+		_further = (String[])arrays.get_new(further_);
 	}
 
 	private static boolean is_ok(data data_, String[] further_)

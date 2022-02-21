@@ -33,7 +33,8 @@ public class arrays
 		if (input_ == null || !generic.is_array(input_)) return size;
 
 		Class<?> type = generic.get_class(input_);
-
+		if (!generic.is_ok(type)) return size;
+		
 		if (type.equals(Array.class)) size = get_size_array((x[])input_);
 		else if (type.equals(ArrayList.class)) size = get_size_arraylist((ArrayList<x>)input_);
 		else if (type.equals(HashMap.class)) size = get_size_hashmap_xx((HashMap<x, x>)input_); 
@@ -46,38 +47,71 @@ public class arrays
 		return (input_ == null ? 0 : get_size_hashmap_xy(input_));		
 	}
 
+	
 	//To be synced with generic.get_class().
 	@SuppressWarnings("unchecked")
 	public static <x> x[] to_array(ArrayList<x> input_)
 	{
 		x[] output = null;
 
-		Class<?> type = get_class(input_);
-		if (type == null) return output;
+		Class<?> type = get_class_items(input_);
+		if (!generic.is_ok(type)) return output;
 
 		int size = input_.size();
-		if (type.equals(String.class)) output = (x[])input_.toArray(new String[size]);
-		else if (type.equals(Integer.class)) output = (x[])input_.toArray(new Integer[size]);
-		else if (type.equals(Double.class)) output = (x[])input_.toArray(new Double[size]);
-		else if (type.equals(Boolean.class)) output = (x[])input_.toArray(new Boolean[size]);
-		else if (type.equals(Class.class)) output = (x[])input_.toArray(new Class<?>[size]);
-		else if (type.equals(Method.class)) output = (x[])input_.toArray(new Method[size]);
-		else if (type.equals(Exception.class)) output = (x[])input_.toArray(new Exception[size]);
+		if (generic.classes_are_equal(type, String.class)) output = (x[])input_.toArray(new String[size]);
+		else if (generic.classes_are_equal(type, Integer.class)) output = (x[])input_.toArray(new Integer[size]);
+		else if (generic.classes_are_equal(type, Long.class)) output = (x[])input_.toArray(new Long[size]);
+		else if (generic.classes_are_equal(type, Double.class)) output = (x[])input_.toArray(new Double[size]);
+		else if (generic.classes_are_equal(type, Boolean.class)) output = (x[])input_.toArray(new Boolean[size]);
+		else if (generic.classes_are_equal(type, Class.class)) output = (x[])input_.toArray(new Class<?>[size]);
+		else if (generic.classes_are_equal(type, Method.class)) output = (x[])input_.toArray(new Method[size]);
+		else if (generic.classes_are_equal(type, Exception.class)) output = (x[])input_.toArray(new Exception[size]);
 		
 		return output;
 	}
 	
-	public static <x> x[] get_new(x[] input_)
+	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_)
+	{
+		return (!is_ok(input_) ? new HashMap<x, y>() : new HashMap<x, y>(input_));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <x> Object get_new(Object input_)
+	{
+		Object output = null;
+		if (!is_ok(input_)) return output;
+
+		Class<?> type = generic.get_class(input_);
+		if (!generic.is_ok(type)) return output;
+		
+		if (type.equals(Array.class)) output = get_new_array((x[])input_);
+		else if (type.equals(ArrayList.class))  output = get_new_arraylist((ArrayList<x>)input_);
+		else if (type.equals(HashMap.class)) output = get_new_hashmap((HashMap<x, x>)input_); 
+
+		return output;
+	}
+
+	private static <x> x[] get_new_array(x[] input_)
 	{
 		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
 	}
-			
-	public static <x> Class<?> get_class(ArrayList<x> input_)
+	
+	private static <x> ArrayList<x> get_new_arraylist(ArrayList<x> input_)
+	{
+		return (!is_ok(input_) ? new ArrayList<x>() : new ArrayList<x>(input_));
+	}
+	
+	private static <x> HashMap<x, x> get_new_hashmap(HashMap<x, x> input_)
+	{
+		return (!is_ok(input_) ? new HashMap<x, x>() : new HashMap<x, x>(input_));
+	}
+	
+	public static <x> Class<?> get_class_items(ArrayList<x> input_)
 	{
 		return (!is_ok(input_) ? null : generic.get_class(input_.get(0)));
 	}
 
-	public static <x> Class<?> get_class(x[] input_)
+	public static <x> Class<?> get_class_items(x[] input_)
 	{
 		return (!is_ok(input_) ? null : generic.get_class(input_[0]));
 	}

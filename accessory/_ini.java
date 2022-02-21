@@ -8,8 +8,14 @@ class _ini
 	//This method is expected to be called every time a static class is loaded.
 	public static void load() 
 	{
+		update_globals();
 		load_types();
 		load_sources();
+	}
+	
+	private static void update_globals()
+	{
+		errors._triggered = false;
 	}
 	
 	private static void load_sources()

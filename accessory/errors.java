@@ -5,18 +5,22 @@ import java.util.Map.Entry;
 
 public class errors 
 {	
+	public static boolean _triggered = false; 
+	
 	static { _ini.load(); }
 
 	public static void manage(HashMap<String, String> info_, boolean exit_)
-	{		
+	{			
 		String message = get_message(info_);
 
 		logs.update(message, arrays.get_value(info_, keys.ID));
 
+		_triggered = true;
+		
 		if (exit_) System.exit(1);
 	}
 
-	public static void manage(String type_, Exception e_, String[] further_)
+	public static void manage(String type_, Exception e_, String[] further_, boolean exit_)
 	{		
 		String message = (strings.is_ok(type_) ? type_ : keys.ERROR) + misc.SEPARATOR_CONTENT;
 
@@ -31,6 +35,10 @@ public class errors
 		}
 
 		logs.update(message, null);
+
+		_triggered = true;
+		
+		if (exit_) System.exit(1);
 	}
 
 	public static void manage_io(String type_, String path_, Exception e_, boolean errors_to_file_, boolean exit_)
@@ -48,7 +56,7 @@ public class errors
 
 		manage(get_info_io(type, path_, e_), exit_);
 
-		if (changed) _config.update_logs(types._CONFIG_LOGS_OUT_FILE, strings.from_boolean(true));
+		if (changed) _config.update_logs(types._CONFIG_LOGS_OUT_FILE, strings.from_boolean(true));	
 	}
 
 	public static void manage_db(String type_, String query_, Exception e_, String message_)
@@ -64,7 +72,7 @@ public class errors
 		);
 	}
 
-	public static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_)
+	private static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_)
 	{
 		if (!strings.is_ok(type_)) return null;
 
@@ -98,7 +106,7 @@ public class errors
 		return info;
 	}
 
-	public static HashMap<String, String> get_info_io(String type_, String path_, Exception e_)
+	private static HashMap<String, String> get_info_io(String type_, String path_, Exception e_)
 	{
 		if (!strings.is_ok(type_)) return null;
 

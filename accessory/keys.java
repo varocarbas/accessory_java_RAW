@@ -53,6 +53,7 @@ public class keys
 	public static final String ORDER = "order";
 	public static final String GET = "get";
 	public static final String UPDATE = "update";
-
+	public static final String OK = "ok";
+	
 	static { _ini.load(); }
 }

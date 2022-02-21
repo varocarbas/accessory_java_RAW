@@ -6,7 +6,10 @@ import java.util.ArrayList;
 public class strings 
 {
 	public static final String DEFAULT = (String)defaults.get_class(String.class);
-
+	public static final int SIZE_DEFAULT = 100;
+	public static final int SIZE_SMALL = 10;
+	public static final int SIZE_BIG = 500;
+	
 	static { _ini.load(); }
 
 	public static boolean is_ok(String string_)
@@ -93,39 +96,57 @@ public class strings
 
 	public static String substring(String string_, int start_, int length_)
 	{
+		String output = (String)defaults.get_class(String.class);
+		
 		int length0 = get_length(string_, false);
-		if (length0 < 1 || start_ < 0 || start_ + length_ > length0) return (String)defaults.get_class(String.class);
+		if 
+		(
+			length0 < 1 || (((long)start_ + (long)length_) > (long)numbers.MAX_INT) || 
+			length_ < 1 || start_ < 0 || start_ + length_ > length0
+		) 
+		{ return output; }
 
 		return (length_ > 0 ? string_.substring(start_, start_ + length_) : string_.substring(start_));
 	}
 
 	public static String[] split(String haystack_, String regex_, boolean normalise_, int max_size_, boolean trim_, boolean remove_wrong_)
 	{
-		String haystack = haystack_;
-		String regex = regex_;
-		if (!strings.is_ok(haystack) || !strings.is_ok(regex)) return null;
-
-		if (normalise_)
+		String[] output = null; 
+			
+		try
 		{
-			haystack = normalise(haystack);
-			regex = normalise(regex);
+			String haystack = haystack_;
+			String regex = regex_;
+			if (!strings.is_ok(haystack) || !strings.is_ok(regex)) return null;
+
+			if (normalise_)
+			{
+				haystack = normalise(haystack);
+				regex = normalise(regex);
+			}
+
+			output = haystack.split(regex);
+			int size = arrays.get_size(output);
+			if (size < 1) return null;
+
+			if (trim_ || remove_wrong_) output = arrays.clean(output, trim_, remove_wrong_);
+
+			if (max_size_ > 1 && size > max_size_)
+			{
+				String[] temp = arrays.get_range(output, max_size_ - 1, 0);
+				String[] temp2 = arrays.get_range(output, 0, max_size_ - 1);
+
+				ArrayList<String> temp3 = arrays.to_arraylist(temp2);
+				temp3.add(String.join(regex, temp));
+
+				output = arrays.to_array(temp3);
+			}			
 		}
-
-		String[] output = haystack.split(regex);
-		int size = arrays.get_size(output);
-		if (size < 1) return null;
-
-		if (trim_ || remove_wrong_) output = arrays.clean(output, trim_, remove_wrong_);
-
-		if (max_size_ > 1 && size > max_size_)
+		catch (Exception e)
 		{
-			String[] temp = arrays.get_range(output, max_size_ - 1, 0);
-			String[] temp2 = arrays.get_range(output, 0, max_size_ - 1);
-
-			ArrayList<String> temp3 = arrays.to_arraylist(temp2);
-			temp3.add(String.join(regex, temp));
-
-			output = arrays.to_array(temp3);
+			errors.manage(types.ERROR_STRING_SPLIT, e, new String[] { haystack_, regex_ }, false);
+			
+			output = null;
 		}
 
 		return output;
@@ -141,6 +162,33 @@ public class strings
 		return substring_before_after(string_, target_, count_, normalise_, false);
 	}	
 
+	public static String get_random(int length_)
+	{
+		return get_random(length_, true, true, true);
+	}
+	
+	public static String get_random(int length_, boolean upper_, boolean numbers_, boolean symbols_)
+	{
+		if (length_ < 1) return DEFAULT;
+		
+		String haystack = "abcdefghijklmnopqrstuvwxyz";
+	    if (upper_) haystack += haystack.toUpperCase();
+	    if (numbers_) haystack += "0123456789";
+	    if (symbols_) haystack += "~!@#$%^&*()-_=+[]{}|;:,.<>?";
+
+		String output = "";
+	    int max = haystack.length() - 1;
+	    int count = 0;
+
+	    while (count < length_)
+	    {
+	    	count++;
+	    	output += substring(haystack, numbers.get_random_index(max), 1);
+	    }
+	    
+	    return output;
+	}
+	
 	public static int index_of(String needle_, String haystack_, boolean normalise_)
 	{
 		if (!is_ok(needle_) || !is_ok(haystack_)) return -1;
@@ -158,17 +206,22 @@ public class strings
 
 	public static boolean is_integer(String string_)
 	{
-		return is_number_internal(string_, true);
+		return is_number_internal(string_, true, false);
 	}
 
 	public static boolean is_decimal(String string_)
 	{
-		return is_number_internal(string_, false);		
+		return is_number_internal(string_, false, false);		
 	}
 
+	public static boolean is_long(String string_)
+	{
+		return is_number_internal(string_, true, true);		
+	}
+	
 	public static boolean is_number(String string_)
 	{
-		return is_number_internal(string_, false);	
+		return is_number_internal(string_, false, false);	
 	}
 
 	public static boolean is_boolean(String string_)
@@ -184,6 +237,16 @@ public class strings
 	public static double to_number_decimal(String string_)
 	{
 		return (is_decimal(string_) ? Double.parseDouble(string_) : numbers.DEFAULT_DEC);
+	}
+
+	public static String from_number_long(long input_)
+	{
+		return Long.toString(input_);
+	}
+
+	public static double to_number_long(String string_)
+	{
+		return (is_long(string_) ? Long.parseLong(string_) : numbers.DEFAULT_LONG);
 	}
 
 	public static String from_number_int(int input_)
@@ -236,9 +299,10 @@ public class strings
 		Class<?> type = input_.getClass();
 		if (type == null) return output;
 
-		if (type.equals(Double.class)) output = from_number_decimal((Double)input_);
-		else if (type.equals(Integer.class)) output = from_number_int((Integer)input_);
-		else if (type.equals(Boolean.class)) output = from_boolean((Boolean)input_);
+		if (generic.classes_are_equal(type, Double.class)) output = from_number_decimal((Double)input_);
+		else if (generic.classes_are_equal(type, Integer.class)) output = from_number_int((Integer)input_);
+		else if (generic.classes_are_equal(type, Long.class)) output = from_number_long((Long)input_);
+		else if (generic.classes_are_equal(type, Boolean.class)) output = from_boolean((Boolean)input_);
 
 		return output;
 	}
@@ -252,14 +316,16 @@ public class strings
 		if (!generic.is_ok(type))
 		{
 			if (is_decimal(string_)) type = Double.class;
+			else if (is_long(string_)) type = Long.class;
 			else if (is_integer(string_)) type = Integer.class;
 			else if (is_boolean(string_)) type = Boolean.class;
 			else return output;
 		}
 
-		if (type.equals(Double.class)) output = to_number_decimal(string_);
-		else if (type.equals(Integer.class)) output = to_number_int(string_);
-		else if (type.equals(Boolean.class)) output = to_boolean(string_);
+		if (generic.classes_are_equal(type, Double.class)) output = to_number_decimal(string_);
+		else if (generic.classes_are_equal(type, Long.class)) output = to_number_long(string_);
+		else if (generic.classes_are_equal(type, Integer.class)) output = to_number_int(string_);
+		else if (generic.classes_are_equal(type, Boolean.class)) output = to_boolean(string_);
 
 		return output;
 	}
@@ -305,7 +371,7 @@ public class strings
 		return is_ok;
 	}
 
-	private static boolean is_number_internal(String string_, boolean integer_)
+	private static boolean is_number_internal(String string_, boolean is_integer_, boolean is_long_)
 	{
 		if (!is_ok(string_)) return false;
 
@@ -339,7 +405,7 @@ public class strings
 
 				if 
 				(
-					(is_decimal && (integer_ || i == 0 || i == last_i)) || decimal_found || 
+					(is_decimal && (is_integer_ || i == 0 || i == last_i)) || decimal_found || 
 					(group_count != group_no && group_count != group_max2)
 				)
 				{ 
@@ -365,7 +431,10 @@ public class strings
 		}
 		if (group_count != group_no && group_count != group_max) return false;
 
-		int digit_limit = (integer_ ? numbers.MAX_DIGITS_INT : numbers.MAX_DIGITS_DEC);
+		int digit_limit = numbers.MAX_DIGITS_DEC;
+		if (is_long_) digit_limit = numbers.MAX_DIGITS_LONG;
+		else if (is_integer_) digit_limit = numbers.MAX_DIGITS_INT;
+
 		if (digit_count > digit_limit) return false;
 
 		boolean is_ok = true;
@@ -374,7 +443,8 @@ public class strings
 		{
 			try
 			{
-				if (integer_) Integer.parseInt(string_);
+				if (is_long_) Long.parseLong(string_);
+				else if (is_integer_) Integer.parseInt(string_);
 				else Double.parseDouble(string_);
 			}
 			catch (Exception e) { is_ok = false; }

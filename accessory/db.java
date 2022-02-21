@@ -148,7 +148,7 @@ public class db
 	{
 		HashMap<String, field> fields = new HashMap<String, field>();
 
-		size temp = new size(0.0, time.get_time_pattern(time.DATE_TIME).length());
+		size temp = new size(0.0, dates.get_time_pattern(dates.DATE_TIME).length());
 		fields.put(types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, new field(new data(accessory.types.DATA_STRING, temp), null));
 		fields.put(types._CONFIG_DB_FIELDS_DEFAULT_ID, new field(new data(accessory.types.DATA_INTEGER, null), null));
 

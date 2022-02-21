@@ -69,9 +69,10 @@ public class types
 	public static final String DATA = "data";
 	public static final String DATA_STRING = "data_string";
 	public static final String DATA_INTEGER = "data_integer";
+	public static final String DATA_LONG = "data_long";
 	public static final String DATA_DECIMAL = "data_decimal";
 	public static final String DATA_BOOLEAN = "data_boolean";
-
+	
 	public static final String ERROR_DB = "error_db";
 	public static final String ERROR_DB_INFO = "error_db_info";
 	public static final String ERROR_DB_CREDENTIALS = "error_db_credentials";
@@ -83,10 +84,17 @@ public class types
 	public static final String ERROR_FILE_WRITE = "error_file_write";
 	public static final String ERROR_FILE_READ = "error_file_read";
 
+	public static final String ERROR_STRING = "error_string";
+	public static final String ERROR_STRING_SPLIT = "error_string_split";
+	
 	public static final String ERROR_GENERIC = "error_generic";
 	public static final String ERROR_GENERIC_METHOD = "error_generic_method";	
 	public static final String ERROR_GENERIC_METHOD_GET = "error_generic_method_get";
 	public static final String ERROR_GENERIC_METHOD_CALL = "error_generic_method_call";
+
+	public static final String ERROR_TEST = "error_test";
+	public static final String ERROR_TEST_PARAMS = "error_test_params";
+	public static final String ERROR_TEST_RUN = "error_test_run";
 	
 	//---------------------------
 
@@ -235,17 +243,23 @@ public class types
 			_CONFIG_DB_FIELDS_DEFAULT_ID, _CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, 
 
 			//DATA
-			DATA_STRING, DATA_INTEGER, DATA_DECIMAL, DATA_BOOLEAN,
+			DATA_STRING, DATA_INTEGER, DATA_LONG, DATA_DECIMAL, DATA_BOOLEAN,
 			
 			//ERROR_DB
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,
 
 			//ERROR_FILE
 			ERROR_FILE_WRITE, ERROR_FILE_READ,
-
+			
+			//ERROR_STRING
+			ERROR_STRING_SPLIT,
+			
 			//ERROR_GENERIC
 			//ERROR_GENERIC_METHOD
-			ERROR_GENERIC_METHOD_GET, ERROR_GENERIC_METHOD_CALL
+			ERROR_GENERIC_METHOD_GET, ERROR_GENERIC_METHOD_CALL,
+			
+			//ERROR_TEST
+			ERROR_TEST_PARAMS, ERROR_TEST_RUN
 		};		
 	}
 }	

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class time 
+public class dates 
 {
 	public static final String TIME = keys.TIME;
 	public static final String TIME_SHORT = "time_short";
