@@ -54,6 +54,10 @@ public class keys
 	public static final String GET = "get";
 	public static final String UPDATE = "update";
 	public static final String OK = "ok";
+	public static final String START = "start";
+	public static final String STOP = "stop";
+	public static final String END = "end";
+	public static final String TEST = "test";
 	
 	static { _ini.load(); }
 }

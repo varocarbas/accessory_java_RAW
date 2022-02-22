@@ -14,7 +14,14 @@ public class logs
 		String id = id_;
 		if (!strings.is_ok(id)) id = _config.get_basic(types._CONFIG_BASIC_NAME);
 
-		if (out_is_ok(types._CONFIG_LOGS_OUT_SCREEN)) update_screen(message_);
+		if (tests._running || out_is_ok(types._CONFIG_LOGS_OUT_SCREEN)) update_screen(message_);
+		
+		if (tests._running)
+		{	
+			System.out.println("Only screen logs while tests are running.");
+			
+			return;
+		}
 		
 		if (out_is_ok(types._CONFIG_LOGS_OUT_FILE)) update_file(message_, id);
 		

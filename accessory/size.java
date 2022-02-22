@@ -22,9 +22,9 @@ public class size
 		size output = new size(numbers.MIN_DEC, numbers.MAX_DEC);
 		if (!generic.is_ok(class_)) return output;
 		
-		if (generic.classes_are_equal(class_, Integer.class)) output = new size(numbers.MIN_INT, numbers.MAX_INT);
-		else if (generic.classes_are_equal(class_, Long.class)) output = new size(numbers.MIN_LONG, numbers.MAX_LONG);
-		else if (generic.classes_are_equal(class_, String.class)) output = new size(0, strings.SIZE_DEFAULT);
+		if (generic.are_equal(class_, Integer.class)) output = new size(numbers.MIN_INT, numbers.MAX_INT);
+		else if (generic.are_equal(class_, Long.class)) output = new size(numbers.MIN_LONG, numbers.MAX_LONG);
+		else if (generic.are_equal(class_, String.class)) output = new size(0, strings.SIZE_DEFAULT);
 		
 		return output;
 	}

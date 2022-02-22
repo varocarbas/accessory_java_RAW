@@ -2,15 +2,16 @@ package accessory;
 
 public class misc 
 {	
+	public static final String NEW_LINE = System.lineSeparator();
+	
 	public static final String SEPARATOR_CONTENT = " --- ";
 	public static final String SEPARATOR_SCREEN = SEPARATOR_CONTENT;
-	public static final String SEPARATOR_FILE = System.lineSeparator();	
+	public static final String SEPARATOR_FILE = NEW_LINE;	
 	public static final String SEPARATOR_NAME = "_";	
 	public static final String SEPARATOR_KEYVAL = ": ";
 	public static final String SEPARATOR_ITEM = ", ";
-
 	public static final String SEPARATOR_DIR = paths.SEPARATOR_DIR;
-
+	
 	static { _ini.load(); }
 
 	public static void pause_min()

@@ -6,24 +6,42 @@ import java.util.HashMap;
 
 public class tests 
 {
-	public static void run_accessory_all()
-	{
-		run_accessory_basic();
+	public static boolean _running = false;
+	
+	private static int _overload = 0;
+	
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all()
+	{	
+		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
+		
+		String name0 = "accessory_all";
+		System.out.println("-------- " + keys.START.toUpperCase() + " " + name0 + misc.NEW_LINE);
+
+		outputs = run_accessory_basic(outputs);
+		
+		System.out.println(misc.NEW_LINE + keys.END.toUpperCase() + " " + name0 + misc.NEW_LINE);
+		
+		return outputs;
 	}
 
-	public static void run_accessory_basic()
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_basic(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		run_accessory_strings();
-		run_accessory_arrays();
-		run_accessory_dates();
-		run_accessory_generic();
-		run_accessory_io();
-		run_accessory_numbers();
-		run_accessory_paths();
-		run_accessory_types();
+		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
+		if (arrays.is_ok(outputs_)) outputs = new HashMap<String, HashMap<String, Boolean>>(outputs_);
+	
+		outputs = run_accessory_strings(outputs);
+		outputs = run_accessory_arrays(outputs);	
+		outputs = run_accessory_dates(outputs);
+		outputs = run_accessory_generic(outputs);
+		outputs = run_accessory_io(outputs);
+		outputs = run_accessory_numbers(outputs);
+		outputs = run_accessory_paths(outputs);
+		outputs = run_accessory_types(outputs);
+		
+		return outputs;
 	}
 
-	public static void run_accessory_strings()
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_strings(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
 		Class<?> type = strings.class;
 		
@@ -48,58 +66,74 @@ public class tests
 		HashMap<String, Object[]> targets = null; 
 		String[] skip = null;
 		
-		run(type, args_all, targets, skip);	
+		return run(type, args_all, targets, skip, outputs_);	
 	}
 	
-	public static void run_accessory_arrays()
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_arrays(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		run(arrays.class);
+		return run(arrays.class, outputs_);
 	}
 	
-	public static void run_accessory_dates()
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_dates(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		run(dates.class);
+		return run(dates.class, outputs_);
 	}
 	
-	public static void run_accessory_generic()
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_generic(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		run(generic.class);
+		return run(generic.class, outputs_);
 	}
 	
-	public static void run_accessory_io()
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_io(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		run(io.class);
+		return run(io.class, outputs_);
 	}
 	
-	public static void run_accessory_numbers()
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_numbers(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		run(numbers.class);
+		return run(numbers.class, outputs_);
 	}
 	
-	public static void run_accessory_paths()
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_paths(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		run(paths.class);
+		return run(paths.class, null, null, new String[] { "update_main_dir" }, outputs_);
 	}
 	
-	public static void run_accessory_types()
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_types(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		run(types.class);
+		return run(types.class, outputs_);
 	}
 	
-	public static void run(Class<?> class_)
+	public static HashMap<String, HashMap<String, Boolean>>run(Class<?> class_, HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		run(class_, null, null, null);
+		return run(class_, null, null, null, outputs_);
 	}
 	
-	public static void run(Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_)
+	public static HashMap<String, HashMap<String, Boolean>> run
+	(
+		Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, 
+		String[] skip_, HashMap<String, HashMap<String, Boolean>> runs_out_
+	)
 	{
+		_running = true;
+		
+		HashMap<String, HashMap<String, Boolean>> run_outs = new HashMap<String, HashMap<String, Boolean>>();
+		if (arrays.is_ok(runs_out_)) run_outs = new HashMap<String, HashMap<String, Boolean>>(runs_out_);
+		
 		Method[] methods = generic.get_all_methods(class_, null);
 		if (!arrays.is_ok(methods))
 		{
 			errors.manage(types.ERROR_TEST_PARAMS, null, (generic.is_ok(class_) ? new String[] { class_.getName() } : null), false);
 			
-			return;
+			_running = false;
+			
+			return run_outs;
 		}
+		
+		String name0 = class_.getName();
+		System.out.println("-------- " + keys.START.toUpperCase() + " " + name0 + misc.NEW_LINE);
+		
+		run_outs.put(name0, new HashMap<String, Boolean>());
 		
 		try
 		{
@@ -131,16 +165,22 @@ public class tests
 				}
 				else message = keys.OK.toLowerCase();
 				
-				message += System.lineSeparator();
+				message += misc.SEPARATOR_CONTENT + output + misc.NEW_LINE;
 				System.out.print(message);
 				
-				if (!is_ok) return;
+				run_outs.get(name0).put(name, is_ok);
 			}			
 		}
 		catch (Exception e)
 		{
 			errors.manage(types.ERROR_TEST_RUN, e, new String[] { class_.getName() }, false);		
 		}
+		
+		System.out.println(misc.NEW_LINE + "-------- " + keys.END.toUpperCase() + " " + name0 + misc.NEW_LINE);
+	
+		_running = false;
+		
+		return run_outs;
 	}
 	
 	public static Object[] get_default_args(Class<?>[] params_)
@@ -162,11 +202,11 @@ public class tests
 		Object output = null;
 		if (!generic.is_ok(class_)) return output;
 
-		if (generic.classes_are_equal(class_, Double.class)) output = numbers.get_random_class(class_);
-		else if (generic.classes_are_equal(class_, Long.class)) output = (long)numbers.get_random_class(class_);
-		else if (generic.classes_are_equal(class_, Integer.class)) output = (int)numbers.get_random_class(class_); 
-		else if (generic.classes_are_equal(class_, String.class)) output = strings.get_random(strings.SIZE_DEFAULT);
-		else if (generic.classes_are_equal(class_, Boolean.class)) output = false;
+		if (generic.are_equal(class_, Double.class)) output = numbers.get_random_decimal(-12345.67, 12345.67);
+		else if (generic.are_equal(class_, Long.class)) output = numbers.get_random_long(-12345l, 12345l);
+		else if (generic.are_equal(class_, Integer.class)) output = numbers.get_random_int(-12345, 12345); 
+		else if (generic.are_equal(class_, String.class)) output = strings.get_random(strings.SIZE_SMALL);
+		else output = generic.get_random(class_);
 
 		return output;
 	}
@@ -175,28 +215,19 @@ public class tests
 	{
 		boolean output_ok = generic.is_ok(output_);
 		if (!arrays.is_ok(targets_)) return true;
+
+		boolean is_ok = false;
+		Object target = (targets_.length - 1 >= _overload ? targets_[_overload] : null);
 		
-		boolean all_wrong = true;
+		if (!generic.is_ok(target)) is_ok = !output_ok;
+		else is_ok = generic.are_equal(target, output_);
 		
-		for (Object target: targets_)
-		{
-			if (!generic.is_ok(target))
-			{
-				if (!output_ok) return true;
-				else continue;
-			}
-			else 
-			{
-				all_wrong = false;
-				if (target.equals(output_)) return true;
-			}
-		}
-		
-		return (all_wrong && !output_ok);
+		return is_ok;
 	}
 	
 	private static Object[] get_args(Class<?>[] params_, ArrayList<ArrayList<Object>> args_all_)
 	{
+		_overload = 0;
 		int size = arrays.get_size(params_);
 		if (size < 1) return null;
 		
@@ -205,15 +236,16 @@ public class tests
 		else args_all.add(null);
 		
 		ArrayList<Object> args0 = null;
-		for (ArrayList<Object> args: args_all)
+		for (int i = 0; i < args_all.size(); i++)
 		{
+			ArrayList<Object> args = args_all.get(i);
 			if (arrays.get_size(args) != size) continue;
 			
 			boolean is_ok = true;
 			
-			for (int i = 0; i < size; i++)
+			for (int i2 = 0; i2 < size; i2++)
 			{
-				if (!generic.classes_are_equal(generic.get_class(args.get(i)), params_[i]))
+				if (!generic.are_equal(generic.get_class(args.get(i2)), params_[i2]))
 				{
 					is_ok = false;
 					break;
@@ -221,7 +253,9 @@ public class tests
 			}
 			if (!is_ok) continue;
 			
+			_overload = i;
 			args0 = new ArrayList<Object>(args);
+			
 			break;
 		}
 		

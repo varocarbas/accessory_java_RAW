@@ -299,10 +299,10 @@ public class strings
 		Class<?> type = input_.getClass();
 		if (type == null) return output;
 
-		if (generic.classes_are_equal(type, Double.class)) output = from_number_decimal((Double)input_);
-		else if (generic.classes_are_equal(type, Integer.class)) output = from_number_int((Integer)input_);
-		else if (generic.classes_are_equal(type, Long.class)) output = from_number_long((Long)input_);
-		else if (generic.classes_are_equal(type, Boolean.class)) output = from_boolean((Boolean)input_);
+		if (generic.are_equal(type, Double.class)) output = from_number_decimal((Double)input_);
+		else if (generic.are_equal(type, Integer.class)) output = from_number_int((Integer)input_);
+		else if (generic.are_equal(type, Long.class)) output = from_number_long((Long)input_);
+		else if (generic.are_equal(type, Boolean.class)) output = from_boolean((Boolean)input_);
 
 		return output;
 	}
@@ -322,10 +322,10 @@ public class strings
 			else return output;
 		}
 
-		if (generic.classes_are_equal(type, Double.class)) output = to_number_decimal(string_);
-		else if (generic.classes_are_equal(type, Long.class)) output = to_number_long(string_);
-		else if (generic.classes_are_equal(type, Integer.class)) output = to_number_int(string_);
-		else if (generic.classes_are_equal(type, Boolean.class)) output = to_boolean(string_);
+		if (generic.are_equal(type, Double.class)) output = to_number_decimal(string_);
+		else if (generic.are_equal(type, Long.class)) output = to_number_long(string_);
+		else if (generic.are_equal(type, Integer.class)) output = to_number_int(string_);
+		else if (generic.are_equal(type, Boolean.class)) output = to_boolean(string_);
 
 		return output;
 	}

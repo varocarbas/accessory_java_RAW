@@ -106,7 +106,7 @@ public class _config
 	}
 
 	public static <x> boolean update(String type_, String key_, x val_)
-	{
+	{		
 		String type = types.check_aliases(type_);
 		String key = types.check_aliases(key_);
 

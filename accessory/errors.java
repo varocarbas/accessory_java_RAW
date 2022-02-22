@@ -17,7 +17,7 @@ public class errors
 
 		_triggered = true;
 		
-		if (exit_) System.exit(1);
+		if (!tests._running && exit_) System.exit(1);
 	}
 
 	public static void manage(String type_, Exception e_, String[] further_, boolean exit_)
@@ -38,7 +38,7 @@ public class errors
 
 		_triggered = true;
 		
-		if (exit_) System.exit(1);
+		if (!tests._running && exit_) System.exit(1);
 	}
 
 	public static void manage_io(String type_, String path_, Exception e_, boolean errors_to_file_, boolean exit_)

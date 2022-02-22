@@ -53,7 +53,7 @@ public class io
 				writer = new FileWriter(path_, append_);
 			}
 
-			writer.write(line_ + System.lineSeparator());
+			writer.write(line_ + misc.NEW_LINE);
 
 			if (is_new) writer.close();
 		} 

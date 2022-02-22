@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 
 public class arrays 
 {
+	public static final int SIZE_DEFAULT = 5;
+	
 	static { _ini.load(); }
 
 	public static final Class<?>[] get_all_classes()
@@ -16,16 +18,21 @@ public class arrays
 		return new Class<?>[] { HashMap.class, ArrayList.class, Array.class };
 	}
 
+	public static <x, y> boolean is_ok(HashMap<x, y> input_)
+	{
+		return (get_size(input_) > 0);
+	}
+	
 	public static boolean is_ok(Object input_)
 	{
 		return (get_size(input_) > 0);
 	}
 
-	public static <x, y> boolean is_ok(HashMap<x, y> input_)
+	public static <x, y> int get_size(HashMap<x, y> input_)
 	{
-		return (get_size(input_) > 0);
+		return (input_ == null ? 0 : get_size_hashmap_xy(input_));		
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public static <x> int get_size(Object input_)
 	{
@@ -35,18 +42,94 @@ public class arrays
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_ok(type)) return size;
 		
-		if (type.equals(Array.class)) size = get_size_array((x[])input_);
-		else if (type.equals(ArrayList.class)) size = get_size_arraylist((ArrayList<x>)input_);
-		else if (type.equals(HashMap.class)) size = get_size_hashmap_xx((HashMap<x, x>)input_); 
+		if (generic.are_equal(type, Array.class)) size = get_size_array((x[])input_);
+		else if (generic.are_equal(type, ArrayList.class)) size = get_size_arraylist((ArrayList<x>)input_);
+		else if (generic.are_equal(type, HashMap.class)) size = get_size_hashmap_xx((HashMap<x, x>)input_); 
 
 		return size;
 	}
 
-	public static <x, y> int get_size(HashMap<x, y> input_)
+	public static <x, y> boolean are_equal(HashMap<x, y> input1_, HashMap<x, y> input2_)
 	{
-		return (input_ == null ? 0 : get_size_hashmap_xy(input_));		
+		if (!is_ok(input1_) || !is_ok(input2_)) return false;
+		
+		Class<?> type_key = get_class_key_xy(input1_);
+		Class<?> type_val = get_class_key_xy(input1_);
+		
+		return
+		(
+			(
+				generic.are_equal(type_key, get_class_key_xy(input2_)) &&
+				generic.are_equal(type_val, get_class_val_xy(input2_))
+			)
+			? input1_.equals(input2_) : false
+		);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <x> boolean are_equal(Object input1_, Object input2_)
+	{
+		if (!is_ok(input1_) || !is_ok(input2_)) return false;
+		
+		Class<?> type = generic.get_class(input1_);
+		if (!generic.is_array(type) || !generic.are_equal(type, generic.get_class(input2_))) return false;
+		
+		int size = get_size(input1_);
+		if (size != get_size(input2_)) return false;
+		
+		x[] input1 = (x[])input1_;
+		x[] input2 = (x[])input2_;
+		
+		for (int i = 0; i < size; i++)
+		{
+			if (!generic.is_ok(input1[i])) continue;
+			if (!input1[i].equals(input2[i])) return false;
+		}
+				
+		return true;
 	}
 
+	public static Object get_random(Class<?> class_)
+	{
+		Object output = null;
+		if (!generic.is_array(class_)) return output;
+		
+		if (generic.are_equal(class_, Array.class))
+		{
+			String[] temp = new String[SIZE_DEFAULT];
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = strings.get_random(strings.SIZE_SMALL);
+			}
+			
+			output = (String[])temp;
+		}
+		else if (generic.are_equal(class_, ArrayList.class))
+		{
+			ArrayList<String> temp = new ArrayList<String>();
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp.add(strings.get_random(strings.SIZE_SMALL));
+			}
+			
+			output = (ArrayList<String>)temp;
+		}
+		else if (generic.are_equal(class_, HashMap.class))
+		{
+			HashMap<String, String> temp = new HashMap<String, String>();
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp.put(Integer.toString(i), strings.get_random(strings.SIZE_SMALL));
+			}
+			
+			output = (HashMap<String, String>)temp;
+		}
+		
+		return output;
+	}
 	
 	//To be synced with generic.get_class().
 	@SuppressWarnings("unchecked")
@@ -58,14 +141,17 @@ public class arrays
 		if (!generic.is_ok(type)) return output;
 
 		int size = input_.size();
-		if (generic.classes_are_equal(type, String.class)) output = (x[])input_.toArray(new String[size]);
-		else if (generic.classes_are_equal(type, Integer.class)) output = (x[])input_.toArray(new Integer[size]);
-		else if (generic.classes_are_equal(type, Long.class)) output = (x[])input_.toArray(new Long[size]);
-		else if (generic.classes_are_equal(type, Double.class)) output = (x[])input_.toArray(new Double[size]);
-		else if (generic.classes_are_equal(type, Boolean.class)) output = (x[])input_.toArray(new Boolean[size]);
-		else if (generic.classes_are_equal(type, Class.class)) output = (x[])input_.toArray(new Class<?>[size]);
-		else if (generic.classes_are_equal(type, Method.class)) output = (x[])input_.toArray(new Method[size]);
-		else if (generic.classes_are_equal(type, Exception.class)) output = (x[])input_.toArray(new Exception[size]);
+		if (generic.are_equal(type, String.class)) output = (x[])input_.toArray(new String[size]);
+		else if (generic.are_equal(type, Integer.class)) output = (x[])input_.toArray(new Integer[size]);
+		else if (generic.are_equal(type, Long.class)) output = (x[])input_.toArray(new Long[size]);
+		else if (generic.are_equal(type, Double.class)) output = (x[])input_.toArray(new Double[size]);
+		else if (generic.are_equal(type, Boolean.class)) output = (x[])input_.toArray(new Boolean[size]);
+		else if (generic.are_equal(type, Class.class)) output = (x[])input_.toArray(new Class<?>[size]);
+		else if (generic.are_equal(type, Method.class)) output = (x[])input_.toArray(new Method[size]);
+		else if (generic.are_equal(type, Exception.class)) output = (x[])input_.toArray(new Exception[size]);
+		else if (generic.are_equal(type, size.class)) output = (x[])input_.toArray(new size[size]);
+		else if (generic.are_equal(type, data.class)) output = (x[])input_.toArray(new data[size]);
+		else if (generic.are_equal(type, field.class)) output = (x[])input_.toArray(new field[size]);
 		
 		return output;
 	}
@@ -84,9 +170,9 @@ public class arrays
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_ok(type)) return output;
 		
-		if (type.equals(Array.class)) output = get_new_array((x[])input_);
-		else if (type.equals(ArrayList.class))  output = get_new_arraylist((ArrayList<x>)input_);
-		else if (type.equals(HashMap.class)) output = get_new_hashmap((HashMap<x, x>)input_); 
+		if (generic.are_equal(type, Array.class)) output = get_new_array((x[])input_);
+		else if (generic.are_equal(type, ArrayList.class))  output = get_new_arraylist((ArrayList<x>)input_);
+		else if (generic.are_equal(type, HashMap.class)) output = get_new_hashmap((HashMap<x, x>)input_); 
 
 		return output;
 	}
@@ -104,6 +190,26 @@ public class arrays
 	private static <x> HashMap<x, x> get_new_hashmap(HashMap<x, x> input_)
 	{
 		return (!is_ok(input_) ? new HashMap<x, x>() : new HashMap<x, x>(input_));
+	}
+	
+	public static <x> Class<?> get_class_key_xx(HashMap<x, x> input_)
+	{
+		return get_class_key_val_xx(input_, true);
+	}
+	
+	public static <x> Class<?> get_class_val_xx(HashMap<x, x> input_)
+	{
+		return get_class_key_val_xx(input_, false);
+	}
+	
+	public static <x, y> Class<?> get_class_key_xy(HashMap<x, y> input_)
+	{
+		return get_class_key_val_xy(input_, true);
+	}
+	
+	public static <x, y> Class<?> get_class_val_xy(HashMap<x, y> input_)
+	{
+		return get_class_key_val_xy(input_, false);
 	}
 	
 	public static <x> Class<?> get_class_items(ArrayList<x> input_)
@@ -281,7 +387,31 @@ public class arrays
 
 		return output;
 	}
-
+	
+	private static <x> Class<?> get_class_key_val_xx(HashMap<x, x> input_, boolean is_key_)
+	{
+		if (!is_ok(input_)) return null;
+		
+		for (Entry<x, x> item: input_.entrySet())
+		{
+			return generic.get_class((is_key_ ? item.getKey() : item.getValue()));
+		}
+		
+		return null;
+	}
+	
+	private static <x, y> Class<?> get_class_key_val_xy(HashMap<x, y> input_, boolean is_key_)
+	{
+		if (!is_ok(input_)) return null;
+		
+		for (Entry<x, y> item: input_.entrySet())
+		{
+			return generic.get_class((is_key_ ? item.getKey() : item.getValue()));
+		}
+		
+		return null;
+	}
+	
 	private static <x> int get_size_array(x[] input_)
 	{
 		return input_.length;
@@ -340,7 +470,7 @@ public class arrays
 		Class<?> type = generic.get_class(array_);
 		if (!generic.is_ok(type)) return (get_ ? null : false);
 
-		if (type.equals(HashMap.class))
+		if (generic.are_equal(type, HashMap.class))
 		{
 			for (Entry<x, x> item: ((HashMap<x, x>)array_).entrySet())
 			{
