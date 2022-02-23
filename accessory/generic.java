@@ -19,6 +19,9 @@ public class generic
 		if (is_string(input_)) is_ok = strings.is_ok((String)input_);
 		else if (is_array(input_)) is_ok = arrays.is_ok(input_);
 		else if (is_boolean(input_) || is_number(input_)) is_ok = true;
+		else if (is_data(input_)) is_ok = data.is_ok((data)input_);
+		else if (is_size(input_)) is_ok = size.is_ok((size)input_);
+		else if (is_field(input_)) is_ok = field.is_ok((field)input_);
 		else is_ok = true;
 
 		return is_ok;
@@ -167,14 +170,17 @@ public class generic
 
 	public static <x> boolean are_equal(x input1_, x input2_)
 	{
+		boolean is_ok1 = is_ok(input1_);
+		boolean is_ok2 = is_ok(input2_);
+		if (!is_ok1 || !is_ok2) return (is_ok1 == is_ok2);
+
 		boolean output = false;
-		if (!is_ok(input1_) || !is_ok(input2_)) return output;
 
 		Class<?> type1 = get_class(input1_);
 		Class<?> type2 = get_class(input2_);
 		if (type1 == null || type2 == null || !type1.equals(type2)) return output;
 		
-		if (is_array(type1)) output = arrays.are_equal(type1, type2);
+		if (is_array(type1)) output = arrays.are_equal(input1_, input2_);
 		else output = input1_.equals(input2_);
 		
 		return output;
@@ -301,7 +307,10 @@ public class generic
 
 	private static boolean classes_are_equal(Class<?> class1_, Class<?> class2_)
 	{
-		if (!is_ok(class1_) || !is_ok(class2_)) return false;
+		boolean is_ok1 = is_ok(class1_);
+		boolean is_ok2 = is_ok(class2_);
+		if (!is_ok1 || !is_ok2) return (is_ok1 == is_ok2);
+
 		if (class1_.equals(class2_)) return true;
 
 		for (Entry<Class<?>, Class<?>> equivalent: classes_are_equal_equivalents().entrySet())

@@ -4,6 +4,11 @@ public class misc
 {	
 	public static final String NEW_LINE = System.lineSeparator();
 	
+	public static final String BRACKET_MAIN_OPEN = "{ ";
+	public static final String BRACKET_MAIN_CLOSE = " }";
+	public static final String BRACKET_SEC_OPEN = "(";
+	public static final String BRACKET_SEC_CLOSE = ")";
+	
 	public static final String SEPARATOR_CONTENT = " --- ";
 	public static final String SEPARATOR_SCREEN = SEPARATOR_CONTENT;
 	public static final String SEPARATOR_FILE = NEW_LINE;	

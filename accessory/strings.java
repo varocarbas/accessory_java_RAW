@@ -1,7 +1,9 @@
 package accessory;
 
+import java.lang.reflect.Method;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class strings 
 {
@@ -9,7 +11,7 @@ public class strings
 	public static final int SIZE_DEFAULT = 100;
 	public static final int SIZE_SMALL = 10;
 	public static final int SIZE_BIG = 500;
-	
+
 	static { _ini.load(); }
 
 	public static boolean is_ok(String string_)
@@ -61,7 +63,10 @@ public class strings
 
 	public static boolean are_equal(String string1_, String string2_)
 	{
-		return ((!is_ok(string1_) || !is_ok(string2_)) ? false : string1_.equals(string2_));
+		boolean is_ok1 = is_ok(string1_);
+		boolean is_ok2 = is_ok(string2_);
+		
+		return ((!is_ok1 || !is_ok2) ? (is_ok1 == is_ok2) : string1_.equals(string2_));
 	}
 
 	public static boolean are_equivalent(String string1_, String string2_)
@@ -97,7 +102,7 @@ public class strings
 	public static String substring(String string_, int start_, int length_)
 	{
 		String output = (String)defaults.get_class(String.class);
-		
+
 		int length0 = get_length(string_, false);
 		if 
 		(
@@ -112,7 +117,7 @@ public class strings
 	public static String[] split(String haystack_, String regex_, boolean normalise_, int max_size_, boolean trim_, boolean remove_wrong_)
 	{
 		String[] output = null; 
-			
+
 		try
 		{
 			String haystack = haystack_;
@@ -145,7 +150,7 @@ public class strings
 		catch (Exception e)
 		{
 			errors.manage(types.ERROR_STRING_SPLIT, e, new String[] { haystack_, regex_ }, false);
-			
+
 			output = null;
 		}
 
@@ -166,7 +171,7 @@ public class strings
 	{
 		return get_random(length_, true, true, true);
 	}
-	
+
 	public static String get_random(int length_, boolean upper_, boolean numbers_, boolean symbols_)
 	{
 		if (length_ < 1) return DEFAULT;
@@ -188,7 +193,7 @@ public class strings
 
 		return output;
 	}
-	
+
 	public static int index_of(String needle_, String haystack_, boolean normalise_)
 	{
 		if (!is_ok(needle_) || !is_ok(haystack_)) return -1;
@@ -218,7 +223,7 @@ public class strings
 	{
 		return is_number_internal(string_, true, true);		
 	}
-	
+
 	public static boolean is_number(String string_)
 	{
 		return is_number_internal(string_, false, false);	
@@ -277,36 +282,46 @@ public class strings
 	public static <x> String[] to_strings(x[] inputs_)
 	{
 		if (!arrays.is_ok(inputs_)) return null;
-		
+
 		ArrayList<String> output = new ArrayList<String>();
-		
+
 		for (x input: inputs_)
 		{
 			String temp = to_string(input);
 			if (is_ok(temp)) output.add(temp);
 		}
-		
+
 		return arrays.to_array(output);
 	}
-	
+
+	public static <x, y> String to_string(HashMap<x, y> input_)
+	{
+		return arrays.to_string(input_, null, null, null);
+	}
+
 	public static <x> String to_string(x input_)
 	{
 		if (generic.is_string(input_)) return (String)input_;
 
-		String output = (String)defaults.get_class(String.class);
+		String output = DEFAULT;
 		if (!generic.is_ok(input_)) return output;
 
-		Class<?> type = input_.getClass();
-		if (type == null) return output;
+		Class<?> type = generic.get_class(input_);
+		if (!generic.is_ok(type)) return output;
 
-		if (generic.are_equal(type, Double.class)) output = from_number_decimal((Double)input_);
+		if (generic.is_array(type)) output = (generic.are_equal(type, HashMap.class) ? arrays.to_string(input_, null, null, null) : arrays.to_string(input_, null));
+		else if (generic.are_equal(type, Class.class)) output = ((Class<?>)input_).getName();
+		else if (generic.are_equal(type, Method.class)) output = ((Method)input_).getName();
+		else if (generic.are_equal(type, Exception.class)) output = ((Exception)input_).getMessage();
+		else if (generic.are_equal(type, Double.class)) output = from_number_decimal((Double)input_);
 		else if (generic.are_equal(type, Integer.class)) output = from_number_int((Integer)input_);
 		else if (generic.are_equal(type, Long.class)) output = from_number_long((Long)input_);
 		else if (generic.are_equal(type, Boolean.class)) output = from_boolean((Boolean)input_);
-
+		else output = input_.toString();
+		
 		return output;
 	}
-
+	
 	public static Object from_string(String string_, Class<?> type_)
 	{
 		Object output = null;
@@ -333,29 +348,29 @@ public class strings
 	public static String remove_escape_many(String[] needles_, String haystack_, boolean remove_)
 	{
 		if (!arrays.is_ok(needles_) || !is_ok(haystack_)) return DEFAULT;
-		
+
 		String output = haystack_;
-		
+
 		for (String needle: needles_)
 		{
 			output = remove_escape(needle, output, remove_);
 		}
-		
+
 		return output;
 	}
-	
+
 	public static String remove_escape(String needle_, String haystack_, boolean remove_)
 	{
 		if (!is_ok(needle_) || !is_ok(haystack_)) return DEFAULT;
-		
+
 		String output = haystack_;
 		String replacement = (remove_ ? "" : "\\" + needle_);
-		
+
 		output = output.replace(needle_, replacement);
-		
+
 		return output;
 	}
-	
+
 	private static boolean matches(String string_, String[] targets_, boolean normalise_, boolean all_)
 	{
 		if (!strings.is_ok(string_) || !arrays.is_ok(targets_)) return false;

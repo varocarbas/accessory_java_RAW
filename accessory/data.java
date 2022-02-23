@@ -5,12 +5,58 @@ import java.util.Map.Entry;
 
 public class data 
 {
-	public Class<?> _class = null;
 	public String _type = null;
+	public Class<?> _class = null;
 	public size _size = null;
 
 	private static HashMap<String, Class<?>> _all_classes = new HashMap<String, Class<?>>();
 
+	public String toString()
+	{
+		String output = "";
+		
+		if (strings.is_ok(_type)) output = _type;
+		
+		if (generic.is_ok(_class))
+		{
+			if (strings.is_ok(output)) output += misc.SEPARATOR_ITEM;
+			output += strings.to_string(_class);
+		}
+		
+		if (generic.is_ok(_size)) 
+		{
+			if (strings.is_ok(output)) output += misc.SEPARATOR_ITEM;
+			output += _size.toString(false);
+		}
+		
+		return (misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE);
+	}
+
+	public boolean equals(data data2_)
+	{
+		if (!generic.is_ok(data2_)) return false;
+	
+		return 
+		(
+			strings.are_equal(_type, data2_._type) && 
+			generic.are_equal(_class, data2_._class) && 
+			size.are_equal(_size, data2_._size)
+		);		
+	}
+	
+	public static String to_string(data data_)
+	{
+		return (generic.is_ok(data_) ? data_.toString() : null);	
+	}
+	
+	public static boolean are_equal(data data1_, data data2_)
+	{
+		boolean is_ok1 = generic.is_ok(data1_);
+		boolean is_ok2 = generic.is_ok(data2_);
+		
+		return ((!is_ok1 || !is_ok2) ? (is_ok1 == is_ok2) : data1_.equals(data2_));
+	}
+	
 	public static boolean is_ok(data input_)
 	{
 		return ((input_ == null) ? false : is_ok(input_._type, input_._class, input_._size, true));
@@ -19,7 +65,7 @@ public class data
 	public static <x> boolean complies(x val_, data data_)
 	{
 		boolean is_ok = false;
-		if (!generic.is_ok(val_) || !is_ok(data_) || !class_complies(val_.getClass(), data_._class)) return is_ok;
+		if (!generic.is_ok(val_) || !is_ok(data_) || !class_complies(generic.get_class(val_), data_._class)) return is_ok;
 
 		if (generic.are_equal(data_._class, Boolean.class)) is_ok = true;
 		else 

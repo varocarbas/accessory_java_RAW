@@ -165,7 +165,7 @@ public class tests
 				}
 				else message = keys.OK.toLowerCase();
 				
-				message += misc.SEPARATOR_CONTENT + output + misc.NEW_LINE;
+				message += misc.SEPARATOR_CONTENT + strings.to_string(output) + misc.NEW_LINE;
 				System.out.print(message);
 				
 				run_outs.get(name0).put(name, is_ok);

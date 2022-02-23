@@ -5,6 +5,40 @@ public class size
 	public double _min = Double.MIN_VALUE;
 	public double _max = Double.MAX_VALUE;
 
+	public String toString()
+	{
+		return toString(true);
+	}
+	
+	public String toString(boolean is_main_)
+	{
+		String[] brackets = 
+		(
+			is_main_ ? new String[] { misc.BRACKET_MAIN_OPEN, misc.BRACKET_MAIN_CLOSE } :
+			new String[] { misc.BRACKET_SEC_OPEN, misc.BRACKET_SEC_CLOSE }
+		);
+		
+		return (brackets[0] + strings.to_string(_min) + misc.SEPARATOR_ITEM + strings.to_string(_max) + brackets[1]);
+	}
+
+	public boolean equals(size size2_)
+	{
+		return (!generic.is_ok(size2_) ? false : (_min == size2_._min && _max == size2_._max));		
+	}
+	
+	public static String to_string(size size_, boolean is_main_)
+	{
+		return (generic.is_ok(size_) ? size_.toString(is_main_) : null);	
+	}
+	
+	public static boolean are_equal(size size1_, size size2_)
+	{
+		boolean is_ok1 = generic.is_ok(size1_);
+		boolean is_ok2 = generic.is_ok(size2_);
+		
+		return ((!is_ok1 || !is_ok2) ? (is_ok1 == is_ok2) : size1_.equals(size2_));
+	}
+	
 	public static boolean is_ok(size input_)
 	{
 		return (input_ != null && input_._min <= input_._max);
