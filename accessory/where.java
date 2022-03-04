@@ -14,7 +14,8 @@ public class where
 	
 	public String toString(String source_id_)
 	{
-		if (!operand_is_ok(_operand)) return strings.DEFAULT;
+		String operand = operand_to_string(_operand);
+		if (!strings.is_ok(operand)) return strings.DEFAULT;
 		
 		boolean is_db = db.source_is_ok(source_id_);
 		
@@ -22,7 +23,7 @@ public class where
 		String value = strings.to_string(_value);
 		value = (is_db ? db.get_value(value) : value);
 		
-		String output = key + _operand + value;
+		String output = key + operand + value;
 		
 		if (link_is_ok(_link)) output += _link.toUpperCase();
 		
@@ -60,13 +61,30 @@ public class where
 		{
 			if (!is_ok(where)) continue;
 			
-			if (!link_is_ok(last_link) && !output.equals("")) output += " " + last_link + " ";
-			output += where.toString(source_id_);
+			if (!output.equals("")) output += " " + last_link + " ";
+			output += "(" + where.toString(source_id_) + ")";
 			
-			last_link = where._link;
+			last_link = (link_is_ok(where._link) ? where._link : types.LINK_AND);
 		}
 		
 		return output;	
+	}
+	
+	public static String operand_to_string(String operand_)
+	{
+		String output = strings.DEFAULT;
+		
+		String operand = check_operand(operand_);
+		if (!strings.is_ok(operand)) return output;
+		
+		if (operand.equals(types.OPERAND_EQUAL)) output = "=";
+		else if (operand.equals(types.OPERAND_NOT_EQUAL)) output = "!=";
+		else if (operand.equals(types.OPERAND_GREATER)) output = ">";
+		else if (operand.equals(types.OPERAND_GREATER_EQUAL)) output = ">=";
+		else if (operand.equals(types.OPERAND_LESS)) output = "<";
+		else if (operand.equals(types.OPERAND_LESS_EQUAL)) output = "<=";
+		
+		return output;
 	}
 	
 	public static boolean are_equal(where where1_, where where2_)
@@ -102,7 +120,7 @@ public class where
 	public where(String key_, String operand_, Object value_, String link_)
 	{
 		_key = key_;
-		_operand = operand_;
+		_operand = check_operand(operand_);
 		_value = value_;	
 		_link = link_;	
 	}
