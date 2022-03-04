@@ -34,7 +34,7 @@ public class data
 
 	public boolean equals(data data2_)
 	{
-		if (!generic.is_ok(data2_)) return false;
+		if (!is_ok(data2_)) return false;
 	
 		return 
 		(
@@ -46,13 +46,13 @@ public class data
 	
 	public static String to_string(data data_)
 	{
-		return (generic.is_ok(data_) ? data_.toString() : null);	
+		return (is_ok(data_) ? data_.toString() : strings.DEFAULT);	
 	}
 	
 	public static boolean are_equal(data data1_, data data2_)
 	{
-		boolean is_ok1 = generic.is_ok(data1_);
-		boolean is_ok2 = generic.is_ok(data2_);
+		boolean is_ok1 = is_ok(data1_);
+		boolean is_ok2 = is_ok(data2_);
 		
 		return ((!is_ok1 || !is_ok2) ? (is_ok1 == is_ok2) : data1_.equals(data2_));
 	}

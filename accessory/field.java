@@ -22,7 +22,7 @@ public class field
 
 	public boolean equals(field field2_)
 	{
-		if (!generic.is_ok(field2_)) return false;
+		if (!is_ok(field2_)) return false;
 		
 		return 
 		(
@@ -33,13 +33,13 @@ public class field
 	
 	public static String to_string(field field_)
 	{
-		return (generic.is_ok(field_) ? field_.toString() : null);	
+		return (is_ok(field_) ? field_.toString() : strings.DEFAULT);	
 	}
 	
 	public static boolean are_equal(field field1_, field field2_)
 	{
-		boolean is_ok1 = generic.is_ok(field1_);
-		boolean is_ok2 = generic.is_ok(field2_);
+		boolean is_ok1 = is_ok(field1_);
+		boolean is_ok2 = is_ok(field2_);
 		
 		return ((!is_ok1 || !is_ok2) ? (is_ok1 == is_ok2) : field1_.equals(field2_));
 	}
@@ -74,6 +74,6 @@ public class field
 
 	private static boolean is_ok(data data_, String[] further_)
 	{
-		return data.is_ok(data_);
+		return generic.is_ok(data_);
 	}
 }

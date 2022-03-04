@@ -72,6 +72,22 @@ public class types
 	public static final String DATA_LONG = "data_long";
 	public static final String DATA_DECIMAL = "data_decimal";
 	public static final String DATA_BOOLEAN = "data_boolean";
+
+	public static final String OPERAND = "operand";
+	public static final String OPERAND_EQUAL = "operand_equal";
+	public static final String OPERAND_NOT_EQUAL = "operand_not_equal";
+	public static final String OPERAND_GREATER = "operand_greater";
+	public static final String OPERAND_GREATER_EQUAL = "operand_greater_equal";
+	public static final String OPERAND_LESS = "operand_less";
+	public static final String OPERAND_LESS_EQUAL = "operand_less_equal";
+
+	public static final String LINK = "link";
+	public static final String LINK_AND = "link_and";
+	public static final String LINK_OR = "link_or";
+	
+	public static final String ORDER = "order";
+	public static final String ORDER_ASC = "order_asc";
+	public static final String ORDER_DESC = "order_desc";
 	
 	public static final String ERROR_DB = "error_db";
 	public static final String ERROR_DB_INFO = "error_db_info";
@@ -244,6 +260,16 @@ public class types
 
 			//DATA
 			DATA_STRING, DATA_INTEGER, DATA_LONG, DATA_DECIMAL, DATA_BOOLEAN,
+
+			//OPERAND
+			OPERAND_EQUAL, OPERAND_NOT_EQUAL, OPERAND_GREATER, OPERAND_GREATER_EQUAL,
+			OPERAND_LESS, OPERAND_LESS_EQUAL,
+			
+			//LINK
+			LINK_AND, LINK_OR,
+	
+			//ORDER
+			ORDER_ASC, ORDER_DESC,
 			
 			//ERROR_DB
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,

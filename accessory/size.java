@@ -23,18 +23,18 @@ public class size
 
 	public boolean equals(size size2_)
 	{
-		return (!generic.is_ok(size2_) ? false : (_min == size2_._min && _max == size2_._max));		
+		return (!is_ok(size2_) ? false : (_min == size2_._min && _max == size2_._max));		
 	}
 	
 	public static String to_string(size size_, boolean is_main_)
 	{
-		return (generic.is_ok(size_) ? size_.toString(is_main_) : null);	
+		return (is_ok(size_) ? size_.toString(is_main_) : strings.DEFAULT);	
 	}
 	
 	public static boolean are_equal(size size1_, size size2_)
 	{
-		boolean is_ok1 = generic.is_ok(size1_);
-		boolean is_ok2 = generic.is_ok(size2_);
+		boolean is_ok1 = is_ok(size1_);
+		boolean is_ok2 = is_ok(size2_);
 		
 		return ((!is_ok1 || !is_ok2) ? (is_ok1 == is_ok2) : size1_.equals(size2_));
 	}

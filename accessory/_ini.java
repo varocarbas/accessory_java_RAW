@@ -20,15 +20,15 @@ class _ini
 	private static void load_sources_logs()
 	{
 		String source = types._CONFIG_LOGS_DB_SOURCE;
-		if (db.source_exists(source)) return;
-		
-		db.add_source_main(source, types._CONFIG_LOGS);
+		if (db.source_is_ok(source)) return;
 		
 		HashMap<String, field> fields = db.get_default_fields();
 		fields.put(types._CONFIG_LOGS_DB_FIELD_ID, new field(new data(types.DATA_INTEGER, null), null));
 		fields.put(types._CONFIG_LOGS_DB_FIELD_MESSAGE, new field(new data(types.DATA_STRING, null), null));
 		
 		db.add_source(source, fields);
+		
+		db.add_source_main(source, types._CONFIG_LOGS);
 	}
 	
 	private static void load_types()

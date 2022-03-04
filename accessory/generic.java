@@ -22,6 +22,8 @@ public class generic
 		else if (is_data(input_)) is_ok = data.is_ok((data)input_);
 		else if (is_size(input_)) is_ok = size.is_ok((size)input_);
 		else if (is_field(input_)) is_ok = field.is_ok((field)input_);
+		else if (is_where(input_)) is_ok = where.is_ok((where)input_);
+		else if (is_order(input_)) is_ok = order.is_ok((order)input_);
 		else is_ok = true;
 
 		return is_ok;
@@ -75,6 +77,26 @@ public class generic
 	public static <x> boolean is_field(x input_)
 	{
 		return (input_ instanceof field);
+	}
+
+	public static boolean is_where(Class<?> input_)
+	{
+		return are_equal(input_, where.class);
+	}
+	
+	public static <x> boolean is_where(x input_)
+	{
+		return (input_ instanceof where);
+	}
+
+	public static boolean is_order(Class<?> input_)
+	{
+		return are_equal(input_, order.class);
+	}
+	
+	public static <x> boolean is_order(x input_)
+	{
+		return (input_ instanceof order);
 	}
 	
 	public static boolean is_string(Class<?> input_)
@@ -202,6 +224,8 @@ public class generic
 		else if (input_ instanceof size) type = size.class;
 		else if (input_ instanceof data) type = data.class;
 		else if (input_ instanceof field) type = field.class;
+		else if (input_ instanceof where) type = where.class;
+		else if (input_ instanceof order) type = order.class;
 		else if (input_ instanceof HashMap<?, ?>) type = HashMap.class;
 		else if (input_ instanceof ArrayList<?>) type = ArrayList.class;
 		else if (input_ instanceof Object[]) type = Array.class;
@@ -227,6 +251,8 @@ public class generic
 		classes.add(size.class);
 		classes.add(data.class);
 		classes.add(field.class);
+		classes.add(where.class);
+		classes.add(order.class);
 		
 		classes.add(String.class);
 		classes.add(Boolean.class);

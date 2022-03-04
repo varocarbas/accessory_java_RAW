@@ -81,7 +81,7 @@ class sql
 				while (data.next()) 
 				{ 
 					HashMap<String, String> row = new HashMap<String, String>();
-
+					
 					for (String col : cols)
 					{
 						String val = 
@@ -93,7 +93,7 @@ class sql
 							? data.getString(col) : strings.DEFAULT
 						);
 						if (!strings.is_ok(val)) val = strings.DEFAULT;
-
+						
 						row.put(col, val);
 					}
 

@@ -171,7 +171,9 @@ public class arrays
 		else if (generic.are_equal(type, size.class)) output = (x[])input_.toArray(new size[size]);
 		else if (generic.are_equal(type, data.class)) output = (x[])input_.toArray(new data[size]);
 		else if (generic.are_equal(type, field.class)) output = (x[])input_.toArray(new field[size]);
-		
+		else if (generic.are_equal(type, where.class)) output = (x[])input_.toArray(new where[size]);
+		else if (generic.are_equal(type, order.class)) output = (x[])input_.toArray(new order[size]);
+
 		return output;
 	}
 	
