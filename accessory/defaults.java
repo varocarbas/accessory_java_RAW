@@ -35,6 +35,11 @@ public class defaults
 	static final String DB_CREDENTIALS_PASSWORD = (String)defaults.get_class(String.class);
 	static final boolean DB_CREDENTIALS_ENCRYPTED = CREDENTIALS_ENCRYPTED;
 	static final boolean DB_ERROR_EXIT = true;
+	static final String DB_ORDER = types.DB_ORDER_ASC;
+	static final boolean DB_ORDER_FIELD = true;
+	static final String DB_WHERE_LINK = types.DB_WHERE_LINK_AND;
+	static final String DB_WHERE_OPERAND = types.DB_WHERE_OPERAND_EQUAL;
+	static final boolean DB_WHERE_LITERAL = true;
 	
 	static final String LOGS_DB_SOURCE = keys.LOG;
 	static final String LOGS_DB_FIELD_ID = keys.ID;

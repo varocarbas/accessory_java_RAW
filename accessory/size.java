@@ -33,10 +33,7 @@ public class size
 	
 	public static boolean are_equal(size size1_, size size2_)
 	{
-		boolean is_ok1 = is_ok(size1_);
-		boolean is_ok2 = is_ok(size2_);
-		
-		return ((!is_ok1 || !is_ok2) ? (is_ok1 == is_ok2) : size1_.equals(size2_));
+		return generic.are_equal(size1_, size2_);
 	}
 	
 	public static boolean is_ok(size input_)

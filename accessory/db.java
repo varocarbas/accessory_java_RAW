@@ -10,7 +10,7 @@ public class db
 	public static String _cur_source = strings.DEFAULT;
 	
 	//--- Populated via the corresponding _ini method (e.g., _ini.load_sources()).
-	private static HashMap<String, HashMap<String, field>> _sources = new HashMap<String, HashMap<String, field>>();
+	private static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
 	private static HashMap<String, String> _source_mains = new HashMap<String, String>();
 	//------
 	
@@ -51,18 +51,18 @@ public class db
 	} 
 
 
-	public static ArrayList<HashMap<String, String>> select_raw(String source_, String[] fields_, where[] wheres_, int max_rows_, order order_)
+	public static ArrayList<HashMap<String, String>> select_raw(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order order_)
 	{	
 		String source = check_source(source_);
 		
-		return select(get_table(source), get_cols(source, fields_), where.to_string(wheres_, source), max_rows_, order.to_string(order_));
+		return select(get_table(source), get_cols(source, fields_), db_where.to_string(wheres_, source), max_rows_, db_order.to_string(order_));
 	}
 
-	public static ArrayList<HashMap<String, String>> select_raw(String source_, String[] fields_, where where_, int max_rows_, order order_)
+	public static ArrayList<HashMap<String, String>> select_raw(String source_, String[] fields_, db_where where_, int max_rows_, db_order order_)
 	{
 		String source = check_source(source_);
 		
-		return select(get_table(source), get_cols(source, fields_), where.to_string(where_, source), max_rows_, order.to_string(order_));
+		return select(get_table(source), get_cols(source, fields_), db_where.to_string(where_), max_rows_, db_order.to_string(order_));
 	}
 	
 	public static ArrayList<HashMap<String, String>> select(String table_, String[] cols_, String where_, int max_rows_, String order_)
@@ -94,18 +94,18 @@ public class db
 		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
 	}
 
-	public static <x> void update_raw(String source_, HashMap<String, x> vals_raw_, where[] wheres_)
+	public static <x> void update_raw(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_)
 	{
 		String source = check_source(source_);
 		
-		update(get_table(source), adapt_inputs(source, null, vals_raw_), where.to_string(wheres_, source));
+		update(get_table(source), adapt_inputs(source, null, vals_raw_), db_where.to_string(wheres_, source));
 	}
 
-	public static void update_raw(String source_, HashMap<String, String> vals_raw_, where where_)
+	public static void update_raw(String source_, HashMap<String, String> vals_raw_, db_where where_)
 	{
 		String source = check_source(source_);
 		
-		update(get_table(source), adapt_inputs(source, null, vals_raw_), where.to_string(where_, source));
+		update(get_table(source), adapt_inputs(source, null, vals_raw_), db_where.to_string(where_));
 	}
 	
 	public static void update(String table_, HashMap<String, String> vals_, String where_)
@@ -117,18 +117,18 @@ public class db
 		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
 	}
 
-	public static void delete_raw(String source_, where[] wheres_)
+	public static void delete_raw(String source_, db_where[] wheres_)
 	{
 		String source = check_source(source_);
 		
-		delete(get_table(source), where.to_string(wheres_, source));
+		delete(get_table(source), db_where.to_string(wheres_, source));
 	}
 	
-	public static void delete_raw(String source_, where where_)
+	public static void delete_raw(String source_, db_where where_)
 	{
 		String source = check_source(source_);
 		
-		delete(get_table(source), where.to_string(where_, source));
+		delete(get_table(source), db_where.to_string(where_));
 	}
 		
 	public static void delete(String table_, String where_)
@@ -171,16 +171,16 @@ public class db
 		return (strings.is_ok(check_source(source_)));
 	}
 	
-	public static void add_source(String source_, HashMap<String, field> fields_)
+	public static void add_source(String source_, HashMap<String, db_field> fields_)
 	{
-		if (!arrays.is_ok(_sources)) _sources = new HashMap<String, HashMap<String, field>>();
+		if (!arrays.is_ok(_sources)) _sources = new HashMap<String, HashMap<String, db_field>>();
 		if (!strings.is_ok(source_) || _sources.containsKey(source_)) return;
 		
-		HashMap<String, field> fields = new HashMap<String, field>();
+		HashMap<String, db_field> fields = new HashMap<String, db_field>();
 		
-		for (Entry<String, field> item: fields_.entrySet())
+		for (Entry<String, db_field> item: fields_.entrySet())
 		{
-			fields.put(item.getKey(), new field(item.getValue()));
+			fields.put(item.getKey(), new db_field(item.getValue()));
 		}
 		
 		_sources.put(source_, fields);
@@ -203,20 +203,20 @@ public class db
 		return ((strings.is_ok(source) && _source_mains.containsKey(source)) ? db._source_mains.get(source) : strings.DEFAULT);
 	}
 	
-	public static HashMap<String, field> get_source_fields(String source_)
+	public static HashMap<String, db_field> get_source_fields(String source_)
 	{
 		String source = check_source(source_);
 		
 		return (source_is_ok(source) ? _sources.get(source) : null);
 	}
 	
-	public static HashMap<String, field> get_default_fields()
+	public static HashMap<String, db_field> get_default_fields()
 	{
-		HashMap<String, field> fields = new HashMap<String, field>();
+		HashMap<String, db_field> fields = new HashMap<String, db_field>();
 
 		size temp = new size(0.0, dates.get_time_pattern(dates.DATE_TIME).length());
-		fields.put(types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, new field(new data(accessory.types.DATA_STRING, temp), null));
-		fields.put(types._CONFIG_DB_FIELDS_DEFAULT_ID, new field(new data(accessory.types.DATA_INTEGER, null), null));
+		fields.put(types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, new db_field(new data(accessory.types.DATA_STRING, temp), null));
+		fields.put(types._CONFIG_DB_FIELDS_DEFAULT_ID, new db_field(new data(accessory.types.DATA_INTEGER, null), null));
 
 		return fields;
 	}
@@ -270,7 +270,7 @@ public class db
 		String source = check_source(source_);
 		if (!strings.is_ok(source) || !arrays.is_ok(new_)) return null;
 		
-		HashMap<String, field> fields = get_source_fields(source);
+		HashMap<String, db_field> fields = get_source_fields(source);
 		if (!arrays.is_ok(fields)) return null;
 		
 		HashMap<String, String> output = (arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>());
@@ -285,14 +285,14 @@ public class db
 		return output;
 	}
 
-	public static <x> HashMap<String, String> adapt_input(String source_, HashMap<String, String> sofar_, String field_, x val_, HashMap<String, field> fields_)
+	public static <x> HashMap<String, String> adapt_input(String source_, HashMap<String, String> sofar_, String field_, x val_, HashMap<String, db_field> fields_)
 	{
 		HashMap<String, String> output = new HashMap<String, String>(sofar_);
 
 		String source = check_source(source_);
 		
 		String id = types.check_aliases(field_);
-		if (!fields_.containsKey(id) || !field.complies(val_, fields_.get(id))) return null;
+		if (!fields_.containsKey(id) || !db_field.complies(val_, fields_.get(id))) return null;
 		
 		String val = sanitise_string(strings.to_string(val_));
 		if (!strings.is_ok(val)) return null;
@@ -389,7 +389,7 @@ public class db
 		String source = check_source(source_);
 		String field = types.check_aliases(field_);
 		
-		HashMap<String, field> fields = get_source_fields(source);
+		HashMap<String, db_field> fields = get_source_fields(source);
 		if (!arrays.is_ok(fields) || !strings.is_ok(field)) return null;
 
 		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field, val_, fields);
@@ -422,10 +422,10 @@ public class db
 		String source = check_source(source_);
 		if (!strings.is_ok(source) || !strings.is_ok(col_)) return strings.DEFAULT;
 		
-		HashMap<String, field> fields = get_source_fields(source);
+		HashMap<String, db_field> fields = get_source_fields(source);
 		if (!arrays.is_ok(fields)) return strings.DEFAULT;
 		
-		for (Entry<String, field> field: fields.entrySet())
+		for (Entry<String, db_field> field: fields.entrySet())
 		{
 			String key = field.getKey();
 			String col = get_col(source_, key);
@@ -439,7 +439,7 @@ public class db
 	{
 		if (!strings.is_ok(table_) || !arrays.is_ok(_sources)) return strings.DEFAULT;
 		
-		for (Entry<String, HashMap<String, field>> source: _sources.entrySet())
+		for (Entry<String, HashMap<String, db_field>> source: _sources.entrySet())
 		{
 			String key = source.getKey();
 			String table = get_table(key);

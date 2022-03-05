@@ -150,9 +150,10 @@ public class tests
 				Object[] args = get_args(method.getParameterTypes(), arrays.get_value(args_, name));			
 				Object output = generic.call_static_method(method, args, false);
 				
-				if (errors._triggered || !output_is_ok(output, arrays.get_value(targets_, name)))
+				Object[] targets = arrays.get_value(targets_, name);
+				if (errors._triggered || !output_is_ok(output, targets))
 				{
-					if (errors._triggered) 
+					if (errors._triggered && !arrays.is_ok(targets)) 
 					{
 						message = keys.ERROR.toUpperCase();
 						errors._triggered = false;

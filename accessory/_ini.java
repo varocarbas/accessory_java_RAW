@@ -22,9 +22,9 @@ class _ini
 		String source = types._CONFIG_LOGS_DB_SOURCE;
 		if (db.source_is_ok(source)) return;
 		
-		HashMap<String, field> fields = db.get_default_fields();
-		fields.put(types._CONFIG_LOGS_DB_FIELD_ID, new field(new data(types.DATA_INTEGER, null), null));
-		fields.put(types._CONFIG_LOGS_DB_FIELD_MESSAGE, new field(new data(types.DATA_STRING, null), null));
+		HashMap<String, db_field> fields = db.get_default_fields();
+		fields.put(types._CONFIG_LOGS_DB_FIELD_ID, new db_field(new data(types.DATA_INTEGER, null), null));
+		fields.put(types._CONFIG_LOGS_DB_FIELD_MESSAGE, new db_field(new data(types.DATA_STRING, null), null));
 		
 		db.add_source(source, fields);
 		

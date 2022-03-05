@@ -170,9 +170,9 @@ public class arrays
 		else if (generic.are_equal(type, Exception.class)) output = (x[])input_.toArray(new Exception[size]);
 		else if (generic.are_equal(type, size.class)) output = (x[])input_.toArray(new size[size]);
 		else if (generic.are_equal(type, data.class)) output = (x[])input_.toArray(new data[size]);
-		else if (generic.are_equal(type, field.class)) output = (x[])input_.toArray(new field[size]);
-		else if (generic.are_equal(type, where.class)) output = (x[])input_.toArray(new where[size]);
-		else if (generic.are_equal(type, order.class)) output = (x[])input_.toArray(new order[size]);
+		else if (generic.are_equal(type, db_field.class)) output = (x[])input_.toArray(new db_field[size]);
+		else if (generic.are_equal(type, db_where.class)) output = (x[])input_.toArray(new db_where[size]);
+		else if (generic.are_equal(type, db_order.class)) output = (x[])input_.toArray(new db_order[size]);
 
 		return output;
 	}
