@@ -24,7 +24,7 @@ public class db_order
 		
 		return 
 		(
-			generic.are_equal(_source, order2_._source) &&
+			db.sources_are_equal(_source, order2_._source) &&
 			generic.are_equal(_value, order2_._value) && 
 			generic.are_equal(_order, order2_._order) &&
 			(_is_field == order2_._is_field)
@@ -58,9 +58,9 @@ public class db_order
 
 	public db_order(String source_, String value_, String order_, boolean is_field_)
 	{
-		if (is_ok(source_, value_, order_)) return;
+		if (!is_ok(source_, value_, order_)) return;
 		
-		_source = source_;
+		_source = db.check_source(source_);
 		_value = value_;
 		_order = check_order(order_);
 		_is_field = is_field_;

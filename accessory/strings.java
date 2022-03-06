@@ -107,7 +107,7 @@ public class strings
 		if 
 		(
 			length0 < 1 || (((long)start_ + (long)length_) > (long)numbers.MAX_INT) || 
-			length_ < 1 || start_ < 0 || start_ + length_ > length0
+			start_ < 0 || start_ + length_ > length0
 		) 
 		{ return output; }
 

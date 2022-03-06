@@ -29,11 +29,12 @@ public class db_where
 		
 		return 
 		(
-			generic.are_equal(_source, where2_._source) &&
+			db.sources_are_equal(_source, where2_._source) &&
 			generic.are_equal(_key, where2_._key) &&
 			generic.are_equal(_operand, where2_._operand) &&
 			generic.are_equal(_value, where2_._value) &&
-			generic.are_equal(_link, where2_._link)
+			generic.are_equal(_link, where2_._link) &&
+			(_is_literal == where2_._is_literal)
 		);		
 	}
 	
@@ -42,7 +43,7 @@ public class db_where
 		return (is_ok(where_) ? where_.toString() : strings.DEFAULT);	
 	}
 	
-	public static String to_string(db_where[] wheres_, String source_id_)
+	public static String to_string(db_where[] wheres_)
 	{
 		String output = "";
 		if (!arrays.is_ok(wheres_)) return output;
@@ -53,7 +54,7 @@ public class db_where
 		{
 			if (!is_ok(where)) continue;
 			
-			if (!output.equals("")) output += " " + last_link + " ";
+			if (!output.equals("")) output += " " + link_to_string(last_link) + " ";
 			output += "(" + where.toString() + ")";
 			
 			last_link = (link_is_ok(where._link) ? where._link : defaults.DB_WHERE_LINK);
@@ -79,6 +80,11 @@ public class db_where
 		return output;
 	}
 	
+	public static String link_to_string(String link_)
+	{
+		return (link_is_ok(link_) ? types.remove_type(link_, types.DB_WHERE_LINK).toUpperCase() : strings.DEFAULT);
+	}
+	
 	public static boolean are_equal(db_where where1_, db_where where2_)
 	{
 		return generic.are_equal(where1_, where2_);
@@ -97,18 +103,20 @@ public class db_where
 		_key = input_._key;
 		_operand = input_._operand;
 		_value = input_._value;
+		_is_literal = input_._is_literal;
 		_link = input_._link;
 	}
 
-	public db_where(String source_, String key_, String operand_, Object value_, String link_)
+	public db_where(String source_, String key_, String operand_, Object value_, boolean is_literal_, String link_)
 	{
 		if (!is_ok(source_, key_, operand_, value_)) return;
 		
-		_source = source_;
+		_source = db.check_source(source_);
 		_key = key_;
 		_operand = check_operand(operand_);
 		_value = value_;	
-		_link = check_operand(link_);	
+		_is_literal = is_literal_;
+		_link = check_operand(link_);
 	}
 	
 	public static boolean operand_is_ok(String operand_)
@@ -133,10 +141,12 @@ public class db_where
 	
 	private static boolean is_ok(String source_, String key_, String operand_, Object value_)
 	{
+		String source = db.check_source(source_);
+		
 		return 
 		( 
-			db.source_is_ok(source_) &&
-			strings.is_ok(db.get_col(source_, key_)) &&
+			strings.is_ok(source) &&
+			db.field_is_ok(source, key_) &&
 			operand_is_ok(operand_) &&
 			generic.is_ok(value_)
 		);

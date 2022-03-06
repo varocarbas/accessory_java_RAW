@@ -55,7 +55,7 @@ public class db
 	{	
 		String source = check_source(source_);
 		
-		return select(get_table(source), get_cols(source, fields_), db_where.to_string(wheres_, source), max_rows_, db_order.to_string(order_));
+		return select(get_table(source), get_cols(source, fields_), db_where.to_string(wheres_), max_rows_, db_order.to_string(order_));
 	}
 
 	public static ArrayList<HashMap<String, String>> select_raw(String source_, String[] fields_, db_where where_, int max_rows_, db_order order_)
@@ -98,7 +98,7 @@ public class db
 	{
 		String source = check_source(source_);
 		
-		update(get_table(source), adapt_inputs(source, null, vals_raw_), db_where.to_string(wheres_, source));
+		update(get_table(source), adapt_inputs(source, null, vals_raw_), db_where.to_string(wheres_));
 	}
 
 	public static void update_raw(String source_, HashMap<String, String> vals_raw_, db_where where_)
@@ -121,7 +121,7 @@ public class db
 	{
 		String source = check_source(source_);
 		
-		delete(get_table(source), db_where.to_string(wheres_, source));
+		delete(get_table(source), db_where.to_string(wheres_));
 	}
 	
 	public static void delete_raw(String source_, db_where where_)
@@ -171,6 +171,36 @@ public class db
 		return (strings.is_ok(check_source(source_)));
 	}
 	
+	public static String check_source(String source_)
+	{
+		if (!arrays.is_ok(_sources)) 
+		{
+			_cur_source = strings.DEFAULT;
+			
+			return _cur_source;
+		}
+		
+		String source = types.check_aliases(source_);
+
+		if (strings.is_ok(source))
+		{
+			_cur_source = (_sources.containsKey(source) ? source : strings.DEFAULT);
+		}
+		else if (!_sources.containsKey(_cur_source)) _cur_source = strings.DEFAULT;
+		
+		return _cur_source;
+	}
+
+	public static boolean sources_are_equal(String source1_, String source2_)
+	{
+		return generic.are_equal(check_source(source1_), check_source(source2_));
+	}
+	
+	public static boolean field_is_ok(String source_, String field_)
+	{
+		return strings.is_ok(db.get_col(source_, field_));
+	}
+	
 	public static void add_source(String source_, HashMap<String, db_field> fields_)
 	{
 		if (!arrays.is_ok(_sources)) _sources = new HashMap<String, HashMap<String, db_field>>();
@@ -207,7 +237,7 @@ public class db
 	{
 		String source = check_source(source_);
 		
-		return (source_is_ok(source) ? _sources.get(source) : null);
+		return (strings.is_ok(source) ? _sources.get(source) : null);
 	}
 	
 	public static HashMap<String, db_field> get_default_fields()
@@ -240,7 +270,7 @@ public class db
 	public static String get_table(String source_)
 	{
 		String source = check_source(source_); 
-	
+
 		return _config.get(get_source_main(source), source);
 	}
 	
@@ -359,7 +389,7 @@ public class db
 		String source = check_source(source_);
 		
 		int size = arrays.get_size(fields_);
-		if (!source_is_ok(source) || size < 1) return null;
+		if (!strings.is_ok(source) || size < 1) return null;
 		
 		String[] cols = new String[size];
 		
@@ -369,19 +399,6 @@ public class db
 		}
 		
 		return cols;
-	}
-	
-	private static String check_source(String source_)
-	{
-		_cur_source = strings.DEFAULT;
-		if (!arrays.is_ok(_sources)) return _cur_source;
-		
-		String source = types.check_aliases(source_);
-
-		if (_sources.containsKey(source)) _cur_source = source;
-		else if (!_sources.containsKey(_cur_source)) _cur_source = strings.DEFAULT;
-		
-		return _cur_source;
 	}
 	
 	private static <x> HashMap<String, String> adapt_inputs_input(String source_, HashMap<String, String> old_, String field_, x val_)
