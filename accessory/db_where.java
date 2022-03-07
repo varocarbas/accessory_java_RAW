@@ -2,6 +2,8 @@ package accessory;
 
 public class db_where 
 {
+	public boolean _is_ok = true;
+	
 	public String _source = strings.DEFAULT;
 	public String _key = strings.DEFAULT;
 	public String _operand = defaults.DB_WHERE_OPERAND;
@@ -18,7 +20,7 @@ public class db_where
 		String value = strings.to_string(_value);
 		value = (_is_literal ? db.get_value(value) : value);
 		
-		String output = key + operand + value;
+		String output = "(" + key + operand + value + ")";
 				
 		return output;
 	}
@@ -55,10 +57,12 @@ public class db_where
 			if (!is_ok(where)) continue;
 			
 			if (!output.equals("")) output += " " + link_to_string(last_link) + " ";
-			output += "(" + where.toString() + ")";
+			output += where.toString();
 			
 			last_link = (link_is_ok(where._link) ? where._link : defaults.DB_WHERE_LINK);
 		}
+		
+		if (!output.equals("")) output = "(" + output + ")";
 		
 		return output;	
 	}
@@ -97,8 +101,10 @@ public class db_where
 
 	public db_where(db_where input_)
 	{
+		_is_ok = false;
 		if (!is_ok(input_)) return;
 
+		_is_ok = true;
 		_source = input_._source;
 		_key = input_._key;
 		_operand = input_._operand;
@@ -107,10 +113,27 @@ public class db_where
 		_link = input_._link;
 	}
 
+	public db_where(String source_, String key_, Object value_)
+	{
+		_is_ok = false;
+		String operand = defaults.DB_WHERE_OPERAND;
+		if (!is_ok(source_, key_, operand, value_)) return;
+		
+		_is_ok = true;
+		_source = source_;
+		_key = key_;
+		_operand = operand;
+		_value = value_;	
+		_is_literal = defaults.DB_WHERE_LITERAL;
+		_link = defaults.DB_WHERE_LINK;
+	}
+	
 	public db_where(String source_, String key_, String operand_, Object value_, boolean is_literal_, String link_)
 	{
+		_is_ok = false;
 		if (!is_ok(source_, key_, operand_, value_)) return;
 		
+		_is_ok = true;
 		_source = db.check_source(source_);
 		_key = key_;
 		_operand = check_operand(operand_);

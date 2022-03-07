@@ -10,60 +10,93 @@ import java.util.Map.Entry;
 class mysql 
 {  
 	static { _ini.load(); }
-
-	public static void truncate_table(String table_)
-	{
-		execute(sql.TRUNCATE, table_, null, null, null, 0, null);
-	} 
-
-	public static ArrayList<HashMap<String, String>> select(String table_, String[] cols_, String where_, int max_rows_, String order_)
-	{
-		return execute(sql.SELECT, table_, cols_, null, where_, max_rows_, order_);
-	}
-
-	public static void insert(String table_, HashMap<String, String> vals_)
-	{
-		execute(sql.INSERT, table_, null, vals_, null, 0, null);
-	}
-
-	public static void update(String table_, HashMap<String, String> vals_, String where_)
-	{
-		execute(sql.UPDATE, table_, null, vals_, where_, 0, null);
-	}
-
-	public static void delete(String table_, String where_)
-	{
-		execute(sql.DELETE, table_, null, null, where_, 0, null);
-	}
 	
 	public static String sanitise_string(String input_)
 	{
 		return strings.remove_escape_many(new String[] { "'", "\"" }, input_, false);
 	}
 	
-	private static ArrayList<HashMap<String, String>> execute(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_)
+	public static ArrayList<HashMap<String, String>> execute(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
-		String query = get_query(what_, table_, cols_, vals_, where_, max_rows_, order_);
+		String query = get_query(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 
 		boolean return_data = false;
-		if (what_.equals(sql.SELECT)) return_data = true;
+		if (what_.equals(types.DB_QUERY_SELECT)) return_data = true;
 
 		return (strings.is_ok(query) ? sql.execute_query(query, return_data, cols_) : null);
 	}
 
-	private static String get_query(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_)
+	public static String get_data_type(db_field field_)
+	{
+		String output = "";
+		if (!db_field.is_ok(field_)) return output;
+		
+		if 
+		(
+			field_._data._type.equals(types.DATA_STRING) || 
+			field_._data._type.equals(types.DATA_TIMESTAMP)
+		)
+		{
+			output = types.MYSQL_VARCHAR;
+		}
+		else if (field_._data._type.equals(types.DATA_INTEGER)) output = types.MYSQL_INT;
+		else if (field_._data._type.equals(types.DATA_LONG)) output = types.MYSQL_LONG;
+		else if (field_._data._type.equals(types.DATA_DECIMAL)) output = types.MYSQL_DECIMAL;
+		else if (field_._data._type.equals(types.DATA_BOOLEAN)) output = types.MYSQL_TINYINT;
+		else return output;
+		
+		output = types.remove_type(output, types.MYSQL);
+		String size = get_data_type_size(field_);
+		if (!strings.is_ok(size)) return output;
+		
+		output += "(" + size + ")";
+		
+		return output;
+	}
+
+	public static String get_data_type_size(db_field field_)
+	{
+		String size = "";
+		int max = (field_._data._size._max > (double)numbers.MAX_INT ? 0 : (int)field_._data._size._max);
+		
+		if (field_._data._type.equals(types.DATA_BOOLEAN)) size = "1";
+		else if (field_._data._type.equals(types.DATA_TIMESTAMP)) 
+		{
+			size = strings.to_string(dates.get_time_pattern(dates.DATE_TIME).length());
+		}
+		else if (field_._data._type.equals(types.DATA_DECIMAL))
+		{
+			int m = ((max > 65 || max < 1) ? defaults.MYSQL_DATA_SIZE_NUMBER : max);
+			int d = field_._data._size._decimals;
+			
+			if (d < 0 || d > 30 || d > m)
+			{
+				d = defaults.MYSQL_DATA_SIZE_DECIMALS;
+				if (d > m) d = m - 1;
+			}
+			
+			size = (strings.to_string(m) + "," + strings.to_string(d));
+		}
+		else if (field_._data._type.equals(types.DATA_INTEGER) || field_._data._type.equals(types.DATA_LONG))
+		{
+			size = strings.to_string(max > numbers.MAX_DIGITS_INT ? defaults.MYSQL_DATA_SIZE_NUMBER : max);
+		}
+		else if (field_._data._type.equals(types.DATA_STRING))
+		{
+			size = strings.to_string(max > 255 ? defaults.MYSQL_DATA_SIZE_STRING : max);
+		}
+		
+		return size;
+	}
+	
+	private static String get_query(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{	
 		String query = strings.DEFAULT;
-		if (!sql.params_are_ok(what_, table_, cols_, vals_, where_, max_rows_, order_)) return query;
+		if (!sql.params_are_ok(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_)) return query;
 
 		boolean is_ok = false;
 
-		if (what_.equals(sql.TRUNCATE))
-		{
-			query = "TRUNCATE TABLE " + get_variable(table_);			
-			is_ok = true;
-		}
-		else if (what_.equals(sql.SELECT))
+		if (what_.equals(types.DB_QUERY_SELECT))
 		{
 			query = "SELECT ";
 			query += (arrays.is_ok(cols_) ? get_query_cols(cols_) : "*");     	
@@ -75,7 +108,7 @@ class mysql
 
 			is_ok = true;
 		}
-		else if (what_.equals(sql.INSERT))
+		else if (what_.equals(types.DB_QUERY_INSERT))
 		{
 			query = "INSERT INTO " + get_variable(table_); 
 			String temp = get_query_cols(vals_, keys.KEY);
@@ -92,7 +125,7 @@ class mysql
 				}      		
 			} 
 		}
-		else if (what_.equals(sql.UPDATE))
+		else if (what_.equals(types.DB_QUERY_UPDATE))
 		{
 			query = "UPDATE " + get_variable(table_); 
 			
@@ -105,15 +138,57 @@ class mysql
 			
 			if (strings.is_ok(where_)) query += " WHERE " + where_;
 		}
-		else if (what_.equals(sql.DELETE))
+		else if (what_.equals(types.DB_QUERY_DELETE))
 		{
 			query = "DELETE FROM " + get_variable(table_);
 			query += " WHERE " + where_;
 
 			is_ok = true;
 		}
+		else if (what_.equals(types.DB_QUERY_TABLE_EXISTS))
+		{
+			query = "SHOW TABLES LIKE " + get_value(table_);			
+			is_ok = true;
+		}
+		else if (what_.equals(types.DB_QUERY_TABLE_CREATE))
+		{
+			query = "";
+			
+			for (Entry<String, db_field> item: cols_info_.entrySet())
+			{
+				String col = item.getKey();
+				String type = get_data_type(item.getValue());
+				if (!strings.is_ok(col) || !strings.is_ok(type)) continue;
+				
+				if (!query.equals("")) query += ", ";
+				query += get_variable(col) + " " + type;
+			}
 
-		return (is_ok ? query : strings.DEFAULT);
+			if (!query.equals("")) 
+			{
+				query = "CREATE TABLE " + get_variable(table_) + " (" + query + ")";	
+				is_ok = true;
+			}
+			else is_ok = false;
+		}
+		else if (what_.equals(types.DB_QUERY_TABLE_DROP))
+		{
+			query = "DROP TABLE " + get_variable(table_);			
+			is_ok = true;
+		}
+		else if (what_.equals(types.DB_QUERY_TABLE_TRUNCATE))
+		{
+			query = "TRUNCATE TABLE " + get_variable(table_);			
+			is_ok = true;
+		}
+
+		if (!is_ok)
+		{
+			db.manage_error(types.ERROR_DB_QUERY, null, null, query);
+			query = strings.DEFAULT;
+		}
+		
+		return query;
 	}
 
 	static String get_value(String input_)

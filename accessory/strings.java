@@ -279,6 +279,26 @@ public class strings
 		return output;
 	}
 
+	public static String[] to_strings(double[] inputs_)
+	{
+		return to_strings((Double[])generic.array_to_big(inputs_));
+	}
+	
+	public static String[] to_strings(long[] inputs_)
+	{
+		return to_strings((Long[])generic.array_to_big(inputs_));
+	}
+	
+	public static String[] to_strings(int[] inputs_)
+	{
+		return to_strings((Integer[])generic.array_to_big(inputs_));
+	}
+	
+	public static String[] to_strings(boolean[] inputs_)
+	{
+		return to_strings((Boolean[])generic.array_to_big(inputs_));
+	}
+	
 	public static <x> String[] to_strings(x[] inputs_)
 	{
 		if (!arrays.is_ok(inputs_)) return null;

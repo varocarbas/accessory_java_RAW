@@ -2,6 +2,8 @@ package accessory;
 
 public class db_field 
 {
+	public boolean _is_ok = true;
+	
 	public data _data = null;
 	public String[] _further = null;
 
@@ -53,22 +55,48 @@ public class db_field
 
 	public db_field(db_field input_)
 	{
+		_is_ok = false;
 		if (!is_ok(input_)) return;
 
+		_is_ok = true;
 		_data = new data(input_._data);
 		_further = (String[])arrays.get_new(input_._further);
 	}
 
 	public db_field(data data_, String[] further_)
 	{
+		_is_ok = false;
 		if (!is_ok(data_, further_)) return;
 
+		_is_ok = true;
 		_data = new data(data_);
 		_further = (String[])arrays.get_new(further_);
 	}
 
+	public static boolean further_is_ok(String further_)
+	{
+		return (strings.is_ok(check_further(further_)));
+	}
+	
+	public static String check_further(String further_)
+	{
+		return types.check_subtype(further_, types.get_subtypes(types.DB_FIELD_FURTHER, null), null, null);
+	}
+	
 	private static boolean is_ok(data data_, String[] further_)
 	{
-		return generic.is_ok(data_);
+		return (generic.is_ok(data_) && further_is_ok(further_));
+	}
+	
+	private static boolean further_is_ok(String[] further_)
+	{
+		if (!arrays.is_ok(further_)) return true;
+		
+		for (String item: further_)
+		{
+			if (!further_is_ok(item)) return false;
+		}
+		
+		return true;
 	}
 }

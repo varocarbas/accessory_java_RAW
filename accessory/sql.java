@@ -10,21 +10,16 @@ import java.util.Properties;
 
 class sql 
 {
-	public static final String SELECT = "select";
-	public static final String INSERT = "insert";
-	public static final String UPDATE = "update";
-	public static final String DELETE = "delete";
-	public static final String TRUNCATE = "truncate";
-
 	static { _ini.load(); }
 
-	public static boolean params_are_ok(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_)
+	public static boolean params_are_ok(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
 		if 
 		(
 			!(
-				!strings.is_ok(table_) || (what_.equals(DELETE) && !strings.is_ok(where_)) ||
-				((what_.equals(INSERT) || what_.equals(UPDATE)) && !arrays.is_ok(vals_))					
+				!strings.is_ok(table_) || (what_.equals(types.DB_QUERY_DELETE) && !strings.is_ok(where_)) ||
+				((what_.equals(types.DB_QUERY_INSERT) || what_.equals(types.DB_QUERY_UPDATE)) && !arrays.is_ok(vals_)) ||
+				(what_.equals(types.DB_QUERY_TABLE_CREATE) && !arrays.is_ok(cols_info_))
 			)
 		)
 		{ return true; }
@@ -37,7 +32,8 @@ class sql
 		if (strings.is_ok(where_)) items.put(keys.WHERE, where_);
 		if (max_rows_ > 0) items.put(keys.MAX, strings.from_number_int(max_rows_));
 		if (strings.is_ok(order_)) items.put(keys.ORDER, order_);
-
+		if (arrays.is_ok(cols_info_)) items.put(keys.INFO, arrays.to_string(cols_info_, null, null, null));
+		
 		String message = "Wrong " + what_.toUpperCase() + " query" + misc.SEPARATOR_CONTENT;
 		String temp = arrays.to_string(items, null, null, null);
 		if (strings.is_ok(temp)) message += temp;

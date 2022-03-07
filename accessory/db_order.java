@@ -2,6 +2,8 @@ package accessory;
 
 public class db_order 
 {
+	public boolean _is_ok = true;
+	
 	public String _source = strings.DEFAULT;
 	public String _value = strings.DEFAULT;
 	public String _order = defaults.DB_ORDER;
@@ -48,8 +50,10 @@ public class db_order
 	
 	public db_order(db_order input_)
 	{
+		_is_ok = false;
 		if (!is_ok(input_)) return;
 
+		_is_ok = true;
 		_source = input_._source;
 		_value = input_._value;
 		_order = input_._order;
@@ -58,8 +62,10 @@ public class db_order
 
 	public db_order(String source_, String value_, String order_, boolean is_field_)
 	{
+		_is_ok = false;
 		if (!is_ok(source_, value_, order_)) return;
 		
+		_is_ok = true;
 		_source = db.check_source(source_);
 		_value = value_;
 		_order = check_order(order_);

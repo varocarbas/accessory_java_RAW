@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 
 public class data 
 {
+	public boolean _is_ok = true;
+	
 	public String _type = null;
 	public Class<?> _class = null;
 	public size _size = null;
@@ -51,10 +53,7 @@ public class data
 	
 	public static boolean are_equal(data data1_, data data2_)
 	{
-		boolean is_ok1 = is_ok(data1_);
-		boolean is_ok2 = is_ok(data2_);
-		
-		return ((!is_ok1 || !is_ok2) ? (is_ok1 == is_ok2) : data1_.equals(data2_));
+		return generic.are_equal(data1_, data2_);
 	}
 	
 	public static boolean is_ok(data input_)
@@ -89,22 +88,38 @@ public class data
 
 	public data(data input_)
 	{
-		if (!is_ok(input_)) return;
+		_is_ok = false;
+		if (!is_ok(input_._type, input_._class, input_._size, false)) return;
 
+		_is_ok = true;
 		_type = input_._type;
 		_class = input_._class;
-		_size = update_size(_class, input_._size);
+		_size = update_size(_type, input_._size);
 	}
 
 	public data(String type_, size size_)
 	{
+		_is_ok = false;
+		
 		String type = check_type(type_);
 		Class<?> temp = get_class(type);
+		
 		if (!is_ok(type_, temp, size_, false)) return;
 
+		_is_ok = true;
 		_type = type;
 		_class = temp;
-		_size = update_size(_class, size_);
+		_size = update_size(type, size_);
+	}
+
+	public static String check_type(String type_)
+	{
+		return types.check_subtype(type_, types.get_subtypes(types.DATA, null), null, null);
+	}
+
+	public static size get_default_size(String type_)
+	{
+		return get_boundaries(type_);
 	}
 
 	private static boolean is_ok(String type_, Class<?> class_, size size_, boolean check_size_)
@@ -112,20 +127,20 @@ public class data
 		return 
 		(
 			strings.is_ok(type_) && class_is_ok(class_) &&
-			(!check_size_ || (check_size_ && size_is_ok(class_, size_)))
+			(!check_size_ || (check_size_ && size_is_ok(type_, size_)))
 		);
 	}
 
-	private static size update_size(Class<?> class_, size size_)
+	private static size update_size(String type_, size size_)
 	{
-		size boundaries = get_boundaries(class_);
+		size boundaries = get_boundaries(type_);
 
 		return new size(size.complies(size_, boundaries) ? size_ : boundaries);
 	}
 
-	private static boolean size_is_ok(Class<?> class_, size size_)
+	private static boolean size_is_ok(String type_, size size_)
 	{
-		return size.complies(size_, get_boundaries(class_));
+		return size.complies(size_, get_boundaries(type_));
 	}
 
 	private static boolean is_numeric(Class<?> class_)
@@ -138,32 +153,40 @@ public class data
 		return false;
 	}
 
-	private static size get_boundaries(Class<?> class_)
+	private static size get_boundaries(String type_)
 	{
-		size boundaries = new size(0.0, 0.0);
-
-		if (generic.are_equal(class_, String.class)) boundaries._max = (double)Integer.MAX_VALUE;
-		else if (generic.are_equal(class_, Integer.class))
+		size boundaries = new size(0.0, 0.0, defaults.SIZE_DECIMALS);
+		
+		String type = check_type(type_);
+		if (!strings.is_ok(type)) return boundaries;
+		
+		if (generic.are_equal(type, types.DATA_STRING)) boundaries._max = (double)Integer.MAX_VALUE;
+		else if (generic.are_equal(type, types.DATA_INTEGER))
 		{
 			boundaries._min = (double)numbers.MIN_INT;
 			boundaries._max = (double)numbers.MAX_INT;
 		}
-		else if (generic.are_equal(class_, Long.class))
+		else if (generic.are_equal(type, types.DATA_LONG))
 		{
 			boundaries._min = (double)numbers.MIN_LONG;
 			boundaries._max = (double)numbers.MAX_LONG;
 		}
-		else if (generic.are_equal(class_, Double.class))
+		else if (generic.are_equal(type, types.DATA_DECIMAL))
 		{
 			boundaries._min = (double)numbers.MIN_DEC;
 			boundaries._max = (double)numbers.MAX_DEC;
 		}
-		else if (generic.are_equal(class_, Boolean.class)) 
+		else if (generic.are_equal(type, types.DATA_BOOLEAN)) 
 		{
 			boundaries._min = 2.0;
 			boundaries._max = 2.0;	
 		}
-
+		else if (generic.are_equal(type, types.DATA_TIMESTAMP)) 
+		{
+			boundaries._min = 0.0;
+			boundaries._max = dates.get_time_pattern(dates.DATE_TIME).length();	
+		}
+		
 		return boundaries;
 	}
 
@@ -215,10 +238,6 @@ public class data
 		_all_classes.put(types.DATA_LONG, Long.class);
 		_all_classes.put(types.DATA_DECIMAL, Double.class);
 		_all_classes.put(types.DATA_BOOLEAN, Boolean.class);
-	}
-
-	private static String check_type(String type_)
-	{
-		return types.check_subtype(type_, types.get_subtypes(types.DATA, null), null, null);
+		_all_classes.put(types.DATA_TIMESTAMP, String.class);
 	}
 }

@@ -64,8 +64,15 @@ public class types
 	public static final String _CONFIG_DB_FIELDS_DEFAULT = "_config_db_fields_default";
 	public static final String _CONFIG_DB_FIELDS_DEFAULT_ID = "_config_db_fields_default_id";
 	public static final String _CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP = "_config_db_fields_default_timestamp";
+	
+	public static final String _CONFIG_TESTS = "_config_tests";
+	public static final String _CONFIG_TESTS_DB = "_config_tests_db";
+	public static final String _CONFIG_TESTS_DB_SOURCE = "_config_tests_db_source";
+	public static final String _CONFIG_TESTS_DB_FIELD_INT = "_config_tests_db_field_int";
+	public static final String _CONFIG_TESTS_DB_FIELD_STRING = "_config_tests_db_field_string";
+	public static final String _CONFIG_TESTS_DB_FIELD_DECIMAL = "_config_tests_db_field_decimal";
 	//------
-
+	
 	public static final String DB = "db";
 	public static final String DB_WHERE = "db_where";
 	public static final String DB_WHERE_OPERAND = "db_where_operand";
@@ -81,6 +88,29 @@ public class types
 	public static final String DB_ORDER = "db_order";
 	public static final String DB_ORDER_ASC = "db_order_asc";
 	public static final String DB_ORDER_DESC = "db_order_desc";
+	public static final String DB_FIELD_FURTHER = "db_field_further";
+	public static final String DB_FIELD_FURTHER_KEY = "db_field_further_key";
+	public static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_key_primary";
+	public static final String DB_FIELD_FURTHER_KEY_UNIQUE = "db_field_key_unique";
+	public static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";
+	
+	public static final String DB_QUERY = "db_query";
+	public static final String DB_QUERY_SELECT = "db_query_select";
+	public static final String DB_QUERY_INSERT = "db_query_insert";
+	public static final String DB_QUERY_UPDATE = "db_query_update";
+	public static final String DB_QUERY_DELETE = "db_query_delete";
+	public static final String DB_QUERY_TABLE = "db_query_table";
+	public static final String DB_QUERY_TABLE_EXISTS = "db_query_table_exists";
+	public static final String DB_QUERY_TABLE_CREATE = "db_query_table_create";
+	public static final String DB_QUERY_TABLE_DROP = "db_query_table_drop";
+	public static final String DB_QUERY_TABLE_TRUNCATE = "db_query_table_truncate";
+	
+	public static final String MYSQL = "mysql";
+	public static final String MYSQL_VARCHAR = "mysql_varchar";
+	public static final String MYSQL_INT = "mysql_int";
+	public static final String MYSQL_TINYINT = "mysql_tinyint";
+	public static final String MYSQL_LONG = "mysql_long";
+	public static final String MYSQL_DECIMAL = "mysql_decimal";
 	
 	public static final String DATA = "data";
 	public static final String DATA_STRING = "data_string";
@@ -88,6 +118,7 @@ public class types
 	public static final String DATA_LONG = "data_long";
 	public static final String DATA_DECIMAL = "data_decimal";
 	public static final String DATA_BOOLEAN = "data_boolean";
+	public static final String DATA_TIMESTAMP = "data_timestamp";
 	
 	public static final String ERROR_DB = "error_db";
 	public static final String ERROR_DB_INFO = "error_db_info";
@@ -258,6 +289,11 @@ public class types
 			//_CONFIG_DB_FIELDS_DEFAULT 
 			_CONFIG_DB_FIELDS_DEFAULT_ID, _CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, 
 
+			//_CONFIG_TESTS 
+			//_CONFIG_TESTS_DB
+			_CONFIG_TESTS_DB_SOURCE, _CONFIG_TESTS_DB_FIELD_INT,
+			_CONFIG_TESTS_DB_FIELD_STRING, _CONFIG_TESTS_DB_FIELD_DECIMAL,
+			
 			//DB
 			//DB_WHERE
 			//DB_WHERE_OPERAND
@@ -267,9 +303,16 @@ public class types
 			DB_WHERE_LINK_AND, DB_WHERE_LINK_OR,
 			//DB_ORDER
 			DB_ORDER_ASC, DB_ORDER_DESC,
+			//DB_QUERY
+			DB_QUERY_SELECT, DB_QUERY_INSERT, DB_QUERY_UPDATE, DB_QUERY_DELETE, 
+			//DB_QUERY_TABLE
+			DB_QUERY_TABLE_EXISTS, DB_QUERY_TABLE_CREATE, DB_QUERY_TABLE_DROP, DB_QUERY_TABLE_TRUNCATE,
+
+			//MYSQL
+			MYSQL_VARCHAR, MYSQL_INT, MYSQL_TINYINT, MYSQL_LONG, MYSQL_DECIMAL,
 			
 			//DATA
-			DATA_STRING, DATA_INTEGER, DATA_LONG, DATA_DECIMAL, DATA_BOOLEAN,
+			DATA_STRING, DATA_INTEGER, DATA_LONG, DATA_DECIMAL, DATA_BOOLEAN, DATA_TIMESTAMP,
 			
 			//ERROR_DB
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,

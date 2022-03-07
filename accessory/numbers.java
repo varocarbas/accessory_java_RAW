@@ -93,7 +93,7 @@ public class numbers
 	
 	public static double get_random_decimal(double min_, double max_)
 	{
-		return get_random_decimal(new size(min_, max_));
+		return get_random_decimal(new size(min_, max_, defaults.SIZE_DECIMALS));
 	}
 	
 	public static double get_random_decimal(size size_)

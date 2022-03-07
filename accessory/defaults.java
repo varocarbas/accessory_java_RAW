@@ -11,7 +11,8 @@ public class defaults
 	public static final String DIR_INI = paths.get_default_dir(keys.INI);
 	public static final String DIR_LOGS = paths.get_default_dir(keys.LOG);
 	public static final String TIME_DATE = keys.TIME; 
-
+	public static final int SIZE_DECIMALS = 3;
+	
 	static final boolean CREDENTIALS_ENCRYPTED = false;
 	static final String CREDENTIALS_WHERE = types._CONFIG_CREDENTIALS_WHERE_FILE;
 	static final String CREDENTIALS_FILE_DIR = paths.get_default_dir(keys.CREDENTIALS);
@@ -40,10 +41,19 @@ public class defaults
 	static final String DB_WHERE_LINK = types.DB_WHERE_LINK_AND;
 	static final String DB_WHERE_OPERAND = types.DB_WHERE_OPERAND_EQUAL;
 	static final boolean DB_WHERE_LITERAL = true;
+
+	static final int MYSQL_DATA_SIZE_NUMBER = 8;
+	static final int MYSQL_DATA_SIZE_DECIMALS = SIZE_DECIMALS;
+	static final int MYSQL_DATA_SIZE_STRING = strings.SIZE_DEFAULT;
 	
 	static final String LOGS_DB_SOURCE = keys.LOG;
 	static final String LOGS_DB_FIELD_ID = keys.ID;
 	static final String LOGS_DB_FIELD_MESSAGE = keys.MESSAGE;
+	
+	static final String TESTS_DB_SOURCE = keys.TEST;
+	static final String TESTS_DB_FIELD_INT = keys.INTEGER;
+	static final String TESTS_DB_FIELD_STRING = keys.STRING;
+	static final String TESTS_DB_FIELD_DECIMAL = keys.DECIMAL;
 
 	static final boolean LOGS_SCREEN = true;
 	static final boolean LOGS_FILE = true;

@@ -36,110 +36,68 @@ public class db
 		return _config.update(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_ERROR_EXIT, error_exit_);
 	}
 	
-	public static void truncate_table_raw(String source_)
-	{
-		truncate_table(get_table(source_));
-	}
-	
-	public static void truncate_table(String table_)
-	{
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
-		{
-			mysql.truncate_table(table_);
-		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
-	} 
-
-
-	public static ArrayList<HashMap<String, String>> select_raw(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order order_)
+	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order order_)
 	{	
 		String source = check_source(source_);
 		
-		return select(get_table(source), get_cols(source, fields_), db_where.to_string(wheres_), max_rows_, db_order.to_string(order_));
-	}
-
-	public static ArrayList<HashMap<String, String>> select_raw(String source_, String[] fields_, db_where where_, int max_rows_, db_order order_)
-	{
-		String source = check_source(source_);
-		
-		return select(get_table(source), get_cols(source, fields_), db_where.to_string(where_), max_rows_, db_order.to_string(order_));
+		return select_internal(get_table(source), get_cols(source, fields_), db_where.to_string(wheres_), max_rows_, db_order.to_string(order_));
 	}
 	
-	public static ArrayList<HashMap<String, String>> select(String table_, String[] cols_, String where_, int max_rows_, String order_)
-	{
-		ArrayList<HashMap<String, String>> vals = null;
-		
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
-		{
-			vals = mysql.select(table_, cols_, where_, max_rows_, order_);
-		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
-
-		return adapt_outputs(table_to_source(table_), vals);
-	}
-
-	public static <x> void insert_raw(String source_, HashMap<String, x> vals_raw_)
+	public static <x> void insert(String source_, HashMap<String, x> vals_raw_)
 	{
 		String source = check_source(source_);
 		
-		insert(get_table(source_), adapt_inputs(source, null, vals_raw_));
+		insert_internal(get_table(source_), adapt_inputs(source, null, vals_raw_));
 	}
 	
-	public static void insert(String table_, HashMap<String, String> vals_)
-	{
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
-		{
-			mysql.insert(table_, vals_);
-		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
-	}
-
-	public static <x> void update_raw(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_)
+	public static <x> void update(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_)
 	{
 		String source = check_source(source_);
 		
-		update(get_table(source), adapt_inputs(source, null, vals_raw_), db_where.to_string(wheres_));
-	}
-
-	public static void update_raw(String source_, HashMap<String, String> vals_raw_, db_where where_)
-	{
-		String source = check_source(source_);
-		
-		update(get_table(source), adapt_inputs(source, null, vals_raw_), db_where.to_string(where_));
+		update_internal(get_table(source), adapt_inputs(source, null, vals_raw_), db_where.to_string(wheres_));
 	}
 	
-	public static void update(String table_, HashMap<String, String> vals_, String where_)
-	{
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
-		{
-			mysql.update(table_, vals_, where_);
-		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
-	}
-
-	public static void delete_raw(String source_, db_where[] wheres_)
+	public static void delete(String source_, db_where[] wheres_)
 	{
 		String source = check_source(source_);
 		
-		delete(get_table(source), db_where.to_string(wheres_));
+		delete_internal(get_table(source), db_where.to_string(wheres_));
+	}
+
+	public static void create_table(String source_)
+	{
+		create_table(source_, arrays.get_value(_sources, source_));
 	}
 	
-	public static void delete_raw(String source_, db_where where_)
+	public static void create_table(String source_, HashMap<String, db_field> fields_)
 	{
-		String source = check_source(source_);
-		
-		delete(get_table(source), db_where.to_string(where_));
-	}
-		
-	public static void delete(String table_, String where_)
-	{
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
-		{
-			mysql.delete(table_, where_);
-		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
-	}
+		HashMap<String, db_field> cols = new HashMap<String, db_field>();
 
+		if (source_is_ok(source_) && arrays.is_ok(fields_))
+		{
+			for (Entry<String, db_field> item: fields_.entrySet())
+			{
+				String field = item.getKey();
+				String col = db.get_col(source_, field);
+				if (!strings.is_ok(col)) continue;
+				
+				cols.put(col, new db_field(item.getValue()));
+			}
+		}
+
+		create_table_internal(get_table(source_), cols);
+	}
+	
+	public static void drop_table(String source_)
+	{
+		drop_table_internal(get_table(source_));		
+	}
+	
+	public static void truncate_table(String source_)
+	{
+		truncate_table_internal(get_table(source_));
+	}
+	
 	public static String get_value(String input_)
 	{
 		String value = strings.DEFAULT;
@@ -236,7 +194,7 @@ public class db
 	public static HashMap<String, db_field> get_source_fields(String source_)
 	{
 		String source = check_source(source_);
-		
+
 		return (strings.is_ok(source) ? _sources.get(source) : null);
 	}
 	
@@ -244,7 +202,7 @@ public class db
 	{
 		HashMap<String, db_field> fields = new HashMap<String, db_field>();
 
-		size temp = new size(0.0, dates.get_time_pattern(dates.DATE_TIME).length());
+		size temp = new size(0.0, dates.get_time_pattern(dates.DATE_TIME).length(), 0);
 		fields.put(types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, new db_field(new data(accessory.types.DATA_STRING, temp), null));
 		fields.put(types._CONFIG_DB_FIELDS_DEFAULT_ID, new db_field(new data(accessory.types.DATA_INTEGER, null), null));
 
@@ -255,7 +213,7 @@ public class db
 	{
 		String source = check_source(source_); 
 		String field = types.check_aliases(field_);
-		
+
 		return _config.get(get_source_main(source), field);
 	}
 
@@ -349,6 +307,19 @@ public class db
 		return output; 
 	}
 
+	public static String get_data_type(db_field field_)
+	{
+		String output = "";
+		
+		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		{
+			output = mysql.get_data_type(field_);
+		}
+		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
+		
+		return output;
+	}
+	
 	static HashMap<String, String> get_credentials()
 	{
 		HashMap<String, String> output = new HashMap<String, String>();
@@ -382,6 +353,54 @@ public class db
 		String type = types.check_aliases(type_);
 
 		errors.manage_db(type, query_, e_, message_);
+	}
+
+	private static ArrayList<HashMap<String, String>> select_internal(String table_, String[] cols_, String where_, int max_rows_, String order_)
+	{
+		return adapt_outputs(table_to_source(table_), execute_type(types.DB_QUERY_SELECT, table_, cols_, null, where_, max_rows_, order_, null));
+	}
+	
+	private static void insert_internal(String table_, HashMap<String, String> vals_)
+	{
+		execute_type(types.DB_QUERY_INSERT, table_, null, vals_, null, 0, null, null);
+	}
+	
+	private static void update_internal(String table_, HashMap<String, String> vals_, String where_)
+	{
+		execute_type(types.DB_QUERY_UPDATE, table_, null, vals_, where_, 0, null, null);
+	}
+
+	private static void delete_internal(String table_, String where_)
+	{
+		execute_type(types.DB_QUERY_DELETE, table_, null, null, where_, 0, null, null);
+	}
+	
+	private static void create_table_internal(String table_, HashMap<String, db_field> cols_)
+	{
+		execute_type(types.DB_QUERY_TABLE_CREATE, table_, null, null, null, 0, null, cols_);
+	} 
+	
+	private static void drop_table_internal(String table_)
+	{
+		execute_type(types.DB_QUERY_TABLE_DROP, table_, null, null, null, 0, null, null);
+	} 
+	
+	private static void truncate_table_internal(String table_)
+	{
+		execute_type(types.DB_QUERY_TABLE_TRUNCATE, table_, null, null, null, 0, null, null);
+	} 
+	
+	public static ArrayList<HashMap<String, String>> execute_type(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	{
+		ArrayList<HashMap<String, String>> output = null;
+		
+		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		{
+			output = mysql.execute(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
+		}
+		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
+		
+		return output;
 	}
 	
 	private static String[] get_cols(String source_, String[] fields_)
@@ -425,12 +444,15 @@ public class db
 			
 			for (Entry<String, String> item2: item.entrySet())
 			{
-				output.put(col_to_field(source_, item2.getKey()), item2.getValue());
+				String key = col_to_field(source_, item2.getKey());
+				if (!strings.is_ok(key)) continue;
+
+				output.put(key, item2.getValue());
 			}
 			
 			outputs.add(output);
 		}
-		
+
 		return outputs;
 	}
 	

@@ -173,7 +173,7 @@ public class _config
 		String main = types.check_aliases(main_);
 		if (!strings.is_ok(main) || !arrays.is_ok(subtypes_)) return false;
 
-		_subtypes.put(main, arrays.new_instance(subtypes_));
+		_subtypes.put(main, (String[])arrays.get_new(subtypes_));
 
 		return true;
 	}
@@ -209,7 +209,7 @@ public class _config
 
 		return output;
 	}
-
+	
 	private static <x> boolean update_matches(String type_, String key_, x val_, boolean update_, boolean ini_)
 	{
 		boolean is_ok = false;

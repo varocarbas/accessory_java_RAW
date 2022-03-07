@@ -15,7 +15,11 @@ public class arrays
 
 	public static final Class<?>[] get_all_classes()
 	{
-		return new Class<?>[] { HashMap.class, ArrayList.class, Array.class };
+		return new Class<?>[] 
+		{ 
+			HashMap.class, ArrayList.class, Array.class,
+			double[].class, long[].class, int[].class, boolean[].class //!!!
+		};
 	}
 
 	public static <x, y> boolean is_ok(HashMap<x, y> input_)
@@ -34,6 +38,7 @@ public class arrays
 	}
 	
 	@SuppressWarnings("unchecked")
+	//To be synced with get_all_classes().
 	public static <x> int get_size(Object input_)
 	{
 		int size = 0;
@@ -42,13 +47,20 @@ public class arrays
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_ok(type)) return size;
 		
-		if (generic.are_equal(type, Array.class)) size = get_size_array((x[])input_);
+		if (generic.is_array_small_big(type)) 
+		{
+			if (input_ instanceof double[]) size = ((double[])input_).length;
+			else if (input_ instanceof long[]) size = ((long[])input_).length;
+			else if (input_ instanceof int[]) size = ((int[])input_).length;
+			else if (input_ instanceof boolean[]) size = ((boolean[])input_).length;
+			else size = ((Object[])input_).length;
+		}
 		else if (generic.are_equal(type, ArrayList.class)) size = get_size_arraylist((ArrayList<x>)input_);
 		else if (generic.are_equal(type, HashMap.class)) size = get_size_hashmap_xx((HashMap<x, x>)input_); 
 
 		return size;
 	}
-
+	
 	public static <x, y> boolean are_equal(HashMap<x, y> input1_, HashMap<x, y> input2_)
 	{
 		boolean is_ok1 = is_ok(input1_);
@@ -66,6 +78,26 @@ public class arrays
 			)
 			? input1_.equals(input2_) : false
 		);
+	}
+	
+	public static boolean are_equal(double[] input1_, double[] input2_)
+	{
+		return are_equal(generic.array_to_big(input1_), generic.array_to_big(input2_));
+	}
+	
+	public static boolean are_equal(long[] input1_, long[] input2_)
+	{
+		return are_equal(generic.array_to_big(input1_), generic.array_to_big(input2_));
+	}
+	
+	public static boolean are_equal(int[] input1_, int[] input2_)
+	{
+		return are_equal(generic.array_to_big(input1_), generic.array_to_big(input2_));
+	}
+	
+	public static boolean are_equal(boolean[] input1_, boolean[] input2_)
+	{
+		return are_equal(generic.array_to_big(input1_), generic.array_to_big(input2_));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -108,6 +140,7 @@ public class arrays
 		return true;
 	}
 
+	//To be synced with get_all_classes().
 	public static Object get_random(Class<?> class_)
 	{
 		Object output = null;
@@ -152,27 +185,28 @@ public class arrays
 	
 	//To be synced with generic.get_class().
 	@SuppressWarnings("unchecked")
-	public static <x> x[] to_array(ArrayList<x> input_)
+	public static <x> x[] to_array(Object input_)
 	{
 		x[] output = null;
-
-		Class<?> type = get_class_items(input_);
+		if (input_ == null || !generic.are_equal(generic.get_class(input_), ArrayList.class)) return output;
+		
+		Class<?> type = get_class_items((ArrayList<x>)input_);
 		if (!generic.is_ok(type)) return output;
 
-		int size = input_.size();
-		if (generic.are_equal(type, String.class)) output = (x[])input_.toArray(new String[size]);
-		else if (generic.are_equal(type, Integer.class)) output = (x[])input_.toArray(new Integer[size]);
-		else if (generic.are_equal(type, Long.class)) output = (x[])input_.toArray(new Long[size]);
-		else if (generic.are_equal(type, Double.class)) output = (x[])input_.toArray(new Double[size]);
-		else if (generic.are_equal(type, Boolean.class)) output = (x[])input_.toArray(new Boolean[size]);
-		else if (generic.are_equal(type, Class.class)) output = (x[])input_.toArray(new Class<?>[size]);
-		else if (generic.are_equal(type, Method.class)) output = (x[])input_.toArray(new Method[size]);
-		else if (generic.are_equal(type, Exception.class)) output = (x[])input_.toArray(new Exception[size]);
-		else if (generic.are_equal(type, size.class)) output = (x[])input_.toArray(new size[size]);
-		else if (generic.are_equal(type, data.class)) output = (x[])input_.toArray(new data[size]);
-		else if (generic.are_equal(type, db_field.class)) output = (x[])input_.toArray(new db_field[size]);
-		else if (generic.are_equal(type, db_where.class)) output = (x[])input_.toArray(new db_where[size]);
-		else if (generic.are_equal(type, db_order.class)) output = (x[])input_.toArray(new db_order[size]);
+		int size = ((ArrayList<x>)input_).size();
+		if (generic.are_equal(type, String.class)) output = (x[])((ArrayList<x>)input_).toArray(new String[size]);
+		else if (generic.are_equal(type, Integer.class)) output = (x[])((ArrayList<x>)input_).toArray(new Integer[size]);
+		else if (generic.are_equal(type, Long.class)) output = (x[])((ArrayList<x>)input_).toArray(new Long[size]);
+		else if (generic.are_equal(type, Double.class)) output = (x[])((ArrayList<x>)input_).toArray(new Double[size]);
+		else if (generic.are_equal(type, Boolean.class)) output = (x[])((ArrayList<x>)input_).toArray(new Boolean[size]);
+		else if (generic.are_equal(type, Class.class)) output = (x[])((ArrayList<x>)input_).toArray(new Class<?>[size]);
+		else if (generic.are_equal(type, Method.class)) output = (x[])((ArrayList<x>)input_).toArray(new Method[size]);
+		else if (generic.are_equal(type, Exception.class)) output = (x[])((ArrayList<x>)input_).toArray(new Exception[size]);
+		else if (generic.are_equal(type, size.class)) output = (x[])((ArrayList<x>)input_).toArray(new size[size]);
+		else if (generic.are_equal(type, data.class)) output = (x[])((ArrayList<x>)input_).toArray(new data[size]);
+		else if (generic.are_equal(type, db_field.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_field[size]);
+		else if (generic.are_equal(type, db_where.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_where[size]);
+		else if (generic.are_equal(type, db_order.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_order[size]);
 
 		return output;
 	}
@@ -183,6 +217,7 @@ public class arrays
 	}
 	
 	@SuppressWarnings("unchecked")
+	//To be synced with get_all_classes().
 	public static <x> Object get_new(Object input_)
 	{
 		Object output = null;
@@ -191,13 +226,37 @@ public class arrays
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_ok(type)) return output;
 		
-		if (generic.are_equal(type, Array.class)) output = get_new_array((x[])input_);
+		if (generic.are_equal(type, double[].class)) output = get_new_array((double[])input_);
+		else if (generic.are_equal(type, long[].class)) output = get_new_array((long[])input_);
+		else if (generic.are_equal(type, int[].class)) output = get_new_array((int[])input_);
+		else if (generic.are_equal(type, boolean[].class)) output = get_new_array((boolean[])input_);
+		else if (generic.are_equal(type, Array.class)) output = get_new_array((x[])input_);
 		else if (generic.are_equal(type, ArrayList.class))  output = get_new_arraylist((ArrayList<x>)input_);
 		else if (generic.are_equal(type, HashMap.class)) output = get_new_hashmap((HashMap<x, x>)input_); 
 
 		return output;
 	}
 
+	public static double[] get_new_array(double[] input_)
+	{
+		return (double[])generic.array_to_small(get_new_array((Double[])generic.array_to_big(input_)));
+	}
+	
+	public static long[] get_new_array(long[] input_)
+	{
+		return (long[])generic.array_to_small(get_new_array((Long[])generic.array_to_big(input_)));
+	}
+	
+	public static int[] get_new_array(int[] input_)
+	{
+		return (int[])generic.array_to_small(get_new_array((Integer[])generic.array_to_big(input_)));
+	}
+	
+	public static boolean[] get_new_array(boolean[] input_)
+	{
+		return (boolean[])generic.array_to_small(get_new_array((Boolean[])generic.array_to_big(input_)));
+	}
+	
 	private static <x> x[] get_new_array(x[] input_)
 	{
 		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
@@ -238,21 +297,56 @@ public class arrays
 		return (!is_ok(input_) ? null : generic.get_class(input_.get(0)));
 	}
 
+	public static Class<?> get_class_items(double[] input_)
+	{
+		return double[].class;
+	}
+	
+	public static Class<?> get_class_items(long[] input_)
+	{
+		return long[].class;
+	}
+	
+	public static Class<?> get_class_items(int[] input_)
+	{
+		return int[].class;
+	}
+	
+	public static Class<?> get_class_items(boolean[] input_)
+	{
+		return boolean[].class;
+	}
+	
 	public static <x> Class<?> get_class_items(x[] input_)
 	{
 		return (!is_ok(input_) ? null : generic.get_class(input_[0]));
 	}
 	
+	public static ArrayList<Double> to_arraylist(double[] input_)
+	{
+		return (is_ok(input_) ? new ArrayList<Double>(Arrays.asList((Double[])generic.array_to_big(input_))) : new ArrayList<Double>());
+	}
+	
+	public static ArrayList<Long> to_arraylist(long[] input_)
+	{
+		return (is_ok(input_) ? new ArrayList<Long>(Arrays.asList((Long[])generic.array_to_big(input_))) : new ArrayList<Long>());
+	}
+	
+	public static ArrayList<Integer> to_arraylist(int[] input_)
+	{
+		return (is_ok(input_) ? new ArrayList<Integer>(Arrays.asList((Integer[])generic.array_to_big(input_))) : new ArrayList<Integer>());
+	}
+	
+	public static ArrayList<Boolean> to_arraylist(boolean[] input_)
+	{
+		return (is_ok(input_) ? new ArrayList<Boolean>(Arrays.asList((Boolean[])generic.array_to_big(input_))) : new ArrayList<Boolean>());
+	}
+	
 	public static <x> ArrayList<x> to_arraylist(x[] input_)
 	{
 		return (is_ok(input_) ? new ArrayList<x>(Arrays.asList(input_)) : new ArrayList<x>());
-	}
-
-	public static <x> String[] new_instance(String[] input_)
-	{
-		return to_array(to_arraylist(input_));
-	}
-
+	}	
+	
 	public static ArrayList<String> clean(ArrayList<String> input_, boolean trim_, boolean remove_wrong_)
 	{
 		if (!is_ok(input_)) return null;
@@ -281,6 +375,26 @@ public class arrays
 		return to_array(output);
 	}
 
+	public static double[] get_range(double[] input_, int start_i, int size_)
+	{
+		return (double[])generic.array_to_small(get_range((Double[])generic.array_to_big(input_), start_i, size_));
+	}
+
+	public static long[] get_range(long[] input_, int start_i, int size_)
+	{
+		return (long[])generic.array_to_small(get_range((Long[])generic.array_to_big(input_), start_i, size_));
+	}
+
+	public static int[] get_range(int[] input_, int start_i, int size_)
+	{
+		return (int[])generic.array_to_small(get_range((Integer[])generic.array_to_big(input_), start_i, size_));
+	}
+
+	public static boolean[] get_range(boolean[] input_, int start_i, int size_)
+	{
+		return (boolean[])generic.array_to_small(get_range((Boolean[])generic.array_to_big(input_), start_i, size_));
+	}
+	
 	public static <x> x[] get_range(x[] input_, int start_i, int size_)
 	{
 		int size0 = get_size(input_);
@@ -305,6 +419,26 @@ public class arrays
 		return (x)(!arrays.is_ok(array_) ? null : key_value_get_exists(array_, key_, false, true));
 	}
 
+	public static <x, y> boolean keys_exist(HashMap<x, y> array_, double[] keys_)
+	{
+		return keys_exist(array_, (Double[])generic.array_to_big(keys_));
+	}
+
+	public static <x, y> boolean keys_exist(HashMap<x, y> array_, long[] keys_)
+	{
+		return keys_exist(array_, (Long[])generic.array_to_big(keys_));
+	}
+
+	public static <x, y> boolean keys_exist(HashMap<x, y> array_, int[] keys_)
+	{
+		return keys_exist(array_, (Integer[])generic.array_to_big(keys_));
+	}
+
+	public static <x, y> boolean keys_exist(HashMap<x, y> array_, boolean[] keys_)
+	{
+		return keys_exist(array_, (Boolean[])generic.array_to_big(keys_));
+	}
+	
 	public static <x, y> boolean keys_exist(HashMap<x, y> array_, x[] keys_)
 	{
 		if (!arrays.is_ok(array_) || !arrays.is_ok(keys_)) return false;
@@ -325,10 +459,30 @@ public class arrays
 			(boolean)key_value_get_exists(array_, key_, null, true, false)
 		);	
 	}
-
+	
+	public static <x> boolean keys_exist(Object array_, double[] keys_)
+	{
+		return keys_exist(array_, (Double[])generic.array_to_big(keys_));
+	}
+	
+	public static <x> boolean keys_exist(Object array_, long[] keys_)
+	{
+		return keys_exist(array_, (Long[])generic.array_to_big(keys_));
+	}
+	
+	public static <x> boolean keys_exist(Object array_, int[] keys_)
+	{
+		return keys_exist(array_, (Integer[])generic.array_to_big(keys_));
+	}
+	
+	public static <x> boolean keys_exist(Object array_, boolean[] keys_)
+	{
+		return keys_exist(array_, (Boolean[])generic.array_to_big(keys_));
+	}
+	
 	public static <x> boolean keys_exist(Object array_, x[] keys_)
 	{
-		if (!arrays.is_ok(array_) || !arrays.is_ok(keys_)) return false;
+		if (!arrays.is_ok(array_) || !arrays.is_ok(keys_) || !generic.are_equal(generic.get_class(array_), HashMap.class)) return false;
 
 		for (x key: keys_)
 		{
@@ -356,6 +510,26 @@ public class arrays
 		);
 	}
 
+	public static boolean value_exists(double[] array_, double value_)
+	{
+		return value_exists(generic.array_to_big(array_), (Double)value_);
+	}
+	
+	public static boolean value_exists(long[] array_, long value_)
+	{
+		return value_exists(generic.array_to_big(array_), (Long)value_);
+	}
+	
+	public static boolean value_exists(int[] array_, int value_)
+	{
+		return value_exists(generic.array_to_big(array_), (Integer)value_);
+	}
+	
+	public static boolean value_exists(boolean[] array_, boolean value_)
+	{
+		return value_exists(generic.array_to_big(array_), (Boolean)value_);
+	}
+	
 	public static <x> boolean value_exists(Object array_, x value_)
 	{
 		return 
@@ -420,17 +594,37 @@ public class arrays
 		return output;
 	}
 
+	public static String to_string(double[] input_, String separator_)
+	{
+		return to_string(generic.array_to_big(input_), separator_);
+	}
+	
+	public static String to_string(long[] input_, String separator_)
+	{
+		return to_string(generic.array_to_big(input_), separator_);
+	}
+	
+	public static String to_string(int[] input_, String separator_)
+	{
+		return to_string(generic.array_to_big(input_), separator_);
+	}
+	
+	public static String to_string(boolean[] input_, String separator_)
+	{
+		return to_string(generic.array_to_big(input_), separator_);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <x> String to_string(Object input_, String separator_)
 	{
 		String output = strings.DEFAULT;
 		if (!arrays.is_ok(input_)) return output;
-
+	
 		Class<?> type = generic.get_class(input_);
-		boolean is_array = generic.are_equal(type, Array.class);
+		boolean is_array = generic.is_array_small_big(type);
 		boolean is_arraylist = generic.are_equal(type, ArrayList.class);
 		if (!is_array && !is_arraylist) return output;
-		
+	
 		output = "";
 		String separator = (strings.is_ok(separator_) ? separator_ : misc.SEPARATOR_ITEM);
 
@@ -482,11 +676,6 @@ public class arrays
 		}
 		
 		return null;
-	}
-	
-	private static <x> int get_size_array(x[] input_)
-	{
-		return input_.length;
 	}
 
 	private static <x> int get_size_arraylist(ArrayList<x> input_)

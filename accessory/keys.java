@@ -58,6 +58,9 @@ public class keys
 	public static final String STOP = "stop";
 	public static final String END = "end";
 	public static final String TEST = "test";
+	public static final String INFO = "info";
+	public static final String INTEGER = "integer";
+	public static final String DECIMAL = "decimal";
 	
 	static { _ini.load(); }
 }

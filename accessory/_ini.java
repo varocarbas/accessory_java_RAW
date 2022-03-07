@@ -3,18 +3,28 @@ package accessory;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-class _ini 
+public class _ini 
 {
-	//This method is expected to be called every time a static class is loaded.
+	//Method expected to be called every time a static class is loaded.
 	public static void load() 
 	{
 		load_types();
 		load_sources();
 	}
+
+	//Method expected to be called together with each load_config_[source]().
+	public static void load_config_default_fields(String type_)
+	{
+		_config.update_ini(type_, types._CONFIG_DB_FIELDS_DEFAULT_ID, defaults.DB_FIELDS_DEFAULT_ID);
+		_config.update_ini(type_, types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, defaults.DB_FIELDS_DEFAULT_TIMESTAMP);	
+	}
 	
 	private static void load_sources()
 	{
 		load_sources_logs();
+		load_sources_tests();
+		
+		load_sources_mains();
 	}
 	
 	private static void load_sources_logs()
@@ -27,8 +37,25 @@ class _ini
 		fields.put(types._CONFIG_LOGS_DB_FIELD_MESSAGE, new db_field(new data(types.DATA_STRING, null), null));
 		
 		db.add_source(source, fields);
+	}
+
+	private static void load_sources_tests()
+	{
+		String source = types._CONFIG_TESTS_DB_SOURCE;
+		if (db.source_is_ok(source)) return;
 		
-		db.add_source_main(source, types._CONFIG_LOGS);
+		HashMap<String, db_field> fields = db.get_default_fields();
+		fields.put(types._CONFIG_TESTS_DB_FIELD_INT, new db_field(new data(types.DATA_INTEGER, null), null));
+		fields.put(types._CONFIG_TESTS_DB_FIELD_STRING, new db_field(new data(types.DATA_STRING, null), null));
+		fields.put(types._CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(new data(types.DATA_DECIMAL, null), null));
+
+		db.add_source(source, fields);
+	}
+	
+	private static void load_sources_mains()
+	{
+		db.add_source_main(types._CONFIG_LOGS_DB_SOURCE, types._CONFIG_LOGS);
+		db.add_source_main(types._CONFIG_TESTS_DB_SOURCE, types._CONFIG_TESTS);
 	}
 	
 	private static void load_types()
@@ -59,12 +86,12 @@ class _ini
 		load_config_basic();
 		load_config_db();
 		load_config_credentials();
-		load_config_logs();
+		load_config_sources();
 
 		load_config_subtypes();
 		load_config_linked();
 	}
-
+	
 	private static void load_config_basic()
 	{
 		String type = types._CONFIG_BASIC;
@@ -93,7 +120,13 @@ class _ini
 		_config.update_ini(type, types._CONFIG_CREDENTIALS_FILE_PASSWORD, defaults.CREDENTIALS_FILE_PASSWORD);
 		_config.update_ini(type, types._CONFIG_CREDENTIALS_FILE_ENCRYPTED, defaults.CREDENTIALS_FILE_ENCRYPTED);
 	}
-
+	
+	private static void load_config_sources()
+	{
+		load_config_logs();
+		load_config_tests();
+	}
+	
 	private static void load_config_logs()
 	{
 		String type = types._CONFIG_LOGS;
@@ -103,6 +136,8 @@ class _ini
 		_config.update_ini(type, types._CONFIG_LOGS_OUT_FILE, strings.from_boolean(defaults.LOGS_FILE));
 		_config.update_ini(type, types._CONFIG_LOGS_OUT_DB, strings.from_boolean(defaults.LOGS_DB));
 
+		load_config_default_fields(type);
+		
 		load_config_logs_db(type);
 	}
 
@@ -113,6 +148,19 @@ class _ini
 		_config.update_ini(type_, types._CONFIG_LOGS_DB_FIELD_MESSAGE, defaults.LOGS_DB_FIELD_MESSAGE);
 	}
 
+	private static void load_config_tests()
+	{
+		String type = types._CONFIG_TESTS;
+
+		_config.update_ini(type, types._CONFIG_TESTS_DB, defaults.DB_NAME);
+		_config.update_ini(type, types._CONFIG_TESTS_DB_SOURCE, defaults.TESTS_DB_SOURCE);
+		_config.update_ini(type, types._CONFIG_TESTS_DB_FIELD_INT, defaults.TESTS_DB_FIELD_INT);
+		_config.update_ini(type, types._CONFIG_TESTS_DB_FIELD_STRING, defaults.TESTS_DB_FIELD_STRING);
+		_config.update_ini(type, types._CONFIG_TESTS_DB_FIELD_DECIMAL, defaults.TESTS_DB_FIELD_DECIMAL);
+	
+		load_config_default_fields(type);
+	}
+	
 	private static void load_config_subtypes()
 	{	
 		String type = types._CONFIG_DB;
@@ -156,8 +204,6 @@ class _ini
 		vals.put(types._CONFIG_DB_NAME, defaults.DB_NAME);
 		vals.put(types._CONFIG_DB_HOST, defaults.DB_HOST);
 		vals.put(types._CONFIG_DB_USER, defaults.DB_USER);
-		vals.put(types._CONFIG_DB_FIELDS_DEFAULT_ID, defaults.DB_FIELDS_DEFAULT_ID);
-		vals.put(types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, defaults.DB_FIELDS_DEFAULT_TIMESTAMP);
 		vals.put(types._CONFIG_DB_ERROR_EXIT, strings.from_boolean(defaults.DB_ERROR_EXIT));
 		vals.put(types._CONFIG_DB_CREDENTIALS_TYPE, defaults.DB_CREDENTIALS_TYPE);
 		vals.put(types._CONFIG_DB_CREDENTIALS_WHERE, defaults.DB_CREDENTIALS_WHERE);
