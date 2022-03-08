@@ -11,7 +11,7 @@ public class errors
 
 	public static void manage(HashMap<String, String> info_, boolean exit_)
 	{			
-		String message = get_message(info_);
+		String message = get_all(info_);
 
 		logs.update(message, arrays.get_value(info_, keys.ID));
 
@@ -22,19 +22,18 @@ public class errors
 
 	public static void manage(String type_, Exception e_, String[] further_, boolean exit_)
 	{		
-		String message = (strings.is_ok(type_) ? type_ : keys.ERROR) + misc.SEPARATOR_CONTENT;
-
-		if (generic.is_ok(e_)) message += keys.EXCEPTION + ": " + e_.getMessage() + misc.SEPARATOR_CONTENT; 
+		String all = (strings.is_ok(type_) ? type_ : keys.ERROR);
+		all += misc.SEPARATOR_CONTENT + get_message(e_, type_);
 
 		if (arrays.is_ok(further_))
 		{
 			for (String val: further_)
 			{
-				message += val + misc.SEPARATOR_CONTENT;
+				all += misc.SEPARATOR_CONTENT + val;
 			}
 		}
 
-		logs.update(message, null);
+		logs.update(all, null);
 
 		_triggered = true;
 		
@@ -82,12 +81,8 @@ public class errors
 		info.put(keys.TYPE, type);
 
 		String message = message_;
-		if (generic.is_ok(e_)) message = e_.getMessage();
-		else if (!strings.is_ok(message)) 
-		{
-			message = ("Wrong " + types.remove_type(type, types.ERROR_DB));
-		}
-
+		String message2 = get_message(e_, type_);
+		if (strings.is_ok(message2) && (generic.is_ok(e_) || strings.is_ok(message))) message = message2;
 		info.put(keys.MESSAGE, message);
 
 		if (strings.is_ok(query_)) info.put(keys.QUERY, query_);
@@ -116,22 +111,36 @@ public class errors
 
 		info.put(keys.TYPE, type);
 		if (strings.is_ok(path_)) info.put(keys.PATH, path_);
-		if (e_ != null && e_ instanceof Exception) info.put(keys.MESSAGE, e_.getMessage());
-
+		info.put(keys.MESSAGE, get_message(e_, type_));
+		
 		return info;
 	}
 
-	private static String get_message(HashMap<String, String> info_)
+	private static String get_all(HashMap<String, String> info_)
 	{
 		String separator = misc.SEPARATOR_CONTENT;
 
-		String message = (info_.containsKey(keys.TYPE) ? info_.get(keys.TYPE) : keys.ERROR).toUpperCase();
-		message += separator;
+		String all = (info_.containsKey(keys.TYPE) ? info_.get(keys.TYPE) : keys.ERROR).toUpperCase();
+		all += separator;
 
-		if (!arrays.is_ok(info_)) return message;
+		if (!arrays.is_ok(info_)) return all;
 
-		message += arrays.to_string(info_, separator, ": ", new String[] { keys.LOG });
+		all += arrays.to_string(info_, separator, misc.SEPARATOR_KEYVAL, new String[] { keys.LOG });
 
+		return all;
+	}
+	
+	private static String get_message(Exception e_, String type_)
+	{
+		String message = "";
+		
+		if (generic.is_ok(e_)) message = e_.getMessage();
+		else if (strings.is_ok(type_)) 
+		{
+			String type = types.remove_type(type_, types.ERROR_DB);
+			if (strings.is_ok(type)) message = "Wrong " + type;
+		}
+		
 		return message;
 	}
 }

@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 public class _config 
 {	
-	//--- Initialiased via _ini.load().
+	//--- Initialiased via _config_ini.load().
 	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
 	private static HashMap<String, String[]> _subtypes = new HashMap<String, String[]>();
 	private static HashMap<String, String[]> _linked = new HashMap<String, String[]>();

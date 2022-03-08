@@ -24,6 +24,16 @@ public class tests
 		return outputs;
 	}
 
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_db(HashMap<String, HashMap<String, Boolean>> outputs_)
+	{
+		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
+		if (arrays.is_ok(outputs_)) outputs = new HashMap<String, HashMap<String, Boolean>>(outputs_);
+		
+		
+		
+		return outputs;	
+	}
+	
 	public static HashMap<String, HashMap<String, Boolean>> run_accessory_basic(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
 		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
@@ -115,12 +125,22 @@ public class tests
 		String[] skip_, HashMap<String, HashMap<String, Boolean>> runs_out_
 	)
 	{
+		return run(class_, null, args_, targets_, skip_, runs_out_);
+	}
+
+	public static HashMap<String, HashMap<String, Boolean>> run
+	(
+		Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, 
+		String[] skip_, HashMap<String, HashMap<String, Boolean>> runs_out_
+	)
+	{
 		_running = true;
 		
 		HashMap<String, HashMap<String, Boolean>> run_outs = new HashMap<String, HashMap<String, Boolean>>();
 		if (arrays.is_ok(runs_out_)) run_outs = new HashMap<String, HashMap<String, Boolean>>(runs_out_);
+
+		Method[] methods = (arrays.is_ok(methods_) ? methods_ : generic.get_all_methods(class_, null));
 		
-		Method[] methods = generic.get_all_methods(class_, null);
 		if (!arrays.is_ok(methods))
 		{
 			errors.manage(types.ERROR_TEST_PARAMS, null, (generic.is_ok(class_) ? new String[] { class_.getName() } : null), false);
@@ -137,7 +157,7 @@ public class tests
 		
 		try
 		{
-			for (Method method: generic.get_all_methods(class_, null))
+			for (Method method: methods)
 			{
 				String name = method.getName();
 				if (arrays.value_exists(skip_, name)) continue;
@@ -226,7 +246,7 @@ public class tests
 		return is_ok;
 	}
 	
-	private static Object[] get_args(Class<?>[] params_, ArrayList<ArrayList<Object>> args_all_)
+	public static Object[] get_args(Class<?>[] params_, ArrayList<ArrayList<Object>> args_all_)
 	{
 		_overload = 0;
 		int size = arrays.get_size(params_);
@@ -267,6 +287,7 @@ public class tests
 		for (int i = 0; i < size; i++)
 		{
 			output[i] = ((defaults ? get_default_arg(params_[i]) : args0.get(i)));
+			System.out.println(output[i]);
 		}
 	
 		return output;

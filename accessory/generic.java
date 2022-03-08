@@ -158,44 +158,6 @@ public class generic
 
 		return false;
 	}
-
-	//To be synced with arrays.get_all_classes().
-	public static boolean is_array_small_big(Class<?> input_)
-	{
-		Class<?>[] classes = new Class<?>[] { Array.class, double[].class, long[].class, int[].class, boolean[].class };
-		
-		for (Class<?> type: classes)
-		{
-			if (are_equal(input_, type)) return true;
-		}
-
-		return false;
-	}
-
-	public static boolean is_array_small_big(double[] input_)
-	{
-		return true;
-	}
-
-	public static boolean is_array_small_big(long[] input_)
-	{
-		return true;
-	}
-
-	public static boolean is_array_small_big(int[] input_)
-	{
-		return true;
-	}
-
-	public static boolean is_array_small_big(boolean[] input_)
-	{
-		return true;
-	}
-	
-	public static <x> boolean is_array_small_big(x input_)
-	{
-		return is_instance(input_, Array.class);
-	}
 	
 	public static Object get_random(Class<?> class_)
 	{
@@ -238,7 +200,7 @@ public class generic
 
 		Class<?> type1 = get_class(input1_);
 		Class<?> type2 = get_class(input2_);
-		if (type1 == null || type2 == null || !type1.equals(type2)) return output;
+		if (type1 == null || type2 == null || !classes_are_equal(type1, type2)) return output;
 		
 		if (is_array(type1)) output = arrays.are_equal(input1_, input2_);
 		else output = input1_.equals(input2_);
@@ -273,201 +235,6 @@ public class generic
 		else if (input_ instanceof boolean[]) type = boolean[].class;
 		
 		return type;
-	}
-	
-	public static boolean adapt_array(Object input_)
-	{
-		return (input_ != null && !get_array_big_small().containsValue(input_.getClass()));
-	}
-	
-	public static Object array_to_small(Object input_)
-	{
-		Object output = null;
-		
-		if (input_ == null) return output;
-		if (!get_array_big_small().containsKey(input_.getClass())) return input_;
-
-		if (input_ instanceof Double[])
-		{
-			double[] output2 = null;
-
-			if (input_ != null)
-			{
-				Double[] temp = (Double[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new double[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
-			}
-		}
-		else if (input_ instanceof Long[])
-		{
-			long[] output2 = null;
-
-			if (input_ != null)
-			{
-				Long[] temp = (Long[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new long[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
-			}
-		}
-		else if (input_ instanceof Integer[])
-		{
-			int[] output2 = null;
-
-			if (input_ != null)
-			{
-				Integer[] temp = (Integer[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new int[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
-			}
-		}
-		else if (input_ instanceof Boolean[])
-		{
-			boolean[] output2 = null;
-
-			if (input_ != null)
-			{
-				Boolean[] temp = (Boolean[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new boolean[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
-			}
-		}
-		
-		return null;
-	}
-	
-	public static Object array_to_big(Object input_)
-	{
-		Object output = null;
-		
-		if (input_ == null) return output;
-		if (!get_array_big_small().containsValue(input_.getClass())) return input_;
-
-		if (input_ instanceof double[])
-		{
-			Double[] output2 = null;
-
-			if (input_ != null)
-			{
-				double[] temp = (double[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new Double[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
-			}
-		}
-		else if (input_ instanceof long[])
-		{
-			Long[] output2 = null;
-
-			if (input_ != null)
-			{
-				long[] temp = (long[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new Long[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
-			}
-		}
-		else if (input_ instanceof int[])
-		{
-			Integer[] output2 = null;
-
-			if (input_ != null)
-			{
-				int[] temp = (int[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new Integer[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
-			}
-		}
-		else if (input_ instanceof boolean[])
-		{
-			Boolean[] output2 = null;
-
-			if (input_ != null)
-			{
-				boolean[] temp = (boolean[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new Boolean[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
-			}
-		}
-		
-		return output;
 	}
 	
 	//It has to be synced with get_all_classes().
@@ -537,7 +304,14 @@ public class generic
 		} 
 		catch (Exception e) 
 		{ 
-			errors.manage(types.ERROR_GENERIC_METHOD_GET, e, new String[] { name_ }, error_exit_); 
+			errors.manage
+			(
+				types.ERROR_GENERIC_METHOD_GET, e, new String[] 
+				{ 
+					name_, strings.to_string(params_) 
+				},
+				error_exit_
+			);
 		}
 
 		return output;
@@ -559,7 +333,7 @@ public class generic
 			(
 				types.ERROR_GENERIC_METHOD_CALL, e, new String[] 
 				{ 
-					method_.getName(), arrays.to_string(strings.to_strings(args_), null) 
+					method_.getName(), strings.to_string(args_)
 				},
 				error_exit_
 			); 
@@ -576,11 +350,10 @@ public class generic
 
 		if (class1_.equals(class2_)) return true;
 
-		for (Entry<Class<?>, Class<?>> equivalent: get_array_big_small().entrySet())
+		for (Entry<Class<?>, Class<?>> equivalent: get_class_equivalents().entrySet())
 		{
 			Class<?> key = equivalent.getKey();
 			Class<?> val = equivalent.getValue();
-			
 			if 
 			(
 				(class1_.equals(key) && class2_.equals(val)) || 
@@ -600,16 +373,16 @@ public class generic
 			"getClass", "notify", "notifyAll"
 		};
 	}
-
-	private static HashMap<Class<?>, Class<?>> get_array_big_small()
+	
+	private static HashMap<Class<?>, Class<?>> get_class_equivalents()
 	{
-		HashMap<Class<?>, Class<?>> big_small = new HashMap<Class<?>, Class<?>>();
+		HashMap<Class<?>, Class<?>> equivalents = new HashMap<Class<?>, Class<?>>();
 		
-		big_small.put(Double[].class, double[].class);
-		big_small.put(Long[].class, long[].class);
-		big_small.put(Integer[].class, int[].class);
-		big_small.put(Boolean[].class, boolean[].class);
+		equivalents.put(Double.class, double.class);
+		equivalents.put(Long.class, long.class);
+		equivalents.put(Integer.class, int.class);
+		equivalents.put(Boolean.class, boolean.class);
 
-		return big_small;
+		return equivalents;
 	}
 }

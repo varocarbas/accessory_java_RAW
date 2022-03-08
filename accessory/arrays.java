@@ -47,7 +47,7 @@ public class arrays
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_ok(type)) return size;
 		
-		if (generic.is_array_small_big(type)) 
+		if (is_small_big(type)) 
 		{
 			if (input_ instanceof double[]) size = ((double[])input_).length;
 			else if (input_ instanceof long[]) size = ((long[])input_).length;
@@ -82,22 +82,22 @@ public class arrays
 	
 	public static boolean are_equal(double[] input1_, double[] input2_)
 	{
-		return are_equal(generic.array_to_big(input1_), generic.array_to_big(input2_));
+		return are_equal(to_big(input1_), to_big(input2_));
 	}
 	
 	public static boolean are_equal(long[] input1_, long[] input2_)
 	{
-		return are_equal(generic.array_to_big(input1_), generic.array_to_big(input2_));
+		return are_equal(to_big(input1_), to_big(input2_));
 	}
 	
 	public static boolean are_equal(int[] input1_, int[] input2_)
 	{
-		return are_equal(generic.array_to_big(input1_), generic.array_to_big(input2_));
+		return are_equal(to_big(input1_), to_big(input2_));
 	}
 	
 	public static boolean are_equal(boolean[] input1_, boolean[] input2_)
 	{
-		return are_equal(generic.array_to_big(input1_), generic.array_to_big(input2_));
+		return are_equal(to_big(input1_), to_big(input2_));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -239,22 +239,22 @@ public class arrays
 
 	public static double[] get_new_array(double[] input_)
 	{
-		return (double[])generic.array_to_small(get_new_array((Double[])generic.array_to_big(input_)));
+		return (double[])to_small(get_new_array((Double[])to_big(input_)));
 	}
 	
 	public static long[] get_new_array(long[] input_)
 	{
-		return (long[])generic.array_to_small(get_new_array((Long[])generic.array_to_big(input_)));
+		return (long[])to_small(get_new_array((Long[])to_big(input_)));
 	}
 	
 	public static int[] get_new_array(int[] input_)
 	{
-		return (int[])generic.array_to_small(get_new_array((Integer[])generic.array_to_big(input_)));
+		return (int[])to_small(get_new_array((Integer[])to_big(input_)));
 	}
 	
 	public static boolean[] get_new_array(boolean[] input_)
 	{
-		return (boolean[])generic.array_to_small(get_new_array((Boolean[])generic.array_to_big(input_)));
+		return (boolean[])to_small(get_new_array((Boolean[])to_big(input_)));
 	}
 	
 	private static <x> x[] get_new_array(x[] input_)
@@ -324,22 +324,22 @@ public class arrays
 	
 	public static ArrayList<Double> to_arraylist(double[] input_)
 	{
-		return (is_ok(input_) ? new ArrayList<Double>(Arrays.asList((Double[])generic.array_to_big(input_))) : new ArrayList<Double>());
+		return (is_ok(input_) ? new ArrayList<Double>(Arrays.asList((Double[])to_big(input_))) : new ArrayList<Double>());
 	}
 	
 	public static ArrayList<Long> to_arraylist(long[] input_)
 	{
-		return (is_ok(input_) ? new ArrayList<Long>(Arrays.asList((Long[])generic.array_to_big(input_))) : new ArrayList<Long>());
+		return (is_ok(input_) ? new ArrayList<Long>(Arrays.asList((Long[])to_big(input_))) : new ArrayList<Long>());
 	}
 	
 	public static ArrayList<Integer> to_arraylist(int[] input_)
 	{
-		return (is_ok(input_) ? new ArrayList<Integer>(Arrays.asList((Integer[])generic.array_to_big(input_))) : new ArrayList<Integer>());
+		return (is_ok(input_) ? new ArrayList<Integer>(Arrays.asList((Integer[])to_big(input_))) : new ArrayList<Integer>());
 	}
 	
 	public static ArrayList<Boolean> to_arraylist(boolean[] input_)
 	{
-		return (is_ok(input_) ? new ArrayList<Boolean>(Arrays.asList((Boolean[])generic.array_to_big(input_))) : new ArrayList<Boolean>());
+		return (is_ok(input_) ? new ArrayList<Boolean>(Arrays.asList((Boolean[])to_big(input_))) : new ArrayList<Boolean>());
 	}
 	
 	public static <x> ArrayList<x> to_arraylist(x[] input_)
@@ -377,22 +377,22 @@ public class arrays
 
 	public static double[] get_range(double[] input_, int start_i, int size_)
 	{
-		return (double[])generic.array_to_small(get_range((Double[])generic.array_to_big(input_), start_i, size_));
+		return (double[])to_small(get_range((Double[])to_big(input_), start_i, size_));
 	}
 
 	public static long[] get_range(long[] input_, int start_i, int size_)
 	{
-		return (long[])generic.array_to_small(get_range((Long[])generic.array_to_big(input_), start_i, size_));
+		return (long[])to_small(get_range((Long[])to_big(input_), start_i, size_));
 	}
 
 	public static int[] get_range(int[] input_, int start_i, int size_)
 	{
-		return (int[])generic.array_to_small(get_range((Integer[])generic.array_to_big(input_), start_i, size_));
+		return (int[])to_small(get_range((Integer[])to_big(input_), start_i, size_));
 	}
 
 	public static boolean[] get_range(boolean[] input_, int start_i, int size_)
 	{
-		return (boolean[])generic.array_to_small(get_range((Boolean[])generic.array_to_big(input_), start_i, size_));
+		return (boolean[])to_small(get_range((Boolean[])to_big(input_), start_i, size_));
 	}
 	
 	public static <x> x[] get_range(x[] input_, int start_i, int size_)
@@ -421,22 +421,22 @@ public class arrays
 
 	public static <x, y> boolean keys_exist(HashMap<x, y> array_, double[] keys_)
 	{
-		return keys_exist(array_, (Double[])generic.array_to_big(keys_));
+		return keys_exist(array_, (Double[])to_big(keys_));
 	}
 
 	public static <x, y> boolean keys_exist(HashMap<x, y> array_, long[] keys_)
 	{
-		return keys_exist(array_, (Long[])generic.array_to_big(keys_));
+		return keys_exist(array_, (Long[])to_big(keys_));
 	}
 
 	public static <x, y> boolean keys_exist(HashMap<x, y> array_, int[] keys_)
 	{
-		return keys_exist(array_, (Integer[])generic.array_to_big(keys_));
+		return keys_exist(array_, (Integer[])to_big(keys_));
 	}
 
 	public static <x, y> boolean keys_exist(HashMap<x, y> array_, boolean[] keys_)
 	{
-		return keys_exist(array_, (Boolean[])generic.array_to_big(keys_));
+		return keys_exist(array_, (Boolean[])to_big(keys_));
 	}
 	
 	public static <x, y> boolean keys_exist(HashMap<x, y> array_, x[] keys_)
@@ -462,22 +462,22 @@ public class arrays
 	
 	public static <x> boolean keys_exist(Object array_, double[] keys_)
 	{
-		return keys_exist(array_, (Double[])generic.array_to_big(keys_));
+		return keys_exist(array_, (Double[])to_big(keys_));
 	}
 	
 	public static <x> boolean keys_exist(Object array_, long[] keys_)
 	{
-		return keys_exist(array_, (Long[])generic.array_to_big(keys_));
+		return keys_exist(array_, (Long[])to_big(keys_));
 	}
 	
 	public static <x> boolean keys_exist(Object array_, int[] keys_)
 	{
-		return keys_exist(array_, (Integer[])generic.array_to_big(keys_));
+		return keys_exist(array_, (Integer[])to_big(keys_));
 	}
 	
 	public static <x> boolean keys_exist(Object array_, boolean[] keys_)
 	{
-		return keys_exist(array_, (Boolean[])generic.array_to_big(keys_));
+		return keys_exist(array_, (Boolean[])to_big(keys_));
 	}
 	
 	public static <x> boolean keys_exist(Object array_, x[] keys_)
@@ -512,22 +512,22 @@ public class arrays
 
 	public static boolean value_exists(double[] array_, double value_)
 	{
-		return value_exists(generic.array_to_big(array_), (Double)value_);
+		return value_exists(to_big(array_), (Double)value_);
 	}
 	
 	public static boolean value_exists(long[] array_, long value_)
 	{
-		return value_exists(generic.array_to_big(array_), (Long)value_);
+		return value_exists(to_big(array_), (Long)value_);
 	}
 	
 	public static boolean value_exists(int[] array_, int value_)
 	{
-		return value_exists(generic.array_to_big(array_), (Integer)value_);
+		return value_exists(to_big(array_), (Integer)value_);
 	}
 	
 	public static boolean value_exists(boolean[] array_, boolean value_)
 	{
-		return value_exists(generic.array_to_big(array_), (Boolean)value_);
+		return value_exists(to_big(array_), (Boolean)value_);
 	}
 	
 	public static <x> boolean value_exists(Object array_, x value_)
@@ -596,22 +596,22 @@ public class arrays
 
 	public static String to_string(double[] input_, String separator_)
 	{
-		return to_string(generic.array_to_big(input_), separator_);
+		return to_string(to_big(input_), separator_);
 	}
 	
 	public static String to_string(long[] input_, String separator_)
 	{
-		return to_string(generic.array_to_big(input_), separator_);
+		return to_string(to_big(input_), separator_);
 	}
 	
 	public static String to_string(int[] input_, String separator_)
 	{
-		return to_string(generic.array_to_big(input_), separator_);
+		return to_string(to_big(input_), separator_);
 	}
 	
 	public static String to_string(boolean[] input_, String separator_)
 	{
-		return to_string(generic.array_to_big(input_), separator_);
+		return to_string(to_big(input_), separator_);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -621,7 +621,7 @@ public class arrays
 		if (!arrays.is_ok(input_)) return output;
 	
 		Class<?> type = generic.get_class(input_);
-		boolean is_array = generic.is_array_small_big(type);
+		boolean is_array = is_small_big(type);
 		boolean is_arraylist = generic.are_equal(type, ArrayList.class);
 		if (!is_array && !is_arraylist) return output;
 	
@@ -754,5 +754,250 @@ public class arrays
 		}
 
 		return (get_ ? null : false);
+	}
+	
+	public static Object to_small(Object input_)
+	{
+		Object output = null;
+		
+		if (input_ == null) return output;
+		if (!get_all_big_small().containsKey(input_.getClass())) return input_;
+
+		if (input_ instanceof Double[])
+		{
+			double[] output2 = null;
+
+			if (input_ != null)
+			{
+				Double[] temp = (Double[])input_;
+				
+				int tot = temp.length;
+				if (tot < 1) return output;
+				
+				output2 = new double[tot];
+				
+				for (int i = 0; i < tot; i++)
+				{
+					output2[i] = temp[i];
+				}
+				
+				output = output2;
+			}
+		}
+		else if (input_ instanceof Long[])
+		{
+			long[] output2 = null;
+
+			if (input_ != null)
+			{
+				Long[] temp = (Long[])input_;
+				
+				int tot = temp.length;
+				if (tot < 1) return output;
+				
+				output2 = new long[tot];
+				
+				for (int i = 0; i < tot; i++)
+				{
+					output2[i] = temp[i];
+				}
+				
+				output = output2;
+			}
+		}
+		else if (input_ instanceof Integer[])
+		{
+			int[] output2 = null;
+
+			if (input_ != null)
+			{
+				Integer[] temp = (Integer[])input_;
+				
+				int tot = temp.length;
+				if (tot < 1) return output;
+				
+				output2 = new int[tot];
+				
+				for (int i = 0; i < tot; i++)
+				{
+					output2[i] = temp[i];
+				}
+				
+				output = output2;
+			}
+		}
+		else if (input_ instanceof Boolean[])
+		{
+			boolean[] output2 = null;
+
+			if (input_ != null)
+			{
+				Boolean[] temp = (Boolean[])input_;
+				
+				int tot = temp.length;
+				if (tot < 1) return output;
+				
+				output2 = new boolean[tot];
+				
+				for (int i = 0; i < tot; i++)
+				{
+					output2[i] = temp[i];
+				}
+				
+				output = output2;
+			}
+		}
+		
+		return null;
+	}
+	
+	public static Object to_big(Object input_)
+	{
+		Object output = null;
+		
+		if (input_ == null) return output;
+		if (!get_all_big_small().containsValue(input_.getClass())) return input_;
+
+		if (input_ instanceof double[])
+		{
+			Double[] output2 = null;
+
+			if (input_ != null)
+			{
+				double[] temp = (double[])input_;
+				
+				int tot = temp.length;
+				if (tot < 1) return output;
+				
+				output2 = new Double[tot];
+				
+				for (int i = 0; i < tot; i++)
+				{
+					output2[i] = temp[i];
+				}
+				
+				output = output2;
+			}
+		}
+		else if (input_ instanceof long[])
+		{
+			Long[] output2 = null;
+
+			if (input_ != null)
+			{
+				long[] temp = (long[])input_;
+				
+				int tot = temp.length;
+				if (tot < 1) return output;
+				
+				output2 = new Long[tot];
+				
+				for (int i = 0; i < tot; i++)
+				{
+					output2[i] = temp[i];
+				}
+				
+				output = output2;
+			}
+		}
+		else if (input_ instanceof int[])
+		{
+			Integer[] output2 = null;
+
+			if (input_ != null)
+			{
+				int[] temp = (int[])input_;
+				
+				int tot = temp.length;
+				if (tot < 1) return output;
+				
+				output2 = new Integer[tot];
+				
+				for (int i = 0; i < tot; i++)
+				{
+					output2[i] = temp[i];
+				}
+				
+				output = output2;
+			}
+		}
+		else if (input_ instanceof boolean[])
+		{
+			Boolean[] output2 = null;
+
+			if (input_ != null)
+			{
+				boolean[] temp = (boolean[])input_;
+				
+				int tot = temp.length;
+				if (tot < 1) return output;
+				
+				output2 = new Boolean[tot];
+				
+				for (int i = 0; i < tot; i++)
+				{
+					output2[i] = temp[i];
+				}
+				
+				output = output2;
+			}
+		}
+		
+		return output;
+	}
+	
+	//To be synced with arrays.get_all_classes().
+	private static boolean is_small_big(Class<?> input_)
+	{
+		Class<?>[] classes = new Class<?>[] { Array.class, double[].class, long[].class, int[].class, boolean[].class };
+		
+		for (Class<?> type: classes)
+		{
+			if (generic.are_equal(input_, type)) return true;
+		}
+
+		return false;
+	}
+
+	@SuppressWarnings("unused")
+	private static boolean is_small_big(double[] input_)
+	{
+		return true;
+	}
+
+	@SuppressWarnings("unused")
+	private static boolean is_small_big(long[] input_)
+	{
+		return true;
+	}
+
+	@SuppressWarnings("unused")
+	private static boolean is_small_big(int[] input_)
+	{
+		return true;
+	}
+
+	@SuppressWarnings("unused")
+	private static boolean is_small_big(boolean[] input_)
+	{
+		return true;
+	}
+	
+	@SuppressWarnings("unused")
+	private static <x> boolean is_small_big(x input_)
+	{
+		return generic.is_instance(input_, Array.class);
+	}
+
+	private static HashMap<Class<?>, Class<?>> get_all_big_small()
+	{
+		HashMap<Class<?>, Class<?>> big_small = new HashMap<Class<?>, Class<?>>();
+		
+		big_small.put(Double[].class, double[].class);
+		big_small.put(Long[].class, long[].class);
+		big_small.put(Integer[].class, int[].class);
+		big_small.put(Boolean[].class, boolean[].class);
+
+		return big_small;
 	}
 }
