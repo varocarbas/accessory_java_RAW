@@ -5,23 +5,31 @@ import java.util.Map.Entry;
 
 public class db_ini 
 {
-	static { _ini.load(); }
-	
 	public static void load() 
 	{
 		load_sources();
-		load_config();
+		load_aliases_types();
 	}
 
-	//Method expected to be called together with each load_config_[source]().
-	public static void load_config_default_fields(String main_)
+	//Method expected to be called together with each load_config_sources_[source]().
+	public static void load_config_sources_default_fields(String main_)
 	{
 		_config.update_ini(main_, types._CONFIG_DB_FIELDS_DEFAULT_ID, defaults.DB_FIELDS_DEFAULT_ID);
 		_config.update_ini(main_, types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, defaults.DB_FIELDS_DEFAULT_TIMESTAMP);	
 	}
 	
-	//Method including the _config types more closely related to the DB setup.
-	private static void load_config()
+	//Method including the aliases and types more closely related to the DB setup.
+	private static void load_aliases_types()
+	{
+		load_types();
+	}
+	
+	private static void load_types()
+	{
+		load_types_config();
+	}
+	
+	private static void load_types_config()
 	{
 		load_config_db();
 		load_config_sources();
@@ -70,7 +78,7 @@ public class db_ini
 		
 		for (String main: mains)
 		{
-			load_config_default_fields(main);	
+			load_config_sources_default_fields(main);	
 			
 			if (main.equals(types._CONFIG_LOGS)) load_config_sources_logs(main);
 			else if (main.equals(types._CONFIG_TESTS)) load_config_sources_tests(main);

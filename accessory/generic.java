@@ -114,6 +114,11 @@ public class generic
 		return are_equal(input_, Boolean.class);
 	}
 	
+	public static boolean is_boolean(boolean input_)
+	{
+		return true;
+	}
+	
 	public static <x> boolean is_boolean(x input_)
 	{
 		return (input_ instanceof Boolean);
@@ -260,7 +265,8 @@ public class generic
 		
 		classes.add(String.class);
 		classes.add(Boolean.class);
-
+		classes.add(boolean.class);
+		
 		for (Class<?> type: numbers.get_all_classes())
 		{
 			classes.add(type);

@@ -5,13 +5,14 @@ public class _config_ini
 	//Method expected to be called from _ini.load().
 	public static void load() 
 	{
-		load_types();
+		load_aliases_types();
 	}
-		
-	private static void load_types()
+
+	//Method including all the generic aliases and _config types, not easily included in any other ini class.
+	private static void load_aliases_types()
 	{
 		load_aliases();
-		load_config();
+		load_types();
 	}
 	
 	private static void load_aliases()
@@ -31,14 +32,18 @@ public class _config_ini
 		types.update_aliases(keys.FILE, types._CONFIG_LOGS_OUT_FILE);
 	}
 
-	//Method including all the generic _config types, not easily including in other ini class.
-	private static void load_config()
+	private static void load_types()
+	{
+		load_types_config();
+	}
+
+	private static void load_types_config()
 	{
 		load_config_basic();
 		load_config_credentials();
 		load_config_logs();
-
 		load_config_subtypes();
+		
 		//load_config_linked();
 	}
 	

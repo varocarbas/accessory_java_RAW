@@ -26,19 +26,36 @@ public class tests
 
 	public static HashMap<String, HashMap<String, Boolean>> run_accessory_db(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
-		if (arrays.is_ok(outputs_)) outputs = new HashMap<String, HashMap<String, Boolean>>(outputs_);
+		Class<?> type = db.class;
 		
+		HashMap<String, ArrayList<ArrayList<Object>>> args_all = new HashMap<String, ArrayList<ArrayList<Object>>>();
 		
+		String name = "get_random";
 		
-		return outputs;	
+		ArrayList<ArrayList<Object>> args0 = new ArrayList<ArrayList<Object>>();
+		ArrayList<Object> args = new ArrayList<Object>();
+		args.add(strings.SIZE_DEFAULT);
+		args.add(true);
+		args.add(true);
+		args.add(true);
+		args0.add(args);
+		
+		args = new ArrayList<Object>();
+		args.add(strings.SIZE_DEFAULT);
+		args0.add(args);
+		
+		args_all.put(name, args0);
+		
+		HashMap<String, Object[]> targets = null; 
+		String[] skip = null;
+		
+		return run(type, args_all, targets, skip, outputs_);	
 	}
 	
 	public static HashMap<String, HashMap<String, Boolean>> run_accessory_basic(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
-		if (arrays.is_ok(outputs_)) outputs = new HashMap<String, HashMap<String, Boolean>>(outputs_);
-	
+		HashMap<String, HashMap<String, Boolean>> outputs = arrays.get_new(outputs_);
+		
 		outputs = run_accessory_strings(outputs);
 		outputs = run_accessory_arrays(outputs);	
 		outputs = run_accessory_dates(outputs);
@@ -135,9 +152,8 @@ public class tests
 	)
 	{
 		_running = true;
-		
-		HashMap<String, HashMap<String, Boolean>> run_outs = new HashMap<String, HashMap<String, Boolean>>();
-		if (arrays.is_ok(runs_out_)) run_outs = new HashMap<String, HashMap<String, Boolean>>(runs_out_);
+
+		HashMap<String, HashMap<String, Boolean>> run_outs = arrays.get_new(runs_out_);
 
 		Method[] methods = (arrays.is_ok(methods_) ? methods_ : generic.get_all_methods(class_, null));
 		
@@ -155,6 +171,8 @@ public class tests
 		
 		run_outs.put(name0, new HashMap<String, Boolean>());
 		
+		boolean first_time = true;
+		
 		try
 		{
 			for (Method method: methods)
@@ -162,10 +180,13 @@ public class tests
 				String name = method.getName();
 				if (arrays.value_exists(skip_, name)) continue;
 				
-				System.out.print(name + misc.SEPARATOR_CONTENT);
+				if (first_time) first_time = false;
+				else System.out.println("");
+				
+				System.out.println(name);
 				
 				boolean is_ok = true;
-				String message = "";
+				String result = "";
 
 				Object[] args = get_args(method.getParameterTypes(), arrays.get_value(args_, name));			
 				Object output = generic.call_static_method(method, args, false);
@@ -175,19 +196,28 @@ public class tests
 				{
 					if (errors._triggered && !arrays.is_ok(targets)) 
 					{
-						message = keys.ERROR.toUpperCase();
+						result = keys.ERROR.toUpperCase();
 						errors._triggered = false;
 					}
 					else 
 					{
 						is_ok = false;
-						message = "targets not met";
+						result = "targets not met";
 					}
 				}
-				else message = keys.OK.toLowerCase();
+				else result = keys.OK.toUpperCase();
+		
+				System.out.println(result);
 				
-				message += misc.SEPARATOR_CONTENT + strings.to_string(output) + misc.NEW_LINE;
-				System.out.print(message);
+				String in = "IN: ";
+				if (arrays.is_ok(args)) in += strings.to_string(args);
+				System.out.println(in);
+				
+				String out = "OUT: ";
+				if (generic.is_ok(output)) out += strings.to_string(output);
+				System.out.println(out);
+
+				System.out.println("------");
 				
 				run_outs.get(name0).put(name, is_ok);
 			}			
@@ -246,15 +276,15 @@ public class tests
 		return is_ok;
 	}
 	
-	public static Object[] get_args(Class<?>[] params_, ArrayList<ArrayList<Object>> args_all_)
+	private static Object[] get_args(Class<?>[] params_, ArrayList<ArrayList<Object>> args_all_)
 	{
 		_overload = 0;
+		
 		int size = arrays.get_size(params_);
 		if (size < 1) return null;
 		
-		ArrayList<ArrayList<Object>> args_all = new ArrayList<ArrayList<Object>>();
-		if (arrays.is_ok(args_all_)) args_all = new ArrayList<ArrayList<Object>>(args_all_);
-		else args_all.add(null);
+		ArrayList<ArrayList<Object>> args_all = (ArrayList<ArrayList<Object>>)arrays.get_new(args_all_);
+		if (arrays.is_ok(args_all)) args_all.add(null);
 		
 		ArrayList<Object> args0 = null;
 		for (int i = 0; i < args_all.size(); i++)
@@ -287,7 +317,6 @@ public class tests
 		for (int i = 0; i < size; i++)
 		{
 			output[i] = ((defaults ? get_default_arg(params_[i]) : args0.get(i)));
-			System.out.println(output[i]);
 		}
 	
 		return output;

@@ -21,7 +21,12 @@ public class arrays
 			double[].class, long[].class, int[].class, boolean[].class //!!!
 		};
 	}
-
+	
+	public static <x> boolean is_ok(ArrayList<ArrayList<x>> input_)
+	{
+		return (get_size(input_) > 0 && get_size(input_.get(0)) > 0);
+	}
+	
 	public static <x, y> boolean is_ok(HashMap<x, y> input_)
 	{
 		return (get_size(input_) > 0);
@@ -31,7 +36,12 @@ public class arrays
 	{
 		return (get_size(input_) > 0);
 	}
-
+	
+	public static <x> int get_size(ArrayList<ArrayList<x>> input_)
+	{
+		return (input_ == null ? 0 : get_size_arraylist(input_));		
+	}
+	
 	public static <x, y> int get_size(HashMap<x, y> input_)
 	{
 		return (input_ == null ? 0 : get_size_hashmap_xy(input_));		
@@ -61,18 +71,41 @@ public class arrays
 		return size;
 	}
 	
+	public static <x> boolean are_equal(ArrayList<ArrayList<x>> input1_, ArrayList<ArrayList<x>> input2_)
+	{
+		boolean is_ok1 = is_ok(input1_);
+		boolean is_ok2 = is_ok(input2_);
+		if (!is_ok1 || !is_ok2) return (is_ok1 == is_ok2);
+
+		return 
+		(
+			(
+				(
+					get_size(input1_) != get_size(input2_)
+				) 
+				|| !generic.are_equal
+				(
+					get_class_items(input1_), get_class_items(input2_)
+				)
+			) 
+			? false : input1_.equals(input2_)
+		);
+	}
+	
 	public static <x, y> boolean are_equal(HashMap<x, y> input1_, HashMap<x, y> input2_)
 	{
 		boolean is_ok1 = is_ok(input1_);
 		boolean is_ok2 = is_ok(input2_);
 		if (!is_ok1 || !is_ok2) return (is_ok1 == is_ok2);
-		
+
+		int size = get_size(input1_);
 		Class<?> type_key = get_class_key_xy(input1_);
 		Class<?> type_val = get_class_val_xy(input1_);
 		
 		return
 		(
 			(
+				(size == get_size(input2_)) &&
 				generic.are_equal(type_key, get_class_key_xy(input2_)) &&
 				generic.are_equal(type_val, get_class_val_xy(input2_))
 			)
@@ -124,8 +157,22 @@ public class arrays
 		}
 		else
 		{
-			if (!generic.are_equal(type, generic.get_class(input2_))) return false;
-			if (!generic.are_equal(type, Array.class)) return input1_.equals(input2_);
+			if (generic.are_equal(type, ArrayList.class))
+			{
+				return 
+				(
+					(
+						generic.are_equal
+						(
+							get_class_items((ArrayList<x>)input1_), 
+							get_class_items((ArrayList<x>)input2_)
+						)
+					) 
+					? input1_.equals(input2_) : false		
+				);
+			}
+			
+			if (!generic.are_equal(get_class_items((x[])input1_), get_class_items((x[])input2_))) return false;
 		}
 		
 		x[] input1 = (x[])input1_;
@@ -182,6 +229,11 @@ public class arrays
 		
 		return output;
 	}
+
+	public static <x> x[] to_array(ArrayList<ArrayList<x>> input_)
+	{
+		return null;
+	}
 	
 	//To be synced with generic.get_class().
 	@SuppressWarnings("unchecked")
@@ -214,6 +266,11 @@ public class arrays
 	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_)
 	{
 		return (!is_ok(input_) ? new HashMap<x, y>() : new HashMap<x, y>(input_));
+	}
+	
+	public static <x> ArrayList<ArrayList<x>> get_new(ArrayList<ArrayList<x>> input_)
+	{
+		return (!is_ok(input_) ? new ArrayList<ArrayList<x>>() : new ArrayList<ArrayList<x>>(input_));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -291,10 +348,20 @@ public class arrays
 	{
 		return get_class_key_val_xy(input_, false);
 	}
-	
-	public static <x> Class<?> get_class_items(ArrayList<x> input_)
+
+	public static <x> Class<?> get_class_items(ArrayList<ArrayList<x>> input_)
 	{
-		return (!is_ok(input_) ? null : generic.get_class(input_.get(0)));
+		return (!is_ok(input_) ? null : generic.get_class(input_.get(0).get(0)));
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <x> Class<?> get_class_items(Object input_)
+	{
+		return 
+		(
+			!generic.are_equal(generic.get_class(input_), ArrayList.class) ? 
+			null : generic.get_class(((ArrayList<x>)input_).get(0))
+		);
 	}
 
 	public static Class<?> get_class_items(double[] input_)
@@ -677,7 +744,7 @@ public class arrays
 		
 		return null;
 	}
-
+	
 	private static <x> int get_size_arraylist(ArrayList<x> input_)
 	{
 		return input_.size();
