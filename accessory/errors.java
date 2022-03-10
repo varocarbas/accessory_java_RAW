@@ -75,14 +75,13 @@ public class errors
 	{
 		if (!strings.is_ok(type_)) return null;
 
-		String type = types.check_aliases(type_);
-
 		HashMap<String, String> info = new HashMap<String, String>();
-		info.put(keys.TYPE, type);
+		info.put(keys.TYPE, type_);
 
 		String message = message_;
 		String message2 = get_message(e_, type_);
-		if (strings.is_ok(message2) && (generic.is_ok(e_) || strings.is_ok(message))) message = message2;
+		
+		if ((strings.is_ok(message2) && (generic.is_ok(e_)) || !strings.is_ok(message))) message = message2;
 		info.put(keys.MESSAGE, message);
 
 		if (strings.is_ok(query_)) info.put(keys.QUERY, query_);

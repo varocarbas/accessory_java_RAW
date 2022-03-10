@@ -126,7 +126,8 @@ public class types
 	public static final String ERROR_DB_TYPE = "error_db_type";
 	public static final String ERROR_DB_CONN = "error_db_conn";
 	public static final String ERROR_DB_QUERY = "error_db_query";
-
+	public static final String ERROR_DB_SOURCE = "error_db_source";
+	
 	public static final String ERROR_FILE = "error_file";
 	public static final String ERROR_FILE_WRITE = "error_file_write";
 	public static final String ERROR_FILE_READ = "error_file_read";
@@ -207,6 +208,8 @@ public class types
 
 		String subtype = check_aliases(subtype_);
 		String type = check_aliases(type_);
+		if (!strings.contains_start(type, subtype, false)) return subtype_;
+		
 		type += SEPARATOR;
 
 		return strings.get_end(subtype, type.length());

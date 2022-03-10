@@ -20,8 +20,10 @@ class mysql
 	{
 		String query = get_query(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 
-		boolean return_data = false;
-		if (what_.equals(types.DB_QUERY_SELECT)) return_data = true;
+		boolean return_data = 
+		(
+			what_.equals(types.DB_QUERY_SELECT) || what_.equals(types.DB_QUERY_TABLE_EXISTS)
+		);
 
 		return (strings.is_ok(query) ? sql.execute_query(query, return_data, cols_) : null);
 	}

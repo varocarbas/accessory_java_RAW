@@ -10,7 +10,7 @@ public class tests
 	
 	private static int _overload = 0;
 	
-	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all()
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all(boolean db_too_)
 	{	
 		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
 		
@@ -21,35 +21,23 @@ public class tests
 		
 		System.out.println(misc.NEW_LINE + keys.END.toUpperCase() + " " + name0 + misc.NEW_LINE);
 		
+		if (!db_too_) return outputs;
+		
+		name0 = "accessory_db";
+		System.out.println("-------- " + keys.START.toUpperCase() + " " + name0 + misc.NEW_LINE);
+
+		outputs = run_accessory_db(outputs);
+		
+		System.out.println(misc.NEW_LINE + keys.END.toUpperCase() + " " + name0 + misc.NEW_LINE);
+		
 		return outputs;
 	}
 
 	public static HashMap<String, HashMap<String, Boolean>> run_accessory_db(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		Class<?> type = db.class;
+		HashMap<String, HashMap<String, Boolean>> outputs = arrays.get_new(outputs_);
 		
-		HashMap<String, ArrayList<ArrayList<Object>>> args_all = new HashMap<String, ArrayList<ArrayList<Object>>>();
-		
-		String name = "get_random";
-		
-		ArrayList<ArrayList<Object>> args0 = new ArrayList<ArrayList<Object>>();
-		ArrayList<Object> args = new ArrayList<Object>();
-		args.add(strings.SIZE_DEFAULT);
-		args.add(true);
-		args.add(true);
-		args.add(true);
-		args0.add(args);
-		
-		args = new ArrayList<Object>();
-		args.add(strings.SIZE_DEFAULT);
-		args0.add(args);
-		
-		args_all.put(name, args0);
-		
-		HashMap<String, Object[]> targets = null; 
-		String[] skip = null;
-		
-		return run(type, args_all, targets, skip, outputs_);	
+		return outputs;	
 	}
 	
 	public static HashMap<String, HashMap<String, Boolean>> run_accessory_basic(HashMap<String, HashMap<String, Boolean>> outputs_)

@@ -6,10 +6,17 @@ import java.util.Map.Entry;
 
 public class db 
 {
+	//Sources/fields are constant, used internally, stored in memory (e.g., in _sources). 
+	//Tables/cols are variable and refer to the actual DB.
+	//The basic table/col structures, like number, type and size of columns, are assumed to be constant and defined via sources/fields.
+	//On the other hand, table/col names are assumed to be variable and managed via tables/cols.
+	//A valid source is one included within the sources currently considered by the library, in memory.
+	//A valid table is one really existing in the given DB.
+
 	public static boolean _is_ok = true;
 	public static String _cur_source = strings.DEFAULT;
 	
-	//--- Populated via the corresponding _ini method (e.g., _ini.load_sources()).
+	//--- Populated via the corresponding db_ini method (e.g., load_sources()).
 	private static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
 	private static HashMap<String, String> _source_mains = new HashMap<String, String>();
 	//------
@@ -38,42 +45,65 @@ public class db
 	
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order order_)
 	{	
-		String source = check_source(source_);
+		String source = check_source_error(source_);
+		if (!_is_ok) return null;
 		
 		return select_internal(get_table(source), get_cols(source, fields_), db_where.to_string(wheres_), max_rows_, db_order.to_string(order_));
 	}
 	
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_)
 	{
-		String source = check_source(source_);
+		String source = check_source_error(source_);
+		if (!_is_ok) return;
 		
 		insert_internal(get_table(source_), adapt_inputs(source, null, vals_raw_));
 	}
 	
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_)
 	{
-		String source = check_source(source_);
+		String source = check_source_error(source_);
+		if (!_is_ok) return;
 		
 		update_internal(get_table(source), adapt_inputs(source, null, vals_raw_), db_where.to_string(wheres_));
 	}
 	
 	public static void delete(String source_, db_where[] wheres_)
 	{
-		String source = check_source(source_);
+		String source = check_source_error(source_);
+		if (!_is_ok) return;
 		
 		delete_internal(get_table(source), db_where.to_string(wheres_));
 	}
 
-	public static void create_table(String source_)
+	public static boolean table_exists(String source_)
 	{
-		create_table(source_, arrays.get_value(_sources, source_));
+		String source = check_source_error(source_);
+		if (!_is_ok) return false;
+		
+		return table_exists_internal(get_table(source));
 	}
 	
-	public static void create_table(String source_, HashMap<String, db_field> fields_)
+	public static void create_table(String source_, boolean drop_it_)
 	{
+		create_table(source_, get_source_fields(source_), drop_it_);
+	}
+	
+	public static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_)
+	{
+		String source = check_source_error(source_);
+		if (!_is_ok) return;
+
+		String table = get_table(source);
+		boolean exists = table_exists_internal(table);
+		if (drop_it_) 
+		{
+			if (exists) drop_table_internal(table);
+		}
+		else if (exists) return;
+		
 		HashMap<String, db_field> cols = new HashMap<String, db_field>();
 
-		if (source_is_ok(source_) && arrays.is_ok(fields_))
+		if (arrays.is_ok(fields_))
 		{
 			for (Entry<String, db_field> item: fields_.entrySet())
 			{
@@ -85,17 +115,26 @@ public class db
 			}
 		}
 
-		create_table_internal(get_table(source_), cols);
+		create_table_internal(table, cols);
 	}
 	
 	public static void drop_table(String source_)
 	{
-		drop_table_internal(get_table(source_));		
+		String source = check_source_error(source_);
+		if (!_is_ok) return;
+		
+		String table = get_table(source);
+		if (!table_exists(table)) return;
+		
+		drop_table_internal(table);		
 	}
 	
 	public static void truncate_table(String source_)
 	{
-		truncate_table_internal(get_table(source_));
+		String source = check_source_error(source_);
+		if (!_is_ok) return;
+		
+		truncate_table_internal(get_table(source));
 	}
 	
 	public static String get_value(String input_)
@@ -106,7 +145,7 @@ public class db
 		{
 			value = mysql.get_value(input_);
 		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 
 		return value;
 	}
@@ -119,7 +158,7 @@ public class db
 		{
 			variable = mysql.get_variable(input_);
 		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 
 		return variable; 	
 	} 
@@ -302,7 +341,7 @@ public class db
 		{
 			output = mysql.sanitise_string(output);
 		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 
 		return output; 
 	}
@@ -315,7 +354,7 @@ public class db
 		{
 			output = mysql.get_data_type(field_);
 		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
 		return output;
 	}
@@ -354,7 +393,15 @@ public class db
 
 		errors.manage_db(type, query_, e_, message_);
 	}
-
+	
+	public static String check_source_error(String source_)
+	{
+		String source = check_source(source_);
+		if (!strings.is_ok(source)) manage_error(types.ERROR_DB_SOURCE, null, null, null);
+		
+		return source;
+	}
+	
 	private static ArrayList<HashMap<String, String>> select_internal(String table_, String[] cols_, String where_, int max_rows_, String order_)
 	{
 		return adapt_outputs(table_to_source(table_), execute_type(types.DB_QUERY_SELECT, table_, cols_, null, where_, max_rows_, order_, null));
@@ -375,6 +422,11 @@ public class db
 		execute_type(types.DB_QUERY_DELETE, table_, null, null, where_, 0, null, null);
 	}
 	
+	private static boolean table_exists_internal(String table_)
+	{
+		return arrays.is_ok(execute_type(types.DB_QUERY_TABLE_EXISTS, table_, null, null, null, 0, null, null));
+	} 
+	
 	private static void create_table_internal(String table_, HashMap<String, db_field> cols_)
 	{
 		execute_type(types.DB_QUERY_TABLE_CREATE, table_, null, null, null, 0, null, cols_);
@@ -390,7 +442,7 @@ public class db
 		execute_type(types.DB_QUERY_TABLE_TRUNCATE, table_, null, null, null, 0, null, null);
 	} 
 	
-	public static ArrayList<HashMap<String, String>> execute_type(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	private static ArrayList<HashMap<String, String>> execute_type(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
 		ArrayList<HashMap<String, String>> output = null;
 		
@@ -398,7 +450,7 @@ public class db
 		{
 			output = mysql.execute(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
 		return output;
 	}

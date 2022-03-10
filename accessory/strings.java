@@ -321,7 +321,12 @@ public class strings
 
 	public static <x> String to_string(x input_)
 	{
-		if (generic.is_string(input_)) return (String)input_;
+		if (generic.is_string(input_)) 
+		{
+			String temp = (String)input_;
+			
+			return (is_ok(temp) ? temp : strings.DEFAULT);
+		}
 
 		String output = DEFAULT;
 		if (!generic.is_ok(input_)) return output;
@@ -496,7 +501,7 @@ public class strings
 		int length2 = get_length(needle_, normalise_);
 		if (length <= 0 || length2 <= 0) return contains;
 
-		int i = index_of(needle_, haystack_, normalise_);		
+		int i = index_of(needle_, haystack_, normalise_);
 		if (first_) contains = (i == 0);
 		else contains = (i == (length - length2));
 

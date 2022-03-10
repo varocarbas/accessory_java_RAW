@@ -618,12 +618,18 @@ public class arrays
 		{
 			x key = item.getKey();
 			y val = item.getValue();
-			if (!generic.is_ok(key) || !generic.is_ok(val) || value_exists(keys_ignore_, key)) continue; 
+			if (!generic.is_ok(key) || value_exists(keys_ignore_, key)) continue; 
 
 			if (!output.equals("")) output += separator1;
 			
 			String key2 = (generic.is_array(key) ? key.toString() : strings.to_string(key));
-			String val2 = (generic.is_array(val) ? key.toString() : strings.to_string(val));
+			String val2 = strings.DEFAULT;
+			if (generic.is_array(val))
+			{
+				if (is_ok(val)) val2 = val.toString();
+			}
+			else val2 = strings.to_string(val);
+			
 			output += (key2 + separator2 + val2);
 		}
 

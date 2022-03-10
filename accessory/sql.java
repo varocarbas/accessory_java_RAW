@@ -26,16 +26,25 @@ class sql
 
 		HashMap<String, String> items = new HashMap<String, String>();
 
-		if (strings.is_ok(table_)) items.put(keys.TABLE, table_);
-		if (arrays.is_ok(cols_)) items.put(keys.COL, arrays.to_string(cols_, null));
-		if (arrays.is_ok(vals_)) items.put(keys.VALUE, arrays.to_string(vals_, null, null, null));
-		if (strings.is_ok(where_)) items.put(keys.WHERE, where_);
-		if (max_rows_ > 0) items.put(keys.MAX, strings.from_number_int(max_rows_));
-		if (strings.is_ok(order_)) items.put(keys.ORDER, order_);
-		if (arrays.is_ok(cols_info_)) items.put(keys.INFO, arrays.to_string(cols_info_, null, null, null));
+		items.put(keys.TABLE, strings.to_string(table_));
 		
-		String message = "Wrong " + what_.toUpperCase() + " query" + misc.SEPARATOR_CONTENT;
-		String temp = arrays.to_string(items, null, null, null);
+		if (what_.equals(types.DB_QUERY_SELECT)) 
+		{
+			items.put(keys.COL, strings.to_string(cols_));
+			items.put(keys.MAX, strings.to_string(max_rows_));
+			items.put(keys.ORDER, strings.to_string(order_));
+		}
+		
+		if (what_.equals(types.DB_QUERY_DELETE) || what_.equals(types.DB_QUERY_UPDATE) || what_.equals(types.DB_QUERY_SELECT)) 
+		{
+			items.put(keys.WHERE, strings.to_string(where_));
+		}
+		
+		if (what_.equals(types.DB_QUERY_INSERT) || what_.equals(types.DB_QUERY_UPDATE)) items.put(keys.VALUE, strings.to_string(vals_));
+		if (what_.equals(types.DB_QUERY_TABLE_CREATE)) items.put(keys.INFO, strings.to_string(cols_info_));
+		
+		String message = "Wrong " + types.remove_type(what_, types.DB_QUERY).toUpperCase() + " query" + misc.SEPARATOR_CONTENT;
+		String temp = strings.to_string(items);
 		if (strings.is_ok(temp)) message += temp;
 
 		db.manage_error(types.ERROR_DB_QUERY, null, null, message);
