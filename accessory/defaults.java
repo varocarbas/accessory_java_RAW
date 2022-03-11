@@ -44,7 +44,7 @@ public class defaults
 
 	static final int MYSQL_DATA_SIZE_NUMBER = 8;
 	static final int MYSQL_DATA_SIZE_DECIMALS = SIZE_DECIMALS;
-	static final int MYSQL_DATA_SIZE_STRING = strings.SIZE_DEFAULT;
+	static final int MYSQL_DATA_SIZE_VARCHAR = strings.SIZE_DEFAULT;
 	
 	static final String LOGS_DB_SOURCE = keys.LOG;
 	static final String LOGS_DB_FIELD_ID = keys.ID;

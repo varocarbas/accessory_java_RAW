@@ -127,6 +127,7 @@ public class types
 	public static final String ERROR_DB_CONN = "error_db_conn";
 	public static final String ERROR_DB_QUERY = "error_db_query";
 	public static final String ERROR_DB_SOURCE = "error_db_source";
+	public static final String ERROR_DB_VALS = "error_db_vals";
 	
 	public static final String ERROR_FILE = "error_file";
 	public static final String ERROR_FILE_WRITE = "error_file_write";
@@ -141,7 +142,6 @@ public class types
 	public static final String ERROR_GENERIC_METHOD_CALL = "error_generic_method_call";
 
 	public static final String ERROR_TEST = "error_test";
-	public static final String ERROR_TEST_PARAMS = "error_test_params";
 	public static final String ERROR_TEST_RUN = "error_test_run";
 	
 	//---------------------------
@@ -331,7 +331,7 @@ public class types
 			ERROR_GENERIC_METHOD_GET, ERROR_GENERIC_METHOD_CALL,
 			
 			//ERROR_TEST
-			ERROR_TEST_PARAMS, ERROR_TEST_RUN
+			ERROR_TEST_RUN
 		};		
 	}
 }	

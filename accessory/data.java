@@ -122,6 +122,24 @@ public class data
 		return get_boundaries(type_);
 	}
 
+	public static boolean is_numeric(String type_)
+	{
+		String type = check_type(type_);
+		if (!strings.is_ok(type)) return false;
+		
+		String[] targets = new String[] 
+		{
+			types.DATA_DECIMAL, types.DATA_LONG, types.DATA_INTEGER
+		};
+		
+		for (String target: targets)
+		{
+			if (type.equals(target)) return true;
+		}
+		
+		return false;
+	}
+	
 	private static boolean is_ok(String type_, Class<?> class_, size size_, boolean check_size_)
 	{
 		return 

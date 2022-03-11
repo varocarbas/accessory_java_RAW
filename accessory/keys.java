@@ -61,6 +61,8 @@ public class keys
 	public static final String INFO = "info";
 	public static final String INTEGER = "integer";
 	public static final String DECIMAL = "decimal";
+	public static final String METHOD = "method";
+	public static final String CLASS = "class";
 	
 	static { _ini.load(); }
 }

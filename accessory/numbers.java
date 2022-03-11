@@ -51,6 +51,19 @@ public class numbers
 		return 0;
 	}
 	
+	public static <x> double to_number(x input_)
+	{
+		double output = 0.0;
+		
+		Class<?> type = generic.get_class(input_);
+		
+		if (generic.are_equal(type, Double.class)) output = (double)input_;
+		else if (generic.are_equal(type, Integer.class)) output = (double)((int)input_); //!!!
+		else if (generic.are_equal(type, Long.class)) output = (double)((long)input_); //!!!
+		
+		return output;
+	}
+	
 	public static Object get_random(Class<?> class_)
 	{
 		Object output = null;

@@ -8,7 +8,7 @@ import java.util.Properties;
 import java.util.Map.Entry;
 
 class mysql 
-{  
+{	
 	static { _ini.load(); }
 	
 	public static String sanitise_string(String input_)
@@ -58,17 +58,19 @@ class mysql
 
 	public static String get_data_type_size(db_field field_)
 	{
-		String size = "";
-		int max = (field_._data._size._max > (double)numbers.MAX_INT ? 0 : (int)field_._data._size._max);
+		String output = strings.DEFAULT;
 		
-		if (field_._data._type.equals(types.DATA_BOOLEAN)) size = "1";
-		else if (field_._data._type.equals(types.DATA_TIMESTAMP)) 
+		int max = (field_._data._size._max > (double)numbers.MAX_INT ? 0 : (int)field_._data._size._max);
+		String type = field_._data._type;
+
+		HashMap<String, Object> info = get_mysql_data_type(type);
+		int max2 = (int)info.get(keys.MAX);
+		
+		if (type.equals(types.DATA_BOOLEAN) || type.equals(types.DATA_TIMESTAMP)) output = (String)info.get(keys.MAX);
+		
+		if (type.equals(types.DATA_DECIMAL))
 		{
-			size = strings.to_string(dates.get_time_pattern(dates.DATE_TIME).length());
-		}
-		else if (field_._data._type.equals(types.DATA_DECIMAL))
-		{
-			int m = ((max > 65 || max < 1) ? defaults.MYSQL_DATA_SIZE_NUMBER : max);
+			int m = ((max > max2 || max < 1) ? defaults.MYSQL_DATA_SIZE_NUMBER : max);
 			int d = field_._data._size._decimals;
 			
 			if (d < 0 || d > 30 || d > m)
@@ -77,18 +79,78 @@ class mysql
 				if (d > m) d = m - 1;
 			}
 			
-			size = (strings.to_string(m) + "," + strings.to_string(d));
+			output = (strings.to_string(m) + "," + strings.to_string(d));
 		}
-		else if (field_._data._type.equals(types.DATA_INTEGER) || field_._data._type.equals(types.DATA_LONG))
+		else if (type.equals(types.DATA_INTEGER) || type.equals(types.DATA_LONG))
 		{
-			size = strings.to_string(max > numbers.MAX_DIGITS_INT ? defaults.MYSQL_DATA_SIZE_NUMBER : max);
+			output = strings.to_string(max > max2 ? defaults.MYSQL_DATA_SIZE_NUMBER : max);
 		}
-		else if (field_._data._type.equals(types.DATA_STRING))
+		else if (type.equals(types.DATA_STRING))
 		{
-			size = strings.to_string(max > 255 ? defaults.MYSQL_DATA_SIZE_STRING : max);
+			output = strings.to_string(max > max2 ? defaults.MYSQL_DATA_SIZE_VARCHAR: max);
 		}
 		
-		return size;
+		return output;
+	}
+
+	public static int get_data_max_size(String data_type_)
+	{
+		int max = 0;
+		
+		String data_type = data.check_type(data_type_);
+		if (!strings.is_ok(data_type)) return max;
+		
+		if (data_type.equals(types.DATA_BOOLEAN)) max = 1;
+		else if (data_type.equals(types.DATA_TIMESTAMP)) max = dates.get_time_pattern(dates.DATE_TIME).length();		
+		else if (data_type.equals(types.DATA_DECIMAL)) max = 64;
+		else if (data_type.equals(types.DATA_INTEGER)) max = numbers.MAX_DIGITS_INT;
+		else if (data_type.equals(types.DATA_LONG)) max = numbers.MAX_DIGITS_INT;
+		else if (data_type.equals(types.DATA_STRING)) max = 255;
+		
+		return max;
+	}
+	
+	public static double get_numeric_data_max(String data_type_)
+	{
+		double max = 0.0;
+		
+		String data_type = data.check_type(data_type_);
+		if (!data.is_numeric(data_type)) return max;
+		
+		if (data_type.equals(types.DATA_DECIMAL)) max = Math.pow(10, get_data_max_size(data_type));
+		else if (data_type.equals(types.DATA_INTEGER)) max = (double)numbers.MAX_INT;
+		else if (data_type.equals(types.DATA_LONG)) max = (double)numbers.MAX_INT;
+		
+		return max;
+	}
+	
+	public static boolean numeric_val_size_is_ok(double val_, String data_type_)
+	{
+		String type = data.check_type(data_type_);
+		if (!data.is_numeric(type)) return false;
+		
+		double max = get_numeric_data_max(type);
+		
+		return (val_ <= max && val_ >= -1 * max);
+	}
+
+	private static HashMap<String, Object> get_mysql_data_type(String data_type_)
+	{
+		HashMap<String, Object> output = new HashMap<String, Object>();
+		
+		String type = null;
+		
+		if (data_type_.equals(types.DATA_BOOLEAN)) type = types.MYSQL_TINYINT;
+		else if (data_type_.equals(types.DATA_TIMESTAMP)) type = types.MYSQL_VARCHAR;
+		else if (data_type_.equals(types.DATA_DECIMAL)) type = types.MYSQL_DECIMAL;
+		else if (data_type_.equals(types.DATA_INTEGER)) type = types.MYSQL_INT;
+		else if (data_type_.equals(types.DATA_LONG)) type = types.MYSQL_LONG;
+		else if (data_type_.equals(types.DATA_STRING)) type = types.MYSQL_VARCHAR;
+	
+		output.put(keys.TYPE, type);
+		output.put(keys.MAX, get_data_max_size(data_type_));
+		
+		return output;
 	}
 	
 	private static String get_query(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)

@@ -56,7 +56,10 @@ public class db
 		String source = check_source_error(source_);
 		if (!_is_ok) return;
 		
-		insert_internal(get_table(source_), adapt_inputs(source, null, vals_raw_));
+		HashMap<String, String> vals = check_vals_error(source, vals_raw_);
+		if (!_is_ok) return;
+		
+		insert_internal(get_table(source), vals);
 	}
 	
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_)
@@ -64,7 +67,10 @@ public class db
 		String source = check_source_error(source_);
 		if (!_is_ok) return;
 		
-		update_internal(get_table(source), adapt_inputs(source, null, vals_raw_), db_where.to_string(wheres_));
+		HashMap<String, String> vals = check_vals_error(source, vals_raw_);
+		if (!_is_ok) return;
+		
+		update_internal(get_table(source), vals, db_where.to_string(wheres_));
 	}
 	
 	public static void delete(String source_, db_where[] wheres_)
@@ -319,7 +325,16 @@ public class db
 		String source = check_source(source_);
 		
 		String id = types.check_aliases(field_);
-		if (!fields_.containsKey(id) || !db_field.complies(val_, fields_.get(id))) return null;
+		if (!fields_.containsKey(id)) return null;
+		
+		db_field field = arrays.get_value(fields_, id);
+		if (!generic.is_ok(field)) return null;
+		
+		if (!db_field.complies(val_, field)) return null;
+		if (data.is_numeric(field._data._type))
+		{
+			if (!numeric_val_size_is_ok(val_, field._data._type)) return null;		
+		}
 		
 		String val = sanitise_string(strings.to_string(val_));
 		if (!strings.is_ok(val)) return null;
@@ -329,6 +344,7 @@ public class db
 		
 		output.put(col, val);
 
+		
 		return output;
 	}
 	
@@ -353,6 +369,32 @@ public class db
 		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
 			output = mysql.get_data_type(field_);
+		}
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		
+		return output;
+	}
+
+	public static int get_data_max_size(String data_type_)
+	{
+		int output = 0;
+		
+		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		{
+			output = mysql.get_data_max_size(data_type_);
+		}
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		
+		return output;
+	}
+	
+	public static double get_numeric_data_max(String data_type_)
+	{
+		double output = 0;
+		
+		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		{
+			output = mysql.get_numeric_data_max(data_type_);
 		}
 		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
@@ -393,13 +435,34 @@ public class db
 
 		errors.manage_db(type, query_, e_, message_);
 	}
+
+	private static <x> boolean numeric_val_size_is_ok(x val_, String data_type_)
+	{
+		boolean output = false;
+		
+		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		{
+			output = mysql.numeric_val_size_is_ok(numbers.to_number(val_), data_type_);
+		}
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		
+		return output;	
+	}
 	
-	public static String check_source_error(String source_)
+	private static String check_source_error(String source_)
 	{
 		String source = check_source(source_);
 		if (!strings.is_ok(source)) manage_error(types.ERROR_DB_SOURCE, null, null, null);
 		
 		return source;
+	}
+	
+	private static <x> HashMap<String, String> check_vals_error(String source_, HashMap<String, x> vals_raw_)
+	{
+		HashMap<String, String> vals = adapt_inputs(source_, null, vals_raw_);
+		if (!arrays.is_ok(vals)) manage_error(types.ERROR_DB_VALS, null, null, null);
+		
+		return vals;
 	}
 	
 	private static ArrayList<HashMap<String, String>> select_internal(String table_, String[] cols_, String where_, int max_rows_, String order_)
