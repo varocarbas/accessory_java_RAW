@@ -49,7 +49,7 @@ public class db_ini
 
 		HashMap<String, String> vals = load_config_linked_db_vals();
 
-		_ini.load_config_linked_update(main, secs, vals);
+		ini.load_config_linked_update(main, secs, vals);
 	}
 	
 	private static HashMap<String, String> load_config_linked_db_vals()
@@ -124,8 +124,8 @@ public class db_ini
 		if (db.source_is_ok(source_)) return;
 		
 		HashMap<String, db_field> fields = db.get_default_fields();
-		fields.put(types._CONFIG_LOGS_DB_FIELD_ID, new db_field(new data(types.DATA_INTEGER, null), null));
-		fields.put(types._CONFIG_LOGS_DB_FIELD_MESSAGE, new db_field(new data(types.DATA_STRING, null), null));
+		fields.put(types._CONFIG_LOGS_DB_FIELD_ID, new db_field(new data(types.DATA_INTEGER, null), null, null));
+		fields.put(types._CONFIG_LOGS_DB_FIELD_MESSAGE, new db_field(new data(types.DATA_STRING, null), null, null));
 		
 		db.add_source(source_, fields);
 	}
@@ -135,9 +135,9 @@ public class db_ini
 		if (db.source_is_ok(source_)) return;
 		
 		HashMap<String, db_field> fields = db.get_default_fields();
-		fields.put(types._CONFIG_TESTS_DB_FIELD_INT, new db_field(new data(types.DATA_INTEGER, null), null));
-		fields.put(types._CONFIG_TESTS_DB_FIELD_STRING, new db_field(new data(types.DATA_STRING, null), null));
-		fields.put(types._CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(new data(types.DATA_DECIMAL, null), null));
+		fields.put(types._CONFIG_TESTS_DB_FIELD_INT, new db_field(new data(types.DATA_INTEGER, null), null, null));
+		fields.put(types._CONFIG_TESTS_DB_FIELD_STRING, new db_field(new data(types.DATA_STRING, new size(0, strings.SIZE_DEFAULT, 0)), null, null));
+		fields.put(types._CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(new data(types.DATA_DECIMAL, new size(0, 15, 3)), null, null));
 
 		db.add_source(source_, fields);
 	}

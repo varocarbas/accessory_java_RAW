@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class logs 
 {
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static void update(String message_, String id_)
 	{

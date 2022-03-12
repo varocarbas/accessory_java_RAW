@@ -90,8 +90,9 @@ public class types
 	public static final String DB_ORDER_DESC = "db_order_desc";
 	public static final String DB_FIELD_FURTHER = "db_field_further";
 	public static final String DB_FIELD_FURTHER_KEY = "db_field_further_key";
-	public static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_key_primary";
-	public static final String DB_FIELD_FURTHER_KEY_UNIQUE = "db_field_key_unique";
+	public static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_further_key_primary";
+	public static final String DB_FIELD_FURTHER_KEY_UNIQUE = "db_field_further_key_unique";
+	public static final String DB_FIELD_FURTHER_AUTO_INCREMENT = "db_field_further_auto_increment";
 	public static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";
 	
 	public static final String DB_QUERY = "db_query";
@@ -111,6 +112,7 @@ public class types
 	public static final String MYSQL_TINYINT = "mysql_tinyint";
 	public static final String MYSQL_LONG = "mysql_long";
 	public static final String MYSQL_DECIMAL = "mysql_decimal";
+	public static final String MYSQL_TIMESTAMP = "mysql_timestamp";
 	
 	public static final String DATA = "data";
 	public static final String DATA_STRING = "data_string";
@@ -148,7 +150,7 @@ public class types
 
 	private static HashMap<String, String> aliases = new HashMap<String, String>();
 
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static String check_aliases(String candidate_)
 	{
@@ -306,6 +308,10 @@ public class types
 			DB_WHERE_LINK_AND, DB_WHERE_LINK_OR,
 			//DB_ORDER
 			DB_ORDER_ASC, DB_ORDER_DESC,
+			//DB_FIELD_FURTHER
+			DB_FIELD_FURTHER_KEY, DB_FIELD_FURTHER_KEY_PRIMARY,
+			DB_FIELD_FURTHER_KEY_UNIQUE, DB_FIELD_FURTHER_AUTO_INCREMENT,
+			DB_FIELD_FURTHER_TIMESTAMP,
 			//DB_QUERY
 			DB_QUERY_SELECT, DB_QUERY_INSERT, DB_QUERY_UPDATE, DB_QUERY_DELETE, 
 			//DB_QUERY_TABLE

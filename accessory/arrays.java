@@ -11,7 +11,7 @@ public class arrays
 {
 	public static final int SIZE_DEFAULT = 5;
 	
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static final Class<?>[] get_all_classes()
 	{

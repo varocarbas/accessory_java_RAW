@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 
 public class generic 
 {
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static <x> boolean is_ok(x input_)
 	{

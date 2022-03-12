@@ -19,7 +19,7 @@ public class numbers
 	public static final int MAX_INT = Integer.MAX_VALUE;
 	public static final int MAX_DIGITS_INT = 10;
 	
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static final Class<?>[] get_all_classes()
 	{
@@ -121,6 +121,54 @@ public class numbers
 		
 		if (output < size_._min) output = size_._min;
 		if (output > size_._max) output = size_._max;
+		
+		return output;
+	}
+	
+	public static int get_length(int input_)
+	{
+		return get_length((double)input_);
+	}
+	
+	public static int get_length(long input_)
+	{
+		return get_length((double)input_);
+	}
+	
+	public static int get_length(double input_)
+	{
+		int length = 1;
+		
+		double input = Math.abs(input_);
+		if (input < 10.0) return length;
+		
+		while (input >= 10.0)
+		{
+			input /= 10.0;
+			length++;
+		}
+		
+		return length;
+	}
+	
+	public static String to_integer_string(double input_)
+	{
+		String output = "";
+
+		double input = input_;
+		int length = get_length(input_);
+		boolean is_negative = (input < 0);
+		if (length < MAX_DIGITS_LONG) return Long.toString((long)input);
+
+		input = Math.abs(input);
+		
+		while (input >= 1)
+		{
+			output = (int)(input % 10) + output;
+			input /= 10;
+		}
+		
+		if (is_negative) output = "-" + output;	
 		
 		return output;
 	}

@@ -12,7 +12,7 @@ public class _config
 	private static HashMap<String, String[]> _linked = new HashMap<String, String[]>();
 	//------
 
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static String get_basic(String key_)
 	{

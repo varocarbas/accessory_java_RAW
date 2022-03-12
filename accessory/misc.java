@@ -17,7 +17,7 @@ public class misc
 	public static final String SEPARATOR_ITEM = ", ";
 	public static final String SEPARATOR_DIR = paths.SEPARATOR_DIR;
 	
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static void pause_min()
 	{

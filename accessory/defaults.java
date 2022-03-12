@@ -62,7 +62,7 @@ public class defaults
 	static final Class<?> CLASS_NUMBERS = Double.class; 
 	static final Class<?> CLASS_ARRAYS = ArrayList.class;
 
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static Object get(Object var_)
 	{

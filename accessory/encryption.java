@@ -2,7 +2,7 @@ package accessory;
 
 public class encryption 
 {
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static String decrypt(String input_)
 	{

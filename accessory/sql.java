@@ -10,7 +10,7 @@ import java.util.Properties;
 
 class sql 
 {
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static boolean params_are_ok(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{

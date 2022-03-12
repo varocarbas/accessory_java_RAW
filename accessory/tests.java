@@ -71,10 +71,31 @@ public class tests
 		
 		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
 		
-		boolean is_ok = tests.run_method(type, method, name, args, targets);
+		boolean is_ok = run_method(type, method, name, args, targets, false);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 
+		name = "insert";
+		params = new Class<?>[] { String.class, HashMap.class };
+		method = generic.get_method(type, name, params, false);		
+
+		args = new ArrayList<ArrayList<Object>>();
+		
+		args2 = new ArrayList<Object>();
+		args2.add(source);
+		
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+		int max = 123456;
+		vals.put(types._CONFIG_TESTS_DB_FIELD_INT, numbers.get_random_int(-1 * max, max));
+		vals.put(types._CONFIG_TESTS_DB_FIELD_STRING, strings.get_random(strings.SIZE_SMALL));
+		double max2 = 123456789.123;
+		vals.put(types._CONFIG_TESTS_DB_FIELD_DECIMAL, numbers.get_random_decimal(-1 * max2, max2));		
+		args2.add(vals);
+		
+		args.add(args2);
+
+		outputs.put(name, run_method(type, method, name, args, targets, false));
+		
 		return outputs;	
 	}
 
@@ -197,7 +218,7 @@ public class tests
 			if (first_time) first_time = false;
 			else System.out.println("");
 					
-			run_outs.put(name, run_method(class_, method, name, arrays.get_value(args_, name), arrays.get_value(targets_, name)));
+			run_outs.put(name, run_method(class_, method, name, arrays.get_value(args_, name), arrays.get_value(targets_, name), true));
 		}
 		
 		System.out.println(misc.NEW_LINE + "-------- " + keys.END.toUpperCase() + " " + name0 + misc.NEW_LINE);
@@ -205,7 +226,7 @@ public class tests
 		return run_outs;
 	}
 
-	public static boolean run_method(Class<?> class_, Method method_, String method_name_, ArrayList<ArrayList<Object>> args_, Object[] targets_)
+	public static boolean run_method(Class<?> class_, Method method_, String method_name_, ArrayList<ArrayList<Object>> args_, Object[] targets_, boolean errors_allowed_)
 	{
 		boolean is_ok = false;
 		if (!method_is_ok(class_, method_, method_name_)) return is_ok;
@@ -224,6 +245,7 @@ public class tests
 			if (errors._triggered && !arrays.is_ok(targets_)) 
 			{
 				result = keys.ERROR.toUpperCase();
+				if (errors._triggered && !errors_allowed_) is_ok = false;
 				errors._triggered = false;
 			}
 			else 

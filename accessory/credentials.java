@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class credentials 
 {   	
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static HashMap<String, String> get(String type_, String user_, boolean encrypted_, String where_)
 	{		

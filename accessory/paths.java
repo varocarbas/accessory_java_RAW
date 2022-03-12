@@ -14,7 +14,7 @@ public class paths
 	public static final String EXTENSION_INI = ".ini";
 	public static final String EXTENSION_LOG = ".log";
 
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static boolean exists(String path_)
 	{

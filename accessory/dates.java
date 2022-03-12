@@ -13,7 +13,7 @@ public class dates
 	public static final String DATE_TIME = DATE + misc.SEPARATOR_NAME + TIME;
 	public static final String DEFAULT = defaults.TIME_DATE;
 
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static String get_current_time(String format_, int offset_)
 	{

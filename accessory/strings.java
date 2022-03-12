@@ -12,7 +12,7 @@ public class strings
 	public static final int SIZE_SMALL = 10;
 	public static final int SIZE_BIG = 500;
 
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static boolean is_ok(String string_)
 	{
@@ -234,9 +234,9 @@ public class strings
 		return (are_equivalent(string_, keys.TRUE) || are_equivalent(string_, keys.FALSE));
 	}
 
-	public static String from_number_decimal(double input_)
+	public static String from_number_decimal(double input_, boolean to_int_)
 	{
-		return Double.toString(input_);
+		return (to_int_ ? numbers.to_integer_string(input_) : Double.toString(input_));
 	}
 
 	public static double to_number_decimal(String string_)
@@ -338,7 +338,7 @@ public class strings
 		else if (generic.are_equal(type, Class.class)) output = ((Class<?>)input_).getName();
 		else if (generic.are_equal(type, Method.class)) output = ((Method)input_).getName();
 		else if (generic.are_equal(type, Exception.class)) output = ((Exception)input_).getMessage();
-		else if (generic.are_equal(type, Double.class)) output = from_number_decimal((Double)input_);
+		else if (generic.are_equal(type, Double.class)) output = from_number_decimal((Double)input_, false);
 		else if (generic.are_equal(type, Integer.class)) output = from_number_int((Integer)input_);
 		else if (generic.are_equal(type, Long.class)) output = from_number_long((Long)input_);
 		else if (generic.are_equal(type, Boolean.class)) output = from_boolean((Boolean)input_);

@@ -21,7 +21,7 @@ public class db
 	private static HashMap<String, String> _source_mains = new HashMap<String, String>();
 	//------
 	
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static HashMap<String, Boolean> update_conn_info(HashMap<String, String> params_)
 	{
@@ -247,9 +247,26 @@ public class db
 	{
 		HashMap<String, db_field> fields = new HashMap<String, db_field>();
 
-		size temp = new size(0.0, dates.get_time_pattern(dates.DATE_TIME).length(), 0);
-		fields.put(types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, new db_field(new data(accessory.types.DATA_STRING, temp), null));
-		fields.put(types._CONFIG_DB_FIELDS_DEFAULT_ID, new db_field(new data(accessory.types.DATA_INTEGER, null), null));
+		fields.put
+		(
+			types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, new db_field
+			(
+				new data(accessory.types.DATA_TIMESTAMP, null), null, new String[] 
+				{ 
+					types.DB_FIELD_FURTHER_TIMESTAMP 
+				}
+			)
+		);
+		fields.put
+		(
+			types._CONFIG_DB_FIELDS_DEFAULT_ID, new db_field
+			(
+				new data(accessory.types.DATA_INTEGER, null), null, new String[] 
+				{ 
+					types.DB_FIELD_FURTHER_KEY_PRIMARY, types.DB_FIELD_FURTHER_AUTO_INCREMENT 
+				}
+			)
+		);
 
 		return fields;
 	}
@@ -302,19 +319,18 @@ public class db
 	{
 		String source = check_source(source_);
 		if (!strings.is_ok(source) || !arrays.is_ok(new_)) return null;
-		
+
 		HashMap<String, db_field> fields = get_source_fields(source);
 		if (!arrays.is_ok(fields)) return null;
-		
+
 		HashMap<String, String> output = (arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>());
 		
 		for (Entry<String, x> item: new_.entrySet())
 		{
 			output = adapt_input(source, output, item.getKey(), item.getValue(), fields);
-
 			if (!arrays.is_ok(output)) return null;
 		}
-		
+
 		return output;
 	}
 
@@ -326,24 +342,26 @@ public class db
 		
 		String id = types.check_aliases(field_);
 		if (!fields_.containsKey(id)) return null;
-		
+	
 		db_field field = arrays.get_value(fields_, id);
-		if (!generic.is_ok(field)) return null;
-		
-		if (!db_field.complies(val_, field)) return null;
+		if (!generic.is_ok(field) || !db_field.complies(val_, field)) return null;
+
+		String val2 = strings.DEFAULT;
 		if (data.is_numeric(field._data._type))
 		{
-			if (!numeric_val_size_is_ok(val_, field._data._type)) return null;		
+			if (!numeric_val_size_is_ok(val_, field._data._type)) return null;	
+			
+			val2 = strings.to_string(val_);
+			//val2 = (field._data._type.equals(types.DATA_DECIMAL) ? numbers.to_integer_string((double)val) : strings.to_string(val));
 		}
+		else val2 = sanitise_string(strings.to_string(val_));
 		
-		String val = sanitise_string(strings.to_string(val_));
-		if (!strings.is_ok(val)) return null;
+		if (!strings.is_ok(val2)) return null;
 
 		String col = get_col(source, id);
 		if (!strings.is_ok(col)) return null;
-		
-		output.put(col, val);
 
+		output.put(col, val2);
 		
 		return output;
 	}

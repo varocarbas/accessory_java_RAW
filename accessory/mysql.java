@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 
 class mysql 
 {	
-	static { _ini.load(); }
+	static { ini.load(); }
 	
 	public static String sanitise_string(String input_)
 	{
@@ -33,14 +33,8 @@ class mysql
 		String output = "";
 		if (!db_field.is_ok(field_)) return output;
 		
-		if 
-		(
-			field_._data._type.equals(types.DATA_STRING) || 
-			field_._data._type.equals(types.DATA_TIMESTAMP)
-		)
-		{
-			output = types.MYSQL_VARCHAR;
-		}
+		if (field_._data._type.equals(types.DATA_STRING)) output = types.MYSQL_VARCHAR;
+		else if (field_._data._type.equals(types.DATA_TIMESTAMP)) output = types.MYSQL_TIMESTAMP;
 		else if (field_._data._type.equals(types.DATA_INTEGER)) output = types.MYSQL_INT;
 		else if (field_._data._type.equals(types.DATA_LONG)) output = types.MYSQL_LONG;
 		else if (field_._data._type.equals(types.DATA_DECIMAL)) output = types.MYSQL_DECIMAL;
@@ -59,14 +53,15 @@ class mysql
 	public static String get_data_type_size(db_field field_)
 	{
 		String output = strings.DEFAULT;
-		
+
 		int max = (field_._data._size._max > (double)numbers.MAX_INT ? 0 : (int)field_._data._size._max);
 		String type = field_._data._type;
-
+		if (type.equals(types.DATA_TIMESTAMP)) return output;
+			
 		HashMap<String, Object> info = get_mysql_data_type(type);
 		int max2 = (int)info.get(keys.MAX);
 		
-		if (type.equals(types.DATA_BOOLEAN) || type.equals(types.DATA_TIMESTAMP)) output = (String)info.get(keys.MAX);
+		if (type.equals(types.DATA_BOOLEAN)) output = (String)info.get(keys.MAX);
 		
 		if (type.equals(types.DATA_DECIMAL))
 		{
@@ -133,7 +128,38 @@ class mysql
 		
 		return (val_ <= max && val_ >= -1 * max);
 	}
+	
+	static String get_value(String input_)
+	{
+		return get_variable_value(input_, false);
+	}
 
+	static String get_variable(String input_)
+	{
+		return get_variable_value(input_, true);   	
+	} 
+
+	static Connection connect(Properties properties) 
+	{
+		Connection conn = null;
+
+		String url = get_connect_url();
+		if (!strings.is_ok(url)) return conn;
+
+		try 
+		{
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection(url, properties);
+		} 
+		catch (Exception e) 
+		{
+			db.manage_error(types.ERROR_DB_CONN, null, e, null); 
+			conn = null;
+		}
+
+		return conn;
+	} 
+	
 	private static HashMap<String, Object> get_mysql_data_type(String data_type_)
 	{
 		HashMap<String, Object> output = new HashMap<String, Object>();
@@ -141,7 +167,7 @@ class mysql
 		String type = null;
 		
 		if (data_type_.equals(types.DATA_BOOLEAN)) type = types.MYSQL_TINYINT;
-		else if (data_type_.equals(types.DATA_TIMESTAMP)) type = types.MYSQL_VARCHAR;
+		else if (data_type_.equals(types.DATA_TIMESTAMP)) type = types.MYSQL_TIMESTAMP;
 		else if (data_type_.equals(types.DATA_DECIMAL)) type = types.MYSQL_DECIMAL;
 		else if (data_type_.equals(types.DATA_INTEGER)) type = types.MYSQL_INT;
 		else if (data_type_.equals(types.DATA_LONG)) type = types.MYSQL_LONG;
@@ -221,13 +247,19 @@ class mysql
 			for (Entry<String, db_field> item: cols_info_.entrySet())
 			{
 				String col = item.getKey();
-				String type = get_data_type(item.getValue());
+				db_field field = item.getValue();
+				String type = get_data_type(field);
 				if (!strings.is_ok(col) || !strings.is_ok(type)) continue;
 				
 				if (!query.equals("")) query += ", ";
-				query += get_variable(col) + " " + type;
+				String item2 = get_variable(col) + " " + type;
+				
+				String further = get_query_create_table_further(field._further);
+				if (strings.is_ok(further)) item2 += " " + further;
+				
+				query += item2;
 			}
-
+			
 			if (!query.equals("")) 
 			{
 				query = "CREATE TABLE " + get_variable(table_) + " (" + query + ")";	
@@ -255,36 +287,45 @@ class mysql
 		return query;
 	}
 
-	static String get_value(String input_)
-	{
-		return get_variable_value(input_, false);
-	}
-
-	static String get_variable(String input_)
-	{
-		return get_variable_value(input_, true);   	
-	} 
-
-	static Connection connect(Properties properties) 
-	{
-		Connection conn = null;
-
-		String url = get_connect_url();
-		if (!strings.is_ok(url)) return conn;
-
-		try 
+	private static String get_query_create_table_further(String[] further_)
+	{	
+		String output = "";
+		if (!arrays.is_ok(further_)) return output;
+		
+		for (String further: further_)
 		{
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn = DriverManager.getConnection(url, properties);
-		} 
-		catch (Exception e) 
-		{
-			db.manage_error(types.ERROR_DB_CONN, null, e, null); 
-			conn = null;
+			String further2 = db_field.check_further(further);
+			if (!strings.is_ok(further2)) continue;
+			
+			if (further2.equals(types.DB_FIELD_FURTHER_KEY_PRIMARY))
+			{
+				output = "PRIMARY KEY";
+				break;
+			}
+			else if (further2.equals(types.DB_FIELD_FURTHER_KEY_UNIQUE)) 
+			{
+				output = "UNIQUE KEY";
+				break;
+			}
 		}
-
-		return conn;
-	} 
+		
+		if (arrays.value_exists(further_, types.DB_FIELD_FURTHER_AUTO_INCREMENT))
+		{
+			if (!output.equals("")) output += " ";
+			output += types.remove_type(types.DB_FIELD_FURTHER_AUTO_INCREMENT, types.DB_FIELD_FURTHER);
+		}
+		else if (arrays.value_exists(further_, types.DB_FIELD_FURTHER_TIMESTAMP))
+		{
+			if (!output.equals("")) output += " ";
+			output += "DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+		}
+		
+		//field._further
+		//MODIFY COLUMN `id` INT(10) UNSIGNED PRIMARY KEY AUTO_INCREMENT;
+		//PRIMARY KEY AUTO_INCREMENT
+		
+		return output;
+	}
 
 	private static String get_connect_url()
 	{   

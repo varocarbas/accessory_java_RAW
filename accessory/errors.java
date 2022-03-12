@@ -7,7 +7,7 @@ public class errors
 {	
 	public static boolean _triggered = false; 
 	
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static void manage(HashMap<String, String> info_, boolean exit_)
 	{			

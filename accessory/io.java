@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class io 
 {	
-	static { _ini.load(); }
+	static { ini.load(); }
 
 	public static void array_to_file(String path_, ArrayList<String> vals_, boolean append_, boolean errors_to_file_)
 	{
