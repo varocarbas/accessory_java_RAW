@@ -63,6 +63,7 @@ public class keys
 	public static final String DECIMAL = "decimal";
 	public static final String METHOD = "method";
 	public static final String CLASS = "class";
+	public static final String DEFAULT = "default";
 	
 	static { ini.load(); }
 }

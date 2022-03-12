@@ -243,7 +243,7 @@ class mysql
 		else if (what_.equals(types.DB_QUERY_TABLE_CREATE))
 		{
 			query = "";
-			
+
 			for (Entry<String, db_field> item: cols_info_.entrySet())
 			{
 				String col = item.getKey();
@@ -254,9 +254,23 @@ class mysql
 				if (!query.equals("")) query += ", ";
 				String item2 = get_variable(col) + " " + type;
 				
-				String further = get_query_create_table_further(field._further);
-				if (strings.is_ok(further)) item2 += " " + further;
+				String[] further = create_table_check_further(field._further);	
+				String def_val = strings.DEFAULT;
 				
+				if (field._data._type.equals(types.DATA_TIMESTAMP)) def_val = "current_timestamp";
+				else if (!arrays.value_exists(further, types.DB_FIELD_FURTHER_AUTO_INCREMENT))
+				{
+					if (generic.is_ok(field._default)) def_val = strings.to_string(field._default);
+					else if (data.is_numeric(field._data._type)) def_val = "0";
+					
+					if (strings.is_ok(def_val)) def_val = get_value(def_val);
+				}
+				
+				if (strings.is_ok(def_val)) item2 += " " + keys.DEFAULT + " " + def_val;
+				
+				String further2 = create_table_further_to_query(further);
+				if (strings.is_ok(further2)) item2 += " " + further2;
+					
 				query += item2;
 			}
 			
@@ -287,7 +301,23 @@ class mysql
 		return query;
 	}
 
-	private static String get_query_create_table_further(String[] further_)
+	private static String[] create_table_check_further(String[] further_)
+	{
+		ArrayList<String> output = new ArrayList<String>();
+		if (!arrays.is_ok(further_)) return null;
+		
+		for (String further: further_)
+		{
+			String further2 = db_field.check_further(further);
+			if (!strings.is_ok(further2)) continue;
+			
+			output.add(further2);
+		}
+		
+		return arrays.to_array(output);
+	}
+	
+	private static String create_table_further_to_query(String[] further_)
 	{	
 		String output = "";
 		if (!arrays.is_ok(further_)) return output;
@@ -299,12 +329,12 @@ class mysql
 			
 			if (further2.equals(types.DB_FIELD_FURTHER_KEY_PRIMARY))
 			{
-				output = "PRIMARY KEY";
+				output = "primary key";
 				break;
 			}
 			else if (further2.equals(types.DB_FIELD_FURTHER_KEY_UNIQUE)) 
 			{
-				output = "UNIQUE KEY";
+				output = "unique key";
 				break;
 			}
 		}
@@ -317,12 +347,8 @@ class mysql
 		else if (arrays.value_exists(further_, types.DB_FIELD_FURTHER_TIMESTAMP))
 		{
 			if (!output.equals("")) output += " ";
-			output += "DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+			output += "on update current_timestamp";
 		}
-		
-		//field._further
-		//MODIFY COLUMN `id` INT(10) UNSIGNED PRIMARY KEY AUTO_INCREMENT;
-		//PRIMARY KEY AUTO_INCREMENT
 		
 		return output;
 	}
