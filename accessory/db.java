@@ -43,6 +43,13 @@ public class db
 		return _config.update(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_ERROR_EXIT, error_exit_);
 	}
 	
+	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order order_)
+	{
+		ArrayList<HashMap<String, String>> temp = select(source_, fields_, wheres_, 1, order_);
+		
+		return (arrays.is_ok(temp) ? temp.get(0) : null);
+	}
+	
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order order_)
 	{	
 		String source = check_source_error(source_);
@@ -64,8 +71,9 @@ public class db
 	
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_)
 	{
-		String source = check_source_error(source_);
-		if (!_is_ok) return;
+		//String source = check_source_error(source_);
+		//if (!_is_ok) return;
+		String source = source_;
 		
 		HashMap<String, String> vals = check_vals_error(source, vals_raw_);
 		if (!_is_ok) return;

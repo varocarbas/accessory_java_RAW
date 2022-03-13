@@ -11,12 +11,14 @@ public class db_where
 	public String _link = defaults.DB_WHERE_LINK;
 	public boolean _is_literal = defaults.DB_WHERE_LITERAL; //_value as a literal (e.g., 5 -> '5') or something else (e.g., col + 1 -> col + 1).
 	
+	private static String _source_temp = strings.DEFAULT;
+	
 	public String toString()
 	{
 		if (!is_ok(_source, _key, _operand, _value)) return strings.DEFAULT;
 		
 		String operand = operand_to_string(_operand);
-		String key = db.get_variable(db.get_col(_source, _key));
+		String key = db.get_variable(db.get_col(_source_temp, _key));
 		String value = strings.to_string(_value);
 		value = (_is_literal ? db.get_value(value) : value);
 		
@@ -31,7 +33,7 @@ public class db_where
 		
 		return 
 		(
-			db.sources_are_equal(_source, where2_._source) &&
+			db.sources_are_equal(_source_temp, where2_._source) &&
 			generic.are_equal(_key, where2_._key) &&
 			generic.are_equal(_operand, where2_._operand) &&
 			generic.are_equal(_value, where2_._value) &&
@@ -102,10 +104,11 @@ public class db_where
 	public db_where(db_where input_)
 	{
 		_is_ok = false;
+
 		if (!is_ok(input_)) return;
 
 		_is_ok = true;
-		_source = input_._source;
+		_source = _source_temp;
 		_key = input_._key;
 		_operand = input_._operand;
 		_value = input_._value;
@@ -116,11 +119,12 @@ public class db_where
 	public db_where(String source_, String key_, Object value_)
 	{
 		_is_ok = false;
+		
 		String operand = defaults.DB_WHERE_OPERAND;
 		if (!is_ok(source_, key_, operand, value_)) return;
 		
 		_is_ok = true;
-		_source = source_;
+		_source = _source_temp;
 		_key = key_;
 		_operand = operand;
 		_value = value_;	
@@ -134,7 +138,7 @@ public class db_where
 		if (!is_ok(source_, key_, operand_, value_)) return;
 		
 		_is_ok = true;
-		_source = db.check_source(source_);
+		_source = _source_temp;
 		_key = key_;
 		_operand = check_operand(operand_);
 		_value = value_;	
@@ -164,12 +168,12 @@ public class db_where
 	
 	private static boolean is_ok(String source_, String key_, String operand_, Object value_)
 	{
-		String source = db.check_source(source_);
-		
+		_source_temp = db.check_source(source_);
+
 		return 
 		( 
-			strings.is_ok(source) &&
-			db.field_is_ok(source, key_) &&
+			strings.is_ok(_source_temp) &&
+			db.field_is_ok(_source_temp, key_) &&
 			operand_is_ok(operand_) &&
 			generic.is_ok(value_)
 		);

@@ -9,7 +9,7 @@ public class defaults
 	public static final String APP_NAME = keys.APP;
 	public static final String DIR_APP = paths.get_default_dir(keys.APP);
 	public static final String DIR_INI = paths.get_default_dir(keys.INI);
-	public static final String DIR_LOGS = paths.get_default_dir(keys.LOG);
+	public static final String DIR_LOGS = paths.get_default_dir(keys.LOGS);
 	public static final String TIME_DATE = keys.TIME; 
 	public static final int SIZE_DECIMALS = 3;
 	
@@ -46,11 +46,11 @@ public class defaults
 	static final int MYSQL_DATA_SIZE_DECIMALS = SIZE_DECIMALS;
 	static final int MYSQL_DATA_SIZE_VARCHAR = strings.SIZE_DEFAULT;
 	
-	static final String LOGS_DB_SOURCE = keys.LOG;
+	static final String LOGS_DB_SOURCE = keys.LOGS;
 	static final String LOGS_DB_FIELD_ID = keys.ID;
 	static final String LOGS_DB_FIELD_MESSAGE = keys.MESSAGE;
 	
-	static final String TESTS_DB_SOURCE = keys.TEST;
+	static final String TESTS_DB_SOURCE = keys.TESTS;
 	static final String TESTS_DB_FIELD_INT = keys.INTEGER;
 	static final String TESTS_DB_FIELD_STRING = keys.STRING;
 	static final String TESTS_DB_FIELD_DECIMAL = keys.DECIMAL;

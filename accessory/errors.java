@@ -22,7 +22,7 @@ public class errors
 
 	public static void manage(String type_, Exception e_, String[] further_, boolean exit_)
 	{		
-		String all = (strings.is_ok(type_) ? type_ : keys.ERROR);
+		String all = (strings.is_ok(type_) ? type_ : "error");
 		all += misc.SEPARATOR_CONTENT + get_message(e_, type_);
 
 		if (arrays.is_ok(further_))
@@ -77,7 +77,8 @@ public class errors
 
 		HashMap<String, String> info = new HashMap<String, String>();
 		info.put(keys.TYPE, type_);
-
+		info.put(keys.SOURCE, strings.to_string(db._cur_source));
+		
 		String message = message_;
 		String message2 = get_message(e_, type_);
 		
@@ -119,12 +120,12 @@ public class errors
 	{
 		String separator = misc.SEPARATOR_CONTENT;
 
-		String all = (info_.containsKey(keys.TYPE) ? info_.get(keys.TYPE) : keys.ERROR).toUpperCase();
+		String all = (info_.containsKey(keys.TYPE) ? info_.get(keys.TYPE) : "error").toUpperCase();
 		all += separator;
 
 		if (!arrays.is_ok(info_)) return all;
 
-		all += arrays.to_string(info_, separator, misc.SEPARATOR_KEYVAL, new String[] { keys.LOG });
+		all += arrays.to_string(info_, separator, misc.SEPARATOR_KEYVAL, new String[] { keys.LOGS });
 
 		return all;
 	}

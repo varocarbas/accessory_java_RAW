@@ -90,7 +90,7 @@ public class types
 	public static final String DB_ORDER_DESC = "db_order_desc";
 	public static final String DB_FIELD_FURTHER = "db_field_further";
 	public static final String DB_FIELD_FURTHER_KEY = "db_field_further_key";
-	public static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_further_key_primary";
+	static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_further_key_primary"; //Added via default fields.
 	public static final String DB_FIELD_FURTHER_KEY_UNIQUE = "db_field_further_key_unique";
 	public static final String DB_FIELD_FURTHER_AUTO_INCREMENT = "db_field_further_auto_increment";
 	public static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";

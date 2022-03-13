@@ -248,20 +248,23 @@ class mysql
 			{
 				String col = item.getKey();
 				db_field field = item.getValue();
-				String type = get_data_type(field);
-				if (!strings.is_ok(col) || !strings.is_ok(type)) continue;
+				String type = field._data._type;
+				
+				String type2 = get_data_type(field);
+				if (!strings.is_ok(col) || !strings.is_ok(type2)) continue;
 				
 				if (!query.equals("")) query += ", ";
-				String item2 = get_variable(col) + " " + type;
+				String item2 = get_variable(col) + " " + type2;
 				
 				String[] further = create_table_check_further(field._further);	
 				String def_val = strings.DEFAULT;
 				
-				if (field._data._type.equals(types.DATA_TIMESTAMP)) def_val = "current_timestamp";
+				if (type.equals(types.DATA_TIMESTAMP)) def_val = "current_timestamp";
 				else if (!arrays.value_exists(further, types.DB_FIELD_FURTHER_AUTO_INCREMENT))
 				{
 					if (generic.is_ok(field._default)) def_val = strings.to_string(field._default);
-					else if (data.is_numeric(field._data._type)) def_val = "0";
+					else if (data.is_numeric(type)) def_val = "0";
+					else if (type.equals(types.DATA_STRING)) def_val = get_variable_value(" ", false);
 					
 					if (strings.is_ok(def_val)) def_val = get_value(def_val);
 				}

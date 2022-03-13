@@ -259,6 +259,7 @@ public class arrays
 		else if (generic.are_equal(type, db_field.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_field[size]);
 		else if (generic.are_equal(type, db_where.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_where[size]);
 		else if (generic.are_equal(type, db_order.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_order[size]);
+		else if (generic.are_equal(type, Object.class)) output = (x[])((ArrayList<x>)input_).toArray(new Object[size]);
 
 		return output;
 	}
@@ -351,17 +352,22 @@ public class arrays
 
 	public static <x> Class<?> get_class_items(ArrayList<ArrayList<x>> input_)
 	{
-		return (!is_ok(input_) ? null : generic.get_class(input_.get(0).get(0)));
+		return (!is_ok(input_) ? null : get_class_items(input_.get(0)));
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <x> Class<?> get_class_items(Object input_)
 	{
-		return 
-		(
-			!generic.are_equal(generic.get_class(input_), ArrayList.class) ? 
-			null : generic.get_class(((ArrayList<x>)input_).get(0))
-		);
+		Class<?> output = null;
+		if (!generic.are_equal(generic.get_class(input_), ArrayList.class)) return output;
+		
+		for (x item: (ArrayList<x>)input_)
+		{
+			output = get_class_item(item, output);
+			if (generic.are_equal(output, Object.class)) break;
+		}
+
+		return output;
 	}
 
 	public static Class<?> get_class_items(double[] input_)
@@ -386,7 +392,27 @@ public class arrays
 	
 	public static <x> Class<?> get_class_items(x[] input_)
 	{
-		return (!is_ok(input_) ? null : generic.get_class(input_[0]));
+		Class<?> output = null;
+		if (!is_ok(input_)) return output;
+		
+		for (x item: input_)
+		{
+			output = get_class_item(item, output);
+			if (generic.are_equal(output, Object.class)) break;
+		}
+
+		return output;
+	}
+	
+	private static <x> Class<?> get_class_item(x item_, Class<?> class_)
+	{
+		Class<?> output = class_;
+		
+		Class<?> temp = generic.get_class(item_);
+		if (output == null) output = temp;
+		else if (!generic.are_equal(temp, output)) output = Object.class;
+		
+		return output;
 	}
 	
 	public static ArrayList<Double> to_arraylist(double[] input_)
@@ -614,26 +640,24 @@ public class arrays
 		String separator1 = (strings.is_ok(separator1_) ? separator1_ : misc.SEPARATOR_ITEM);
 		String separator2 = (strings.is_ok(separator2_) ? separator2_ : misc.SEPARATOR_KEYVAL);
 
+		boolean first_time = true;
+		
 		for (Entry<x, y> item: input_.entrySet())
 		{
 			x key = item.getKey();
 			y val = item.getValue();
 			if (!generic.is_ok(key) || value_exists(keys_ignore_, key)) continue; 
 
-			if (!output.equals("")) output += separator1;
+			if (first_time) first_time = false;
+			else output += separator1;
 			
 			String key2 = (generic.is_array(key) ? key.toString() : strings.to_string(key));
-			String val2 = strings.DEFAULT;
-			if (generic.is_array(val))
-			{
-				if (is_ok(val)) val2 = val.toString();
-			}
-			else val2 = strings.to_string(val);
+			String val2 = to_string_val(val);
 			
 			output += (key2 + separator2 + val2);
 		}
 
-		if (strings.is_ok(output)) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
+		if (!first_time) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
 		
 		return output;
 	}
@@ -648,21 +672,25 @@ public class arrays
 		String output = "";
 		String separator1 = (strings.is_ok(separator1_) ? separator1_ : misc.SEPARATOR_ITEM);
 		String separator2 = (strings.is_ok(separator2_) ? separator2_ : misc.SEPARATOR_KEYVAL);
-
+		
+		boolean first_time = true;
+		
 		for (Entry<x, x> item: input.entrySet())
 		{
 			x key = item.getKey();
 			x val = item.getValue();
-			if (!generic.is_ok(key) || !generic.is_ok(val) || value_exists(keys_ignore_, key)) continue; 
+			if (!generic.is_ok(key) || value_exists(keys_ignore_, key)) continue; 
 
-			if (!output.equals("")) output += separator1;
+			if (first_time) first_time = false;
+			else output += separator1;
 			
 			String key2 = (generic.is_array(key) ? key.toString() : strings.to_string(key));
-			String val2 = (generic.is_array(val) ? key.toString() : strings.to_string(val));
+			String val2 = to_string_val(val);
+			
 			output += (key2 + separator2 + val2);
 		}
 
-		if (strings.is_ok(output)) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
+		if (!first_time) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
 
 		return output;
 	}
@@ -700,32 +728,46 @@ public class arrays
 	
 		output = "";
 		String separator = (strings.is_ok(separator_) ? separator_ : misc.SEPARATOR_ITEM);
-
+		boolean first_time = true;
+		
 		if (is_array)
 		{
 			for (x item: (x[])input_)
 			{
-				if (!generic.is_ok(item)) continue;
-				if (!output.equals("")) output += separator;
+				if (first_time) first_time = false;
+				else output += separator;
 
-				output += (generic.is_array(item) ? item.toString() : strings.to_string(item));
+				output += to_string_val(item);
 			}	
 		}
 		else if (is_arraylist)
 		{
 			for (x item: (ArrayList<x>)input_)
 			{
-				if (!generic.is_ok(item)) continue;
-				if (!output.equals("")) output += separator;
+				if (first_time) first_time = false;
+				else output += separator;
 
-				output += (generic.is_array(item) ? item.toString() : strings.to_string(item));
+				output += to_string_val(item);
 			}
 		}
 
-		if (strings.is_ok(output)) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
+		if (!first_time) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
 
 		return output;
 	}	
+
+	private static <x> String to_string_val(x val_)
+	{
+		String output = strings.DEFAULT;
+		
+		if (generic.is_array(val_))
+		{
+			if (is_ok(val_)) output = val_.toString();
+		}
+		else output = strings.to_string(val_);
+		
+		return output;
+	}
 	
 	private static <x> Class<?> get_class_key_val_xx(HashMap<x, x> input_, boolean is_key_)
 	{

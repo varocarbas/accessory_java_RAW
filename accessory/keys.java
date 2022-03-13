@@ -10,8 +10,8 @@ public class keys
 	public static final String TYPE = "type";
 	public static final String PATH = "path";
 	public static final String EXCEPTION = "exception";
-	public static final String ERROR = "error";
-	public static final String LOG = "log";
+	public static final String ERRORS = "errors";
+	public static final String LOGS = "logs";
 	public static final String TIME = "time";
 	public static final String DATE = "date";
 	public static final String USER = "user";
@@ -57,7 +57,7 @@ public class keys
 	public static final String START = "start";
 	public static final String STOP = "stop";
 	public static final String END = "end";
-	public static final String TEST = "test";
+	public static final String TESTS = "tests";
 	public static final String INFO = "info";
 	public static final String INTEGER = "integer";
 	public static final String DECIMAL = "decimal";

@@ -56,7 +56,7 @@ public class tests
 		Class<?> type = db.class;
 		
 		String source = types._CONFIG_TESTS_DB_SOURCE;
-		
+				
 		String name = "create_table";
 		Class<?>[] params = new Class<?>[] { String.class, boolean.class };
 		Method method = generic.get_method(type, name, params, false);		
@@ -94,7 +94,46 @@ public class tests
 		
 		args.add(args2);
 
-		outputs.put(name, run_method(type, method, name, args, targets, false));
+		is_ok = run_method(type, method, name, args, targets, false);
+		outputs.put(name, is_ok);
+		if (!is_ok) return outputs;
+
+		name = "update";
+		params = new Class<?>[] { String.class, HashMap.class, db_where[].class };
+		method = generic.get_method(type, name, params, false);	
+				
+		int val = numbers.get_random_int(-1 * max, max);
+
+		vals.put(types._CONFIG_TESTS_DB_FIELD_INT, val);		
+
+		db._cur_source = source;
+		db_where[] wheres = new db_where[] { new db_where(null, types._CONFIG_DB_FIELDS_DEFAULT_ID, 1) };
+		
+		args2.add(wheres);
+		
+		is_ok = run_method(type, method, name, args, targets, false);
+		outputs.put(name, is_ok);
+		if (!is_ok) return outputs;
+
+		name = "select_one";
+		params = new Class<?>[] { String.class, String[].class, db_where[].class, db_order.class };
+		method = generic.get_method(type, name, params, false);	
+		
+		args = new ArrayList<ArrayList<Object>>();
+		
+		args2 = new ArrayList<Object>();
+		args2.add(source);
+		args2.add(new String[] { types._CONFIG_TESTS_DB_FIELD_INT });
+		args2.add(wheres);
+		args2.add(null);
+		args.add(args2);
+		
+		String val2 = strings.to_string(val);
+		HashMap<String, String> target = new HashMap<String, String>();
+		target.put(types._CONFIG_TESTS_DB_FIELD_INT, val2);
+		
+		is_ok = run_method(type, method, name, args, new Object[] { target }, false);
+		outputs.put(name, is_ok);
 		
 		return outputs;	
 	}
@@ -234,17 +273,18 @@ public class tests
 		is_ok = true;
 		String result = strings.DEFAULT;
 
-		Object[] args = get_args(method_.getParameterTypes(), args_);			
+		Object[] targets = (Object[])arrays.get_new(targets_);
+		Object[] args = get_args(method_.getParameterTypes(), arrays.get_new(args_));			
 		Object output = generic.call_static_method(method_, args, false);
 
-		boolean out_is_ok = output_is_ok(output, targets_);
+		boolean out_is_ok = output_is_ok(output, targets);
 		System.out.println(method_name_);
 		
 		if (errors._triggered || !out_is_ok)
 		{
-			if (errors._triggered && !arrays.is_ok(targets_)) 
+			if (errors._triggered && !arrays.is_ok(targets)) 
 			{
-				result = keys.ERROR.toUpperCase();
+				result = "ERROR";
 				if (errors._triggered && !errors_allowed_) is_ok = false;
 				errors._triggered = false;
 			}
@@ -261,6 +301,10 @@ public class tests
 		String in = "IN: ";
 		if (arrays.is_ok(args)) in += strings.to_string(args);
 		System.out.println(in);
+		
+		String target = "TARGETS: ";
+		if (arrays.is_ok(targets)) target += strings.to_string(targets);
+		System.out.println(target);
 		
 		String out = "OUT: ";
 		if (generic.is_ok(output)) out += strings.to_string(output);
@@ -352,10 +396,11 @@ public class tests
 		return is_ok;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static Object[] get_args(Class<?>[] params_, ArrayList<ArrayList<Object>> args_all_)
 	{
 		_overload = 0;
-		
+	
 		int size = arrays.get_size(params_);
 		if (size < 1) return null;
 		
@@ -365,14 +410,16 @@ public class tests
 		ArrayList<Object> args0 = null;
 		for (int i = 0; i < args_all.size(); i++)
 		{
-			ArrayList<Object> args = args_all.get(i);
+			ArrayList<Object> args = (ArrayList<Object>)arrays.get_new(args_all.get(i));
 			if (arrays.get_size(args) != size) continue;
-			
+
 			boolean is_ok = true;
-			
+
 			for (int i2 = 0; i2 < size; i2++)
 			{
-				if (!generic.are_equal(generic.get_class(args.get(i2)), params_[i2]))
+				if (args.get(i2) == null) continue;
+				
+				if (!generic.are_equal(generic.get_class_specific(args.get(i2)), params_[i2]))
 				{
 					is_ok = false;
 					break;

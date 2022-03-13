@@ -238,6 +238,29 @@ public class generic
 		else if (input_ instanceof long[]) type = long[].class;
 		else if (input_ instanceof int[]) type = int[].class;
 		else if (input_ instanceof boolean[]) type = boolean[].class;
+		else if (input_ instanceof Object) type = Object.class;
+		
+		return type;
+	}
+
+	public static <x> Class<?> get_class_specific(x input_)
+	{
+		Class<?> type = get_class(input_);
+		if (type == null || !are_equal(type, Array.class)) return type;
+
+		if (input_ instanceof String[]) type = String[].class;
+		else if (input_ instanceof Boolean[]) type = Boolean[].class;
+		else if (input_ instanceof Integer[]) type = Integer[].class;
+		else if (input_ instanceof Long[]) type = Long[].class;
+		else if (input_ instanceof Double[]) type = Double[].class;
+		else if (input_ instanceof Class[]) type = Class[].class;
+		else if (input_ instanceof Method[]) type = Method[].class;
+		else if (input_ instanceof Exception[]) type = Exception[].class;
+		else if (input_ instanceof size[]) type = size[].class;
+		else if (input_ instanceof data[]) type = data[].class;
+		else if (input_ instanceof db_field[]) type = db_field[].class;
+		else if (input_ instanceof db_where[]) type = db_where[].class;
+		else if (input_ instanceof db_order[]) type = db_order[].class;
 		
 		return type;
 	}
@@ -266,6 +289,7 @@ public class generic
 		classes.add(String.class);
 		classes.add(Boolean.class);
 		classes.add(boolean.class);
+		classes.add(Object.class);
 		
 		for (Class<?> type: numbers.get_all_classes())
 		{
@@ -355,7 +379,7 @@ public class generic
 		if (!is_ok1 || !is_ok2) return (is_ok1 == is_ok2);
 
 		if (class1_.equals(class2_)) return true;
-
+		
 		for (Entry<Class<?>, Class<?>> equivalent: get_class_equivalents().entrySet())
 		{
 			Class<?> key = equivalent.getKey();
