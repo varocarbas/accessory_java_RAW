@@ -80,10 +80,7 @@ public class arrays
 		return 
 		(
 			(
-				(
-					get_size(input1_) != get_size(input2_)
-				) 
-				|| !generic.are_equal
+				(get_size(input1_) != get_size(input2_)) || !generic.are_equal
 				(
 					get_class_items(input1_), get_class_items(input2_)
 				)
@@ -768,29 +765,33 @@ public class arrays
 		
 		return output;
 	}
-	
+
 	private static <x> Class<?> get_class_key_val_xx(HashMap<x, x> input_, boolean is_key_)
 	{
-		if (!is_ok(input_)) return null;
+		Class<?> output = null;
+		if (!is_ok(input_)) return output;
 		
 		for (Entry<x, x> item: input_.entrySet())
 		{
-			return generic.get_class((is_key_ ? item.getKey() : item.getValue()));
+			output = get_class_item((is_key_ ? item.getKey() : item.getValue()), output);
+			if (generic.are_equal(output, Object.class)) break;
 		}
 		
-		return null;
+		return output;
 	}
 	
 	private static <x, y> Class<?> get_class_key_val_xy(HashMap<x, y> input_, boolean is_key_)
 	{
-		if (!is_ok(input_)) return null;
-
+		Class<?> output = null;
+		if (!is_ok(input_)) return output;
+		
 		for (Entry<x, y> item: input_.entrySet())
 		{
-			return generic.get_class((is_key_ ? item.getKey() : item.getValue()));
+			output = get_class_item((is_key_ ? item.getKey() : item.getValue()), output);
+			if (generic.are_equal(output, Object.class)) break;
 		}
 		
-		return null;
+		return output;
 	}
 	
 	private static <x> int get_size_arraylist(ArrayList<x> input_)

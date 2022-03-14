@@ -59,8 +59,9 @@ public class keys
 	public static final String END = "end";
 	public static final String TESTS = "tests";
 	public static final String INFO = "info";
-	public static final String INTEGER = "integer";
+	public static final String INT = "int";
 	public static final String DECIMAL = "decimal";
+	public static final String LONG = "long";
 	public static final String METHOD = "method";
 	public static final String CLASS = "class";
 	public static final String DEFAULT = "default";

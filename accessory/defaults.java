@@ -51,7 +51,7 @@ public class defaults
 	static final String LOGS_DB_FIELD_MESSAGE = keys.MESSAGE;
 	
 	static final String TESTS_DB_SOURCE = keys.TESTS;
-	static final String TESTS_DB_FIELD_INT = keys.INTEGER;
+	static final String TESTS_DB_FIELD_INT = keys.INT;
 	static final String TESTS_DB_FIELD_STRING = keys.STRING;
 	static final String TESTS_DB_FIELD_DECIMAL = keys.DECIMAL;
 

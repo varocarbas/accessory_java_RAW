@@ -172,4 +172,19 @@ public class numbers
 		
 		return output;
 	}
+	
+	public static double decimal_from_string(String input_)
+	{
+		return strings.to_number_decimal(input_);
+	}
+	
+	public static long long_from_string(String input_)
+	{
+		return strings.to_number_long(input_);
+	}
+	
+	public static int int_from_string(String input_)
+	{
+		return strings.to_number_int(input_);
+	}
 }

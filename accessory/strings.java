@@ -74,6 +74,11 @@ public class strings
 		return are_equal(normalise(string1_), normalise(string2_));
 	}
 
+	public static boolean contains_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_)
+	{
+		return (index_of_outside(needle_, haystack_, normalise_, start_, end_) > -1);
+	}
+
 	public static boolean contains(String needle_, String haystack_, boolean normalise_)
 	{
 		return (index_of(needle_, haystack_, normalise_) >= 0);
@@ -114,6 +119,21 @@ public class strings
 		return (length_ > 0 ? string_.substring(start_, start_ + length_) : string_.substring(start_));
 	}
 
+	public static String[] split(String haystack_, String regex_)
+	{
+		return split(haystack_, regex_, false, 0, false, false);
+	}
+	
+	public static String[] split(String haystack_, String regex_, boolean trim_)
+	{
+		return split(haystack_, regex_, false, 0, trim_, false);
+	}
+	
+	public static String[] split(String haystack_, String regex_, boolean trim_, boolean remove_wrong_)
+	{
+		return split(haystack_, regex_, false, 0, trim_, remove_wrong_);
+	}
+	
 	public static String[] split(String haystack_, String regex_, boolean normalise_, int max_size_, boolean trim_, boolean remove_wrong_)
 	{
 		String[] output = null; 
@@ -122,7 +142,7 @@ public class strings
 		{
 			String haystack = haystack_;
 			String regex = regex_;
-			if (!strings.is_ok(haystack) || !strings.is_ok(regex)) return null;
+			if (haystack == null || regex == null) return null;
 
 			if (normalise_)
 			{
@@ -194,7 +214,35 @@ public class strings
 		return output;
 	}
 
+	public static int index_of_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_)
+	{
+		int output = index_of(needle_, haystack_, normalise_);
+		if (output < 0 || !strings.is_ok(start_) || !strings.is_ok(end_)) return output;
+		
+		output = 0;
+		
+		while (true)
+		{
+			output = index_of(needle_, haystack_, output, normalise_);
+			if (output < 0) return output;
+			
+			int start = index_of(start_, haystack_, normalise_);
+			if (start >= 0 && start < output)
+			{
+				int end = index_of(end_, haystack_, output, normalise_);
+				if (end >= 0) continue;
+			}
+			
+			return output;
+		}
+	}
+	
 	public static int index_of(String needle_, String haystack_, boolean normalise_)
+	{
+		return index_of(needle_, haystack_, 0, normalise_);
+	}
+	
+	public static int index_of(String needle_, String haystack_, int start_, boolean normalise_)
 	{
 		if (!is_ok(needle_) || !is_ok(haystack_)) return -1;
 
@@ -206,7 +254,7 @@ public class strings
 			needle = normalise(needle);
 		}
 
-		return haystack.indexOf(needle);
+		return (start_ > 0 ? haystack.indexOf(needle, start_) : haystack.indexOf(needle));
 	}
 
 	public static boolean is_integer(String string_)
@@ -249,7 +297,7 @@ public class strings
 		return Long.toString(input_);
 	}
 
-	public static double to_number_long(String string_)
+	public static long to_number_long(String string_)
 	{
 		return (is_long(string_) ? Long.parseLong(string_) : numbers.DEFAULT_LONG);
 	}

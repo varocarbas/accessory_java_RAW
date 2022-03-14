@@ -3,6 +3,7 @@ package accessory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class tests 
 {
@@ -15,20 +16,42 @@ public class tests
 		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
 		
 		String name0 = "accessory_main";
-		System.out.println("-------- " + keys.START.toUpperCase() + " " + name0 + misc.NEW_LINE);
+		System.out.println("-------- " + keys.START.toUpperCase() + " " + name0);
 
 		outputs = run_accessory_main();
-		
-		System.out.println(misc.NEW_LINE + keys.END.toUpperCase() + " " + name0 + misc.NEW_LINE);
+	
+		System.out.println(keys.END.toUpperCase() + " " + name0);
+		System.out.println();
 		
 		if (!db_too_) return outputs;
 		
 		name0 = "accessory_db";
-		System.out.println("-------- " + keys.START.toUpperCase() + " " + name0 + misc.NEW_LINE);
+		System.out.println("-------- " + keys.START.toUpperCase() + " " + name0);
 
 		outputs.put(name0, run_accessory_internal(db.class));
 		
-		System.out.println(misc.NEW_LINE + keys.END.toUpperCase() + " " + name0 + misc.NEW_LINE);
+		System.out.println(keys.END.toUpperCase() + " " + name0);
+		System.out.println();
+		
+		ArrayList<String> wrongs = new ArrayList<String>();
+		
+		for (Entry<String, HashMap<String, Boolean>> output: outputs.entrySet())
+		{
+			HashMap<String, Boolean> vals = output.getValue();
+			if (!arrays.is_ok(vals)) continue;
+			
+			for (Entry<String, Boolean> val: vals.entrySet())
+			{
+				String name = val.getKey();
+				if (!strings.is_ok(name)) continue;
+				
+				if (!val.getValue()) wrongs.add(name);
+			}
+		}
+		
+		int tot = wrongs.size();
+		System.out.println("TOTAL ERRORS: " + tot);
+		if (tot > 0) System.out.println(strings.to_string(wrongs));
 		
 		return outputs;
 	}
@@ -106,8 +129,7 @@ public class tests
 
 		vals.put(types._CONFIG_TESTS_DB_FIELD_INT, val);		
 
-		db._cur_source = source;
-		db_where[] wheres = new db_where[] { new db_where(null, types._CONFIG_DB_FIELDS_DEFAULT_ID, 1) };
+		db_where[] wheres = new db_where[] { new db_where(source, types._CONFIG_DB_FIELDS_DEFAULT_ID, 1) };
 		
 		args2.add(wheres);
 		
@@ -115,24 +137,56 @@ public class tests
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 
-		name = "select_one";
-		params = new Class<?>[] { String.class, String[].class, db_where[].class, db_order.class };
+		name = "select_one_int";
+		params = new Class<?>[] { String.class, String.class, db_where[].class, db_order[].class };
 		method = generic.get_method(type, name, params, false);	
 		
 		args = new ArrayList<ArrayList<Object>>();
 		
 		args2 = new ArrayList<Object>();
 		args2.add(source);
-		args2.add(new String[] { types._CONFIG_TESTS_DB_FIELD_INT });
+		args2.add(types._CONFIG_TESTS_DB_FIELD_INT);
 		args2.add(wheres);
 		args2.add(null);
 		args.add(args2);
 		
-		String val2 = strings.to_string(val);
-		HashMap<String, String> target = new HashMap<String, String>();
-		target.put(types._CONFIG_TESTS_DB_FIELD_INT, val2);
+		int target = val;
 		
 		is_ok = run_method(type, method, name, args, new Object[] { target }, false);
+		outputs.put(name, is_ok);
+
+		name = "execute_query";
+		params = new Class<?>[] { String.class };
+		method = generic.get_method(type, name, params, false);	
+
+		String field = types._CONFIG_TESTS_DB_FIELD_INT;
+		String col = db.get_col(source, field);
+		//String col_var = db.get_variable_col(source, field);
+
+		String table = db.get_variable_table(source);
+
+		db_order[] orders = new db_order[] 
+		{ 
+			new db_order(source, field, types.DB_ORDER_DESC, true)
+			//new db_order(source, col, types.DB_ORDER_DESC, false)
+		};
+		
+		String query = "SELECT " + db.get_variable(col) + " FROM " + table;
+		query += " WHERE " + db_where.to_string(wheres);
+		query += " ORDER BY " + db_order.to_string(orders);
+		
+		args = new ArrayList<ArrayList<Object>>();
+		
+		args2 = new ArrayList<Object>();
+		args2.add(query);
+		args.add(args2);
+		
+		ArrayList<HashMap<String, String>> target2 = new ArrayList<HashMap<String, String>>();
+		HashMap<String, String> target22 = new HashMap<String, String>();
+		target22.put(col, strings.to_string(target));		
+		target2.add(target22);
+		
+		is_ok = run_method(type, method, name, args, new Object[] { target2 }, false);
 		outputs.put(name, is_ok);
 		
 		return outputs;	
@@ -270,6 +324,8 @@ public class tests
 		boolean is_ok = false;
 		if (!method_is_ok(class_, method_, method_name_)) return is_ok;
 
+		System.out.println(method_name_);
+		
 		is_ok = true;
 		String result = strings.DEFAULT;
 
@@ -278,20 +334,19 @@ public class tests
 		Object output = generic.call_static_method(method_, args, false);
 
 		boolean out_is_ok = output_is_ok(output, targets);
-		System.out.println(method_name_);
 		
 		if (errors._triggered || !out_is_ok)
 		{
+			result = "ERROR";
 			if (errors._triggered && !arrays.is_ok(targets)) 
 			{
-				result = "ERROR";
 				if (errors._triggered && !errors_allowed_) is_ok = false;
 				errors._triggered = false;
 			}
 			else 
 			{
 				is_ok = false;
-				result = "targets not met";
+				result += " (targets not met)";
 			}
 		}
 		else result = keys.OK.toUpperCase();
@@ -403,9 +458,11 @@ public class tests
 	
 		int size = arrays.get_size(params_);
 		if (size < 1) return null;
-		
+
+		boolean args_ok = false;
 		ArrayList<ArrayList<Object>> args_all = (ArrayList<ArrayList<Object>>)arrays.get_new(args_all_);
-		if (arrays.is_ok(args_all)) args_all.add(null);
+		if (!arrays.is_ok(args_all)) args_all.add(null);
+		else args_ok = true;
 		
 		ArrayList<Object> args0 = null;
 		for (int i = 0; i < args_all.size(); i++)
@@ -434,7 +491,8 @@ public class tests
 		}
 		
 		boolean defaults = (!arrays.is_ok(args0));
-
+		if (defaults && args_ok) return null;
+		
 		Object[] output = new Object[size];
 		
 		for (int i = 0; i < size; i++)

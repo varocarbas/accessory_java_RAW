@@ -53,10 +53,12 @@ public class db_where
 		if (!arrays.is_ok(wheres_)) return output;
 		
 		String last_link = null;
+		int tot = 0;
 		
 		for (db_where where: wheres_)
 		{
 			if (!is_ok(where)) continue;
+			tot++;
 			
 			if (!output.equals("")) output += " " + link_to_string(last_link) + " ";
 			output += where.toString();
@@ -64,7 +66,7 @@ public class db_where
 			last_link = (link_is_ok(where._link) ? where._link : defaults.DB_WHERE_LINK);
 		}
 		
-		if (!output.equals("")) output = "(" + output + ")";
+		if (tot > 1) output = "(" + output + ")";
 		
 		return output;	
 	}

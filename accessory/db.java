@@ -43,19 +43,39 @@ public class db
 		return _config.update(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_ERROR_EXIT, error_exit_);
 	}
 	
-	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order order_)
+	public static String select_one_string(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		ArrayList<HashMap<String, String>> temp = select(source_, fields_, wheres_, 1, order_);
+		return (String)select_one_common(source_, field_, wheres_, orders_, keys.STRING);
+	}
+	
+	public static double select_one_decimal(String source_, String field_, db_where[] wheres_, db_order[] orders_)
+	{
+		return (double)select_one_common(source_, field_, wheres_, orders_, keys.DECIMAL);
+	}
+	
+	public static long select_one_long(String source_, String field_, db_where[] wheres_, db_order[] orders_)
+	{
+		return (long)select_one_common(source_, field_, wheres_, orders_, keys.LONG);
+	}
+	
+	public static int select_one_int(String source_, String field_, db_where[] wheres_, db_order[] orders_)
+	{
+		return (int)select_one_common(source_, field_, wheres_, orders_, keys.INT);
+	}
+	
+	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_)
+	{
+		ArrayList<HashMap<String, String>> temp = select(source_, fields_, wheres_, 1, orders_);
 		
 		return (arrays.is_ok(temp) ? temp.get(0) : null);
 	}
 	
-	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order order_)
+	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order[] orders_)
 	{	
 		String source = check_source_error(source_);
 		if (!_is_ok) return null;
 		
-		return select_internal(get_table(source), get_cols(source, fields_), db_where.to_string(wheres_), max_rows_, db_order.to_string(order_));
+		return select_internal(get_table(source), get_cols(source, fields_), db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_));
 	}
 	
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_)
@@ -164,6 +184,22 @@ public class db
 		return value;
 	}
 
+	public static String get_variable_table(String source_)
+	{
+		String source = check_source_error(source_);
+		if (!_is_ok) return strings.DEFAULT;
+
+		return get_variable(db.get_table(source));
+	}
+	
+	public static String get_variable_col(String source_, String col_)
+	{
+		String source = check_source_error(source_);
+		if (!_is_ok) return strings.DEFAULT;
+
+		return get_variable(get_col(source, col_));
+	}
+	
 	public static String get_variable(String input_)
 	{
 		String variable = strings.DEFAULT;
@@ -173,7 +209,7 @@ public class db
 			variable = mysql.get_variable(input_);
 		}
 		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-
+		
 		return variable; 	
 	} 
 
@@ -426,6 +462,28 @@ public class db
 		
 		return output;
 	}
+
+	public static ArrayList<HashMap<String, String>> execute_query(String query_)
+	{
+		ArrayList<HashMap<String, String>> output = null;
+		
+		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		{
+			output = mysql.execute_query(query_);
+		}
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		
+		return output;
+	}
+
+	public static String check_type(String input_)
+	{
+		return types.check_subtype
+		(
+			input_, types.get_subtypes(types.DB_QUERY, null), 
+			keys.ADD, types.DB_QUERY
+		);
+	}
 	
 	static HashMap<String, String> get_credentials()
 	{
@@ -461,7 +519,53 @@ public class db
 
 		errors.manage_db(type, query_, e_, message_);
 	}
+	
+	static boolean query_returns_data(String type_)
+	{
+		String type = types.check_subtype(type_, types.get_subtypes(types.DB_QUERY, null), null, null);
+		if (!strings.is_ok(type)) return false;
+		
+		String[] targets = new String[] { types.DB_QUERY_SELECT, types.DB_QUERY_TABLE_EXISTS };
+		
+		for (String target: targets)
+		{
+			if (target.equals(type)) return true;
+		}
+		
+		return false;
+	}
 
+	private static Object select_one_common(String source_, String field_, db_where[] wheres_, db_order[] orders_, String what_)
+	{
+		Object output = null;
+		
+		if (what_.equals(keys.STRING)) output = strings.DEFAULT;
+		else if (what_.equals(keys.DECIMAL)) output = numbers.DEFAULT_DEC;
+		else if (what_.equals(keys.LONG)) output = numbers.DEFAULT_LONG;
+		else if (what_.equals(keys.INT)) output = numbers.DEFAULT_INT;
+		
+		if (!strings.is_ok(field_)) 
+		{
+			_is_ok = false;
+			
+			return output;
+		}
+		
+		HashMap<String, String> temp = select_one(source_, new String[] { field_ }, wheres_, orders_);
+		
+		if (arrays.is_ok(temp))
+		{
+			String temp2 = temp.get(field_);
+			
+			if (what_.equals(keys.STRING)) output = temp2;
+			else if (what_.equals(keys.DECIMAL)) output = numbers.decimal_from_string(temp2);
+			else if (what_.equals(keys.LONG)) output = numbers.long_from_string(temp2);
+			else if (what_.equals(keys.INT)) output = numbers.int_from_string(temp2);	
+		}
+		
+		return output;
+	}
+	
 	private static <x> boolean numeric_val_size_is_ok(x val_, String data_type_)
 	{
 		boolean output = false;

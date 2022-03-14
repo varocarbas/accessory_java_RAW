@@ -9,23 +9,65 @@ import java.util.Map.Entry;
 
 class mysql 
 {	
+	public static String QUOTE_VARIABLE = "`";
+	public static String QUOTE_VALUE = "'";
+
 	static { ini.load(); }
+	
+	public static ArrayList<HashMap<String, String>> execute_query(String query_)
+	{
+		String type = strings.DEFAULT;
+				
+		String[] temp = strings.split(query_, " ");
+		if (arrays.get_size(temp) >= 2) type = db.check_type(temp[0]);
+
+		if (!strings.is_ok(type))
+		{
+			db.manage_error(types.ERROR_DB_QUERY, query_, null, null);
+			
+			return null;
+		}
+ 
+		String[] cols = null;
+		if (type.equals(types.DB_QUERY_SELECT))
+		{
+			String[] temp2 = strings.split(temp[1], ",");
+			if (arrays.get_size(temp2) >= 1 && !temp2[0].trim().equals("*"))
+			{
+				ArrayList<String> cols2 = new ArrayList<String>();
+				
+				for (String item: temp2)
+				{
+					if (!strings.is_ok(item)) continue;
+									
+					int i = strings.index_of_outside(" from ", item, true, QUOTE_VARIABLE, QUOTE_VARIABLE);
+					String item2 = strings.remove_escape(QUOTE_VARIABLE, item, true);
+
+					if (i < 0) cols2.add(item2);
+					else 
+					{
+						cols2.add(strings.substring(item2, 0, i));
+						break;
+					}
+				}
+				
+				cols = arrays.to_array(cols2);
+			}
+		}
+		
+		return sql.execute_query(query_, db.query_returns_data(type), cols);
+	}
 	
 	public static String sanitise_string(String input_)
 	{
 		return strings.remove_escape_many(new String[] { "'", "\"" }, input_, false);
 	}
 	
-	public static ArrayList<HashMap<String, String>> execute(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	public static ArrayList<HashMap<String, String>> execute(String type_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
-		String query = get_query(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
+		String query = get_query(type_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 
-		boolean return_data = 
-		(
-			what_.equals(types.DB_QUERY_SELECT) || what_.equals(types.DB_QUERY_TABLE_EXISTS)
-		);
-
-		return (strings.is_ok(query) ? sql.execute_query(query, return_data, cols_) : null);
+		return (strings.is_ok(query) ? sql.execute_query(query, db.query_returns_data(type_), cols_) : null);
 	}
 
 	public static String get_data_type(db_field field_)
@@ -179,14 +221,14 @@ class mysql
 		return output;
 	}
 	
-	private static String get_query(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	private static String get_query(String type_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{	
 		String query = strings.DEFAULT;
-		if (!sql.params_are_ok(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_)) return query;
+		if (!sql.params_are_ok(type_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_)) return query;
 
 		boolean is_ok = false;
 
-		if (what_.equals(types.DB_QUERY_SELECT))
+		if (type_.equals(types.DB_QUERY_SELECT))
 		{
 			query = "SELECT ";
 			query += (arrays.is_ok(cols_) ? get_query_cols(cols_) : "*");     	
@@ -198,7 +240,7 @@ class mysql
 
 			is_ok = true;
 		}
-		else if (what_.equals(types.DB_QUERY_INSERT))
+		else if (type_.equals(types.DB_QUERY_INSERT))
 		{
 			query = "INSERT INTO " + get_variable(table_); 
 			String temp = get_query_cols(vals_, keys.KEY);
@@ -215,7 +257,7 @@ class mysql
 				}      		
 			} 
 		}
-		else if (what_.equals(types.DB_QUERY_UPDATE))
+		else if (type_.equals(types.DB_QUERY_UPDATE))
 		{
 			query = "UPDATE " + get_variable(table_); 
 			
@@ -228,19 +270,19 @@ class mysql
 			
 			if (strings.is_ok(where_)) query += " WHERE " + where_;
 		}
-		else if (what_.equals(types.DB_QUERY_DELETE))
+		else if (type_.equals(types.DB_QUERY_DELETE))
 		{
 			query = "DELETE FROM " + get_variable(table_);
 			query += " WHERE " + where_;
 
 			is_ok = true;
 		}
-		else if (what_.equals(types.DB_QUERY_TABLE_EXISTS))
+		else if (type_.equals(types.DB_QUERY_TABLE_EXISTS))
 		{
 			query = "SHOW TABLES LIKE " + get_value(table_);			
 			is_ok = true;
 		}
-		else if (what_.equals(types.DB_QUERY_TABLE_CREATE))
+		else if (type_.equals(types.DB_QUERY_TABLE_CREATE))
 		{
 			query = "";
 
@@ -284,12 +326,12 @@ class mysql
 			}
 			else is_ok = false;
 		}
-		else if (what_.equals(types.DB_QUERY_TABLE_DROP))
+		else if (type_.equals(types.DB_QUERY_TABLE_DROP))
 		{
 			query = "DROP TABLE " + get_variable(table_);			
 			is_ok = true;
 		}
-		else if (what_.equals(types.DB_QUERY_TABLE_TRUNCATE))
+		else if (type_.equals(types.DB_QUERY_TABLE_TRUNCATE))
 		{
 			query = "TRUNCATE TABLE " + get_variable(table_);			
 			is_ok = true;
@@ -381,7 +423,7 @@ class mysql
 
 	private static String get_variable_value(String input_, boolean is_variable_)
 	{
-		String quote = (is_variable_ ? "`" : "'");
+		String quote = (is_variable_ ? QUOTE_VARIABLE : QUOTE_VALUE);
 
 		return (quote + input_ + quote);
 	}

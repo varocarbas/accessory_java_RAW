@@ -180,7 +180,7 @@ public class types
 		
 		for (String subtype: get_subtypes(strings.DEFAULT, subtypes_))
 		{
-			String output = subtype0;
+			String output = subtype;
 			String subtype2 = strings.DEFAULT;
 
 			if (strings.are_equivalent(add_remove_, keys.ADD)) 
@@ -219,7 +219,7 @@ public class types
 
 	public static String add_type(String subtype_, String type_)
 	{
-		if (!strings.is_ok(subtype_) || !strings.is_ok(type_)) return subtype_;
+		if (!strings.is_ok(subtype_) || !strings.is_ok(type_) || strings.contains_start(type_, subtype_, false)) return subtype_;
 
 		String subtype = check_aliases(subtype_);
 		String type = check_aliases(type_);
