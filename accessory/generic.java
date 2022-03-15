@@ -164,6 +164,53 @@ public class generic
 		return false;
 	}
 	
+	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_)
+	{
+		return arrays.get_new(input_);
+	}
+	
+	public static <x> ArrayList<ArrayList<x>> get_new(ArrayList<ArrayList<x>> input_)
+	{
+		return arrays.get_new(input_);
+	}
+
+	public static double[] get_new(double[] input_)
+	{
+		return arrays.get_new(input_);
+	}
+	
+	public static long[] get_new(long[] input_)
+	{
+		return arrays.get_new(input_);
+	}
+	
+	public static int[] get_new(int[] input_)
+	{
+		return arrays.get_new(input_);
+	}
+	
+	public static boolean[] get_new(boolean[] input_)
+	{
+		return arrays.get_new(input_);
+	}
+	
+	public static <x> Object get_new(Object input_)
+	{
+		Object output = null;
+		if (!is_ok(input_)) return output;
+		
+		Class<?> type = get_class(input_);
+		if (is_array(type)) output = arrays.get_new(input_);
+		else if (are_equal(type, size.class)) output = new size((size)input_);
+		else if (are_equal(type, data.class)) output = new data((data)input_);
+		else if (are_equal(type, db_field.class)) output = new db_field((db_field)input_);
+		else if (are_equal(type, db_where.class)) output = new db_where((db_where)input_);
+		else if (are_equal(type, db_order.class)) output = new db_order((db_order)input_);
+		else output = input_;
+		
+		return output;
+	}
+	
 	public static Object get_random(Class<?> class_)
 	{
 		Object output = null;

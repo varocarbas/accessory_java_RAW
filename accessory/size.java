@@ -8,6 +8,28 @@ public class size
 	public double _max = Double.MAX_VALUE;
 	public int _decimals = defaults.SIZE_DECIMALS;
 	
+	public size(size input_)
+	{
+		_is_ok = false;
+		if (!is_ok(input_)) return;
+
+		_is_ok = true;
+		_min = input_._min;
+		_max = input_._max;
+		_decimals = input_._decimals;
+	}
+
+	public size(double min_, double max_, int decimals_)
+	{
+		_is_ok = false;
+		if (!is_ok(min_, max_, decimals_)) return;
+
+		_is_ok = true;
+		_min = min_;
+		_max = max_;
+		_decimals = decimals_;
+	}
+	
 	public String toString()
 	{
 		return toString(true);
@@ -61,28 +83,6 @@ public class size
 		else if (generic.are_equal(class_, String.class)) output = new size(0, strings.SIZE_DEFAULT, 0);
 		
 		return output;
-	}
-	
-	public size(size input_)
-	{
-		_is_ok = false;
-		if (!is_ok(input_)) return;
-
-		_is_ok = true;
-		_min = input_._min;
-		_max = input_._max;
-		_decimals = input_._decimals;
-	}
-
-	public size(double min_, double max_, int decimals_)
-	{
-		_is_ok = false;
-		if (!is_ok(min_, max_, decimals_)) return;
-
-		_is_ok = true;
-		_min = min_;
-		_max = max_;
-		_decimals = decimals_;
 	}
 	
 	private static boolean is_ok(double min_, double max_, int decimals_)

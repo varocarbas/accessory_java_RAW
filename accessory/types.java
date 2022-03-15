@@ -105,17 +105,20 @@ public class types
 	public static final String DB_QUERY_TABLE_CREATE = "db_query_table_create";
 	public static final String DB_QUERY_TABLE_DROP = "db_query_table_drop";
 	public static final String DB_QUERY_TABLE_TRUNCATE = "db_query_table_truncate";
-	
+
 	public static final String MYSQL = "mysql";
-	public static final String MYSQL_VARCHAR = "mysql_varchar";
-	public static final String MYSQL_INT = "mysql_int";
-	public static final String MYSQL_TINYINT = "mysql_tinyint";
-	public static final String MYSQL_LONG = "mysql_long";
-	public static final String MYSQL_DECIMAL = "mysql_decimal";
-	public static final String MYSQL_TIMESTAMP = "mysql_timestamp";
+	public static final String MYSQL_DATA = "mysql_data";
+	public static final String MYSQL_DATA_VARCHAR = "mysql_data_varchar";
+	public static final String MYSQL_DATA_TEXT = "mysql_data_text";
+	public static final String MYSQL_DATA_INT = "mysql_data_int";
+	public static final String MYSQL_DATA_TINYINT = "mysql_data_tinyint";
+	public static final String MYSQL_DATA_BIGINT = "mysql_data_bigint";
+	public static final String MYSQL_DATA_DECIMAL = "mysql_data_decimal";
+	public static final String MYSQL_DATA_TIMESTAMP = "mysql_data_timestamp";
 	
 	public static final String DATA = "data";
 	public static final String DATA_STRING = "data_string";
+	public static final String DATA_STRING_BIG = "data_string_big";
 	public static final String DATA_INTEGER = "data_integer";
 	public static final String DATA_LONG = "data_long";
 	public static final String DATA_DECIMAL = "data_decimal";
@@ -129,6 +132,7 @@ public class types
 	public static final String ERROR_DB_CONN = "error_db_conn";
 	public static final String ERROR_DB_QUERY = "error_db_query";
 	public static final String ERROR_DB_SOURCE = "error_db_source";
+	public static final String ERROR_DB_FIELD = "error_db_field";
 	public static final String ERROR_DB_VALS = "error_db_vals";
 	
 	public static final String ERROR_FILE = "error_file";
@@ -318,14 +322,15 @@ public class types
 			DB_QUERY_TABLE_EXISTS, DB_QUERY_TABLE_CREATE, DB_QUERY_TABLE_DROP, DB_QUERY_TABLE_TRUNCATE,
 
 			//MYSQL
-			MYSQL_VARCHAR, MYSQL_INT, MYSQL_TINYINT, MYSQL_LONG, MYSQL_DECIMAL,
+			MYSQL_DATA_VARCHAR, MYSQL_DATA_TEXT, MYSQL_DATA_INT, MYSQL_DATA_TINYINT, MYSQL_DATA_BIGINT, MYSQL_DATA_DECIMAL,
 			
 			//DATA
-			DATA_STRING, DATA_INTEGER, DATA_LONG, DATA_DECIMAL, DATA_BOOLEAN, DATA_TIMESTAMP,
+			DATA_STRING, DATA_STRING_BIG, DATA_INTEGER, DATA_LONG, DATA_DECIMAL, DATA_BOOLEAN, DATA_TIMESTAMP,
 			
 			//ERROR_DB
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,
-
+			ERROR_DB_SOURCE, ERROR_DB_FIELD, ERROR_DB_VALS,
+			
 			//ERROR_FILE
 			ERROR_FILE_WRITE, ERROR_FILE_READ,
 			
@@ -340,4 +345,4 @@ public class types
 			ERROR_TEST_RUN
 		};		
 	}
-}	
+}

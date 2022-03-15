@@ -31,6 +31,11 @@ public class strings
 		return true;
 	}
 
+	public static int get_length(String string_)
+	{
+		return get_length(string_, false);
+	}
+	
 	public static int get_length(String string_, Boolean trim_)
 	{
 		String string = string_;
@@ -257,7 +262,7 @@ public class strings
 		return (start_ > 0 ? haystack.indexOf(needle, start_) : haystack.indexOf(needle));
 	}
 
-	public static boolean is_integer(String string_)
+	public static boolean is_int(String string_)
 	{
 		return is_number_internal(string_, true, false);
 	}
@@ -309,7 +314,7 @@ public class strings
 
 	public static int to_number_int(String string_)
 	{
-		return (is_integer(string_) ? Integer.parseInt(string_) : numbers.DEFAULT_INT);
+		return (is_int(string_) ? Integer.parseInt(string_) : numbers.DEFAULT_INT);
 	}
 
 	public static String from_boolean(boolean input_)
@@ -405,7 +410,7 @@ public class strings
 		{
 			if (is_decimal(string_)) type = Double.class;
 			else if (is_long(string_)) type = Long.class;
-			else if (is_integer(string_)) type = Integer.class;
+			else if (is_int(string_)) type = Integer.class;
 			else if (is_boolean(string_)) type = Boolean.class;
 			else return output;
 		}

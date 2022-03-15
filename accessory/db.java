@@ -72,10 +72,15 @@ public class db
 	
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order[] orders_)
 	{	
+		return select(source_, fields_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_));
+	}
+	
+	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, String where_cols_, int max_rows_, String order_cols_)
+	{	
 		String source = check_source_error(source_);
 		if (!_is_ok) return null;
 		
-		return select_internal(get_table(source), get_cols(source, fields_), db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_));
+		return select_internal(get_table(source), get_cols(source, fields_), where_cols_, max_rows_, order_cols_);
 	}
 	
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_)
@@ -91,22 +96,31 @@ public class db
 	
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_)
 	{
-		//String source = check_source_error(source_);
-		//if (!_is_ok) return;
-		String source = source_;
-		
-		HashMap<String, String> vals = check_vals_error(source, vals_raw_);
-		if (!_is_ok) return;
-		
-		update_internal(get_table(source), vals, db_where.to_string(wheres_));
+		update(source_, vals_raw_, db_where.to_string(wheres_));
 	}
 	
-	public static void delete(String source_, db_where[] wheres_)
+	public static <x> void update(String source_, HashMap<String, x> vals_raw_, String where_cols_)
 	{
 		String source = check_source_error(source_);
 		if (!_is_ok) return;
 		
-		delete_internal(get_table(source), db_where.to_string(wheres_));
+		HashMap<String, String> vals = check_vals_error(source, vals_raw_);
+		if (!_is_ok) return;
+		
+		update_internal(get_table(source), vals, where_cols_);
+	}
+	
+	public static void delete(String source_, db_where[] wheres_)
+	{
+		delete(source_, db_where.to_string(wheres_));
+	}
+	
+	public static void delete(String source_, String where_cols_)
+	{
+		String source = check_source_error(source_);
+		if (!_is_ok) return;
+		
+		delete_internal(get_table(source), where_cols_);
 	}
 
 	public static boolean table_exists(String source_)
@@ -213,6 +227,45 @@ public class db
 		return variable; 	
 	} 
 
+	public static HashMap<String, Object> get_data_type(String data_type_)
+	{
+		HashMap<String, Object> output = null;
+
+		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		{
+			output = mysql.get_data_type(data_type_);
+		}
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		
+		return output; 
+	}
+
+	public static int get_default_size(String type_)
+	{
+		int output = 0;
+
+		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		{
+			output = mysql.get_default_size(type_);
+		}
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		
+		return output; 
+	}
+
+	public static int get_max_size(String type_)
+	{
+		int output = 0;
+
+		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		{
+			output = mysql.get_max_size(type_);
+		}
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		
+		return output; 
+	}
+	
 	public static boolean source_is_ok(String source_)
 	{
 		return (strings.is_ok(check_source(source_)));
@@ -227,15 +280,14 @@ public class db
 			return _cur_source;
 		}
 		
-		String source = types.check_aliases(source_);
-
-		if (strings.is_ok(source))
-		{
-			_cur_source = (_sources.containsKey(source) ? source : strings.DEFAULT);
-		}
-		else if (!_sources.containsKey(_cur_source)) _cur_source = strings.DEFAULT;
+		if (!strings.is_ok(_cur_source) || !_sources.containsKey(_cur_source)) _cur_source = strings.DEFAULT;
 		
-		return _cur_source;
+		String source = types.check_aliases(source_);
+		if (!strings.is_ok(source) || !_sources.containsKey(source)) source = strings.DEFAULT;
+		
+		if (!strings.is_ok(source) && strings.is_ok(_cur_source)) source = _cur_source;
+		
+		return source;
 	}
 
 	public static boolean sources_are_equal(String source1_, String source2_)
@@ -257,7 +309,16 @@ public class db
 		
 		for (Entry<String, db_field> item: fields_.entrySet())
 		{
-			fields.put(item.getKey(), new db_field(item.getValue()));
+			db_field field = db_field.adapt(new db_field(item.getValue()));
+			
+			if (!field._is_ok)
+			{
+				manage_error(types.ERROR_DB_FIELD, null, null, field.toString());
+				
+				return;
+			}
+			
+			fields.put(item.getKey(), field);
 		}
 		
 		_sources.put(source_, fields);
@@ -295,17 +356,15 @@ public class db
 		(
 			types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, new db_field
 			(
-				new data(accessory.types.DATA_TIMESTAMP, null), null, new String[] 
-				{ 
-					types.DB_FIELD_FURTHER_TIMESTAMP 
-				}
+				types.DATA_TIMESTAMP, new String[] { types.DB_FIELD_FURTHER_TIMESTAMP }
 			)
 		);
+		
 		fields.put
 		(
 			types._CONFIG_DB_FIELDS_DEFAULT_ID, new db_field
 			(
-				new data(accessory.types.DATA_INTEGER, null), null, new String[] 
+				types.DATA_INTEGER, new String[] 
 				{ 
 					types.DB_FIELD_FURTHER_KEY_PRIMARY, types.DB_FIELD_FURTHER_AUTO_INCREMENT 
 				}
@@ -391,13 +450,7 @@ public class db
 		if (!generic.is_ok(field) || !db_field.complies(val_, field)) return null;
 
 		String val2 = strings.DEFAULT;
-		if (data.is_numeric(field._data._type))
-		{
-			if (!numeric_val_size_is_ok(val_, field._data._type)) return null;	
-			
-			val2 = strings.to_string(val_);
-			//val2 = (field._data._type.equals(types.DATA_DECIMAL) ? numbers.to_integer_string((double)val) : strings.to_string(val));
-		}
+		if (data.is_numeric(field._type)) val2 = strings.to_string(val_);
 		else val2 = sanitise_string(strings.to_string(val_));
 		
 		if (!strings.is_ok(val2)) return null;
@@ -422,45 +475,6 @@ public class db
 		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 
 		return output; 
-	}
-
-	public static String get_data_type(db_field field_)
-	{
-		String output = "";
-		
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
-		{
-			output = mysql.get_data_type(field_);
-		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-		
-		return output;
-	}
-
-	public static int get_data_max_size(String data_type_)
-	{
-		int output = 0;
-		
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
-		{
-			output = mysql.get_data_max_size(data_type_);
-		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-		
-		return output;
-	}
-	
-	public static double get_numeric_data_max(String data_type_)
-	{
-		double output = 0;
-		
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
-		{
-			output = mysql.get_numeric_data_max(data_type_);
-		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-		
-		return output;
 	}
 
 	public static ArrayList<HashMap<String, String>> execute_query(String query_)
@@ -515,9 +529,7 @@ public class db
 	{
 		_is_ok = false;
 
-		String type = types.check_aliases(type_);
-
-		errors.manage_db(type, query_, e_, message_);
+		errors.manage_db(type_, query_, e_, message_);
 	}
 	
 	static boolean query_returns_data(String type_)
@@ -564,19 +576,6 @@ public class db
 		}
 		
 		return output;
-	}
-	
-	private static <x> boolean numeric_val_size_is_ok(x val_, String data_type_)
-	{
-		boolean output = false;
-		
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
-		{
-			output = mysql.numeric_val_size_is_ok(numbers.to_number(val_), data_type_);
-		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-		
-		return output;	
 	}
 	
 	private static String check_source_error(String source_)

@@ -7,15 +7,24 @@ public class db_ini
 {
 	public static void load() 
 	{
-		load_sources();
 		load_aliases_types();
+		load_sources();
 	}
-
+	
 	//Method expected to be called together with each load_config_sources_[source]().
 	public static void load_config_sources_default_fields(String main_)
 	{
 		_config.update_ini(main_, types._CONFIG_DB_FIELDS_DEFAULT_ID, defaults.DB_FIELDS_DEFAULT_ID);
 		_config.update_ini(main_, types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, defaults.DB_FIELDS_DEFAULT_TIMESTAMP);	
+	}
+
+	private static void load_sources()
+	{
+		HashMap<String, String> source_mains = new HashMap<String, String>();
+		source_mains.put(types._CONFIG_LOGS_DB_SOURCE, types._CONFIG_LOGS);
+		source_mains.put(types._CONFIG_TESTS_DB_SOURCE, types._CONFIG_TESTS);
+		
+		load_sources_all(source_mains);
 	}
 	
 	//Method including the aliases and types more closely related to the DB setup.
@@ -101,43 +110,43 @@ public class db_ini
 		_config.update_ini(main_, types._CONFIG_TESTS_DB_FIELD_DECIMAL, defaults.TESTS_DB_FIELD_DECIMAL);
 	}
 	
-	private static void load_sources()
-	{
-		HashMap<String, String> source_mains = new HashMap<String, String>();
-		source_mains.put(types._CONFIG_LOGS_DB_SOURCE, types._CONFIG_LOGS);
-		source_mains.put(types._CONFIG_TESTS_DB_SOURCE, types._CONFIG_TESTS);
-		
-		for (Entry<String, String> item: source_mains.entrySet())
+	private static void load_sources_all(HashMap<String, String> source_mains_)
+	{		
+		for (Entry<String, String> item: source_mains_.entrySet())
 		{
 			String source = item.getKey();
 			String main = item.getValue();
 		
-			if (source.equals(types._CONFIG_LOGS_DB_SOURCE)) load_sources_logs(source);
-			else if (source.equals(types._CONFIG_TESTS_DB_SOURCE)) load_sources_tests(source);
-			
+			load_sources_source(source);			
 			db.add_source_main(source, main);
 		}
 	}
 	
-	private static void load_sources_logs(String source_)
+	private static void load_sources_source(String source_)
+	{
+		if (source_.equals(types._CONFIG_LOGS_DB_SOURCE)) load_sources_source_logs(source_);
+		else if (source_.equals(types._CONFIG_TESTS_DB_SOURCE)) load_sources_source_tests(source_);
+	}
+	
+	private static void load_sources_source_logs(String source_)
 	{
 		if (db.source_is_ok(source_)) return;
 		
 		HashMap<String, db_field> fields = db.get_default_fields();
-		fields.put(types._CONFIG_LOGS_DB_FIELD_ID, new db_field(new data(types.DATA_INTEGER, null), null, null));
-		fields.put(types._CONFIG_LOGS_DB_FIELD_MESSAGE, new db_field(new data(types.DATA_STRING, null), null, null));
+		fields.put(types._CONFIG_LOGS_DB_FIELD_ID, new db_field(types.DATA_INTEGER));
+		fields.put(types._CONFIG_LOGS_DB_FIELD_MESSAGE, new db_field(types.DATA_STRING));
 		
 		db.add_source(source_, fields);
 	}
 
-	private static void load_sources_tests(String source_)
+	private static void load_sources_source_tests(String source_)
 	{
 		if (db.source_is_ok(source_)) return;
 		
 		HashMap<String, db_field> fields = db.get_default_fields();
-		fields.put(types._CONFIG_TESTS_DB_FIELD_INT, new db_field(new data(types.DATA_INTEGER, null), null, null));
-		fields.put(types._CONFIG_TESTS_DB_FIELD_STRING, new db_field(new data(types.DATA_STRING, new size(0, strings.SIZE_DEFAULT, 0)), null, null));
-		fields.put(types._CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(new data(types.DATA_DECIMAL, new size(0, 15, 3)), null, null));
+		fields.put(types._CONFIG_TESTS_DB_FIELD_INT, new db_field(types.DATA_INTEGER));
+		fields.put(types._CONFIG_TESTS_DB_FIELD_STRING, new db_field(types.DATA_STRING, strings.SIZE_DEFAULT, 0));
+		fields.put(types._CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(types.DATA_DECIMAL, 15, 3));
 
 		db.add_source(source_, fields);
 	}

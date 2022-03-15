@@ -270,6 +270,26 @@ public class arrays
 	{
 		return (!is_ok(input_) ? new ArrayList<ArrayList<x>>() : new ArrayList<ArrayList<x>>(input_));
 	}
+
+	public static double[] get_new(double[] input_)
+	{
+		return (double[])to_small(get_new_array((Double[])to_big(input_)));
+	}
+	
+	public static long[] get_new(long[] input_)
+	{
+		return (long[])to_small(get_new_array((Long[])to_big(input_)));
+	}
+	
+	public static int[] get_new(int[] input_)
+	{
+		return (int[])to_small(get_new_array((Integer[])to_big(input_)));
+	}
+	
+	public static boolean[] get_new(boolean[] input_)
+	{
+		return (boolean[])to_small(get_new_array((Boolean[])to_big(input_)));
+	}
 	
 	@SuppressWarnings("unchecked")
 	//To be synced with get_all_classes().
@@ -281,35 +301,11 @@ public class arrays
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_ok(type)) return output;
 		
-		if (generic.are_equal(type, double[].class)) output = get_new_array((double[])input_);
-		else if (generic.are_equal(type, long[].class)) output = get_new_array((long[])input_);
-		else if (generic.are_equal(type, int[].class)) output = get_new_array((int[])input_);
-		else if (generic.are_equal(type, boolean[].class)) output = get_new_array((boolean[])input_);
-		else if (generic.are_equal(type, Array.class)) output = get_new_array((x[])input_);
+		if (generic.are_equal(type, Array.class)) output = get_new_array((x[])input_);
 		else if (generic.are_equal(type, ArrayList.class))  output = get_new_arraylist((ArrayList<x>)input_);
 		else if (generic.are_equal(type, HashMap.class)) output = get_new_hashmap((HashMap<x, x>)input_); 
 
 		return output;
-	}
-
-	public static double[] get_new_array(double[] input_)
-	{
-		return (double[])to_small(get_new_array((Double[])to_big(input_)));
-	}
-	
-	public static long[] get_new_array(long[] input_)
-	{
-		return (long[])to_small(get_new_array((Long[])to_big(input_)));
-	}
-	
-	public static int[] get_new_array(int[] input_)
-	{
-		return (int[])to_small(get_new_array((Integer[])to_big(input_)));
-	}
-	
-	public static boolean[] get_new_array(boolean[] input_)
-	{
-		return (boolean[])to_small(get_new_array((Boolean[])to_big(input_)));
 	}
 	
 	private static <x> x[] get_new_array(x[] input_)
@@ -759,7 +755,14 @@ public class arrays
 		
 		if (generic.is_array(val_))
 		{
-			if (is_ok(val_)) output = val_.toString();
+			if (is_ok(val_)) 
+			{
+				Class<?> type = generic.get_class_specific(val_);
+				
+				if (generic.are_equal(type, db_where[].class)) output = db_where.to_string((db_where[])val_);
+				else if (generic.are_equal(type, db_order[].class)) output = db_order.to_string((db_order[])val_);			
+				else output = val_.toString();
+			}
 		}
 		else output = strings.to_string(val_);
 		

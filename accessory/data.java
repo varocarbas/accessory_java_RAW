@@ -13,6 +13,32 @@ public class data
 
 	private static HashMap<String, Class<?>> _all_classes = new HashMap<String, Class<?>>();
 
+	public data(data input_)
+	{
+		_is_ok = false;
+		if (!is_ok(input_._type, input_._class, input_._size, false)) return;
+
+		_is_ok = true;
+		_type = input_._type;
+		_class = input_._class;
+		_size = update_size(_type, input_._size);
+	}
+
+	public data(String type_, size size_)
+	{
+		_is_ok = false;
+		
+		String type = check_type(type_);
+		Class<?> temp = get_class(type);
+		
+		if (!is_ok(type_, temp, size_, false)) return;
+
+		_is_ok = true;
+		_type = type;
+		_class = temp;
+		_size = update_size(type, size_);
+	}
+	
 	public String toString()
 	{
 		String output = "";
@@ -86,32 +112,11 @@ public class data
 		return is_ok;
 	}
 
-	public data(data input_)
+	public static boolean type_is_ok(String type_)
 	{
-		_is_ok = false;
-		if (!is_ok(input_._type, input_._class, input_._size, false)) return;
-
-		_is_ok = true;
-		_type = input_._type;
-		_class = input_._class;
-		_size = update_size(_type, input_._size);
+		return (strings.is_ok(check_type(type_)));
 	}
-
-	public data(String type_, size size_)
-	{
-		_is_ok = false;
-		
-		String type = check_type(type_);
-		Class<?> temp = get_class(type);
-		
-		if (!is_ok(type_, temp, size_, false)) return;
-
-		_is_ok = true;
-		_type = type;
-		_class = temp;
-		_size = update_size(type, size_);
-	}
-
+	
 	public static String check_type(String type_)
 	{
 		return types.check_subtype(type_, types.get_subtypes(types.DATA, null), null, null);
@@ -124,15 +129,20 @@ public class data
 
 	public static boolean is_numeric(String type_)
 	{
+		return is_common(type_, new String[] { types.DATA_DECIMAL, types.DATA_LONG, types.DATA_INTEGER });
+	}
+	
+	public static boolean is_string(String type_)
+	{
+		return is_common(type_, new String[] { types.DATA_STRING, types.DATA_STRING_BIG });		
+	}
+
+	private static boolean is_common(String type_, String[] targets_)
+	{
 		String type = check_type(type_);
 		if (!strings.is_ok(type)) return false;
 		
-		String[] targets = new String[] 
-		{
-			types.DATA_DECIMAL, types.DATA_LONG, types.DATA_INTEGER
-		};
-		
-		for (String target: targets)
+		for (String target: targets_)
 		{
 			if (type.equals(target)) return true;
 		}

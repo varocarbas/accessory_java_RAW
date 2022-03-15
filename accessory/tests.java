@@ -79,7 +79,8 @@ public class tests
 		Class<?> type = db.class;
 		
 		String source = types._CONFIG_TESTS_DB_SOURCE;
-				
+		db._cur_source = source;
+		
 		String name = "create_table";
 		Class<?>[] params = new Class<?>[] { String.class, boolean.class };
 		Method method = generic.get_method(type, name, params, false);		
@@ -129,7 +130,8 @@ public class tests
 
 		vals.put(types._CONFIG_TESTS_DB_FIELD_INT, val);		
 
-		db_where[] wheres = new db_where[] { new db_where(source, types._CONFIG_DB_FIELDS_DEFAULT_ID, 1) };
+		db_where where = new db_where(null, types._CONFIG_DB_FIELDS_DEFAULT_ID, 1);
+		db_where[] wheres = new db_where[] { where };
 		
 		args2.add(wheres);
 		
@@ -161,14 +163,13 @@ public class tests
 
 		String field = types._CONFIG_TESTS_DB_FIELD_INT;
 		String col = db.get_col(source, field);
-		//String col_var = db.get_variable_col(source, field);
 
 		String table = db.get_variable_table(source);
 
 		db_order[] orders = new db_order[] 
 		{ 
-			new db_order(source, field, types.DB_ORDER_DESC, true)
-			//new db_order(source, col, types.DB_ORDER_DESC, false)
+			new db_order(null, field, types.DB_ORDER_DESC, true), 
+			new db_order(null, where.toString(), types.DB_ORDER_ASC, false)
 		};
 		
 		String query = "SELECT " + db.get_variable(col) + " FROM " + table;

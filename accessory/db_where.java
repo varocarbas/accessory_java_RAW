@@ -12,6 +12,51 @@ public class db_where
 	public boolean _is_literal = defaults.DB_WHERE_LITERAL; //_value as a literal (e.g., 5 -> '5') or something else (e.g., col + 1 -> col + 1).
 	
 	private static String _source_temp = strings.DEFAULT;
+
+	public db_where(db_where input_)
+	{
+		_is_ok = false;
+
+		if (!is_ok(input_)) return;
+
+		_is_ok = true;
+		_source = _source_temp;
+		_key = input_._key;
+		_operand = input_._operand;
+		_value = input_._value;
+		_is_literal = input_._is_literal;
+		_link = input_._link;
+	}
+
+	public db_where(String source_, String key_, Object value_)
+	{
+		_is_ok = false;
+		
+		String operand = defaults.DB_WHERE_OPERAND;
+		if (!is_ok(source_, key_, operand, value_)) return;
+		
+		_is_ok = true;
+		_source = _source_temp;
+		_key = key_;
+		_operand = operand;
+		_value = value_;	
+		_is_literal = defaults.DB_WHERE_LITERAL;
+		_link = defaults.DB_WHERE_LINK;
+	}
+	
+	public db_where(String source_, String key_, String operand_, Object value_, boolean is_literal_, String link_)
+	{
+		_is_ok = false;
+		if (!is_ok(source_, key_, operand_, value_)) return;
+		
+		_is_ok = true;
+		_source = _source_temp;
+		_key = key_;
+		_operand = check_operand(operand_);
+		_value = value_;	
+		_is_literal = is_literal_;
+		_link = check_operand(link_);
+	}
 	
 	public String toString()
 	{
@@ -101,51 +146,6 @@ public class db_where
 	public static boolean is_ok(db_where input_)
 	{
 		return (input_ != null && is_ok(input_._source, input_._key, input_._operand, input_._value));
-	}
-
-	public db_where(db_where input_)
-	{
-		_is_ok = false;
-
-		if (!is_ok(input_)) return;
-
-		_is_ok = true;
-		_source = _source_temp;
-		_key = input_._key;
-		_operand = input_._operand;
-		_value = input_._value;
-		_is_literal = input_._is_literal;
-		_link = input_._link;
-	}
-
-	public db_where(String source_, String key_, Object value_)
-	{
-		_is_ok = false;
-		
-		String operand = defaults.DB_WHERE_OPERAND;
-		if (!is_ok(source_, key_, operand, value_)) return;
-		
-		_is_ok = true;
-		_source = _source_temp;
-		_key = key_;
-		_operand = operand;
-		_value = value_;	
-		_is_literal = defaults.DB_WHERE_LITERAL;
-		_link = defaults.DB_WHERE_LINK;
-	}
-	
-	public db_where(String source_, String key_, String operand_, Object value_, boolean is_literal_, String link_)
-	{
-		_is_ok = false;
-		if (!is_ok(source_, key_, operand_, value_)) return;
-		
-		_is_ok = true;
-		_source = _source_temp;
-		_key = key_;
-		_operand = check_operand(operand_);
-		_value = value_;	
-		_is_literal = is_literal_;
-		_link = check_operand(link_);
 	}
 	
 	public static boolean operand_is_ok(String operand_)

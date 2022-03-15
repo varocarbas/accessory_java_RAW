@@ -60,11 +60,9 @@ public class errors
 
 	public static void manage_db(String type_, String query_, Exception e_, String message_)
 	{
-		String type = types.check_aliases(type_);
-
 		manage
 		(
-			get_info_db(type, query_, e_, message_), strings.to_boolean
+			get_info_db(type_, query_, e_, message_), strings.to_boolean
 			(
 				_config.get_db(types._CONFIG_DB_ERROR_EXIT)
 			)
@@ -73,14 +71,13 @@ public class errors
 
 	private static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_)
 	{
-		if (!strings.is_ok(type_)) return null;
+		String type = types.check_subtype(type_, types.get_subtypes(types.ERROR_DB, null), null, null);
 
 		HashMap<String, String> info = new HashMap<String, String>();
-		info.put(keys.TYPE, type_);
-		info.put(keys.SOURCE, strings.to_string(db._cur_source));
+		info.put(keys.TYPE, type);
 		
 		String message = message_;
-		String message2 = get_message(e_, type_);
+		String message2 = get_message(e_, type);
 		
 		if ((strings.is_ok(message2) && (generic.is_ok(e_)) || !strings.is_ok(message))) message = message2;
 		info.put(keys.MESSAGE, message);

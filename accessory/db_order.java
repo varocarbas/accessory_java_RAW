@@ -5,11 +5,35 @@ public class db_order
 	public boolean _is_ok = true;
 	
 	public String _source = strings.DEFAULT;
-	public String _value = strings.DEFAULT;
+	public String _value = strings.DEFAULT; //Always stored as a field and only converted to col before outputting a string.
 	public String _order = defaults.DB_ORDER;
 	public boolean _is_field = defaults.DB_ORDER_FIELD; //_value being a field/col vs. something else like a condition.
 	
 	private static String _source_temp = strings.DEFAULT;
+	
+	public db_order(db_order input_)
+	{
+		_is_ok = false;
+		if (!is_ok(input_)) return;
+
+		_is_ok = true;
+		_source = _source_temp;
+		_value = input_._value;
+		_order = input_._order;
+		_is_field = input_._is_field;
+	}
+	
+	public db_order(String source_, String value_, String order_, boolean is_field_)
+	{
+		_is_ok = false;
+		if (!is_ok(source_, value_, order_)) return;
+
+		_is_ok = true;
+		_source = _source_temp;
+		_value = value_;
+		_order = check_order(order_);
+		_is_field = is_field_;
+	}
 	
 	public String toString()
 	{	
@@ -64,30 +88,6 @@ public class db_order
 	public static boolean is_ok(db_order input_)
 	{
 		return (input_ != null && is_ok(input_._source, input_._value, input_._order));
-	}
-	
-	public db_order(db_order input_)
-	{
-		_is_ok = false;
-		if (!is_ok(input_)) return;
-
-		_is_ok = true;
-		_source = _source_temp;
-		_value = input_._value;
-		_order = input_._order;
-		_is_field = input_._is_field;
-	}
-	
-	public db_order(String source_, String value_, String order_, boolean is_field_)
-	{
-		_is_ok = false;
-		if (!is_ok(source_, value_, order_)) return;
-
-		_is_ok = true;
-		_source = _source_temp;
-		_value = value_;
-		_order = check_order(order_);
-		_is_field = is_field_;
 	}
 	
 	public static boolean order_is_ok(String order_)

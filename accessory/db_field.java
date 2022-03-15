@@ -1,21 +1,99 @@
 package accessory;
 
+import java.util.HashMap;
+
 public class db_field 
 {
 	public boolean _is_ok = true;
 	
-	public data _data = null;
+	public String _type = strings.DEFAULT;
+	public int _size = 0;
+	public int _decimals = 0;
 	public Object _default = null;
 	public String[] _further = null;
+	
+	private static size _size_temp = null;
 
+	public db_field(db_field input_)
+	{
+		_is_ok = false;
+		if (!is_ok(input_)) return;
+
+		_is_ok = true;
+		_type = input_._type;
+		_size = numbers.to_int(_size_temp._max);
+		_decimals = _size_temp._decimals;
+		_default = generic.get_new(input_._default);
+		_further = (String[])generic.get_new(input_._further);
+	}
+
+	public db_field(String type_)
+	{
+		_is_ok = false;
+		if (!is_ok(type_, 0, 0, null)) return;
+
+		_is_ok = true;
+		_type = data.check_type(type_);
+		_size = numbers.to_int(_size_temp._max);
+		_decimals = _size_temp._decimals;
+		_default = null;
+		_further = null;	
+	}
+	
+	public db_field(String type_, String[] further_)
+	{
+		_is_ok = false;
+		if (!is_ok(type_, 0, 0, further_)) return;
+
+		_is_ok = true;
+		_type = data.check_type(type_);
+		_size = numbers.to_int(_size_temp._max);
+		_decimals = _size_temp._decimals;
+		_default = null;
+		_further = (String[])generic.get_new(further_);
+	}
+	
+	public db_field(String type_, int size_, int decimals_)
+	{
+		_is_ok = false;
+		if (!is_ok(type_, size_, decimals_, null)) return;
+
+		_is_ok = true;
+		_type = data.check_type(type_);
+		_size = numbers.to_int(_size_temp._max);
+		_decimals = _size_temp._decimals;
+		_default = null;
+		_further = null;
+	}
+
+	public db_field(String type_, int size_, int decimals_, Object default_, String[] further_)
+	{
+		_is_ok = false;
+		if (!is_ok(type_, size_, decimals_, default_, further_)) return;
+
+		_is_ok = true;
+		_type = data.check_type(type_);
+		_size = numbers.to_int(_size_temp._max);
+		_decimals = _size_temp._decimals;
+		_default = generic.get_new(default_);
+		_further = (String[])generic.get_new(further_);
+	}
+	
 	public String toString()
 	{
 		String output = "";
-		if (generic.is_ok(_data)) output = _data.toString();
 		
+		db_field.update_size(_type, _size, _decimals);
+		
+		String type = data.check_type(_type);
+		if (strings.is_ok(type)) output = type.toString();
+		
+		if (!output.equals("")) output += misc.SEPARATOR_ITEM;
+		output += size.to_string(_size_temp, false);
+				
 		if (generic.is_ok(_further)) 
 		{
-			if (strings.is_ok(output)) output += misc.SEPARATOR_ITEM;
+			output += misc.SEPARATOR_ITEM;
 			output += arrays.to_string(_further, null);
 		} 
 		if (!strings.is_ok(output)) return strings.DEFAULT;
@@ -29,7 +107,10 @@ public class db_field
 		
 		return 
 		(
-			data.are_equal(_data, field2_._data) &&
+			strings.are_equal(data.check_type(_type), field2_._type) &&
+			(_size == field2_._size) && 
+			(_decimals == field2_._decimals) &&
+			generic.are_equal(_default, field2_._default) &&
 			arrays.are_equal(_further, field2_._further)
 		);		
 	}
@@ -46,48 +127,47 @@ public class db_field
 	
 	public static boolean is_ok(db_field input_)
 	{
-		return (input_ != null && is_ok(input_._data, input_._default, input_._further));
+		return (input_ != null && db_field.is_ok(input_._type, input_._size, input_._decimals, input_._default, input_._further));
 	}
 
+	public static db_field adapt(db_field input_)
+	{
+		db_field output = new db_field(input_);
+		if (!output._is_ok) return output;
+		
+		check_size(input_._type, input_._size, input_._decimals);
+		
+		output._size = numbers.to_int(_size_temp._max);
+		output._decimals = numbers.to_int(_size_temp._decimals);
+		
+		return output;
+	}
+	
 	public static <x> boolean complies(x val_, db_field field_)
 	{
 		if (!generic.is_ok(val_) || !is_ok(field_)) return false;
 		
-		size size = new size(field_._data._size);
-		if (data.is_numeric(field_._data._type))
+		double val = Math.pow(10, field_._size);
+		size size = new size(-1 * val, val, field_._decimals);
+
+		return data.complies(val_, new data(field_._type, size));
+	}
+
+	public static boolean further_is_ok(String[] further_)
+	{
+		if (!arrays.is_ok(further_)) return true;
+		
+		for (String further: further_)
 		{
-			size._max = Math.pow(10, size._max);
-			size._min = -1 * size._max;
+			if (!further_is_ok(further)) return false;
 		}
-
-		return data.complies(val_, new data(field_._data._type, size));
+		
+		return true;
 	}
-
-	public db_field(db_field input_)
-	{
-		_is_ok = false;
-		if (!is_ok(input_)) return;
-
-		_is_ok = true;
-		_data = new data(input_._data);
-		_default = input_._default;
-		_further = (String[])arrays.get_new(input_._further);
-	}
-
-	public db_field(data data_, Object default_, String[] further_)
-	{
-		_is_ok = false;
-		if (!is_ok(data_, default_, further_)) return;
-
-		_is_ok = true;
-		_data = new data(data_);
-		_default = default_;
-		_further = (String[])arrays.get_new(further_);
-	}
-
+	
 	public static boolean further_is_ok(String further_)
 	{
-		return (strings.is_ok(check_further(further_)));
+		return (!strings.is_ok(further_) || strings.is_ok(check_further(further_)));
 	}
 	
 	public static String check_further(String further_)
@@ -95,20 +175,114 @@ public class db_field
 		return types.check_subtype(further_, types.get_subtypes(types.DB_FIELD_FURTHER, null), null, null);
 	}
 	
-	private static boolean is_ok(data data_, Object default_, String[] further_)
+	public static int check_size(String type_, int size_)
 	{
-		return (generic.is_ok(data_) && further_is_ok(further_));
+		size temp = check_size(type_, size_, 0);
+		
+		return (size.is_ok(temp) ? numbers.to_int(temp._max) : 0);
 	}
 	
-	private static boolean further_is_ok(String[] further_)
+	public static boolean default_is_ok(String type_, int size_, Object default_)
 	{
-		if (!arrays.is_ok(further_)) return true;
+		check_size(type_, size_);		
+	
+		if (!_size_temp._is_ok) return false;
+		if (default_ == null) return true;
 		
-		for (String item: further_)
+		boolean is_ok = false;		
+		int max = numbers.to_int(_size_temp._max);
+		if (max <= 0) return is_ok;
+		
+		if (data.is_numeric(type_) && generic.is_number(default_)) 
 		{
-			if (!further_is_ok(item)) return false;
+			is_ok = (numbers.to_number(default_) <= max);
+		}
+		else if (data.is_string(type_) && generic.is_string(default_)) 
+		{
+			is_ok = (strings.get_length((String)default_) <= max);
+		}
+		else if (type_.equals(types.DATA_BOOLEAN))
+		{
+			if (generic.is_boolean(default_)) is_ok = true;
+			else if (generic.is_number(default_))
+			{
+				double temp = numbers.to_number(default_);
+				if (temp == 0 || temp == 1) is_ok = true;
+			}
+			else if (generic.is_string(default_))
+			{
+				String temp = (String)default_;
+				if (strings.is_boolean(temp)) is_ok = true;
+				else if (strings.is_number(temp))
+				{
+					double temp2 = numbers.decimal_from_string(temp);
+					if (temp2 == 0.0 || temp2 == 1.0) is_ok = true;
+				}
+			}
 		}
 		
-		return true;
+		return is_ok;
+	}
+	
+	private static size check_size(String type_, int size_, int decimals_)
+	{
+		HashMap<String, Object> info = db.get_data_type(type_);
+		if (!arrays.is_ok(info)) return update_size(type_, null);
+		
+		int size = size_;
+		int max = (int)info.get(keys.MAX);
+		if (size > max) size = max;
+		
+		return update_size(type_, new size(0, size, decimals_));
+	}
+	
+	private static size update_size(String type_, size size_)
+	{
+		int[] vals = from_size(size_);
+
+		return update_size(type_, vals[0], vals[1]);
+	}
+	
+	private static size update_size(String type_, int size_, int decimals_)
+	{
+		_size_temp = new size(0, 0, 0);
+
+		if (size_ > 0) _size_temp._max = size_;
+		else _size_temp._max = db.get_default_size(type_);
+		
+		if (decimals_ >= 0) _size_temp._decimals = decimals_;
+		
+		_size_temp._is_ok = (_size_temp._max > 0);
+		
+		return _size_temp;
+	}
+	
+	private static boolean is_ok(String type_, int size_, int decimals_, Object default_, String[] further_)
+	{
+		size size = check_size(type_, size_, decimals_);
+		if (!size._is_ok) return false;
+
+		return (default_is_ok(type_, numbers.to_int(size._max), default_) && further_is_ok(further_));
+	}
+
+	private static boolean is_ok(String type_, int size_, int decimals_, String[] further_)
+	{
+		update_size(type_, size_, decimals_);
+		
+		return (data.type_is_ok(type_) && further_is_ok(further_));
+	}
+	
+	private static int[] from_size(size size_)
+	{
+		int size2 = 0; 
+		int decimals = 0;
+		
+		if (size.is_ok(size_))
+		{
+			size2 = numbers.to_int(size_._max); 
+			decimals = size_._decimals;
+		}
+		
+		return new int[] { size2, decimals };
 	}
 }

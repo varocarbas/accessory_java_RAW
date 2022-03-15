@@ -153,7 +153,7 @@ class sql
 		String type = null;
 		String message = ""; 
 
-		if (!strings.is_integer(max_pool))
+		if (!strings.is_int(max_pool))
 		{
 			type = types.ERROR_DB_INFO;
 			message = "MaxPooledStatements";

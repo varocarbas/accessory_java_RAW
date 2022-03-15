@@ -151,6 +151,34 @@ public class numbers
 		return length;
 	}
 	
+	public static long to_long(double input_)
+	{
+		double output = Math.ceil(input_);
+		
+		return (long)
+		(
+			(
+				output >= (double)numbers.MIN_LONG && 
+				output <= (double)numbers.MAX_LONG
+			) 
+			? output : DEFAULT_LONG
+		);	
+	}
+	
+	public static int to_int(double input_)
+	{	
+		double output = Math.ceil(input_);
+	
+		return (int)
+		(
+			(
+				output >= (double)numbers.MIN_INT && 
+				output <= (double)numbers.MAX_INT
+			) 
+			? output : DEFAULT_INT
+		);
+	}
+	
 	public static String to_integer_string(double input_)
 	{
 		String output = "";
