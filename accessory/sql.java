@@ -26,18 +26,18 @@ class sql
 
 		HashMap<String, String> items = new HashMap<String, String>();
 
-		items.put(keys.TABLE, strings.to_string(table_));
+		items.put("table", strings.to_string(table_));
 		
 		if (what_.equals(types.DB_QUERY_SELECT)) 
 		{
-			items.put(keys.COL, strings.to_string(cols_));
-			items.put(keys.MAX, strings.to_string(max_rows_));
-			items.put(keys.ORDER, strings.to_string(order_));
+			items.put("cols", strings.to_string(cols_));
+			items.put("max_rows", strings.to_string(max_rows_));
+			items.put("order", strings.to_string(order_));
 		}
 		
 		if (what_.equals(types.DB_QUERY_DELETE) || what_.equals(types.DB_QUERY_UPDATE) || what_.equals(types.DB_QUERY_SELECT)) 
 		{
-			items.put(keys.WHERE, strings.to_string(where_));
+			items.put("where", strings.to_string(where_));
 		}
 		
 		if (what_.equals(types.DB_QUERY_INSERT) || what_.equals(types.DB_QUERY_UPDATE)) items.put(keys.VALUE, strings.to_string(vals_));

@@ -14,24 +14,20 @@ public class tests
 	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all(boolean db_too_)
 	{	
 		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
-		
-		String name0 = "accessory_main";
-		System.out.println("-------- " + keys.START.toUpperCase() + " " + name0);
 
+		int level = 0;		
+		String name0 = "accessory_main";
+
+		print_start_end(name0, true, level);		
 		outputs = run_accessory_main();
-	
-		System.out.println(keys.END.toUpperCase() + " " + name0);
-		System.out.println();
+		print_start_end(name0, false, level);
 		
 		if (!db_too_) return outputs;
 		
 		name0 = "accessory_db";
-		System.out.println("-------- " + keys.START.toUpperCase() + " " + name0);
-
+		print_start_end(name0, true, level);
 		outputs.put(name0, run_accessory_internal(db.class));
-		
-		System.out.println(keys.END.toUpperCase() + " " + name0);
-		System.out.println();
+		print_start_end(name0, false, level);
 		
 		ArrayList<String> wrongs = new ArrayList<String>();
 		
@@ -50,6 +46,7 @@ public class tests
 		}
 		
 		int tot = wrongs.size();
+		
 		System.out.println("TOTAL ERRORS: " + tot);
 		if (tot > 0) System.out.println(strings.to_string(wrongs));
 		
@@ -130,6 +127,7 @@ public class tests
 
 		vals.put(types._CONFIG_TESTS_DB_FIELD_INT, val);		
 
+		db._cur_source = source;
 		db_where where = new db_where(null, types._CONFIG_DB_FIELDS_DEFAULT_ID, 1);
 		db_where[] wheres = new db_where[] { where };
 		
@@ -166,6 +164,7 @@ public class tests
 
 		String table = db.get_variable_table(source);
 
+		db._cur_source = source;
 		db_order[] orders = new db_order[] 
 		{ 
 			new db_order(null, field, types.DB_ORDER_DESC, true), 
@@ -238,7 +237,9 @@ public class tests
 	
 	public static HashMap<String, Boolean> run_accessory_io()
 	{
-		return run(io.class);
+		String[] skip = new String[] { "array_to_file", "line_to_file" };
+		
+		return run(io.class, null, null, skip);
 	}
 	
 	public static HashMap<String, Boolean> run_accessory_numbers()
@@ -248,7 +249,9 @@ public class tests
 	
 	public static HashMap<String, Boolean> run_accessory_paths()
 	{
-		return run(paths.class, null, null, new String[] { "update_main_dir" });
+		String[] skip = new String[] { "update_main_dir" };
+		
+		return run(paths.class, null, null, skip);
 	}
 	
 	public static HashMap<String, Boolean> run_accessory_types()
@@ -276,6 +279,8 @@ public class tests
 	{
 		HashMap<String, Boolean> run_outs = new HashMap<String, Boolean>();
 
+		int level = 1;
+		
 		Method[] methods = (arrays.is_ok(methods_) ? methods_ : generic.get_all_methods(class_, null));
 		
 		if (!arrays.is_ok(methods))
@@ -286,17 +291,15 @@ public class tests
 		}
 		
 		String name0 = class_.getName();
-		System.out.println("-------- " + keys.START.toUpperCase() + " " + name0 + misc.NEW_LINE);
+		print_start_end(name0, true, level);
 		
 		run_outs = new HashMap<String, Boolean>();
-		
-		boolean first_time = true;
 		
 		for (int i = 0; i < methods.length; i++)
 		{
 			boolean is_ok = false;
 			
-			String name = keys.METHOD + misc.SEPARATOR_NAME + i;
+			String name = "method" + misc.SEPARATOR_NAME + i;
 			Method method = methods[i];
 			
 			if (!method_is_ok(class_, method, name))
@@ -308,25 +311,22 @@ public class tests
 			
 			name = method.getName();
 			if (arrays.value_exists(skip_, name)) continue;
-		
-			if (first_time) first_time = false;
-			else System.out.println("");
 					
 			run_outs.put(name, run_method(class_, method, name, arrays.get_value(args_, name), arrays.get_value(targets_, name), true));
 		}
 		
-		System.out.println(misc.NEW_LINE + "-------- " + keys.END.toUpperCase() + " " + name0 + misc.NEW_LINE);
+		print_start_end(name0, false, level);
 		
 		return run_outs;
 	}
-
+	
 	public static boolean run_method(Class<?> class_, Method method_, String method_name_, ArrayList<ArrayList<Object>> args_, Object[] targets_, boolean errors_allowed_)
 	{
 		boolean is_ok = false;
 		if (!method_is_ok(class_, method_, method_name_)) return is_ok;
 
-		System.out.println(method_name_);
-		
+		print_start_end(method_name_, true, 2);		
+
 		is_ok = true;
 		String result = strings.DEFAULT;
 
@@ -350,7 +350,7 @@ public class tests
 				result += " (targets not met)";
 			}
 		}
-		else result = keys.OK.toUpperCase();
+		else result = "OK";
 
 		System.out.println(result);
 		
@@ -366,7 +366,7 @@ public class tests
 		if (generic.is_ok(output)) out += strings.to_string(output);
 		System.out.println(out);
 
-		System.out.println("------");
+		print_start_end(method_name_, false, 2);
 		
 		_running = false;
 		
@@ -400,7 +400,30 @@ public class tests
 
 		return output;
 	}
-	
+
+	private static void print_start_end(String name_, boolean is_start_, int level_)
+	{
+		String output = "";
+		
+		int count = 2;
+		boolean is_last = (level_ == count);
+		
+		while (count >= level_)
+		{
+			count--;
+			output += "---";
+		}
+
+		if (!is_last) output += " " + (is_start_ ? "START" : "END") + " " + name_ + misc.NEW_LINE;
+		else
+		{
+			if (is_start_) output += " " + name_;
+			else output += misc.NEW_LINE;
+		}
+
+		System.out.println(output);
+	}
+
 	private static HashMap<String, Boolean> run_accessory_internal(Class<?> class_)
 	{
 		HashMap<String, Boolean> output = null;
@@ -426,8 +449,8 @@ public class tests
 		{
 			HashMap<String, String> info = new HashMap<String, String>();
 			info.put(keys.TYPE, types.ERROR_TEST_RUN);
-			info.put(keys.METHOD, strings.to_string(method_name_));
-			info.put(keys.CLASS, (generic.is_ok(class_) ? class_.getName() : strings.DEFAULT));
+			info.put("method", strings.to_string(method_name_));
+			info.put("class", (generic.is_ok(class_) ? class_.getName() : strings.DEFAULT));
 
 			errors.manage(info, false);
 		}	

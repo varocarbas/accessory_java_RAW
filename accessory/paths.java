@@ -109,17 +109,19 @@ public class paths
 
 	static String get_default_dir(String what_)
 	{
-		if (!strings.is_ok(what_)) return strings.DEFAULT;
-		if (strings.are_equivalent(what_, keys.APP)) return get_dir_app_default();
+		String what = types.check_what(what_);
+		
+		if (!strings.is_ok(what)) return strings.DEFAULT;
+		if (strings.are_equal(what, types.WHAT_DIR_APP)) return get_dir_app_default();
 
-		String[] targets = { keys.CREDENTIALS, keys.INI, keys.LOGS };
+		String[] targets = { types.WHAT_DIR_CREDENTIALS, types.WHAT_DIR_INI, types.WHAT_DIR_LOGS };
 
 		for (String target: targets)
 		{
-			if (strings.are_equivalent(what_, target))
+			if (strings.are_equal(what, target))
 			{
 				String[] parts = { HOME, target };
-				if (target.equals(keys.LOGS)) parts = new String[] { get_dir_app_default() };
+				if (target.equals(types.WHAT_DIR_LOGS)) parts = new String[] { get_dir_app_default() };
 
 				return build(parts, false);
 			}

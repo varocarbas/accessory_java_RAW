@@ -119,11 +119,45 @@ public class types
 	public static final String DATA = "data";
 	public static final String DATA_STRING = "data_string";
 	public static final String DATA_STRING_BIG = "data_string_big";
-	public static final String DATA_INTEGER = "data_integer";
+	public static final String DATA_INT = "data_int";
 	public static final String DATA_LONG = "data_long";
 	public static final String DATA_DECIMAL = "data_decimal";
-	public static final String DATA_BOOLEAN = "data_boolean";
 	public static final String DATA_TIMESTAMP = "data_timestamp";
+	public static final String DATA_BOOLEAN = "data_boolean";
+	public static final String DATA_BOOLEAN_TRUE = "data_boolean_true";
+	public static final String DATA_BOOLEAN_FALSE = "data_boolean_false";
+	
+	public static final String ACTIONS = "actions";
+	public static final String ACTIONS_ADD = "actions_add";
+	public static final String ACTIONS_REMOVE = "actions_remove";
+	public static final String ACTIONS_ENCRYPT = "actions_encrypt";
+	public static final String ACTIONS_DECRYPT = "actions_decrypt";
+	
+	public static final String WHAT = "what";
+	public static final String WHAT_USER = "what_user";
+	public static final String WHAT_USERNAME = "what_username";
+	public static final String WHAT_PASSWORD = "what_password";
+	public static final String WHAT_DB = "what_db";
+	public static final String WHAT_HOST = "what_host";
+	public static final String WHAT_MAX = "what_max";
+	public static final String WHAT_MIN = "what_min";
+	public static final String WHAT_FILE = "what_file";
+	public static final String WHAT_SCREEN = "what_screen";
+	public static final String WHAT_INFO = "what_info";
+	public static final String WHAT_QUERY = "what_query";
+	public static final String WHAT_KEY = "what_key";
+	public static final String WHAT_VALUE = "what_value";
+	public static final String WHAT_FURTHER = "what_further";
+	public static final String WHAT_TYPE = "what_type";
+	public static final String WHAT_APP = "what_app";
+	public static final String WHAT_SERVER = "what_server";
+	public static final String WHAT_ID = "what_id";
+	
+	public static final String WHAT_DIR = "what_dir";
+	public static final String WHAT_DIR_CREDENTIALS = "what_dir_credentials";
+	public static final String WHAT_DIR_INI = "what_dir_ini";
+	public static final String WHAT_DIR_LOGS = "what_dir_logs";
+	public static final String WHAT_DIR_APP = "what_dir_app";
 	
 	public static final String ERROR_DB = "error_db";
 	public static final String ERROR_DB_INFO = "error_db_info";
@@ -177,35 +211,55 @@ public class types
 		return true;
 	}
 
-	public static String check_subtype(String subtype_, String[] subtypes_, String add_remove_, String type_add_remove_)
+	public static String check_what(String what_)
 	{
-		String subtype0 = check_aliases(subtype_);
-		String type_add_remove = check_aliases(type_add_remove_);
+		return check_subtype(what_, types.get_subtypes(WHAT, null), null, null);
+	}
+	
+	public static String what_to_key(String what_)
+	{
+		return check_subtype(what_, types.get_subtypes(WHAT, null), ACTIONS_REMOVE, WHAT);
+	}
+	
+	public static String check_action(String action_)
+	{
+		return check_subtype(action_, types.get_subtypes(ACTIONS, null), null, null);
+	}
+	
+	public static String check_subtype(String subtype_, String[] subtypes_, String action_add_remove_, String type_add_remove_)
+	{	
+		String output = strings.DEFAULT;
+		
+		String subtype2 = check_aliases(strings.normalise(subtype_));
+		if (!strings.is_ok(subtype2)) return output;
+		
+		String type_add_remove = check_aliases(strings.normalise(type_add_remove_));
+		String action = check_aliases(strings.normalise(action_add_remove_));
 		
 		for (String subtype: get_subtypes(strings.DEFAULT, subtypes_))
 		{
-			String output = subtype;
-			String subtype2 = strings.DEFAULT;
-
-			if (strings.are_equivalent(add_remove_, keys.ADD)) 
-			{
-				subtype2 = add_type(subtype0, type_add_remove);
-			}
-			else if (strings.are_equivalent(add_remove_, keys.REMOVE)) 
-			{
-				subtype2 = remove_type(subtype, type_add_remove);
-			}
-
-			if 
+			if
 			(
-				strings.are_equivalent(subtype, subtype0) ||
-				strings.are_equivalent(subtype2, subtype0) ||
-				strings.are_equivalent(subtype2, subtype)
+				strings.are_equal(subtype2, subtype) || 
+				(
+					strings.is_ok(type_add_remove) && strings.are_equal
+					(
+						add_type(subtype2, type_add_remove), subtype
+					)
+				)
 			)
-			{ return output; }
+			{
+				output =
+				(
+					strings.are_equal(action, ACTIONS_REMOVE) ?
+					remove_type(subtype, type_add_remove) : subtype
+				);
+				
+				break;
+			}
 		}
 
-		return strings.DEFAULT;
+		return output;
 	}
 
 	public static String remove_type(String subtype_, String type_)
@@ -325,7 +379,17 @@ public class types
 			MYSQL_DATA_VARCHAR, MYSQL_DATA_TEXT, MYSQL_DATA_INT, MYSQL_DATA_TINYINT, MYSQL_DATA_BIGINT, MYSQL_DATA_DECIMAL,
 			
 			//DATA
-			DATA_STRING, DATA_STRING_BIG, DATA_INTEGER, DATA_LONG, DATA_DECIMAL, DATA_BOOLEAN, DATA_TIMESTAMP,
+			DATA_STRING, DATA_STRING_BIG, DATA_INT, DATA_LONG, DATA_DECIMAL, DATA_TIMESTAMP,
+			DATA_BOOLEAN,
+			DATA_BOOLEAN_TRUE, DATA_BOOLEAN_FALSE,
+			
+			//ACTIONS
+			ACTIONS_ADD, ACTIONS_REMOVE, ACTIONS_ENCRYPT, ACTIONS_DECRYPT,
+			
+			//WHAT
+			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 
+			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER,
+			WHAT_TYPE,
 			
 			//ERROR_DB
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,

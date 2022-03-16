@@ -19,7 +19,6 @@ public class _config_ini
 	{
 		types.update_aliases(keys.APP, types._CONFIG_BASIC_NAME);
 		types.update_aliases(keys.DIR, types._CONFIG_BASIC_DIR_APP);
-		types.update_aliases(keys.INI, types._CONFIG_BASIC_DIR_INI);
 
 		types.update_aliases(keys.DB, types._CONFIG_DB_NAME);
 		types.update_aliases(keys.HOST, types._CONFIG_DB_HOST);

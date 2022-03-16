@@ -23,44 +23,56 @@ public class db
 	
 	static { ini.load(); }
 
+	public static boolean update_conn_info(String username_, String password_, String database_, String host_)
+	{
+		HashMap<String, String> params = new HashMap<String, String>();
+		if (strings.is_ok(username_)) params.put(types._CONFIG_DB_CREDENTIALS_USERNAME, username_);
+		if (password_ != null) params.put(types._CONFIG_DB_CREDENTIALS_PASSWORD, password_);
+		if (strings.is_ok(database_)) params.put(types._CONFIG_DB_NAME, database_);
+		if (strings.is_ok(host_)) params.put(types._CONFIG_DB_HOST, host_);
+		
+		HashMap<String, Boolean> temp = update_conn_info(params);
+		
+		String error = "";
+		
+		for (Entry<String, Boolean> item: temp.entrySet())
+		{
+			if (!error.equals("")) error += ",";
+			if (!item.getValue()) error += item.getKey();
+		}
+		
+		if (error.equals("")) return true;
+		
+		error = "WRONG " + error;
+		
+		manage_error(types.ERROR_DB_INFO, null, null, error);
+		
+		return false;
+	}
+
 	public static HashMap<String, Boolean> update_conn_info(HashMap<String, String> params_)
 	{
 		return _config.update_db_conn_info(params_, _config.get_db(types._CONFIG_DB_SETUP));
 	}
-
-	public static boolean update_host(String host_)
-	{
-		return _config.update(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_HOST, host_);
-	}
-
-	public static boolean update_user(String user_)
-	{
-		return _config.update(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_USER, user_);
-	}
-
-	public static boolean update_error_exit(boolean error_exit_)
-	{
-		return _config.update(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_ERROR_EXIT, error_exit_);
-	}
 	
 	public static String select_one_string(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (String)select_one_common(source_, field_, wheres_, orders_, keys.STRING);
+		return (String)select_one_common(source_, field_, wheres_, orders_, types.DATA_STRING);
 	}
 	
 	public static double select_one_decimal(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (double)select_one_common(source_, field_, wheres_, orders_, keys.DECIMAL);
+		return (double)select_one_common(source_, field_, wheres_, orders_, types.DATA_DECIMAL);
 	}
 	
 	public static long select_one_long(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (long)select_one_common(source_, field_, wheres_, orders_, keys.LONG);
+		return (long)select_one_common(source_, field_, wheres_, orders_, types.DATA_LONG);
 	}
 	
 	public static int select_one_int(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (int)select_one_common(source_, field_, wheres_, orders_, keys.INT);
+		return (int)select_one_common(source_, field_, wheres_, orders_, types.DATA_INT);
 	}
 	
 	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_)
@@ -364,7 +376,7 @@ public class db
 		(
 			types._CONFIG_DB_FIELDS_DEFAULT_ID, new db_field
 			(
-				types.DATA_INTEGER, new String[] 
+				types.DATA_INT, new String[] 
 				{ 
 					types.DB_FIELD_FURTHER_KEY_PRIMARY, types.DB_FIELD_FURTHER_AUTO_INCREMENT 
 				}
@@ -495,7 +507,7 @@ public class db
 		return types.check_subtype
 		(
 			input_, types.get_subtypes(types.DB_QUERY, null), 
-			keys.ADD, types.DB_QUERY
+			types.ACTIONS_ADD, types.DB_QUERY
 		);
 	}
 	
@@ -551,10 +563,10 @@ public class db
 	{
 		Object output = null;
 		
-		if (what_.equals(keys.STRING)) output = strings.DEFAULT;
-		else if (what_.equals(keys.DECIMAL)) output = numbers.DEFAULT_DEC;
-		else if (what_.equals(keys.LONG)) output = numbers.DEFAULT_LONG;
-		else if (what_.equals(keys.INT)) output = numbers.DEFAULT_INT;
+		if (data.is_string(what_)) output = strings.DEFAULT;
+		else if (what_.equals(types.DATA_DECIMAL)) output = numbers.DEFAULT_DEC;
+		else if (what_.equals(types.DATA_LONG)) output = numbers.DEFAULT_LONG;
+		else if (what_.equals(types.DATA_INT)) output = numbers.DEFAULT_INT;
 		
 		if (!strings.is_ok(field_)) 
 		{
@@ -569,10 +581,10 @@ public class db
 		{
 			String temp2 = temp.get(field_);
 			
-			if (what_.equals(keys.STRING)) output = temp2;
-			else if (what_.equals(keys.DECIMAL)) output = numbers.decimal_from_string(temp2);
-			else if (what_.equals(keys.LONG)) output = numbers.long_from_string(temp2);
-			else if (what_.equals(keys.INT)) output = numbers.int_from_string(temp2);	
+			if (data.is_string(what_)) output = temp2;
+			else if (what_.equals(types.DATA_DECIMAL)) output = numbers.decimal_from_string(temp2);
+			else if (what_.equals(types.DATA_LONG)) output = numbers.long_from_string(temp2);
+			else if (what_.equals(types.DATA_INT)) output = numbers.int_from_string(temp2);	
 		}
 		
 		return output;

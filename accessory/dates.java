@@ -6,10 +6,10 @@ import java.time.format.DateTimeFormatter;
 
 public class dates 
 {
-	public static final String TIME = keys.TIME;
+	public static final String TIME = "time";
 	public static final String TIME_SHORT = "time_short";
 	public static final String TIME_FULL = TIME;
-	public static final String DATE = keys.DATE;
+	public static final String DATE = "date";
 	public static final String DATE_TIME = DATE + misc.SEPARATOR_NAME + TIME;
 	public static final String DEFAULT = defaults.TIME_DATE;
 

@@ -12,8 +12,9 @@ public class db_field
 	public Object _default = null;
 	public String[] _further = null;
 	
-	private static size _size_temp = null;
-
+	private static int _size_temp = 0;
+	private static int _decimals_temp = 0;
+	
 	public db_field(db_field input_)
 	{
 		_is_ok = false;
@@ -21,8 +22,8 @@ public class db_field
 
 		_is_ok = true;
 		_type = input_._type;
-		_size = numbers.to_int(_size_temp._max);
-		_decimals = _size_temp._decimals;
+		_size = _size_temp;
+		_decimals = _decimals_temp;
 		_default = generic.get_new(input_._default);
 		_further = (String[])generic.get_new(input_._further);
 	}
@@ -34,8 +35,8 @@ public class db_field
 
 		_is_ok = true;
 		_type = data.check_type(type_);
-		_size = numbers.to_int(_size_temp._max);
-		_decimals = _size_temp._decimals;
+		_size = _size_temp;
+		_decimals = _decimals_temp;
 		_default = null;
 		_further = null;	
 	}
@@ -47,8 +48,8 @@ public class db_field
 
 		_is_ok = true;
 		_type = data.check_type(type_);
-		_size = numbers.to_int(_size_temp._max);
-		_decimals = _size_temp._decimals;
+		_size = _size_temp;
+		_decimals = _decimals_temp;
 		_default = null;
 		_further = (String[])generic.get_new(further_);
 	}
@@ -60,8 +61,8 @@ public class db_field
 
 		_is_ok = true;
 		_type = data.check_type(type_);
-		_size = numbers.to_int(_size_temp._max);
-		_decimals = _size_temp._decimals;
+		_size = _size_temp;
+		_decimals = _decimals_temp;
 		_default = null;
 		_further = null;
 	}
@@ -73,8 +74,8 @@ public class db_field
 
 		_is_ok = true;
 		_type = data.check_type(type_);
-		_size = numbers.to_int(_size_temp._max);
-		_decimals = _size_temp._decimals;
+		_size = _size_temp;
+		_decimals = _decimals_temp;
 		_default = generic.get_new(default_);
 		_further = (String[])generic.get_new(further_);
 	}
@@ -83,13 +84,13 @@ public class db_field
 	{
 		String output = "";
 		
-		db_field.update_size(_type, _size, _decimals);
-		
 		String type = data.check_type(_type);
-		if (strings.is_ok(type)) output = type.toString();
-		
+		if (strings.is_ok(type)) output = type.toString();		
 		if (!output.equals("")) output += misc.SEPARATOR_ITEM;
-		output += size.to_string(_size_temp, false);
+		
+		String size = strings.to_string(_size);
+		if (_decimals > 0) size += ", " + _decimals;
+		output += "(" + size + ")";
 				
 		if (generic.is_ok(_further)) 
 		{
@@ -137,8 +138,8 @@ public class db_field
 		
 		check_size(input_._type, input_._size, input_._decimals);
 		
-		output._size = numbers.to_int(_size_temp._max);
-		output._decimals = numbers.to_int(_size_temp._decimals);
+		output._size = _size_temp;
+		output._decimals = _decimals_temp;
 		
 		return output;
 	}
@@ -177,20 +178,20 @@ public class db_field
 	
 	public static int check_size(String type_, int size_)
 	{
-		size temp = check_size(type_, size_, 0);
+		check_size(type_, size_, 0);
 		
-		return (size.is_ok(temp) ? numbers.to_int(temp._max) : 0);
+		return _size_temp;
 	}
 	
 	public static boolean default_is_ok(String type_, int size_, Object default_)
 	{
 		check_size(type_, size_);		
 	
-		if (!_size_temp._is_ok) return false;
+		if (_size_temp <= 0) return false;
 		if (default_ == null) return true;
 		
 		boolean is_ok = false;		
-		int max = numbers.to_int(_size_temp._max);
+		int max = _size_temp;
 		if (max <= 0) return is_ok;
 		
 		if (data.is_numeric(type_) && generic.is_number(default_)) 
@@ -224,65 +225,41 @@ public class db_field
 		return is_ok;
 	}
 	
-	private static size check_size(String type_, int size_, int decimals_)
+	private static void check_size(String type_, int size_, int decimals_)
 	{
 		HashMap<String, Object> info = db.get_data_type(type_);
-		if (!arrays.is_ok(info)) return update_size(type_, null);
+		if (!arrays.is_ok(info))
+		{
+			update_temp(type_, 0, 0);
+			
+			return;
+		}
 		
 		int size = size_;
 		int max = (int)info.get(keys.MAX);
 		if (size > max) size = max;
 		
-		return update_size(type_, new size(0, size, decimals_));
+		update_temp(type_, size, decimals_);
 	}
 	
-	private static size update_size(String type_, size size_)
+	private static void update_temp(String type_, int size_, int decimals_)
 	{
-		int[] vals = from_size(size_);
-
-		return update_size(type_, vals[0], vals[1]);
-	}
-	
-	private static size update_size(String type_, int size_, int decimals_)
-	{
-		_size_temp = new size(0, 0, 0);
-
-		if (size_ > 0) _size_temp._max = size_;
-		else _size_temp._max = db.get_default_size(type_);
-		
-		if (decimals_ >= 0) _size_temp._decimals = decimals_;
-		
-		_size_temp._is_ok = (_size_temp._max > 0);
-		
-		return _size_temp;
+		_size_temp = (size_ > 0 ? size_ : db.get_default_size(type_));
+		_decimals_temp = (decimals_ > 0 ? decimals_ : 0);
 	}
 	
 	private static boolean is_ok(String type_, int size_, int decimals_, Object default_, String[] further_)
 	{
-		size size = check_size(type_, size_, decimals_);
-		if (!size._is_ok) return false;
+		check_size(type_, size_, decimals_);
+		if (_size_temp < 1) return false;
 
-		return (default_is_ok(type_, numbers.to_int(size._max), default_) && further_is_ok(further_));
+		return (default_is_ok(type_, _size_temp, default_) && further_is_ok(further_));
 	}
 
 	private static boolean is_ok(String type_, int size_, int decimals_, String[] further_)
 	{
-		update_size(type_, size_, decimals_);
+		update_temp(type_, size_, decimals_);
 		
 		return (data.type_is_ok(type_) && further_is_ok(further_));
-	}
-	
-	private static int[] from_size(size size_)
-	{
-		int size2 = 0; 
-		int decimals = 0;
-		
-		if (size.is_ok(size_))
-		{
-			size2 = numbers.to_int(size_._max); 
-			decimals = size_._decimals;
-		}
-		
-		return new int[] { size2, decimals };
 	}
 }

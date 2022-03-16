@@ -7,8 +7,9 @@ import java.util.HashMap;
 
 public class strings 
 {
-	public static final String DEFAULT = (String)defaults.get_class(String.class);
-	public static final int SIZE_DEFAULT = 100;
+	public static final String DEFAULT = defaults.STRING;
+	
+	public static final int SIZE_DEFAULT = defaults.SIZE_STRING;
 	public static final int SIZE_SMALL = 10;
 	public static final int SIZE_BIG = 500;
 
@@ -50,7 +51,7 @@ public class strings
 	{
 		String string = string_;
 
-		if (!is_ok(string_)) string = (String)defaults.get_class(String.class);
+		if (!is_ok(string_)) string = DEFAULT;
 		else string = string.trim().toLowerCase();
 
 		return string;
@@ -111,7 +112,7 @@ public class strings
 
 	public static String substring(String string_, int start_, int length_)
 	{
-		String output = (String)defaults.get_class(String.class);
+		String output = DEFAULT;
 
 		int length0 = get_length(string_, false);
 		if 
@@ -284,7 +285,16 @@ public class strings
 
 	public static boolean is_boolean(String string_)
 	{
-		return (are_equivalent(string_, keys.TRUE) || are_equivalent(string_, keys.FALSE));
+		String[] targets = types.get_subtypes(types.DATA_BOOLEAN, null);
+
+		String string = types.check_subtype(string_, targets, types.ACTIONS_ADD, types.DATA_BOOLEAN);
+		
+		for (String target: targets)
+		{
+			if (are_equal(target, string)) return true;
+		}
+		
+		return false;
 	}
 
 	public static String from_number_decimal(double input_, boolean to_int_)
@@ -319,15 +329,17 @@ public class strings
 
 	public static String from_boolean(boolean input_)
 	{
-		return (input_ ? keys.TRUE : keys.FALSE);
+		return ((Boolean)input_).toString();
 	}
 
 	public static boolean to_boolean(String string_)
 	{
 		boolean output = false;
 
-		if (are_equivalent(string_, keys.TRUE)) output = true;
-		else if (are_equivalent(string_, keys.FALSE)) output = false;
+		String string = types.check_subtype(string_, types.get_subtypes(types.DATA_BOOLEAN, null), types.ACTIONS_ADD, types.DATA_BOOLEAN);
+		
+		if (are_equal(string, types.DATA_BOOLEAN_TRUE)) output = true;
+		else if (are_equivalent(string_, types.DATA_BOOLEAN_FALSE)) output = false;
 
 		return output;
 	}
@@ -563,7 +575,7 @@ public class strings
 
 	private static String substring_before_after(String string_, String target_, int count_, boolean normalise_, boolean is_before_)
 	{
-		String output = (String)defaults.get_class(String.class);
+		String output = DEFAULT;
 
 		String[] temp = split(string_, target_, normalise_, 0, false, false);
 		if (arrays.get_size(temp) <= count_) return output;

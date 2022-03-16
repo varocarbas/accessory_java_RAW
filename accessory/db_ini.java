@@ -133,7 +133,7 @@ public class db_ini
 		if (db.source_is_ok(source_)) return;
 		
 		HashMap<String, db_field> fields = db.get_default_fields();
-		fields.put(types._CONFIG_LOGS_DB_FIELD_ID, new db_field(types.DATA_INTEGER));
+		fields.put(types._CONFIG_LOGS_DB_FIELD_ID, new db_field(types.DATA_INT));
 		fields.put(types._CONFIG_LOGS_DB_FIELD_MESSAGE, new db_field(types.DATA_STRING));
 		
 		db.add_source(source_, fields);
@@ -144,7 +144,7 @@ public class db_ini
 		if (db.source_is_ok(source_)) return;
 		
 		HashMap<String, db_field> fields = db.get_default_fields();
-		fields.put(types._CONFIG_TESTS_DB_FIELD_INT, new db_field(types.DATA_INTEGER));
+		fields.put(types._CONFIG_TESTS_DB_FIELD_INT, new db_field(types.DATA_INT));
 		fields.put(types._CONFIG_TESTS_DB_FIELD_STRING, new db_field(types.DATA_STRING, strings.SIZE_DEFAULT, 0));
 		fields.put(types._CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(types.DATA_DECIMAL, 15, 3));
 

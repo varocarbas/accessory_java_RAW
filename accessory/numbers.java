@@ -4,26 +4,32 @@ import java.util.Random;
 
 public class numbers 
 {
-	public static final double DEFAULT_DEC = 0.0;
+	public static final double DEFAULT_DEC = defaults.DECIMAL;
 	public static final double MIN_DEC = -1 * Double.MAX_VALUE; //!!!
 	public static final double MAX_DEC = Double.MAX_VALUE;
 	public static final int MAX_DIGITS_DEC = 308;
 
-	public static final long DEFAULT_LONG = 0;
+	public static final long DEFAULT_LONG = defaults.LONG;
 	public static final long MIN_LONG = Long.MIN_VALUE;
 	public static final long MAX_LONG = Long.MAX_VALUE;
 	public static final int MAX_DIGITS_LONG = 19;
 
-	public static final int DEFAULT_INT = 0;
+	public static final int DEFAULT_INT = defaults.INT;
 	public static final int MIN_INT = Integer.MIN_VALUE;
 	public static final int MAX_INT = Integer.MAX_VALUE;
 	public static final int MAX_DIGITS_INT = 10;
 	
 	static { ini.load(); }
 
-	public static final Class<?>[] get_all_classes()
+	public static final Class<?>[] get_all_classes(boolean small_too_)
 	{
-		return new Class<?>[] { Integer.class, int.class, Long.class, long.class, Double.class, double.class };
+		return
+		(
+			!small_too_ ? new Class<?>[] { Integer.class, Long.class, Double.class } : new Class<?>[] 
+			{ 
+				Integer.class, int.class, Long.class, long.class, Double.class, double.class 
+			}	
+		);
 	}
 
 	public static boolean is_ok(double input_, double min_, double max_)

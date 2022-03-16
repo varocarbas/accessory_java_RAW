@@ -13,13 +13,15 @@ public class arrays
 	
 	static { ini.load(); }
 
-	public static final Class<?>[] get_all_classes()
+	public static final Class<?>[] get_all_classes(boolean small_too_)
 	{
-		return new Class<?>[] 
-		{ 
-			HashMap.class, ArrayList.class, Array.class,
-			double[].class, long[].class, int[].class, boolean[].class //!!!
-		};
+		return
+		(
+			!small_too_ ? new Class<?>[] { HashMap.class, ArrayList.class, Array.class } : new Class<?>[] 
+			{ 
+				HashMap.class, ArrayList.class, Array.class, double[].class, long[].class, int[].class, boolean[].class 
+			}	
+		);
 	}
 	
 	public static <x> boolean is_ok(ArrayList<ArrayList<x>> input_)

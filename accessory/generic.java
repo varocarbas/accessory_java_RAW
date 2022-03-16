@@ -41,77 +41,77 @@ public class generic
 
 	public static boolean is_class(Class<?> input_)
 	{
-		return are_equal(input_, Class.class);
+		return is_common(input_, new Class<?>[] { Class.class }, true);
 	}
 	
 	public static <x> boolean is_class(x input_)
 	{
-		return (input_ instanceof Class);
+		return is_common(input_, new Class<?>[] { Class.class }, false);
 	}
 
 	public static boolean is_size(Class<?> input_)
 	{
-		return are_equal(input_, size.class);
+		return is_common(input_, new Class<?>[] { size.class }, true);
 	}
 	
 	public static <x> boolean is_size(x input_)
 	{
-		return (input_ instanceof size);
+		return is_common(input_, new Class<?>[] { size.class }, false);
 	}
 
 	public static boolean is_data(Class<?> input_)
 	{
-		return are_equal(input_, data.class);
+		return is_common(input_, new Class<?>[] { data.class }, true);
 	}
 	
 	public static <x> boolean is_data(x input_)
 	{
-		return (input_ instanceof data);
+		return is_common(input_, new Class<?>[] { data.class }, false);
 	}
 
 	public static boolean is_db_field(Class<?> input_)
 	{
-		return are_equal(input_, db_field.class);
+		return is_common(input_, new Class<?>[] { db_field.class }, true);
 	}
 	
 	public static <x> boolean is_db_field(x input_)
 	{
-		return (input_ instanceof db_field);
+		return is_common(input_, new Class<?>[] { db_field.class }, false);
 	}
 
 	public static boolean is_db_where(Class<?> input_)
 	{
-		return are_equal(input_, db_where.class);
+		return is_common(input_, new Class<?>[] { db_where.class }, true);
 	}
 	
 	public static <x> boolean is_db_where(x input_)
 	{
-		return (input_ instanceof db_where);
+		return is_common(input_, new Class<?>[] { db_where.class }, false);
 	}
 
 	public static boolean is_db_order(Class<?> input_)
 	{
-		return are_equal(input_, db_order.class);
+		return is_common(input_, new Class<?>[] { db_order.class }, true);
 	}
 	
 	public static <x> boolean is_db_order(x input_)
 	{
-		return (input_ instanceof db_order);
+		return is_common(input_, new Class<?>[] { db_order.class }, false);
 	}
 	
 	public static boolean is_string(Class<?> input_)
 	{
-		return are_equal(input_, String.class);
+		return is_common(input_, new Class<?>[] { String.class }, true);
 	}
 	
 	public static <x> boolean is_string(x input_)
 	{
-		return (input_ instanceof String);
+		return is_common(input_, new Class<?>[] { String.class }, false);
 	}
 
 	public static boolean is_boolean(Class<?> input_)
 	{
-		return are_equal(input_, Boolean.class);
+		return is_common(input_, new Class<?>[] { Boolean.class, boolean.class }, true);
 	}
 	
 	public static boolean is_boolean(boolean input_)
@@ -121,47 +121,27 @@ public class generic
 	
 	public static <x> boolean is_boolean(x input_)
 	{
-		return (input_ instanceof Boolean);
+		return is_common(input_, new Class<?>[] { Boolean.class, boolean.class }, false);
 	}
 
 	public static boolean is_number(Class<?> input_)
 	{
-		for (Class<?> type: numbers.get_all_classes())
-		{
-			if (are_equal(input_, type)) return true;
-		}
-
-		return false;
+		return is_common(input_, numbers.get_all_classes(true), true);
 	}
 	
 	public static <x> boolean is_number(x input_)
 	{
-		for (Class<?> type: numbers.get_all_classes())
-		{
-			if (is_instance(input_, type)) return true;
-		}
-
-		return false;
+		return is_common(input_, numbers.get_all_classes(true), false);
 	}
 
 	public static boolean is_array(Class<?> input_)
 	{
-		for (Class<?> type: arrays.get_all_classes())
-		{
-			if (are_equal(input_, type)) return true;
-		}
-
-		return false;
+		return is_common(input_, arrays.get_all_classes(true), true);
 	}
 	
 	public static <x> boolean is_array(x input_)
 	{
-		for (Class<?> type: arrays.get_all_classes())
-		{
-			if (is_instance(input_, type)) return true;
-		}
-
-		return false;
+		return is_common(input_, arrays.get_all_classes(true), false);
 	}
 	
 	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_)
@@ -216,7 +196,7 @@ public class generic
 		Object output = null;
 		if (class_ == null) return output;
 		
-		if (is_class(class_)) output = get_random_class();
+		if (is_class(class_)) output = get_random_class(false);
 		else if (is_string(class_)) output = strings.get_random(strings.SIZE_SMALL);
 		else if (is_boolean(class_)) output = get_random_boolean();
 		else if (is_number(class_)) output = numbers.get_random(class_);
@@ -225,9 +205,9 @@ public class generic
 		return output;
 	}
 	
-	public static Class<?> get_random_class()
+	public static Class<?> get_random_class(boolean small_too_)
 	{
-		Class<?>[] haystack = get_all_classes();
+		Class<?>[] haystack = get_all_classes(small_too_);
 		
 		return haystack[numbers.get_random_index(haystack.length)];
 	}
@@ -260,7 +240,6 @@ public class generic
 		return output;
 	}	
 	
-	//It has to be synced with get_all_classes() and classes_are_equal_equivalents().
 	public static <x> Class<?> get_class(x input_)
 	{
 		Class<?> type = null;
@@ -312,14 +291,12 @@ public class generic
 		return type;
 	}
 	
-	//It has to be synced with get_all_classes().
 	public static <x> boolean is_instance(x input_, Class<?> class_)
 	{
 		return (class_ != null && are_equal(class_, get_class(input_)));
 	}
 
-	//It has to be synced with get_class().
-	public static Class<?>[] get_all_classes()
+	public static Class<?>[] get_all_classes(boolean small_too_)
 	{
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 
@@ -335,15 +312,16 @@ public class generic
 		
 		classes.add(String.class);
 		classes.add(Boolean.class);
-		classes.add(boolean.class);
 		classes.add(Object.class);
 		
-		for (Class<?> type: numbers.get_all_classes())
+		if (small_too_) classes.add(boolean.class);
+		
+		for (Class<?> type: numbers.get_all_classes(small_too_))
 		{
 			classes.add(type);
 		}
 
-		for (Class<?> type: arrays.get_all_classes())
+		for (Class<?> type: arrays.get_all_classes(true))
 		{
 			classes.add(type);
 		}
@@ -417,6 +395,16 @@ public class generic
 		}
 
 		return output;
+	}
+	
+	private static <x> boolean is_common(x input_, Class<?>[] classes_, boolean is_class_)
+	{
+		for (Class<?> type: classes_)
+		{
+			if ((is_class_ && classes_are_equal((Class<?>)input_, type)) || (!is_class_ && is_instance(input_, type))) return true;
+		}
+
+		return false;
 	}
 
 	private static boolean classes_are_equal(Class<?> class1_, Class<?> class2_)

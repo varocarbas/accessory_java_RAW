@@ -82,7 +82,7 @@ class mysql
 		else if (data_type.equals(types.DATA_STRING)) type = types.MYSQL_DATA_VARCHAR;
 		else if (data_type.equals(types.DATA_STRING_BIG)) type = types.MYSQL_DATA_TEXT;
 		else if (data_type.equals(types.DATA_TIMESTAMP)) type = types.MYSQL_DATA_TIMESTAMP;
-		else if (data_type.equals(types.DATA_INTEGER)) type = types.MYSQL_DATA_INT;
+		else if (data_type.equals(types.DATA_INT)) type = types.MYSQL_DATA_INT;
 		else if (data_type.equals(types.DATA_LONG)) type = types.MYSQL_DATA_BIGINT;
 		else if (data_type.equals(types.DATA_DECIMAL)) type = types.MYSQL_DATA_DECIMAL;
 		else return output;
@@ -101,10 +101,10 @@ class mysql
 		if (!strings.is_ok(type)) return size;
 		
 		if (type.equals(types.DATA_BOOLEAN)) size = 1;
-		else if (type.equals(types.DATA_STRING)) size = defaults.MYSQL_DATA_SIZE_VARCHAR;
-		else if (type.equals(types.DATA_STRING_BIG)) size = defaults.MYSQL_DATA_SIZE_TEXT;
+		else if (type.equals(types.DATA_STRING)) size = defaults.SIZE_MYSQL_VARCHAR;
+		else if (type.equals(types.DATA_STRING_BIG)) size = defaults.SIZE_MYSQL_TEXT;
 		else if (type.equals(types.DATA_TIMESTAMP)) size = dates.get_time_pattern(dates.DATE_TIME).length();
-		else if (data.is_numeric(type)) size = defaults.MYSQL_DATA_SIZE_NUMBER;
+		else if (data.is_numeric(type)) size = defaults.SIZE_MYSQL_NUMBER;
 		
 		return size;
 	}
@@ -119,7 +119,7 @@ class mysql
 		if (data_type.equals(types.DATA_BOOLEAN)) max = 1;
 		else if (data_type.equals(types.DATA_TIMESTAMP)) max = get_default_size(data_type_);		
 		else if (data_type.equals(types.DATA_DECIMAL)) max = 64;
-		else if (data_type.equals(types.DATA_INTEGER)) max = numbers.MAX_DIGITS_INT;
+		else if (data_type.equals(types.DATA_INT)) max = numbers.MAX_DIGITS_INT;
 		else if (data_type.equals(types.DATA_LONG)) max = numbers.MAX_DIGITS_LONG;
 		else if (data_type.equals(types.DATA_STRING)) max = 255;
 		else if (data_type.equals(types.DATA_STRING_BIG)) max = 65535;
@@ -196,21 +196,13 @@ class mysql
 			
 			if (d < 0 || d > 30 || d > m)
 			{
-				d = defaults.MYSQL_DATA_SIZE_DECIMALS;
+				d = defaults.SIZE_MYSQL_DECIMALS;
 				if (d > m) d = m - 1;
 			}
 			
 			output = (strings.to_string(m) + "," + strings.to_string(d));
 		}
-		else if (type.equals(types.DATA_INTEGER) || type.equals(types.DATA_LONG))
-		{
-			output = strings.to_string(max > max2 ? size_def : max);
-		}
-		else if (type.equals(types.DATA_STRING))
-		{
-			output = strings.to_string(max > max2 ? size_def : max);
-		}
-		else if (type.equals(types.DATA_STRING_BIG))
+		else if (data.is_numeric(type) || data.is_string(type))
 		{
 			output = strings.to_string(max > max2 ? size_def : max);
 		}
@@ -258,7 +250,7 @@ class mysql
 		{
 			query = "UPDATE " + get_variable(table_); 
 			
-			String temp = get_query_cols(vals_, keys.ALL);
+			String temp = get_query_cols(vals_, keys.FURTHER);
 			if (strings.is_ok(temp)) 
 			{
 				query += " SET " + temp;
@@ -303,12 +295,12 @@ class mysql
 				{
 					if (generic.is_ok(field._default)) def_val = strings.to_string(field._default);
 					else if (data.is_numeric(type)) def_val = "0";
-					else if (type.equals(types.DATA_STRING)) def_val = get_variable_value(" ", false);
+					else if (data.is_string(type)) def_val = get_variable_value(" ", false);
 					
 					if (strings.is_ok(def_val)) def_val = get_value(def_val);
 				}
 				
-				if (strings.is_ok(def_val)) item2 += " " + keys.DEFAULT + " " + def_val;
+				if (strings.is_ok(def_val)) item2 += " default " + def_val;
 				
 				String further2 = create_table_further_to_query(further);
 				if (strings.is_ok(further2)) item2 += " " + further2;
@@ -401,8 +393,8 @@ class mysql
 		String name = _config.get_db(types._CONFIG_DB_NAME);
 
 		String message = ""; 
-		if (!strings.is_ok(name)) message = "WRONG " + keys.DB;
-		else if (!strings.is_ok(host)) message = "WRONG " + keys.HOST;
+		if (!strings.is_ok(name)) message = "WRONG DB";
+		else if (!strings.is_ok(host)) message = "WRONG host";
 
 		if (!message.equals(""))
 		{
@@ -456,7 +448,7 @@ class mysql
 			{
 				item = get_value(entry.getValue());
 			}
-			else if (type_.equals(keys.ALL)) 
+			else if (type_.equals(keys.FURTHER)) 
 			{
 				item = get_variable(entry.getKey()) + "=";
 				item += get_value(entry.getValue());

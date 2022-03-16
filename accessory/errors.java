@@ -1,7 +1,6 @@
 package accessory;
 
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 public class errors 
 {	
@@ -80,19 +79,16 @@ public class errors
 		String message2 = get_message(e_, type);
 		
 		if ((strings.is_ok(message2) && (generic.is_ok(e_)) || !strings.is_ok(message))) message = message2;
-		info.put(keys.MESSAGE, message);
+		info.put("message", message);
 
 		if (strings.is_ok(query_)) info.put(keys.QUERY, query_);
 
-		HashMap<String, String> items = new HashMap<String, String>();
-		items.put(types._CONFIG_DB_HOST, keys.HOST);
-		items.put(types._CONFIG_DB_NAME, keys.DB);
-		items.put(types._CONFIG_DB_USER, keys.USER);
+		String[] keys = new String[] { types._CONFIG_DB_HOST, types._CONFIG_DB_NAME, types._CONFIG_DB_USER }; 
 
-		for (Entry<String, String> item: items.entrySet())
+		for (String key: keys)
 		{
-			String val = _config.get_db(item.getKey());
-			if (strings.is_ok(val)) info.put(item.getValue(), val);
+			String val = _config.get_db(key);
+			if (strings.is_ok(val)) info.put(accessory.types.remove_type(key, types._CONFIG_DB), val);
 		}
 
 		return info;
@@ -107,8 +103,8 @@ public class errors
 		HashMap<String, String> info = new HashMap<String, String>();
 
 		info.put(keys.TYPE, type);
-		if (strings.is_ok(path_)) info.put(keys.PATH, path_);
-		info.put(keys.MESSAGE, get_message(e_, type_));
+		if (strings.is_ok(path_)) info.put("path", path_);
+		info.put("message", get_message(e_, type_));
 		
 		return info;
 	}
@@ -122,7 +118,7 @@ public class errors
 
 		if (!arrays.is_ok(info_)) return all;
 
-		all += arrays.to_string(info_, separator, misc.SEPARATOR_KEYVAL, new String[] { keys.LOGS });
+		all += arrays.to_string(info_, separator, misc.SEPARATOR_KEYVAL, null);
 
 		return all;
 	}

@@ -129,7 +129,7 @@ public class data
 
 	public static boolean is_numeric(String type_)
 	{
-		return is_common(type_, new String[] { types.DATA_DECIMAL, types.DATA_LONG, types.DATA_INTEGER });
+		return is_common(type_, new String[] { types.DATA_DECIMAL, types.DATA_LONG, types.DATA_INT });
 	}
 	
 	public static boolean is_string(String type_)
@@ -173,7 +173,7 @@ public class data
 
 	private static boolean is_numeric(Class<?> class_)
 	{
-		for (Class<?> item: numbers.get_all_classes())
+		for (Class<?> item: numbers.get_all_classes(true))
 		{
 			if (generic.are_equal(class_, item)) return true;
 		}
@@ -188,8 +188,8 @@ public class data
 		String type = check_type(type_);
 		if (!strings.is_ok(type)) return boundaries;
 		
-		if (generic.are_equal(type, types.DATA_STRING)) boundaries._max = (double)Integer.MAX_VALUE;
-		else if (generic.are_equal(type, types.DATA_INTEGER))
+		if (is_string(type)) boundaries._max = (double)Integer.MAX_VALUE;
+		else if (generic.are_equal(type, types.DATA_INT))
 		{
 			boundaries._min = (double)numbers.MIN_INT;
 			boundaries._max = (double)numbers.MAX_INT;
@@ -262,7 +262,8 @@ public class data
 
 		_all_classes = new HashMap<String, Class<?>>();
 		_all_classes.put(types.DATA_STRING, String.class);
-		_all_classes.put(types.DATA_INTEGER, Integer.class);
+		_all_classes.put(types.DATA_STRING_BIG, String.class);
+		_all_classes.put(types.DATA_INT, Integer.class);
 		_all_classes.put(types.DATA_LONG, Long.class);
 		_all_classes.put(types.DATA_DECIMAL, Double.class);
 		_all_classes.put(types.DATA_BOOLEAN, Boolean.class);
