@@ -9,21 +9,52 @@ import java.util.Map.Entry;
 
 public class arrays 
 {
-	public static final int SIZE_DEFAULT = 5;
+	public static final int SIZE_DEFAULT = defaults.SIZE_ARRAY;
 	
 	static { ini.load(); }
 
-	public static final Class<?>[] get_all_classes(boolean small_too_)
+	public static final Class<?>[] get_all_classes(boolean small_too_, boolean array_specific_too_)
 	{
-		return
-		(
-			!small_too_ ? new Class<?>[] { HashMap.class, ArrayList.class, Array.class } : new Class<?>[] 
-			{ 
-				HashMap.class, ArrayList.class, Array.class, double[].class, long[].class, int[].class, boolean[].class 
-			}	
-		);
+		ArrayList<Class<?>> output = new ArrayList<Class<?>>();
+		
+		output.add(HashMap.class);
+		output.add(ArrayList.class);
+		
+		if (array_specific_too_) output.addAll(new ArrayList<Class<?>>(Arrays.asList(get_all_classes_array())));
+		else output.add(Array.class);
+		
+		if (small_too_) output.addAll(new ArrayList<Class<?>>(Arrays.asList(get_all_classes_small())));
+		
+		return to_array(output);
 	}
 	
+	public static final Class<?>[] get_all_classes_small()
+	{
+		return new Class<?>[]
+		{
+			double[].class, long[].class, int[].class, boolean[].class			
+		};
+	}
+	
+	public static final Class<?>[] get_all_classes_array()
+	{
+		return new Class<?>[]
+		{
+			Array.class, String[].class, Boolean[].class, Integer[].class,
+			Long[].class, Double[].class, Class[].class, Method[].class,
+			Exception[].class, size[].class, data[].class, db_field[].class,
+			db_where[].class, db_order[].class		
+		};
+	}
+	
+	public static final Class<?>[] get_all_classes_numeric()
+	{
+		return new Class<?>[]
+		{
+			Double[].class, double[].class, Long[].class, long[].class, Integer[].class, int[].class		
+		};		
+	}
+
 	public static <x> boolean is_ok(ArrayList<ArrayList<x>> input_)
 	{
 		return (get_size(input_) > 0 && get_size(input_.get(0)) > 0);
@@ -50,7 +81,6 @@ public class arrays
 	}
 	
 	@SuppressWarnings("unchecked")
-	//To be synced with get_all_classes().
 	public static <x> int get_size(Object input_)
 	{
 		int size = 0;
@@ -59,7 +89,7 @@ public class arrays
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_ok(type)) return size;
 		
-		if (is_small_big(type)) 
+		if (generic.is_array_class(type)) 
 		{
 			if (input_ instanceof double[]) size = ((double[])input_).length;
 			else if (input_ instanceof long[]) size = ((long[])input_).length;
@@ -185,14 +215,121 @@ public class arrays
 				
 		return true;
 	}
-
-	//To be synced with get_all_classes().
+	
 	public static Object get_random(Class<?> class_)
 	{
 		Object output = null;
 		if (!generic.is_array(class_)) return output;
+
+		if 
+		(
+			generic.are_equal(class_, Array.class) || 
+			generic.are_equal(class_, String[].class) || 
+			generic.are_equal(class_, Class[].class) ||
+			arrays.value_exists(get_all_classes_numeric(), class_)
+		)
+		{
+			output = get_random_array(class_);
+		}
+		else if (generic.are_equal(class_, ArrayList.class)) output = get_random_arraylist();
+		else if (generic.are_equal(class_, HashMap.class)) output = get_random_hashmap();
+
+		return output;
+	}
+
+	public static Object get_random_array(Class<?> class_)
+	{
+		Object output = null;
 		
-		if (generic.are_equal(class_, Array.class))
+		if (generic.are_equal(class_, Array.class) || generic.are_equal(class_, String[].class))
+		{
+			String[] temp = new String[SIZE_DEFAULT];
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = strings.get_random(strings.SIZE_SMALL);
+			}
+			
+			output = temp;
+		}
+		else if (generic.are_equal(class_, Double[].class))
+		{
+			Double[] temp = new Double[SIZE_DEFAULT];
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = (Double)numbers.get_random(Double.class);
+			}
+			
+			output = temp;
+		}
+		else if (generic.are_equal(class_, Long[].class))
+		{
+			Long[] temp = new Long[SIZE_DEFAULT];
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = (Long)numbers.get_random(Long.class);
+			}
+			
+			output = temp;
+		}
+		else if (generic.are_equal(class_, Integer[].class))
+		{
+			Integer[] temp = new Integer[SIZE_DEFAULT];
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = (Integer)numbers.get_random(Integer.class);
+			}
+			
+			output = temp;
+		}
+		else if (generic.are_equal(class_, Class[].class))
+		{
+			Class<?>[] temp = new Class<?>[SIZE_DEFAULT];
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = generic.get_random_class(true, true);
+			}
+			
+			output = temp;
+		}
+		
+		return output;
+	}
+
+	public static ArrayList<String> get_random_arraylist()
+	{
+		ArrayList<String> output = new ArrayList<String>();
+		
+		for (int i = 0; i < SIZE_DEFAULT; i++)
+		{
+			output.add(strings.get_random(strings.SIZE_SMALL));
+		}
+		
+		return output;		
+	}
+
+	public static HashMap<String, String> get_random_hashmap()
+	{
+		HashMap<String, String> output = new HashMap<String, String>();
+		
+		for (int i = 0; i < SIZE_DEFAULT; i++)
+		{
+			output.put(Integer.toString(i), strings.get_random(strings.SIZE_SMALL));
+		}
+		
+		return output;	
+	}
+	
+	public static Object get_random_strings(Class<?> class_)
+	{
+		Object output = null;
+		if (!generic.is_array(class_)) return output;
+
+		if (generic.are_equal(class_, Array.class) || generic.are_equal(class_, String[].class))
 		{
 			String[] temp = new String[SIZE_DEFAULT];
 			
@@ -294,7 +431,6 @@ public class arrays
 	}
 	
 	@SuppressWarnings("unchecked")
-	//To be synced with get_all_classes().
 	public static <x> Object get_new(Object input_)
 	{
 		Object output = null;
@@ -303,7 +439,7 @@ public class arrays
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_ok(type)) return output;
 		
-		if (generic.are_equal(type, Array.class)) output = get_new_array((x[])input_);
+		if (generic.is_array_class(type)) output = get_new_array((x[])input_);
 		else if (generic.are_equal(type, ArrayList.class))  output = get_new_arraylist((ArrayList<x>)input_);
 		else if (generic.are_equal(type, HashMap.class)) output = get_new_hashmap((HashMap<x, x>)input_); 
 
@@ -717,7 +853,7 @@ public class arrays
 		if (!arrays.is_ok(input_)) return output;
 	
 		Class<?> type = generic.get_class(input_);
-		boolean is_array = is_small_big(type);
+		boolean is_array = generic.is_array_class(type);
 		boolean is_arraylist = generic.are_equal(type, ArrayList.class);
 		if (!is_array && !is_arraylist) return output;
 	
@@ -751,7 +887,8 @@ public class arrays
 		return output;
 	}	
 
-	private static <x> String to_string_val(x val_)
+	@SuppressWarnings("unchecked")
+	private static <x> String to_string_val(Object val_)
 	{
 		String output = strings.DEFAULT;
 		
@@ -760,9 +897,10 @@ public class arrays
 			if (is_ok(val_)) 
 			{
 				Class<?> type = generic.get_class_specific(val_);
-				
+
 				if (generic.are_equal(type, db_where[].class)) output = db_where.to_string((db_where[])val_);
 				else if (generic.are_equal(type, db_order[].class)) output = db_order.to_string((db_order[])val_);			
+				else if (generic.are_equal(generic.get_class(val_), Array.class)) output = Arrays.toString((x[])val_);
 				else output = val_.toString();
 			}
 		}
@@ -1065,49 +1203,6 @@ public class arrays
 		}
 		
 		return output;
-	}
-	
-	//To be synced with arrays.get_all_classes().
-	private static boolean is_small_big(Class<?> input_)
-	{
-		Class<?>[] classes = new Class<?>[] { Array.class, double[].class, long[].class, int[].class, boolean[].class };
-		
-		for (Class<?> type: classes)
-		{
-			if (generic.are_equal(input_, type)) return true;
-		}
-
-		return false;
-	}
-
-	@SuppressWarnings("unused")
-	private static boolean is_small_big(double[] input_)
-	{
-		return true;
-	}
-
-	@SuppressWarnings("unused")
-	private static boolean is_small_big(long[] input_)
-	{
-		return true;
-	}
-
-	@SuppressWarnings("unused")
-	private static boolean is_small_big(int[] input_)
-	{
-		return true;
-	}
-
-	@SuppressWarnings("unused")
-	private static boolean is_small_big(boolean[] input_)
-	{
-		return true;
-	}
-	
-	@SuppressWarnings("unused")
-	private static <x> boolean is_small_big(x input_)
-	{
-		return generic.is_instance(input_, Array.class);
 	}
 
 	private static HashMap<Class<?>, Class<?>> get_all_big_small()

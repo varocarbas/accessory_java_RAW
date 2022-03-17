@@ -325,13 +325,14 @@ public class tests
 		boolean is_ok = false;
 		if (!method_is_ok(class_, method_, method_name_)) return is_ok;
 
-		print_start_end(method_name_, true, 2);		
+		Class<?>[] params = (Class<?>[])arrays.get_new(method_.getParameterTypes());
+		print_start_end(method_name_ + " " + strings.to_string(params), true, 2);		
 
 		is_ok = true;
 		String result = strings.DEFAULT;
 
 		Object[] targets = (Object[])arrays.get_new(targets_);
-		Object[] args = get_args(method_.getParameterTypes(), arrays.get_new(args_));			
+		Object[] args = get_args(params, arrays.get_new(args_));			
 		Object output = generic.call_static_method(method_, args, false);
 
 		boolean out_is_ok = output_is_ok(output, targets);

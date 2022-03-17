@@ -136,12 +136,12 @@ public class generic
 
 	public static boolean is_array(Class<?> input_)
 	{
-		return is_common(input_, arrays.get_all_classes(true), true);
+		return is_common(input_, arrays.get_all_classes(true, true), true);
 	}
 	
 	public static <x> boolean is_array(x input_)
 	{
-		return is_common(input_, arrays.get_all_classes(true), false);
+		return is_common(input_, arrays.get_all_classes(true, true), false);
 	}
 	
 	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_)
@@ -196,18 +196,18 @@ public class generic
 		Object output = null;
 		if (class_ == null) return output;
 		
-		if (is_class(class_)) output = get_random_class(false);
-		else if (is_string(class_)) output = strings.get_random(strings.SIZE_SMALL);
+		if (is_class(class_)) output = get_random_class(true, true);
+		else if (is_string(class_) || are_equal(class_, Object.class)) output = strings.get_random(strings.SIZE_SMALL);
 		else if (is_boolean(class_)) output = get_random_boolean();
 		else if (is_number(class_)) output = numbers.get_random(class_);
-		else if (is_array(class_)) output = arrays.get_random(class_);
+		else if (is_array(class_)) output = arrays.get_random(class_); 
 		
 		return output;
 	}
 	
-	public static Class<?> get_random_class(boolean small_too_)
+	public static Class<?> get_random_class(boolean small_too_, boolean array_specific_too_)
 	{
-		Class<?>[] haystack = get_all_classes(small_too_);
+		Class<?>[] haystack = get_all_classes(small_too_, array_specific_too_);
 		
 		return haystack[numbers.get_random_index(haystack.length)];
 	}
@@ -290,13 +290,25 @@ public class generic
 		
 		return type;
 	}
+
+	public static boolean is_array_class(Class<?> class_)
+	{
+		if (class_ == null) return false;
+		
+		for (Class<?> class2: arrays.get_all_classes_array())
+		{
+			if (class_.equals(class2)) return true;
+		}
+		
+		return false;
+	}
 	
 	public static <x> boolean is_instance(x input_, Class<?> class_)
 	{
 		return (class_ != null && are_equal(class_, get_class(input_)));
 	}
 
-	public static Class<?>[] get_all_classes(boolean small_too_)
+	public static Class<?>[] get_all_classes(boolean small_too_, boolean array_specific_too_)
 	{
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 
@@ -321,14 +333,14 @@ public class generic
 			classes.add(type);
 		}
 
-		for (Class<?> type: arrays.get_all_classes(true))
+		for (Class<?> type: arrays.get_all_classes(small_too_, array_specific_too_))
 		{
 			classes.add(type);
 		}
 
 		return classes.toArray(new Class<?>[classes.size()]);
 	}
-
+	
 	public static Method[] get_all_methods(Class<?> class_, String[] skip_)
 	{
 		if (!is_ok(class_)) return null;
@@ -447,7 +459,11 @@ public class generic
 		equivalents.put(Long.class, long.class);
 		equivalents.put(Integer.class, int.class);
 		equivalents.put(Boolean.class, boolean.class);
-
+		equivalents.put(Double[].class, double[].class);
+		equivalents.put(Long[].class, long[].class);
+		equivalents.put(Integer[].class, int[].class);
+		equivalents.put(Boolean[].class, boolean[].class);
+		
 		return equivalents;
 	}
 }

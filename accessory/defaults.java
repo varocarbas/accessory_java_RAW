@@ -8,6 +8,7 @@ public class defaults
 	public static final int INT = 0;
 
 	public static final int SIZE_STRING = 100;
+	public static final int SIZE_ARRAY = 5;
 	public static final int SIZE_DECIMALS = 3;
 	
 	public static final int SIZE_MYSQL_NUMBER = 8;

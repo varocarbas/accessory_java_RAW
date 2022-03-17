@@ -146,19 +146,28 @@ public class strings
 
 		try
 		{
+			if 
+			(
+				haystack_ == null || regex_ == null ||
+				(
+					is_ok(haystack_) && is_ok(regex_) && 
+					!strings.contains(regex_, haystack_, normalise_)
+				)
+			) 
+			{ return null; }
+			
 			String haystack = haystack_;
 			String regex = regex_;
-			if (haystack == null || regex == null) return null;
-
+			
 			if (normalise_)
 			{
 				haystack = normalise(haystack);
 				regex = normalise(regex);
-			}
-
+			}			
+			
 			output = haystack.split(regex);
 			int size = arrays.get_size(output);
-			if (size < 1) return null;
+			if (size < 2) return null;
 
 			if (trim_ || remove_wrong_) output = arrays.clean(output, trim_, remove_wrong_);
 
@@ -400,7 +409,7 @@ public class strings
 		if (!generic.is_ok(type)) return output;
 
 		if (generic.is_array(type)) output = (generic.are_equal(type, HashMap.class) ? arrays.to_string(input_, null, null, null) : arrays.to_string(input_, null));
-		else if (generic.are_equal(type, Class.class)) output = ((Class<?>)input_).getName();
+		else if (generic.are_equal(type, Class.class)) output = ((Class<?>)input_).getSimpleName();
 		else if (generic.are_equal(type, Method.class)) output = ((Method)input_).getName();
 		else if (generic.are_equal(type, Exception.class)) output = ((Exception)input_).getMessage();
 		else if (generic.are_equal(type, Double.class)) output = from_number_decimal((Double)input_, false);
