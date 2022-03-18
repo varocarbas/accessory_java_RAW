@@ -991,7 +991,7 @@ public class arrays
 		
 		if (generic.is_array(val_))
 		{
-			Class<?> type = generic.get_class_specific(val_, true);
+			Class<?> type = generic.get_class_specific(val_);
 			
 			if (type.equals(double[].class)) output = Arrays.toString((double[])val_);
 			else if (type.equals(long[].class)) output = Arrays.toString((long[])val_);
