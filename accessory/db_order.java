@@ -2,7 +2,7 @@ package accessory;
 
 public class db_order 
 {
-	public boolean _is_ok = true;
+	public boolean _is_ok = false;
 	
 	public String _source = strings.DEFAULT;
 	public String _value = strings.DEFAULT; //Always stored as a field and only converted to col before outputting a string.

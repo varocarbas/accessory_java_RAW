@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class db_field 
 {
-	public boolean _is_ok = true;
+	public boolean _is_ok = false;
 	
 	public String _type = strings.DEFAULT;
 	public int _size = 0;

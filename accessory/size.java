@@ -2,7 +2,7 @@ package accessory;
 
 public class size 
 {
-	public boolean _is_ok = true;
+	public boolean _is_ok = false;
 	
 	public double _min = Double.MIN_VALUE;
 	public double _max = Double.MAX_VALUE;

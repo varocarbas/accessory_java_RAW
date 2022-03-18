@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 public class data 
 {
-	public boolean _is_ok = true;
+	public boolean _is_ok = false;
 	
 	public String _type = null;
 	public Class<?> _class = null;

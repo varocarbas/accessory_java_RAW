@@ -65,6 +65,26 @@ public class arrays
 		return (get_size(input_) > 0);
 	}
 	
+	public static boolean is_ok(double[] input_)
+	{
+		return (get_size(input_) > 0);
+	}
+	
+	public static boolean is_ok(long[] input_)
+	{
+		return (get_size(input_) > 0);
+	}
+	
+	public static boolean is_ok(int[] input_)
+	{
+		return (get_size(input_) > 0);
+	}
+	
+	public static boolean is_ok(boolean[] input_)
+	{
+		return (get_size(input_) > 0);
+	}
+	
 	public static boolean is_ok(Object input_)
 	{
 		return (get_size(input_) > 0);
@@ -80,12 +100,32 @@ public class arrays
 		return (input_ == null ? 0 : get_size_hashmap_xy(input_));		
 	}
 	
+	public static int get_size(double[] input_)
+	{
+		return (input_ == null ? 0 : input_.length);
+	}
+	
+	public static int get_size(long[] input_)
+	{
+		return (input_ == null ? 0 : input_.length);
+	}
+	
+	public static int get_size(int[] input_)
+	{
+		return (input_ == null ? 0 : input_.length);
+	}
+	
+	public static int get_size(boolean[] input_)
+	{
+		return (input_ == null ? 0 : input_.length);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <x> int get_size(Object input_)
 	{
 		int size = 0;
 		if (input_ == null || !generic.is_array(input_)) return size;
-
+		
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_ok(type)) return size;
 		
@@ -225,6 +265,7 @@ public class arrays
 		(
 			generic.are_equal(class_, Array.class) || 
 			generic.are_equal(class_, String[].class) || 
+			generic.are_equal(class_, Boolean[].class) || 
 			generic.are_equal(class_, Class[].class) ||
 			arrays.value_exists(get_all_classes_numeric(), class_)
 		)
@@ -240,8 +281,9 @@ public class arrays
 	public static Object get_random_array(Class<?> class_)
 	{
 		Object output = null;
+		if (class_ == null) return output;
 		
-		if (generic.are_equal(class_, Array.class) || generic.are_equal(class_, String[].class))
+		if (class_.equals(Array.class) || class_.equals(String[].class))
 		{
 			String[] temp = new String[SIZE_DEFAULT];
 			
@@ -252,7 +294,18 @@ public class arrays
 			
 			output = temp;
 		}
-		else if (generic.are_equal(class_, Double[].class))
+		else if (class_.equals(double[].class))
+		{
+			double[] temp = new double[SIZE_DEFAULT];
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = (double)numbers.get_random(Double.class);
+			}
+			
+			output = temp;
+		}
+		else if (class_.equals(Double[].class))
 		{
 			Double[] temp = new Double[SIZE_DEFAULT];
 			
@@ -263,7 +316,18 @@ public class arrays
 			
 			output = temp;
 		}
-		else if (generic.are_equal(class_, Long[].class))
+		else if (class_.equals(long[].class))
+		{
+			long[] temp = new long[SIZE_DEFAULT];
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = (long)numbers.get_random(Long.class);
+			}
+			
+			output = temp;
+		}
+		else if (class_.equals(Long[].class))
 		{
 			Long[] temp = new Long[SIZE_DEFAULT];
 			
@@ -274,13 +338,46 @@ public class arrays
 			
 			output = temp;
 		}
-		else if (generic.are_equal(class_, Integer[].class))
+		else if (class_.equals(int[].class))
+		{
+			int[] temp = new int[SIZE_DEFAULT];
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = (int)numbers.get_random(Integer.class);
+			}
+			
+			output = temp;
+		}
+		else if (class_.equals(Integer[].class))
 		{
 			Integer[] temp = new Integer[SIZE_DEFAULT];
 			
 			for (int i = 0; i < SIZE_DEFAULT; i++)
 			{
 				temp[i] = (Integer)numbers.get_random(Integer.class);
+			}
+			
+			output = temp;
+		}
+		else if (class_.equals(boolean[].class))
+		{
+			boolean[] temp = new boolean[SIZE_DEFAULT];
+			
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = generic.get_random_boolean();
+			}
+			
+			output = temp;
+		}
+		else if (class_.equals(Boolean[].class))
+		{
+			Boolean[] temp = new Boolean[SIZE_DEFAULT];
+
+			for (int i = 0; i < SIZE_DEFAULT; i++)
+			{
+				temp[i] = (Boolean)generic.get_random_boolean();
 			}
 			
 			output = temp;
@@ -503,22 +600,22 @@ public class arrays
 
 	public static Class<?> get_class_items(double[] input_)
 	{
-		return double[].class;
+		return double.class;
 	}
 	
 	public static Class<?> get_class_items(long[] input_)
 	{
-		return long[].class;
+		return long.class;
 	}
 	
 	public static Class<?> get_class_items(int[] input_)
 	{
-		return int[].class;
+		return int.class;
 	}
 	
 	public static Class<?> get_class_items(boolean[] input_)
 	{
-		return boolean[].class;
+		return boolean.class;
 	}
 	
 	public static <x> Class<?> get_class_items(x[] input_)
@@ -886,7 +983,7 @@ public class arrays
 
 		return output;
 	}	
-
+	
 	@SuppressWarnings("unchecked")
 	private static <x> String to_string_val(Object val_)
 	{
@@ -894,13 +991,17 @@ public class arrays
 		
 		if (generic.is_array(val_))
 		{
-			if (is_ok(val_)) 
+			Class<?> type = generic.get_class_specific(val_, true);
+			
+			if (type.equals(double[].class)) output = Arrays.toString((double[])val_);
+			else if (type.equals(long[].class)) output = Arrays.toString((long[])val_);
+			else if (type.equals(int[].class)) output = Arrays.toString((int[])val_);
+			else if (type.equals(boolean[].class)) output = Arrays.toString((boolean[])val_);
+			else if (is_ok(val_)) 
 			{
-				Class<?> type = generic.get_class_specific(val_);
-
 				if (generic.are_equal(type, db_where[].class)) output = db_where.to_string((db_where[])val_);
 				else if (generic.are_equal(type, db_order[].class)) output = db_order.to_string((db_order[])val_);			
-				else if (generic.are_equal(generic.get_class(val_), Array.class)) output = Arrays.toString((x[])val_);
+				else if (generic.is_array_class(type)) output = Arrays.toString((x[])val_);
 				else output = val_.toString();
 			}
 		}

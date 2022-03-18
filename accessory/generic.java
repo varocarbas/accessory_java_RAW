@@ -269,7 +269,7 @@ public class generic
 		return type;
 	}
 
-	public static <x> Class<?> get_class_specific(x input_)
+	public static <x> Class<?> get_class_specific(x input_, boolean small_too_)
 	{
 		Class<?> type = get_class(input_);
 		if (type == null || !are_equal(type, Array.class)) return type;
@@ -287,6 +287,12 @@ public class generic
 		else if (input_ instanceof db_field[]) type = db_field[].class;
 		else if (input_ instanceof db_where[]) type = db_where[].class;
 		else if (input_ instanceof db_order[]) type = db_order[].class;
+		if (!small_too_) return type;
+		
+		if (input_ instanceof double[]) type = double[].class;
+		else if (input_ instanceof long[]) type = long[].class;
+		else if (input_ instanceof int[]) type = int[].class;
+		else if (input_ instanceof boolean[]) type = boolean[].class;
 		
 		return type;
 	}

@@ -295,6 +295,9 @@ public class tests
 		
 		run_outs = new HashMap<String, Boolean>();
 		
+		String name_prev = strings.DEFAULT;
+		int overload = 0;
+		
 		for (int i = 0; i < methods.length; i++)
 		{
 			boolean is_ok = false;
@@ -311,7 +314,18 @@ public class tests
 			
 			name = method.getName();
 			if (arrays.value_exists(skip_, name)) continue;
-					
+			
+			String temp = name;
+			if (temp.equals(name_prev))
+			{
+				overload++;
+				temp += "(" + overload + ")";
+			}
+			else overload = 0;
+			
+			name_prev = name;
+			name = temp;
+			
 			run_outs.put(name, run_method(class_, method, name, arrays.get_value(args_, name), arrays.get_value(targets_, name), true));
 		}
 		
@@ -326,6 +340,7 @@ public class tests
 		if (!method_is_ok(class_, method_, method_name_)) return is_ok;
 
 		Class<?>[] params = (Class<?>[])arrays.get_new(method_.getParameterTypes());
+		
 		print_start_end(method_name_ + " " + strings.to_string(params), true, 2);		
 
 		is_ok = true;
@@ -501,7 +516,7 @@ public class tests
 			{
 				if (args.get(i2) == null) continue;
 				
-				if (!generic.are_equal(generic.get_class_specific(args.get(i2)), params_[i2]))
+				if (!generic.are_equal(generic.get_class_specific(args.get(i2), true), params_[i2]))
 				{
 					is_ok = false;
 					break;

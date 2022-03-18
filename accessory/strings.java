@@ -154,7 +154,7 @@ public class strings
 					!strings.contains(regex_, haystack_, normalise_)
 				)
 			) 
-			{ return null; }
+			{ return output; }
 			
 			String haystack = haystack_;
 			String regex = regex_;
@@ -167,7 +167,7 @@ public class strings
 			
 			output = haystack.split(regex);
 			int size = arrays.get_size(output);
-			if (size < 2) return null;
+			if (size < 2) return output;
 
 			if (trim_ || remove_wrong_) output = arrays.clean(output, trim_, remove_wrong_);
 
@@ -392,8 +392,28 @@ public class strings
 	{
 		return arrays.to_string(input_, null, null, null);
 	}
-
-	public static <x> String to_string(x input_)
+	
+	public static String to_string(double[] input_)
+	{
+		return to_string(arrays.to_big(input_));
+	}
+	
+	public static String to_string(long[] input_)
+	{
+		return to_string(arrays.to_big(input_));
+	}
+	
+	public static String to_string(int[] input_)
+	{
+		return to_string(arrays.to_big(input_));
+	}
+	
+	public static String to_string(boolean[] input_)
+	{
+		return to_string(arrays.to_big(input_));
+	}
+	
+	public static String to_string(Object input_)
 	{
 		if (generic.is_string(input_)) 
 		{
@@ -408,7 +428,11 @@ public class strings
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_ok(type)) return output;
 
-		if (generic.is_array(type)) output = (generic.are_equal(type, HashMap.class) ? arrays.to_string(input_, null, null, null) : arrays.to_string(input_, null));
+		if (generic.is_array(type)) 
+		{
+			if (generic.are_equal(type, HashMap.class)) output = arrays.to_string(input_, null, null, null);
+			else output = arrays.to_string(input_, null);
+		}
 		else if (generic.are_equal(type, Class.class)) output = ((Class<?>)input_).getSimpleName();
 		else if (generic.are_equal(type, Method.class)) output = ((Method)input_).getName();
 		else if (generic.are_equal(type, Exception.class)) output = ((Exception)input_).getMessage();
@@ -587,7 +611,8 @@ public class strings
 		String output = DEFAULT;
 
 		String[] temp = split(string_, target_, normalise_, 0, false, false);
-		if (arrays.get_size(temp) <= count_) return output;
+		int size0 = arrays.get_size(temp);
+		if (size0 <= count_ || count_ < 1) return output;
 
 		int start_i = 0;
 		int size = count_;

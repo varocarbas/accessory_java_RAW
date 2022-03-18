@@ -2,7 +2,7 @@ package accessory;
 
 public class db_where 
 {
-	public boolean _is_ok = true;
+	public boolean _is_ok = false;
 	
 	public String _source = strings.DEFAULT;
 	public String _key = strings.DEFAULT;
@@ -16,7 +16,6 @@ public class db_where
 	public db_where(db_where input_)
 	{
 		_is_ok = false;
-
 		if (!is_ok(input_)) return;
 
 		_is_ok = true;
