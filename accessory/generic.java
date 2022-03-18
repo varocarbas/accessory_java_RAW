@@ -240,6 +240,26 @@ public class generic
 		return output;
 	}	
 	
+	public static <x> Class<?> get_class(double input_)
+	{
+		return double.class;
+	}
+	
+	public static <x> Class<?> get_class(long input_)
+	{
+		return long.class;
+	}
+	
+	public static <x> Class<?> get_class(int input_)
+	{
+		return int.class;
+	}
+	
+	public static <x> Class<?> get_class(boolean input_)
+	{
+		return boolean.class;
+	}
+	
 	public static <x> Class<?> get_class(x input_)
 	{
 		Class<?> type = null;
