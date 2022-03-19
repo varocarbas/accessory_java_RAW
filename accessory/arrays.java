@@ -1002,7 +1002,7 @@ public abstract class arrays
 	private static <x> String to_string_val(Object val_)
 	{
 		String output = strings.DEFAULT;
-		//if (!generic.is_ok(val_)) return output;
+		if (!generic.is_ok(val_)) return output;
 
 		if (generic.is_array(val_))
 		{

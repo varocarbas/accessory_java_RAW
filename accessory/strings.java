@@ -117,8 +117,8 @@ public abstract class strings
 		int length0 = get_length(string_, false);
 		if 
 		(
-			length0 < 1 || (((long)start_ + (long)length_) > (long)numbers.MAX_INT) || 
-			start_ < 0 || start_ + length_ > length0
+			length_ < 0 || length0 < 1 || start_ < 0 || start_ + length_ > length0 ||
+			(((long)start_ + (long)length_) > (long)numbers.MAX_INT)
 		) 
 		{ return output; }
 
