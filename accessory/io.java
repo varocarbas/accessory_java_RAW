@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class io 
+public abstract class io 
 {	
 	static { ini.load(); }
 

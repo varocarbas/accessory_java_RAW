@@ -7,23 +7,21 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class arrays 
+public abstract class arrays 
 {
 	public static final int SIZE_DEFAULT = defaults.SIZE_ARRAY;
 	
 	static { ini.load(); }
 
-	public static final Class<?>[] get_all_classes(boolean small_too_, boolean array_specific_too_)
+	public static final Class<?>[] get_all_classes()
 	{
 		ArrayList<Class<?>> output = new ArrayList<Class<?>>();
 		
 		output.add(HashMap.class);
 		output.add(ArrayList.class);
 		
-		if (array_specific_too_) output.addAll(new ArrayList<Class<?>>(Arrays.asList(get_all_classes_array())));
-		else output.add(Array.class);
-		
-		if (small_too_) output.addAll(new ArrayList<Class<?>>(Arrays.asList(get_all_classes_small())));
+		output.addAll(new ArrayList<Class<?>>(Arrays.asList(get_all_classes_array())));
+		output.addAll(new ArrayList<Class<?>>(Arrays.asList(get_all_classes_small())));
 		
 		return to_array(output);
 	}
@@ -87,7 +85,18 @@ public class arrays
 	
 	public static boolean is_ok(Object input_)
 	{
-		return (get_size(input_) > 0);
+		boolean is_ok = (get_size(input_) > 0);
+		if (is_ok) return is_ok;
+		
+		Class<?> type = generic.get_class(input_);
+		if (type == null) return is_ok;
+		
+		if (type.equals(double[].class)) is_ok = is_ok((double[])input_);
+		else if (type.equals(long[].class)) is_ok = is_ok((long[])input_);
+		else if (type.equals(int[].class)) is_ok = is_ok((int[])input_);
+		else if (type.equals(boolean[].class)) is_ok = is_ok((boolean[])input_);
+		
+		return is_ok;
 	}
 	
 	public static <x> int get_size(ArrayList<ArrayList<x>> input_)
@@ -127,19 +136,16 @@ public class arrays
 		if (input_ == null || !generic.is_array(input_)) return size;
 		
 		Class<?> type = generic.get_class(input_);
-		if (!generic.is_ok(type)) return size;
+		if (type == null) return size;
 		
-		if (generic.is_array_class(type)) 
-		{
-			if (input_ instanceof double[]) size = ((double[])input_).length;
-			else if (input_ instanceof long[]) size = ((long[])input_).length;
-			else if (input_ instanceof int[]) size = ((int[])input_).length;
-			else if (input_ instanceof boolean[]) size = ((boolean[])input_).length;
-			else size = ((Object[])input_).length;
-		}
+		if (type.equals(double[].class)) size = get_size((double[])input_);
+		else if (type.equals(long[].class)) size = get_size((long[])input_);
+		else if (type.equals(int[].class)) size = get_size((int[])input_);
+		else if (type.equals(boolean[].class)) size = get_size((boolean[])input_);
 		else if (generic.are_equal(type, ArrayList.class)) size = get_size_arraylist((ArrayList<x>)input_);
 		else if (generic.are_equal(type, HashMap.class)) size = get_size_hashmap_xx((HashMap<x, x>)input_); 
-
+		else size = ((Object[])input_).length;
+		
 		return size;
 	}
 	
@@ -212,10 +218,14 @@ public class arrays
 		int size = get_size(input1_);
 		Class<?> type = generic.get_class(input1_);
 		if (!generic.is_array(type) || size != get_size(input2_)) return false;
-		
-		if (generic.are_equal(type, HashMap.class))
+
+		if (type.equals(double[].class)) return are_equal((double[])input1_, (double[])input2_);
+		else if (type.equals(long[].class)) return are_equal((long[])input1_, (long[])input2_);
+		else if (type.equals(int[].class)) return are_equal((int[])input1_, (int[])input2_);
+		else if (type.equals(boolean[].class)) return are_equal((boolean[])input1_, (boolean[])input2_);
+		else if (generic.are_equal(type, HashMap.class))
 		{
-			return
+			return 
 			(
 				(
 					generic.are_equal(get_class_key_xx((HashMap<x, x>)input1_), get_class_key_xx((HashMap<x, x>)input2_)) &&
@@ -267,7 +277,7 @@ public class arrays
 			generic.are_equal(class_, String[].class) || 
 			generic.are_equal(class_, Boolean[].class) || 
 			generic.are_equal(class_, Class[].class) ||
-			arrays.value_exists(get_all_classes_numeric(), class_)
+			value_exists(get_all_classes_numeric(), class_)
 		)
 		{
 			output = get_random_array(class_);
@@ -388,7 +398,7 @@ public class arrays
 			
 			for (int i = 0; i < SIZE_DEFAULT; i++)
 			{
-				temp[i] = generic.get_random_class(true, true);
+				temp[i] = generic.get_random_class();
 			}
 			
 			output = temp;
@@ -509,22 +519,22 @@ public class arrays
 
 	public static double[] get_new(double[] input_)
 	{
-		return (double[])to_small(get_new_array((Double[])to_big(input_)));
+		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
 	}
 	
 	public static long[] get_new(long[] input_)
 	{
-		return (long[])to_small(get_new_array((Long[])to_big(input_)));
+		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
 	}
 	
 	public static int[] get_new(int[] input_)
 	{
-		return (int[])to_small(get_new_array((Integer[])to_big(input_)));
+		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
 	}
 	
 	public static boolean[] get_new(boolean[] input_)
 	{
-		return (boolean[])to_small(get_new_array((Boolean[])to_big(input_)));
+		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -534,15 +544,19 @@ public class arrays
 		if (!is_ok(input_)) return output;
 
 		Class<?> type = generic.get_class(input_);
-		if (!generic.is_ok(type)) return output;
+		if (type == null) return output;
 		
-		if (generic.is_array_class(type)) output = get_new_array((x[])input_);
+		if (type.equals(double[].class)) output = get_new((double[])input_);
+		else if (type.equals(long[].class)) output = get_new((long[])input_);
+		else if (type.equals(int[].class)) output = get_new((int[])input_);
+		else if (type.equals(boolean[].class)) output = get_new((boolean[])input_);
 		else if (generic.are_equal(type, ArrayList.class))  output = get_new_arraylist((ArrayList<x>)input_);
 		else if (generic.are_equal(type, HashMap.class)) output = get_new_hashmap((HashMap<x, x>)input_); 
-
+		else output = get_new_array((x[])input_);
+		
 		return output;
 	}
-	
+
 	private static <x> x[] get_new_array(x[] input_)
 	{
 		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
@@ -632,7 +646,7 @@ public class arrays
 		return output;
 	}
 	
-	private static <x> Class<?> get_class_item(x item_, Class<?> class_)
+	private static Class<?> get_class_item(Object item_, Class<?> class_)
 	{
 		Class<?> output = class_;
 		
@@ -731,13 +745,13 @@ public class arrays
 	@SuppressWarnings("unchecked")
 	public static <x, y> y get_value(HashMap<x, y> array_, x key_)
 	{
-		return (y)(!arrays.is_ok(array_) ? null : key_value_get_exists(array_, key_, null, true, true));
+		return (y)(!is_ok(array_) ? null : key_value_get_exists(array_, key_, null, true, true));
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <x> x get_value(Object array_, x key_)
 	{
-		return (x)(!arrays.is_ok(array_) ? null : key_value_get_exists(array_, key_, false, true));
+		return (x)(!is_ok(array_) ? null : key_value_get_exists(array_, key_, false, true));
 	}
 
 	public static <x, y> boolean keys_exist(HashMap<x, y> array_, double[] keys_)
@@ -762,7 +776,7 @@ public class arrays
 	
 	public static <x, y> boolean keys_exist(HashMap<x, y> array_, x[] keys_)
 	{
-		if (!arrays.is_ok(array_) || !arrays.is_ok(keys_)) return false;
+		if (!is_ok(array_) || !is_ok(keys_)) return false;
 
 		for (x key: keys_)
 		{
@@ -776,7 +790,7 @@ public class arrays
 	{
 		return 
 		(
-			(!arrays.is_ok(array_) || !generic.is_ok(key_)) ? false : 
+			(!is_ok(array_) || !generic.is_ok(key_)) ? false : 
 			(boolean)key_value_get_exists(array_, key_, null, true, false)
 		);	
 	}
@@ -803,7 +817,7 @@ public class arrays
 	
 	public static <x> boolean keys_exist(Object array_, x[] keys_)
 	{
-		if (!arrays.is_ok(array_) || !arrays.is_ok(keys_) || !generic.are_equal(generic.get_class(array_), HashMap.class)) return false;
+		if (!is_ok(array_) || !is_ok(keys_) || !generic.are_equal(generic.get_class(array_), HashMap.class)) return false;
 
 		for (x key: keys_)
 		{
@@ -817,7 +831,7 @@ public class arrays
 	{
 		return 
 		(
-			(!arrays.is_ok(array_) || !generic.is_ok(key_)) ? false : 
+			(!is_ok(array_) || !generic.is_ok(key_)) ? false : 
 			(boolean)key_value_get_exists(array_, key_, true, false)
 		);		
 	}
@@ -826,7 +840,7 @@ public class arrays
 	{
 		return 
 		(
-			(!arrays.is_ok(array_) || !generic.is_ok(value_)) ? false : 
+			(!is_ok(array_) || !generic.is_ok(value_)) ? false : 
 			(boolean)key_value_get_exists(array_, null, value_, false, false)
 		);
 	}
@@ -855,14 +869,14 @@ public class arrays
 	{
 		return 
 		(
-			(!arrays.is_ok(array_) || !generic.is_ok(value_)) ? false : 
+			(!is_ok(array_) || !generic.is_ok(value_)) ? false : 
 			(boolean)key_value_get_exists(array_, value_, false, false)
 		);
 	}
 
 	public static <x, y> String to_string(HashMap<x, y> input_, String separator1_, String separator2_, String[] keys_ignore_)
 	{
-		if (!arrays.is_ok(input_)) return strings.DEFAULT;
+		if (!is_ok(input_)) return strings.DEFAULT;
 
 		String output = "";
 		String separator1 = (strings.is_ok(separator1_) ? separator1_ : misc.SEPARATOR_ITEM);
@@ -947,13 +961,13 @@ public class arrays
 	public static <x> String to_string(Object input_, String separator_)
 	{
 		String output = strings.DEFAULT;
-		if (!arrays.is_ok(input_)) return output;
+		if (!is_ok(input_)) return output;
 	
 		Class<?> type = generic.get_class(input_);
 		boolean is_array = generic.is_array_class(type);
 		boolean is_arraylist = generic.are_equal(type, ArrayList.class);
 		if (!is_array && !is_arraylist) return output;
-	
+
 		output = "";
 		String separator = (strings.is_ok(separator_) ? separator_ : misc.SEPARATOR_ITEM);
 		boolean first_time = true;
@@ -988,16 +1002,17 @@ public class arrays
 	private static <x> String to_string_val(Object val_)
 	{
 		String output = strings.DEFAULT;
-		
+		//if (!generic.is_ok(val_)) return output;
+
 		if (generic.is_array(val_))
 		{
-			Class<?> type = generic.get_class_specific(val_);
+			Class<?> type = generic.get_class(val_);
 			
 			if (type.equals(double[].class)) output = Arrays.toString((double[])val_);
 			else if (type.equals(long[].class)) output = Arrays.toString((long[])val_);
 			else if (type.equals(int[].class)) output = Arrays.toString((int[])val_);
 			else if (type.equals(boolean[].class)) output = Arrays.toString((boolean[])val_);
-			else if (is_ok(val_)) 
+			else 
 			{
 				if (generic.are_equal(type, db_where[].class)) output = db_where.to_string((db_where[])val_);
 				else if (generic.are_equal(type, db_order[].class)) output = db_order.to_string((db_order[])val_);			

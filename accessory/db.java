@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class db 
+public abstract class db 
 {
 	//Sources/fields are constant, used internally, stored in memory (e.g., in _sources). 
 	//Tables/cols are variable and refer to the actual DB.
@@ -115,7 +115,7 @@ public class db
 	
 	public static void delete(String source_, String where_cols_)
 	{
-		db.delete(source_, where_cols_);
+		db_queries.delete(source_, where_cols_);
 	}
 
 	public static boolean table_exists(String source_)
@@ -154,7 +154,7 @@ public class db
 
 		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
-			value = mysql.get_value(input_);
+			value = db_mysql.get_value(input_);
 		}
 		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 
@@ -166,7 +166,7 @@ public class db
 		String source = check_source_error(source_);
 		if (!_is_ok) return strings.DEFAULT;
 
-		return get_variable(db.get_table(source));
+		return get_variable(get_table(source));
 	}
 	
 	public static String get_variable_col(String source_, String col_)
@@ -183,7 +183,7 @@ public class db
 
 		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
-			variable = mysql.get_variable(input_);
+			variable = db_mysql.get_variable(input_);
 		}
 		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
@@ -196,7 +196,7 @@ public class db
 
 		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
-			output = mysql.get_data_type(data_type_);
+			output = db_mysql.get_data_type(data_type_);
 		}
 		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
@@ -209,7 +209,7 @@ public class db
 
 		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
-			output = mysql.get_default_size(type_);
+			output = db_mysql.get_default_size(type_);
 		}
 		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
@@ -222,7 +222,7 @@ public class db
 
 		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
-			output = mysql.get_max_size(type_);
+			output = db_mysql.get_max_size(type_);
 		}
 		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
@@ -260,7 +260,7 @@ public class db
 	
 	public static boolean field_is_ok(String source_, String field_)
 	{
-		return strings.is_ok(db.get_col(source_, field_));
+		return strings.is_ok(get_col(source_, field_));
 	}
 	
 	public static void add_source(String source_, HashMap<String, db_field> fields_)
@@ -301,7 +301,7 @@ public class db
 	{
 		String source = check_source(source_);
 		
-		return ((strings.is_ok(source) && _source_mains.containsKey(source)) ? db._source_mains.get(source) : strings.DEFAULT);
+		return ((strings.is_ok(source) && _source_mains.containsKey(source)) ? _source_mains.get(source) : strings.DEFAULT);
 	}
 	
 	public static HashMap<String, db_field> get_source_fields(String source_)
@@ -433,7 +433,7 @@ public class db
 		
 		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
-			output = mysql.sanitise_string(output);
+			output = db_mysql.sanitise_string(output);
 		}
 		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 

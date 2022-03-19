@@ -5,7 +5,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class strings 
+public abstract class strings 
 {
 	public static final String DEFAULT = defaults.STRING;
 	
@@ -151,7 +151,7 @@ public class strings
 				haystack_ == null || regex_ == null ||
 				(
 					is_ok(haystack_) && is_ok(regex_) && 
-					!strings.contains(regex_, haystack_, normalise_)
+					!contains(regex_, haystack_, normalise_)
 				)
 			) 
 			{ return output; }
@@ -232,7 +232,7 @@ public class strings
 	public static int index_of_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_)
 	{
 		int output = index_of(needle_, haystack_, normalise_);
-		if (output < 0 || !strings.is_ok(start_) || !strings.is_ok(end_)) return output;
+		if (output < 0 || !is_ok(start_) || !is_ok(end_)) return output;
 		
 		output = 0;
 		
@@ -419,7 +419,7 @@ public class strings
 		{
 			String temp = (String)input_;
 			
-			return (is_ok(temp) ? temp : strings.DEFAULT);
+			return (is_ok(temp) ? temp : DEFAULT);
 		}
 
 		String output = DEFAULT;
@@ -496,7 +496,7 @@ public class strings
 
 	private static boolean matches(String string_, String[] targets_, boolean normalise_, boolean all_)
 	{
-		if (!strings.is_ok(string_) || !arrays.is_ok(targets_)) return false;
+		if (!is_ok(string_) || !arrays.is_ok(targets_)) return false;
 
 		boolean is_ok = true;
 

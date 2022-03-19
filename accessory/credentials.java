@@ -2,7 +2,7 @@ package accessory;
 
 import java.util.HashMap;
 
-public class credentials 
+public abstract class credentials 
 {   	
 	static { ini.load(); }
 

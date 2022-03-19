@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class types 
+public abstract class types 
 {
 	public static final String SEPARATOR = misc.SEPARATOR_NAME;
 
@@ -105,16 +105,15 @@ public class types
 	public static final String DB_QUERY_TABLE_CREATE = "db_query_table_create";
 	public static final String DB_QUERY_TABLE_DROP = "db_query_table_drop";
 	public static final String DB_QUERY_TABLE_TRUNCATE = "db_query_table_truncate";
-
-	public static final String MYSQL = "mysql";
-	public static final String MYSQL_DATA = "mysql_data";
-	public static final String MYSQL_DATA_VARCHAR = "mysql_data_varchar";
-	public static final String MYSQL_DATA_TEXT = "mysql_data_text";
-	public static final String MYSQL_DATA_INT = "mysql_data_int";
-	public static final String MYSQL_DATA_TINYINT = "mysql_data_tinyint";
-	public static final String MYSQL_DATA_BIGINT = "mysql_data_bigint";
-	public static final String MYSQL_DATA_DECIMAL = "mysql_data_decimal";
-	public static final String MYSQL_DATA_TIMESTAMP = "mysql_data_timestamp";
+	public static final String DB_MYSQL = "db_mysql";
+	public static final String DB_MYSQL_DATA = "db_mysql_data";
+	public static final String DB_MYSQL_DATA_VARCHAR = "db_mysql_data_varchar";
+	public static final String DB_MYSQL_DATA_TEXT = "db_mysql_data_text";
+	public static final String DB_MYSQL_DATA_INT = "db_mysql_data_int";
+	public static final String DB_MYSQL_DATA_TINYINT = "db_mysql_data_tinyint";
+	public static final String DB_MYSQL_DATA_BIGINT = "db_mysql_data_bigint";
+	public static final String DB_MYSQL_DATA_DECIMAL = "db_mysql_data_decimal";
+	public static final String DB_MYSQL_DATA_TIMESTAMP = "db_mysql_data_timestamp";
 	
 	public static final String DATA = "data";
 	public static final String DATA_STRING = "data_string";
@@ -152,7 +151,6 @@ public class types
 	public static final String WHAT_APP = "what_app";
 	public static final String WHAT_SERVER = "what_server";
 	public static final String WHAT_ID = "what_id";
-	
 	public static final String WHAT_DIR = "what_dir";
 	public static final String WHAT_DIR_CREDENTIALS = "what_dir_credentials";
 	public static final String WHAT_DIR_INI = "what_dir_ini";
@@ -374,9 +372,9 @@ public class types
 			DB_QUERY_SELECT, DB_QUERY_INSERT, DB_QUERY_UPDATE, DB_QUERY_DELETE, 
 			//DB_QUERY_TABLE
 			DB_QUERY_TABLE_EXISTS, DB_QUERY_TABLE_CREATE, DB_QUERY_TABLE_DROP, DB_QUERY_TABLE_TRUNCATE,
-
-			//MYSQL
-			MYSQL_DATA_VARCHAR, MYSQL_DATA_TEXT, MYSQL_DATA_INT, MYSQL_DATA_TINYINT, MYSQL_DATA_BIGINT, MYSQL_DATA_DECIMAL,
+			//DB_MYSQL
+			DB_MYSQL_DATA_VARCHAR, DB_MYSQL_DATA_TEXT, DB_MYSQL_DATA_INT, DB_MYSQL_DATA_TINYINT, 
+			DB_MYSQL_DATA_BIGINT, DB_MYSQL_DATA_DECIMAL,
 			
 			//DATA
 			DATA_STRING, DATA_STRING_BIG, DATA_INT, DATA_LONG, DATA_DECIMAL, DATA_TIMESTAMP,
@@ -389,7 +387,9 @@ public class types
 			//WHAT
 			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 
 			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER,
-			WHAT_TYPE,
+			WHAT_TYPE, WHAT_APP, WHAT_SERVER, WHAT_ID,
+			//WHAT_DIR
+			WHAT_DIR_CREDENTIALS, WHAT_DIR_INI, WHAT_DIR_LOGS, WHAT_DIR_APP,
 			
 			//ERROR_DB
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,

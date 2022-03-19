@@ -2,7 +2,7 @@ package accessory;
 
 import java.util.Random;
 
-public class numbers 
+public abstract class numbers 
 {
 	public static final double DEFAULT_DEC = defaults.DECIMAL;
 	public static final double MIN_DEC = -1 * Double.MAX_VALUE; //!!!
@@ -21,15 +21,12 @@ public class numbers
 	
 	static { ini.load(); }
 
-	public static final Class<?>[] get_all_classes(boolean small_too_)
+	public static final Class<?>[] get_all_classes()
 	{
-		return
-		(
-			!small_too_ ? new Class<?>[] { Integer.class, Long.class, Double.class } : new Class<?>[] 
-			{ 
-				Integer.class, int.class, Long.class, long.class, Double.class, double.class 
-			}	
-		);
+		return new Class<?>[] 
+		{ 
+			Integer.class, int.class, Long.class, long.class, Double.class, double.class 
+		};
 	}
 
 	public static boolean is_ok(double input_, double min_, double max_)
@@ -47,7 +44,7 @@ public class numbers
 		return ((input_ >= min_ || min_ == MIN_INT) && (input_ <= max_ || max_ == MAX_INT));
 	}
 
-	public static <x> boolean is_ok(x input_)
+	public static boolean is_ok(Object input_)
 	{
 		return generic.is_number(input_);
 	}
@@ -57,12 +54,12 @@ public class numbers
 		return 0;
 	}
 	
-	public static <x> double to_number(x input_)
+	public static double to_number(Object input_)
 	{
 		double output = 0.0;
 		
 		Class<?> type = generic.get_class(input_);
-		
+
 		if (generic.are_equal(type, Double.class)) output = (double)input_;
 		else if (generic.are_equal(type, Integer.class)) output = (double)((int)input_); //!!!
 		else if (generic.are_equal(type, Long.class)) output = (double)((long)input_); //!!!

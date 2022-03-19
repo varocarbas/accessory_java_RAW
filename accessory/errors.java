@@ -2,7 +2,7 @@ package accessory;
 
 import java.util.HashMap;
 
-public class errors 
+public abstract class errors 
 {	
 	public static boolean _triggered = false; 
 	

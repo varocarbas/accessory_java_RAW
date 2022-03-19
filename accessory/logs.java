@@ -3,7 +3,7 @@ package accessory;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class logs 
+public abstract class logs 
 {
 	static { ini.load(); }
 

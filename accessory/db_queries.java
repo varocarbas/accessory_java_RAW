@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-class db_queries 
+abstract class db_queries 
 {
 	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_)
 	{
@@ -136,7 +136,7 @@ class db_queries
 		
 		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
-			output = mysql.execute_query(query_);
+			output = db_mysql.execute_query(query_);
 		}
 		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
@@ -220,7 +220,7 @@ class db_queries
 		
 		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
-			output = mysql.execute(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
+			output = db_mysql.execute(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 		}
 		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
 		

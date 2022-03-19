@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Map.Entry;
 
-class mysql 
+abstract class db_mysql 
 {	
 	public static String QUOTE_VARIABLE = "`";
 	public static String QUOTE_VALUE = "'";
@@ -55,7 +55,7 @@ class mysql
 			}
 		}
 		
-		return sql.execute_query(query_, db.query_returns_data(type), cols);
+		return db_sql.execute_query(query_, db.query_returns_data(type), cols);
 	}
 	
 	public static String sanitise_string(String input_)
@@ -67,7 +67,7 @@ class mysql
 	{
 		String query = get_query(type_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 
-		return (strings.is_ok(query) ? sql.execute_query(query, db.query_returns_data(type_), cols_) : null);
+		return (strings.is_ok(query) ? db_sql.execute_query(query, db.query_returns_data(type_), cols_) : null);
 	}
 	
 	public static HashMap<String, Object> get_data_type(String data_type_)
@@ -78,13 +78,13 @@ class mysql
 		if (!strings.is_ok(data_type)) return output;
 		
 		String type = null;
-		if (data_type.equals(types.DATA_BOOLEAN)) type = types.MYSQL_DATA_TINYINT;
-		else if (data_type.equals(types.DATA_STRING)) type = types.MYSQL_DATA_VARCHAR;
-		else if (data_type.equals(types.DATA_STRING_BIG)) type = types.MYSQL_DATA_TEXT;
-		else if (data_type.equals(types.DATA_TIMESTAMP)) type = types.MYSQL_DATA_TIMESTAMP;
-		else if (data_type.equals(types.DATA_INT)) type = types.MYSQL_DATA_INT;
-		else if (data_type.equals(types.DATA_LONG)) type = types.MYSQL_DATA_BIGINT;
-		else if (data_type.equals(types.DATA_DECIMAL)) type = types.MYSQL_DATA_DECIMAL;
+		if (data_type.equals(types.DATA_BOOLEAN)) type = types.DB_MYSQL_DATA_TINYINT;
+		else if (data_type.equals(types.DATA_STRING)) type = types.DB_MYSQL_DATA_VARCHAR;
+		else if (data_type.equals(types.DATA_STRING_BIG)) type = types.DB_MYSQL_DATA_TEXT;
+		else if (data_type.equals(types.DATA_TIMESTAMP)) type = types.DB_MYSQL_DATA_TIMESTAMP;
+		else if (data_type.equals(types.DATA_INT)) type = types.DB_MYSQL_DATA_INT;
+		else if (data_type.equals(types.DATA_LONG)) type = types.DB_MYSQL_DATA_BIGINT;
+		else if (data_type.equals(types.DATA_DECIMAL)) type = types.DB_MYSQL_DATA_DECIMAL;
 		else return output;
 	
 		output.put(keys.TYPE, type);
@@ -166,7 +166,7 @@ class mysql
 		HashMap<String, Object> info = get_data_type(field_._type);
 		if (!arrays.is_ok(info)) return output;
 		
-		output = types.remove_type((String)info.get(keys.TYPE), types.MYSQL_DATA);
+		output = types.remove_type((String)info.get(keys.TYPE), types.DB_MYSQL_DATA);
 		String size = get_data_type_size(field_);
 		if (!strings.is_ok(size)) return output;
 		
@@ -213,7 +213,7 @@ class mysql
 	private static String get_query(String type_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{	
 		String query = strings.DEFAULT;
-		if (!sql.params_are_ok(type_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_)) return query;
+		if (!db_sql.params_are_ok(type_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_)) return query;
 
 		boolean is_ok = false;
 

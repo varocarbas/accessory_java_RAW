@@ -1,6 +1,6 @@
 package accessory;
 
-public class _config_ini 
+public abstract class _config_ini 
 {
 	//Method expected to be called from _ini.load().
 	public static void load() 

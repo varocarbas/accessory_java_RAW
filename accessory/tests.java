@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class tests 
+public abstract class tests 
 {
 	public static boolean _running = false;
 	
@@ -516,7 +516,7 @@ public class tests
 			{
 				if (args.get(i2) == null) continue;
 				
-				if (!generic.are_equal(generic.get_class_specific(args.get(i2)), params_[i2]))
+				if (!generic.are_equal(generic.get_class(args.get(i2)), params_[i2]))
 				{
 					is_ok = false;
 					break;

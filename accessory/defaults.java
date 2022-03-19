@@ -1,6 +1,6 @@
 package accessory;
 
-public class defaults 
+public abstract class defaults 
 {	
 	public static final String STRING = "";
 	public static final double DECIMAL = 0.0;

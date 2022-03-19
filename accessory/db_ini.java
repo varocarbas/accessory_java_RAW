@@ -3,7 +3,7 @@ package accessory;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class db_ini 
+public abstract class db_ini 
 {
 	public static void load() 
 	{

@@ -1,6 +1,6 @@
 package accessory;
 
-public class misc 
+public abstract class misc 
 {	
 	public static final String NEW_LINE = System.lineSeparator();
 	

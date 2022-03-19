@@ -3,7 +3,7 @@ package accessory;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class ini 
+public abstract class ini 
 {
 	//Method expected to be called every time a non-ini static class is loaded.
 	//It has to include all the load() methods of all the ini classes.

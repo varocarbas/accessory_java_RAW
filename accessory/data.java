@@ -173,7 +173,7 @@ public class data
 
 	private static boolean is_numeric(Class<?> class_)
 	{
-		for (Class<?> item: numbers.get_all_classes(true))
+		for (Class<?> item: numbers.get_all_classes())
 		{
 			if (generic.are_equal(class_, item)) return true;
 		}

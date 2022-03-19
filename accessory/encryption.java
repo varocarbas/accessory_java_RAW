@@ -1,6 +1,6 @@
 package accessory;
 
-public class encryption 
+public abstract class encryption 
 {
 	static { ini.load(); }
 

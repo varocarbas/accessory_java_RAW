@@ -1,6 +1,6 @@
 package accessory;
 
-public class keys 
+public abstract class keys 
 {
 	public static final String USER = types.what_to_key(types.WHAT_USER);
 	public static final String USERNAME = types.what_to_key(types.WHAT_USERNAME);

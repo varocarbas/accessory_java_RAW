@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-class sql 
+abstract class db_sql 
 {
 	static { ini.load(); }
 
@@ -135,7 +135,7 @@ class sql
 
 		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
 		{
-			conn = mysql.connect(properties);
+			conn = db_mysql.connect(properties);
 		}
 		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
 

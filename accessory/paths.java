@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class paths 
+public abstract class paths 
 {	
 	public static final String SEPARATOR_DIR = get_dir_separator();
 	public static final String HOME = get_home_dir();
