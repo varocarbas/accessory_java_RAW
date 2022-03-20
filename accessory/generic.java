@@ -242,8 +242,9 @@ public abstract class generic
 		Object output = null;
 		if (class_ == null) return output;
 		
-		if (is_class(class_)) output = get_random_class();
-		else if (is_string(class_) || are_equal(class_, Object.class)) output = strings.get_random(strings.SIZE_SMALL);
+		if (class_.equals(Object.class) || class_.equals(Object[].class)) output = arrays.get_random(String[].class);
+		else if (is_class(class_)) output = get_random_class();
+		else if (is_string(class_)) output = strings.get_random(strings.SIZE_SMALL);
 		else if (is_boolean(class_)) output = get_random_boolean();
 		else if (is_number(class_)) output = numbers.get_random(class_);
 		else if (is_array(class_)) output = arrays.get_random(class_); 
@@ -309,7 +310,8 @@ public abstract class generic
 	public static Class<?> get_class(Object input_)
 	{
 		Class<?> type = null;
-
+		if (input_ == null) return type;
+		
 		if (input_ instanceof String) type = String.class;
 		else if (input_ instanceof Boolean) type = Boolean.class;
 		else if (input_ instanceof Integer) type = Integer.class;
@@ -342,7 +344,7 @@ public abstract class generic
 		else if (input_ instanceof db_field[]) type = db_field[].class;
 		else if (input_ instanceof db_where[]) type = db_where[].class;
 		else if (input_ instanceof db_order[]) type = db_order[].class;
-		else if (input_ instanceof Object[]) type = Array.class;
+		else if (input_ instanceof Object[]) type = Array.class; //It has to go after all the specific array classes (small native like double[] not included).
 		else if (input_ instanceof Object) type = Object.class;
 		
 		return type;
@@ -482,7 +484,7 @@ public abstract class generic
 
 		if (class1_.equals(class2_)) return true;
 		
-		for (Entry<Class<?>, Class<?>> equivalent: get_class_equivalents().entrySet())
+		for (Entry<Class<?>, Class<?>> equivalent: get_class_equals().entrySet())
 		{
 			Class<?> key = equivalent.getKey();
 			Class<?> val = equivalent.getValue();
@@ -506,19 +508,20 @@ public abstract class generic
 		};
 	}
 	
-	private static HashMap<Class<?>, Class<?>> get_class_equivalents()
+	private static HashMap<Class<?>, Class<?>> get_class_equals()
 	{
-		HashMap<Class<?>, Class<?>> equivalents = new HashMap<Class<?>, Class<?>>();
+		HashMap<Class<?>, Class<?>> output = new HashMap<Class<?>, Class<?>>();
 		
-		equivalents.put(Double.class, double.class);
-		equivalents.put(Long.class, long.class);
-		equivalents.put(Integer.class, int.class);
-		equivalents.put(Boolean.class, boolean.class);
-		equivalents.put(Double[].class, double[].class);
-		equivalents.put(Long[].class, long[].class);
-		equivalents.put(Integer[].class, int[].class);
-		equivalents.put(Boolean[].class, boolean[].class);
+		output.put(Double.class, double.class);
+		output.put(Long.class, long.class);
+		output.put(Integer.class, int.class);
+		output.put(Boolean.class, boolean.class);
+		output.put(Double[].class, double[].class);
+		output.put(Long[].class, long[].class);
+		output.put(Integer[].class, int[].class);
+		output.put(Boolean[].class, boolean[].class);
+		output.put(Object[].class, Array.class);
 		
-		return equivalents;
+		return output;
 	}
 }

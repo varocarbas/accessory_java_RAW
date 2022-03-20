@@ -26,6 +26,12 @@ public abstract class arrays
 		return to_array(output);
 	}
 	
+	//All these classes require a special treatment. In some cases, they are assumed to be equivalent to their big counterparts.
+	//Their instances can only be used as Object/x[] after having been converted into their corresponding big counterparts.
+	//Methods with Object/x[] parameters have to include specific overloads for all these classes. Additionally, they have 
+	//to internally (i.e., in the overload including the Object parameter) account for these scenarios too, because some calls 
+	//might not be reaching the specific overloads (e.g., Object val = new int[] { 1, 2, 3 } going to method(Object input_)).
+	//!!!
 	public static final Class<?>[] get_all_classes_small()
 	{
 		return new Class<?>[]
@@ -34,6 +40,7 @@ public abstract class arrays
 		};
 	}
 	
+	//All these classes are equivalent to Array.class and their instances can be used as Object/x[].
 	public static final Class<?>[] get_all_classes_array()
 	{
 		return new Class<?>[]
@@ -57,7 +64,7 @@ public abstract class arrays
 	{
 		return (get_size(input_) > 0 && get_size(input_.get(0)) > 0);
 	}
-	
+		
 	public static <x, y> boolean is_ok(HashMap<x, y> input_)
 	{
 		return (get_size(input_) > 0);
@@ -151,8 +158,10 @@ public abstract class arrays
 	
 	public static <x> boolean are_equal(ArrayList<ArrayList<x>> input1_, ArrayList<ArrayList<x>> input2_)
 	{
+		if (!is_arraylist_xx(input1_) || !is_arraylist_xx(input2_)) return false;
+		
 		boolean is_ok1 = is_ok(input1_);
-		boolean is_ok2 = is_ok(input2_);
+		boolean is_ok2 = is_ok(input2_);	
 		if (!is_ok1 || !is_ok2) return (is_ok1 == is_ok2);
 
 		return 
@@ -238,19 +247,8 @@ public abstract class arrays
 		{
 			if (generic.are_equal(type, ArrayList.class))
 			{
-				return 
-				(
-					(
-						generic.are_equal
-						(
-							get_class_items((ArrayList<x>)input1_), 
-							get_class_items((ArrayList<x>)input2_)
-						)
-					) 
-					? input1_.equals(input2_) : false		
-				);
+				return (generic.are_equal(get_class_items((ArrayList<x>)input1_), get_class_items((ArrayList<x>)input2_)) ? input1_.equals(input2_) : false);
 			}
-			
 			if (!generic.are_equal(get_class_items((x[])input1_), get_class_items((x[])input2_))) return false;
 		}
 		
@@ -473,38 +471,16 @@ public abstract class arrays
 		return output;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <x> x[] to_array(ArrayList<ArrayList<x>> input_)
 	{
-		return null;
+		return (is_arraylist_xx(input_) ? null : to_array_internal((ArrayList<x>)input_));
 	}
 	
-	//To be synced with generic.get_class().
 	@SuppressWarnings("unchecked")
 	public static <x> x[] to_array(Object input_)
 	{
-		x[] output = null;
-		if (input_ == null || !generic.are_equal(generic.get_class(input_), ArrayList.class)) return output;
-		
-		Class<?> type = get_class_items((ArrayList<x>)input_);
-		if (!generic.is_ok(type)) return output;
-
-		int size = ((ArrayList<x>)input_).size();
-		if (generic.are_equal(type, String.class)) output = (x[])((ArrayList<x>)input_).toArray(new String[size]);
-		else if (generic.are_equal(type, Integer.class)) output = (x[])((ArrayList<x>)input_).toArray(new Integer[size]);
-		else if (generic.are_equal(type, Long.class)) output = (x[])((ArrayList<x>)input_).toArray(new Long[size]);
-		else if (generic.are_equal(type, Double.class)) output = (x[])((ArrayList<x>)input_).toArray(new Double[size]);
-		else if (generic.are_equal(type, Boolean.class)) output = (x[])((ArrayList<x>)input_).toArray(new Boolean[size]);
-		else if (generic.are_equal(type, Class.class)) output = (x[])((ArrayList<x>)input_).toArray(new Class<?>[size]);
-		else if (generic.are_equal(type, Method.class)) output = (x[])((ArrayList<x>)input_).toArray(new Method[size]);
-		else if (generic.are_equal(type, Exception.class)) output = (x[])((ArrayList<x>)input_).toArray(new Exception[size]);
-		else if (generic.are_equal(type, size.class)) output = (x[])((ArrayList<x>)input_).toArray(new size[size]);
-		else if (generic.are_equal(type, data.class)) output = (x[])((ArrayList<x>)input_).toArray(new data[size]);
-		else if (generic.are_equal(type, db_field.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_field[size]);
-		else if (generic.are_equal(type, db_where.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_where[size]);
-		else if (generic.are_equal(type, db_order.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_order[size]);
-		else if (generic.are_equal(type, Object.class)) output = (x[])((ArrayList<x>)input_).toArray(new Object[size]);
-
-		return output;
+		return (generic.are_equal(generic.get_class(input_), ArrayList.class) ? to_array_internal((ArrayList<x>)input_) : null);
 	}
 	
 	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_)
@@ -557,6 +533,13 @@ public abstract class arrays
 		return output;
 	}
 
+	//Method to filter out ArrayList<x> instances being used in ArrayList<ArrayList<x>> params.
+	//!!!
+	private static <x> boolean is_arraylist_xx(ArrayList<ArrayList<x>> input_)
+	{
+		return (is_ok(input_) || input_ == null || input_.get(0) == null || generic.are_equal(input_.get(0), ArrayList.class));
+	}
+	
 	private static <x> x[] get_new_array(x[] input_)
 	{
 		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
@@ -597,21 +580,6 @@ public abstract class arrays
 		return (!is_ok(input_) ? null : get_class_items(input_.get(0)));
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <x> Class<?> get_class_items(Object input_)
-	{
-		Class<?> output = null;
-		if (!generic.are_equal(generic.get_class(input_), ArrayList.class)) return output;
-		
-		for (x item: (ArrayList<x>)input_)
-		{
-			output = get_class_item(item, output);
-			if (generic.are_equal(output, Object.class)) break;
-		}
-
-		return output;
-	}
-
 	public static Class<?> get_class_items(double[] input_)
 	{
 		return double.class;
@@ -645,15 +613,19 @@ public abstract class arrays
 
 		return output;
 	}
-	
-	private static Class<?> get_class_item(Object item_, Class<?> class_)
+
+	@SuppressWarnings("unchecked")
+	public static <x> Class<?> get_class_items(Object input_)
 	{
-		Class<?> output = class_;
+		Class<?> output = null;
+		if (!generic.are_equal(generic.get_class(input_), ArrayList.class)) return output;
 		
-		Class<?> temp = generic.get_class(item_);
-		if (output == null) output = temp;
-		else if (!generic.are_equal(temp, output)) output = Object.class;
-		
+		for (x item: (ArrayList<x>)input_)
+		{
+			output = get_class_item(item, output);
+			if (generic.are_equal(output, Object.class)) break;
+		}
+
 		return output;
 	}
 	
@@ -964,6 +936,13 @@ public abstract class arrays
 		if (!is_ok(input_)) return output;
 	
 		Class<?> type = generic.get_class(input_);
+		if (type == null) return output;
+		
+		if (type.equals(double[].class)) return to_string((double[])input_, separator_);
+		else if (type.equals(long[].class)) return to_string((long[])input_, separator_);
+		else if (type.equals(int[].class)) return to_string((int[])input_, separator_);
+		else if (type.equals(boolean[].class)) return to_string((boolean[])input_, separator_);
+		
 		boolean is_array = generic.is_array_class(type);
 		boolean is_arraylist = generic.are_equal(type, ArrayList.class);
 		if (!is_array && !is_arraylist) return output;
@@ -996,30 +975,34 @@ public abstract class arrays
 		if (!first_time) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
 
 		return output;
-	}	
+	}
 	
+	private static Class<?> get_class_item(Object item_, Class<?> class_)
+	{
+		Class<?> output = class_;
+		
+		Class<?> temp = generic.get_class(item_);
+		if (output == null) output = temp;
+		else if (!generic.are_equal(temp, output)) output = Object.class;
+		
+		return output;
+	}
+
 	@SuppressWarnings("unchecked")
 	private static <x> String to_string_val(Object val_)
 	{
 		String output = strings.DEFAULT;
-		if (!generic.is_ok(val_)) return output;
+		
+		Class<?> type = generic.get_class(val_);
+		if (type == null) return output;
 
-		if (generic.is_array(val_))
-		{
-			Class<?> type = generic.get_class(val_);
-			
-			if (type.equals(double[].class)) output = Arrays.toString((double[])val_);
-			else if (type.equals(long[].class)) output = Arrays.toString((long[])val_);
-			else if (type.equals(int[].class)) output = Arrays.toString((int[])val_);
-			else if (type.equals(boolean[].class)) output = Arrays.toString((boolean[])val_);
-			else 
-			{
-				if (generic.are_equal(type, db_where[].class)) output = db_where.to_string((db_where[])val_);
-				else if (generic.are_equal(type, db_order[].class)) output = db_order.to_string((db_order[])val_);			
-				else if (generic.is_array_class(type)) output = Arrays.toString((x[])val_);
-				else output = val_.toString();
-			}
-		}
+		if (type.equals(double[].class)) output = Arrays.toString((double[])val_);
+		else if (type.equals(long[].class)) output = Arrays.toString((long[])val_);
+		else if (type.equals(int[].class)) output = Arrays.toString((int[])val_);
+		else if (type.equals(boolean[].class)) output = Arrays.toString((boolean[])val_);
+		else if (generic.are_equal(type, db_where[].class)) output = db_where.to_string((db_where[])val_);
+		else if (generic.are_equal(type, db_order[].class)) output = db_order.to_string((db_order[])val_);			
+		else if (generic.is_array_class(type)) output = Arrays.toString((x[])val_);
 		else output = strings.to_string(val_);
 		
 		return output;
@@ -1135,187 +1118,147 @@ public abstract class arrays
 	{
 		Object output = null;
 		
-		if (input_ == null) return output;
-		if (!get_all_big_small().containsKey(input_.getClass())) return input_;
+		Class<?> type = generic.get_class(input_);
+		if (!arrays.key_exists(get_all_big_small(), type)) return output;
 
-		if (input_ instanceof Double[])
+		if (type.equals(Double[].class))
 		{
-			double[] output2 = null;
-
-			if (input_ != null)
+			Double[] temp = (Double[])input_;
+			
+			int tot = temp.length;
+			if (tot < 1) return null;
+			
+			double[] output2 = new double[tot];
+			
+			for (int i = 0; i < tot; i++)
 			{
-				Double[] temp = (Double[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new double[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
+				output2[i] = temp[i];
 			}
+			
+			output = output2;
 		}
-		else if (input_ instanceof Long[])
+		else if (type.equals(Long[].class))
 		{
-			long[] output2 = null;
-
-			if (input_ != null)
+			Long[] temp = (Long[])input_;
+			
+			int tot = temp.length;
+			if (tot < 1) return null;
+			
+			long[] output2 = new long[tot];
+			
+			for (int i = 0; i < tot; i++)
 			{
-				Long[] temp = (Long[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new long[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
+				output2[i] = temp[i];
 			}
+			
+			output = output2;
 		}
-		else if (input_ instanceof Integer[])
+		else if (type.equals(Integer[].class))
 		{
-			int[] output2 = null;
-
-			if (input_ != null)
+			Integer[] temp = (Integer[])input_;
+			
+			int tot = temp.length;
+			if (tot < 1) return null;
+			
+			int[] output2 = new int[tot];
+			
+			for (int i = 0; i < tot; i++)
 			{
-				Integer[] temp = (Integer[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new int[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
+				output2[i] = temp[i];
 			}
+			
+			output = output2;
 		}
-		else if (input_ instanceof Boolean[])
+		else if (type.equals(Boolean[].class))
 		{
-			boolean[] output2 = null;
-
-			if (input_ != null)
+			Boolean[] temp = (Boolean[])input_;
+			
+			int tot = temp.length;
+			if (tot < 1) return null;
+			
+			boolean[] output2 = new boolean[tot];
+			
+			for (int i = 0; i < tot; i++)
 			{
-				Boolean[] temp = (Boolean[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new boolean[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
+				output2[i] = temp[i];
 			}
+			
+			output = output2;
 		}
 		
-		return null;
+		return output;
 	}
 	
 	public static Object to_big(Object input_)
 	{
 		Object output = null;
 		
-		if (input_ == null) return output;
-		if (!get_all_big_small().containsValue(input_.getClass())) return input_;
+		Class<?> type = generic.get_class(input_);
+		if (!arrays.value_exists(get_all_big_small(), type)) return output;
 
-		if (input_ instanceof double[])
+		if (type.equals(double[].class))
 		{
-			Double[] output2 = null;
-
-			if (input_ != null)
+			double[] temp = (double[])input_;
+			
+			int tot = temp.length;
+			if (tot < 1) return null;
+			
+			Double[] output2 = new Double[tot];
+			
+			for (int i = 0; i < tot; i++)
 			{
-				double[] temp = (double[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new Double[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
+				output2[i] = temp[i];
 			}
+			
+			output = output2;
 		}
-		else if (input_ instanceof long[])
+		else if (type.equals(long[].class))
 		{
-			Long[] output2 = null;
-
-			if (input_ != null)
+			long[] temp = (long[])input_;
+			
+			int tot = temp.length;
+			if (tot < 1) return null;
+			
+			Long[] output2 = new Long[tot];
+			
+			for (int i = 0; i < tot; i++)
 			{
-				long[] temp = (long[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new Long[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
+				output2[i] = temp[i];
 			}
+			
+			output = output2;
 		}
 		else if (input_ instanceof int[])
 		{
-			Integer[] output2 = null;
-
-			if (input_ != null)
+			int[] temp = (int[])input_;
+			
+			int tot = temp.length;
+			if (tot < 1) return null;
+			
+			Integer[] output2 = new Integer[tot];
+			
+			for (int i = 0; i < tot; i++)
 			{
-				int[] temp = (int[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new Integer[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
+				output2[i] = temp[i];
 			}
+			
+			output = output2;
 		}
 		else if (input_ instanceof boolean[])
 		{
-			Boolean[] output2 = null;
-
-			if (input_ != null)
+			boolean[] temp = (boolean[])input_;
+			
+			int tot = temp.length;
+			if (tot < 1) return null;
+			
+			Boolean[] output2 = new Boolean[tot];
+			
+			for (int i = 0; i < tot; i++)
 			{
-				boolean[] temp = (boolean[])input_;
-				
-				int tot = temp.length;
-				if (tot < 1) return output;
-				
-				output2 = new Boolean[tot];
-				
-				for (int i = 0; i < tot; i++)
-				{
-					output2[i] = temp[i];
-				}
-				
-				output = output2;
+				output2[i] = temp[i];
 			}
+			
+			output = output2;
 		}
 		
 		return output;
@@ -1331,5 +1274,32 @@ public abstract class arrays
 		big_small.put(Boolean[].class, boolean[].class);
 
 		return big_small;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <x> x[] to_array_internal(ArrayList<x> input_)
+	{
+		x[] output = null;
+
+		Class<?> type = get_class_items((ArrayList<x>)input_);
+		if (!generic.is_ok(type)) return output;
+
+		int size = ((ArrayList<x>)input_).size();
+		if (generic.are_equal(type, String.class)) output = (x[])((ArrayList<x>)input_).toArray(new String[size]);
+		else if (generic.are_equal(type, Integer.class)) output = (x[])((ArrayList<x>)input_).toArray(new Integer[size]);
+		else if (generic.are_equal(type, Long.class)) output = (x[])((ArrayList<x>)input_).toArray(new Long[size]);
+		else if (generic.are_equal(type, Double.class)) output = (x[])((ArrayList<x>)input_).toArray(new Double[size]);
+		else if (generic.are_equal(type, Boolean.class)) output = (x[])((ArrayList<x>)input_).toArray(new Boolean[size]);
+		else if (generic.are_equal(type, Class.class)) output = (x[])((ArrayList<x>)input_).toArray(new Class<?>[size]);
+		else if (generic.are_equal(type, Method.class)) output = (x[])((ArrayList<x>)input_).toArray(new Method[size]);
+		else if (generic.are_equal(type, Exception.class)) output = (x[])((ArrayList<x>)input_).toArray(new Exception[size]);
+		else if (generic.are_equal(type, size.class)) output = (x[])((ArrayList<x>)input_).toArray(new size[size]);
+		else if (generic.are_equal(type, data.class)) output = (x[])((ArrayList<x>)input_).toArray(new data[size]);
+		else if (generic.are_equal(type, db_field.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_field[size]);
+		else if (generic.are_equal(type, db_where.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_where[size]);
+		else if (generic.are_equal(type, db_order.class)) output = (x[])((ArrayList<x>)input_).toArray(new db_order[size]);
+		else if (generic.are_equal(type, Object.class)) output = (x[])((ArrayList<x>)input_).toArray(new Object[size]);
+
+		return output;
 	}
 }
