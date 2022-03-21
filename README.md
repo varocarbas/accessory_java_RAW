@@ -1,6 +1,6 @@
 # accessory
 
-**CURRENTLY UNDER DEVELOPMENT**
+**--- CURRENTLY UNDER DEVELOPMENT ---**
 
 Library containing a set of miscellaneous resources accessorily used by most of my Java code. 
 
