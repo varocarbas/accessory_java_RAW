@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public abstract class _config 
+public abstract class config 
 {	
 	//--- Initialiased via _config_ini.load().
 	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
@@ -16,84 +16,84 @@ public abstract class _config
 
 	public static String get_basic(String key_)
 	{
-		return get(types._CONFIG_BASIC, key_);
+		return get(_types.CONFIG_BASIC, key_);
 	}
 
 	public static <x> boolean update_basic(String key_, x val_)
 	{
-		return update(types._CONFIG_BASIC, key_, val_);
+		return update(_types.CONFIG_BASIC, key_, val_);
 	}
 
 	public static <x> boolean matches_basic(String key_, x val_)
 	{
-		return matches(types._CONFIG_BASIC, key_, val_);
+		return matches(_types.CONFIG_BASIC, key_, val_);
 	}
 
 	public static String get_db(String key_)
 	{
-		return get(types._CONFIG_DB, key_);
+		return get(_types.CONFIG_DB, key_);
 	}
 
 	public static <x> boolean update_db(String key_, x val_)
 	{
-		return update(types._CONFIG_DB, key_, val_);
+		return update(_types.CONFIG_DB, key_, val_);
 	}
 
 	public static <x> boolean matches_db(String key_, x val_)
 	{
-		return matches(types._CONFIG_DB, key_, val_);
+		return matches(_types.CONFIG_DB, key_, val_);
 	}
 
 	public static String get_credentials(String key_)
 	{
-		return get(types._CONFIG_CREDENTIALS, key_);
+		return get(_types.CONFIG_CREDENTIALS, key_);
 	}
 
 	public static <x> boolean update_credentials(String key_, x val_)
 	{
-		return update(types._CONFIG_CREDENTIALS, key_, val_);
+		return update(_types.CONFIG_CREDENTIALS, key_, val_);
 	}
 
 	public static <x> boolean matches_credentials(String key_, x val_)
 	{
-		return matches(types._CONFIG_CREDENTIALS, key_, val_);
+		return matches(_types.CONFIG_CREDENTIALS, key_, val_);
 	}
 
 	public static String get_logs(String key_)
 	{
-		return get(types._CONFIG_LOGS, key_);
+		return get(_types.CONFIG_LOGS, key_);
 	}
 
 	public static <x> boolean update_logs(String key_, x val_)
 	{
-		return update(types._CONFIG_LOGS, key_, val_);
+		return update(_types.CONFIG_LOGS, key_, val_);
 	}
 
 	public static <x> boolean matches_logs(String key_, x val_)
 	{
-		return matches(types._CONFIG_LOGS, key_, val_);
+		return matches(_types.CONFIG_LOGS, key_, val_);
 	}
 
 	public static String get_logs_db(String key_)
 	{
-		return get(types._CONFIG_LOGS_DB, key_);
+		return get(_types.CONFIG_LOGS_DB, key_);
 	}
 
 	public static <x> boolean update_logs_db(String key_, x val_)
 	{
-		return update(types._CONFIG_LOGS_DB, key_, val_);
+		return update(_types.CONFIG_LOGS_DB, key_, val_);
 	}
 
 	public static <x> boolean matches_logs_db(String key_, x val_)
 	{
-		return matches(types._CONFIG_LOGS_DB, key_, val_);
+		return matches(_types.CONFIG_LOGS_DB, key_, val_);
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <x> x get(String type_, String key_)
 	{		
-		String type = types.check_aliases(type_);
-		String key = types.check_aliases(key_);
+		String type = _types.check_aliases(type_);
+		String key = _types.check_aliases(key_);
 
 		x output = null;
 
@@ -107,8 +107,8 @@ public abstract class _config
 
 	public static <x> boolean update(String type_, String key_, x val_)
 	{		
-		String type = types.check_aliases(type_);
-		String key = types.check_aliases(key_);
+		String type = _types.check_aliases(type_);
+		String key = _types.check_aliases(key_);
 
 		boolean is_ok = update_matches(type, key, val_, true, false);
 		if (!is_ok) return is_ok;
@@ -134,14 +134,14 @@ public abstract class _config
 
 	public static String[] get_linked(String main_)
 	{
-		String main = types.check_aliases(main_);
+		String main = _types.check_aliases(main_);
 
 		return ((strings.is_ok(main) && _linked.containsKey(main)) ? _linked.get(main) : null);
 	}
 
 	public static String get_linked_main(String type_)
 	{
-		String type = types.check_aliases(type_);
+		String type = _types.check_aliases(type_);
 
 		String output = strings.DEFAULT;
 		if (!strings.is_ok(type) || !arrays.is_ok(_linked)) return output;
@@ -149,7 +149,7 @@ public abstract class _config
 		for (Entry<String, String[]> item: _linked.entrySet())
 		{
 			String key = item.getKey();
-			key = types.check_aliases(key);
+			key = _types.check_aliases(key);
 
 			if (strings.are_equal(type, key)) return key;
 			else if (arrays.value_exists(item.getValue(), type)) return type;
@@ -160,7 +160,7 @@ public abstract class _config
 
 	public static <x> boolean update_linked(String main_, String[] secs_)
 	{
-		String main = types.check_aliases(main_);
+		String main = _types.check_aliases(main_);
 		if (!strings.is_ok(main) || !arrays.is_ok(secs_)) return false;
 
 		_linked.put(main, secs_);
@@ -170,7 +170,7 @@ public abstract class _config
 
 	public static <x> boolean update_subtypes(String main_, String[] subtypes_)
 	{
-		String main = types.check_aliases(main_);
+		String main = _types.check_aliases(main_);
 		if (!strings.is_ok(main) || !arrays.is_ok(subtypes_)) return false;
 
 		_subtypes.put(main, (String[])arrays.get_new(subtypes_));
@@ -188,21 +188,21 @@ public abstract class _config
 		HashMap<String, Boolean> output = null;
 		if (!arrays.is_ok(params_)) return output;
 
-		String type = types.check_aliases(type_);
-		if (!strings.are_equal(get_linked_main(type), types._CONFIG_DB)) return output;
+		String type = _types.check_aliases(type_);
+		if (!strings.are_equal(get_linked_main(type), _types.CONFIG_DB)) return output;
 
 		output = new HashMap<String, Boolean>();
 
 		for (Entry<String, String> param: params_.entrySet())
 		{
 			String key = param.getKey();
-			key = types.check_aliases(key);
+			key = _types.check_aliases(key);
 
 			String val = param.getValue();
 
 			boolean is_ok = false;
-			if (type.equals(types._CONFIG_DB)) is_ok = update_db(key, val);
-			else if (type.equals(types._CONFIG_LOGS_DB)) is_ok = update_logs_db(key, val);
+			if (type.equals(_types.CONFIG_DB)) is_ok = update_db(key, val);
+			else if (type.equals(_types.CONFIG_LOGS_DB)) is_ok = update_logs_db(key, val);
 
 			output.put(key, is_ok);
 		}
@@ -214,8 +214,8 @@ public abstract class _config
 	{
 		boolean is_ok = false;
 
-		String type = types.check_aliases(type_);
-		String key = types.check_aliases(key_);
+		String type = _types.check_aliases(type_);
+		String key = _types.check_aliases(key_);
 
 		if (!strings.is_ok(type) || !strings.is_ok(key)) return is_ok;
 		if (!generic.is_string(val_)) return is_ok;
@@ -279,7 +279,7 @@ public abstract class _config
 	{
 		ArrayList<String> all_keys = new ArrayList<String>();
 		all_keys.add(key_);    	
-		if (!ini_) all_keys.add(types.add_type(key_, update_matches_get_keys_type(key_, type_, subtypes_)));  
+		if (!ini_) all_keys.add(_types.add_type(key_, update_matches_get_keys_type(key_, type_, subtypes_)));  
 
 		return arrays.to_array(all_keys);
 	}
@@ -291,9 +291,9 @@ public abstract class _config
 
 		for (String subtype: subtypes_)
 		{
-			for (String type2: types.get_subtypes(subtype, null))
+			for (String type2: _types.get_subtypes(subtype, null))
 			{
-				if (strings.are_equivalent(key_, types.remove_type(type2, subtype)))
+				if (strings.are_equivalent(key_, _types.remove_type(type2, subtype)))
 				{
 					type = subtype;
 					break;

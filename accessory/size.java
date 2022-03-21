@@ -6,7 +6,7 @@ public class size
 	
 	public double _min = Double.MIN_VALUE;
 	public double _max = Double.MAX_VALUE;
-	public int _decimals = defaults.SIZE_DECIMALS;
+	public int _decimals = _defaults.SIZE_DECIMALS;
 	
 	public size(size input_)
 	{
@@ -75,7 +75,7 @@ public class size
 	
 	public static size get_default(Class<?> class_)
 	{
-		size output = new size(numbers.MIN_DEC, numbers.MAX_DEC, defaults.SIZE_DECIMALS);
+		size output = new size(numbers.MIN_DEC, numbers.MAX_DEC, _defaults.SIZE_DECIMALS);
 		if (!generic.is_ok(class_)) return output;
 		
 		if (generic.are_equal(class_, Integer.class)) output = new size(numbers.MIN_INT, numbers.MAX_INT, 0);

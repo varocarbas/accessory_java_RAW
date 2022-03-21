@@ -27,10 +27,10 @@ public abstract class db
 	public static boolean update_conn_info(String username_, String password_, String database_, String host_)
 	{
 		HashMap<String, String> params = new HashMap<String, String>();
-		if (strings.is_ok(username_)) params.put(types._CONFIG_DB_CREDENTIALS_USERNAME, username_);
-		if (password_ != null) params.put(types._CONFIG_DB_CREDENTIALS_PASSWORD, password_);
-		if (strings.is_ok(database_)) params.put(types._CONFIG_DB_NAME, database_);
-		if (strings.is_ok(host_)) params.put(types._CONFIG_DB_HOST, host_);
+		if (strings.is_ok(username_)) params.put(_types.CONFIG_DB_CREDENTIALS_USERNAME, username_);
+		if (password_ != null) params.put(_types.CONFIG_DB_CREDENTIALS_PASSWORD, password_);
+		if (strings.is_ok(database_)) params.put(_types.CONFIG_DB_NAME, database_);
+		if (strings.is_ok(host_)) params.put(_types.CONFIG_DB_HOST, host_);
 		
 		HashMap<String, Boolean> temp = update_conn_info(params);
 		
@@ -46,34 +46,34 @@ public abstract class db
 		
 		error = "WRONG " + error;
 		
-		manage_error(types.ERROR_DB_INFO, null, null, error);
+		manage_error(_types.ERROR_DB_INFO, null, null, error);
 		
 		return false;
 	}
 
 	public static HashMap<String, Boolean> update_conn_info(HashMap<String, String> params_)
 	{
-		return _config.update_db_conn_info(params_, _config.get_db(types._CONFIG_DB_SETUP));
+		return config.update_db_conn_info(params_, config.get_db(_types.CONFIG_DB_SETUP));
 	}
 
 	public static String select_one_string(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (String)db_queries.select_one_common(source_, field_, wheres_, orders_, types.DATA_STRING);
+		return (String)db_queries.select_one_common(source_, field_, wheres_, orders_, _types.DATA_STRING);
 	}
 	
 	public static double select_one_decimal(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (double)db_queries.select_one_common(source_, field_, wheres_, orders_, types.DATA_DECIMAL);
+		return (double)db_queries.select_one_common(source_, field_, wheres_, orders_, _types.DATA_DECIMAL);
 	}
 	
 	public static long select_one_long(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (long)db_queries.select_one_common(source_, field_, wheres_, orders_, types.DATA_LONG);
+		return (long)db_queries.select_one_common(source_, field_, wheres_, orders_, _types.DATA_LONG);
 	}
 	
 	public static int select_one_int(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (int)db_queries.select_one_common(source_, field_, wheres_, orders_, types.DATA_INT);
+		return (int)db_queries.select_one_common(source_, field_, wheres_, orders_, _types.DATA_INT);
 	}
 	
 	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_)
@@ -152,11 +152,11 @@ public abstract class db
 	{
 		String value = strings.DEFAULT;
 
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
 		{
 			value = db_mysql.get_value(input_);
 		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
 
 		return value;
 	}
@@ -181,11 +181,11 @@ public abstract class db
 	{
 		String variable = strings.DEFAULT;
 
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
 		{
 			variable = db_mysql.get_variable(input_);
 		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
 		
 		return variable; 	
 	} 
@@ -194,11 +194,11 @@ public abstract class db
 	{
 		HashMap<String, Object> output = null;
 
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
 		{
 			output = db_mysql.get_data_type(data_type_);
 		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
 		
 		return output; 
 	}
@@ -207,11 +207,11 @@ public abstract class db
 	{
 		int output = 0;
 
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
 		{
 			output = db_mysql.get_default_size(type_);
 		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
 		
 		return output; 
 	}
@@ -220,11 +220,11 @@ public abstract class db
 	{
 		int output = 0;
 
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
 		{
 			output = db_mysql.get_max_size(type_);
 		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
 		
 		return output; 
 	}
@@ -245,7 +245,7 @@ public abstract class db
 		
 		if (!strings.is_ok(_cur_source) || !_sources.containsKey(_cur_source)) _cur_source = strings.DEFAULT;
 		
-		String source = types.check_aliases(source_);
+		String source = _types.check_aliases(source_);
 		if (!strings.is_ok(source) || !_sources.containsKey(source)) source = strings.DEFAULT;
 		
 		if (!strings.is_ok(source) && strings.is_ok(_cur_source)) source = _cur_source;
@@ -276,7 +276,7 @@ public abstract class db
 			
 			if (!field._is_ok)
 			{
-				manage_error(types.ERROR_DB_FIELD, null, null, field.toString());
+				manage_error(_types.ERROR_DB_FIELD, null, null, field.toString());
 				
 				return;
 			}
@@ -317,19 +317,19 @@ public abstract class db
 
 		fields.put
 		(
-			types._CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, new db_field
+			_types.CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, new db_field
 			(
-				types.DATA_TIMESTAMP, new String[] { types.DB_FIELD_FURTHER_TIMESTAMP }
+				_types.DATA_TIMESTAMP, new String[] { _types.DB_FIELD_FURTHER_TIMESTAMP }
 			)
 		);
 		
 		fields.put
 		(
-			types._CONFIG_DB_FIELDS_DEFAULT_ID, new db_field
+			_types.CONFIG_DB_FIELDS_DEFAULT_ID, new db_field
 			(
-				types.DATA_INT, new String[] 
+				_types.DATA_INT, new String[] 
 				{ 
-					types.DB_FIELD_FURTHER_KEY_PRIMARY, types.DB_FIELD_FURTHER_AUTO_INCREMENT 
+					_types.DB_FIELD_FURTHER_KEY_PRIMARY, _types.DB_FIELD_FURTHER_AUTO_INCREMENT 
 				}
 			)
 		);
@@ -340,24 +340,24 @@ public abstract class db
 	public static String get_col(String source_, String field_)
 	{
 		String source = check_source(source_); 
-		String field = types.check_aliases(field_);
-
-		return _config.get(get_source_main(source), field);
+		String field = _types.check_aliases(field_);
+	
+		return config.get(get_source_main(source), field);
 	}
 
 	public static String get_field(String source_, String field_)
 	{
 		String source = check_source(source_); 
-		String field = types.check_aliases(field_);
+		String field = _types.check_aliases(field_);
 		
-		return _config.get(get_source_main(source), field);
+		return config.get(get_source_main(source), field);
 	}
 	
 	public static String get_table(String source_)
 	{
 		String source = check_source(source_); 
 
-		return _config.get(get_source_main(source), source);
+		return config.get(get_source_main(source), source);
 	}
 	
 	public static HashMap<String, String> adapt_inputs(String source_, HashMap<String, String> old_, String field_, double val_)
@@ -406,7 +406,7 @@ public abstract class db
 
 		String source = check_source(source_);
 		
-		String id = types.check_aliases(field_);
+		String id = _types.check_aliases(field_);
 		if (!fields_.containsKey(id)) return null;
 	
 		db_field field = arrays.get_value(fields_, id);
@@ -431,21 +431,21 @@ public abstract class db
 		String output = input_;
 		if (!strings.is_ok(output)) return output;
 		
-		if (_config.matches(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_TYPE, types._CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
 		{
 			output = db_mysql.sanitise_string(output);
 		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
 
 		return output; 
 	}
 
 	public static String check_type(String input_)
 	{
-		return types.check_subtype
+		return _types.check_subtype
 		(
-			input_, types.get_subtypes(types.DB_QUERY, null), 
-			types.ACTIONS_ADD, types.DB_QUERY
+			input_, _types.get_subtypes(_types.DB_QUERY, null), 
+			_types.ACTIONS_ADD, _types.DB_QUERY
 		);
 	}
 	
@@ -453,22 +453,22 @@ public abstract class db
 	{
 		HashMap<String, String> output = new HashMap<String, String>();
 
-		String user = _config.get(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_USER);
-		String username = _config.get(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_CREDENTIALS_USERNAME);
-		String password = _config.get(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_CREDENTIALS_PASSWORD);
+		String user = config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_USER);
+		String username = config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_CREDENTIALS_USERNAME);
+		String password = config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_CREDENTIALS_PASSWORD);
 
 		if (strings.is_ok(username) && strings.is_ok(password))
 		{
-			output.put(keys.USERNAME, username);
-			output.put(keys.PASSWORD, password);
+			output.put(_keys.USERNAME, username);
+			output.put(_keys.PASSWORD, password);
 		}
 		else if (strings.is_ok(user))
 		{
 			output = credentials.get
 			(
-				_config.get(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_CREDENTIALS_TYPE), user, 
-				strings.to_boolean(_config.get(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_CREDENTIALS_ENCRYPTED)),
-				_config.get(_config.get_db(types._CONFIG_DB_SETUP), types._CONFIG_DB_CREDENTIALS_WHERE)
+				config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_CREDENTIALS_TYPE), user, 
+				strings.to_boolean(config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_CREDENTIALS_ENCRYPTED)),
+				config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_CREDENTIALS_WHERE)
 			);
 		}
 
@@ -484,10 +484,10 @@ public abstract class db
 	
 	static boolean query_returns_data(String type_)
 	{
-		String type = types.check_subtype(type_, types.get_subtypes(types.DB_QUERY, null), null, null);
+		String type = _types.check_subtype(type_, _types.get_subtypes(_types.DB_QUERY, null), null, null);
 		if (!strings.is_ok(type)) return false;
 		
-		String[] targets = new String[] { types.DB_QUERY_SELECT, types.DB_QUERY_TABLE_EXISTS };
+		String[] targets = new String[] { _types.DB_QUERY_SELECT, _types.DB_QUERY_TABLE_EXISTS };
 		
 		for (String target: targets)
 		{
@@ -500,7 +500,7 @@ public abstract class db
 	private static <x> HashMap<String, String> adapt_inputs_input(String source_, HashMap<String, String> old_, String field_, x val_)
 	{
 		String source = check_source(source_);
-		String field = types.check_aliases(field_);
+		String field = _types.check_aliases(field_);
 		
 		HashMap<String, db_field> fields = get_source_fields(source);
 		if (!arrays.is_ok(fields) || !strings.is_ok(field)) return null;
@@ -512,7 +512,7 @@ public abstract class db
 	{
 		_is_ok = true;
 		String source = check_source(source_);
-		if (!strings.is_ok(source)) manage_error(types.ERROR_DB_SOURCE, null, null, null);
+		if (!strings.is_ok(source)) manage_error(_types.ERROR_DB_SOURCE, null, null, null);
 		
 		return source;
 	}
@@ -520,7 +520,7 @@ public abstract class db
 	static <x> HashMap<String, String> check_vals_error(String source_, HashMap<String, x> vals_raw_)
 	{
 		HashMap<String, String> vals = adapt_inputs(source_, null, vals_raw_);
-		if (!arrays.is_ok(vals)) manage_error(types.ERROR_DB_VALS, null, null, null);
+		if (!arrays.is_ok(vals)) manage_error(_types.ERROR_DB_VALS, null, null, null);
 		
 		return vals;
 	}

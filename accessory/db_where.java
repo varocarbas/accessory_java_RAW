@@ -6,10 +6,10 @@ public class db_where
 	
 	public String _source = strings.DEFAULT;
 	public String _key = strings.DEFAULT;
-	public String _operand = defaults.DB_WHERE_OPERAND;
+	public String _operand = _defaults.DB_WHERE_OPERAND;
 	public Object _value = null;
-	public String _link = defaults.DB_WHERE_LINK;
-	public boolean _is_literal = defaults.DB_WHERE_LITERAL; //_value as a literal (e.g., 5 -> '5') or something else (e.g., col + 1 -> col + 1).
+	public String _link = _defaults.DB_WHERE_LINK;
+	public boolean _is_literal = _defaults.DB_WHERE_LITERAL; //_value as a literal (e.g., 5 -> '5') or something else (e.g., col + 1 -> col + 1).
 	
 	private static String _source_temp = strings.DEFAULT;
 
@@ -31,7 +31,7 @@ public class db_where
 	{
 		_is_ok = false;
 		
-		String operand = defaults.DB_WHERE_OPERAND;
+		String operand = _defaults.DB_WHERE_OPERAND;
 		if (!is_ok(source_, key_, operand, value_)) return;
 		
 		_is_ok = true;
@@ -39,8 +39,8 @@ public class db_where
 		_key = key_;
 		_operand = operand;
 		_value = value_;	
-		_is_literal = defaults.DB_WHERE_LITERAL;
-		_link = defaults.DB_WHERE_LINK;
+		_is_literal = _defaults.DB_WHERE_LITERAL;
+		_link = _defaults.DB_WHERE_LINK;
 	}
 	
 	public db_where(String source_, String key_, String operand_, Object value_, boolean is_literal_, String link_)
@@ -107,7 +107,7 @@ public class db_where
 			if (!output.equals("")) output += " " + link_to_string(last_link) + " ";
 			output += where.toString();
 			
-			last_link = (link_is_ok(where._link) ? where._link : defaults.DB_WHERE_LINK);
+			last_link = (link_is_ok(where._link) ? where._link : _defaults.DB_WHERE_LINK);
 		}
 		
 		if (tot > 1) output = "(" + output + ")";
@@ -122,19 +122,19 @@ public class db_where
 		String operand = check_operand(operand_);
 		if (!strings.is_ok(operand)) return output;
 		
-		if (operand.equals(types.DB_WHERE_OPERAND_EQUAL)) output = "=";
-		else if (operand.equals(types.DB_WHERE_OPERAND_NOT_EQUAL)) output = "!=";
-		else if (operand.equals(types.DB_WHERE_OPERAND_GREATER)) output = ">";
-		else if (operand.equals(types.DB_WHERE_OPERAND_GREATER_EQUAL)) output = ">=";
-		else if (operand.equals(types.DB_WHERE_OPERAND_LESS)) output = "<";
-		else if (operand.equals(types.DB_WHERE_OPERAND_LESS_EQUAL)) output = "<=";
+		if (operand.equals(_types.DB_WHERE_OPERAND_EQUAL)) output = "=";
+		else if (operand.equals(_types.DB_WHERE_OPERAND_NOT_EQUAL)) output = "!=";
+		else if (operand.equals(_types.DB_WHERE_OPERAND_GREATER)) output = ">";
+		else if (operand.equals(_types.DB_WHERE_OPERAND_GREATER_EQUAL)) output = ">=";
+		else if (operand.equals(_types.DB_WHERE_OPERAND_LESS)) output = "<";
+		else if (operand.equals(_types.DB_WHERE_OPERAND_LESS_EQUAL)) output = "<=";
 		
 		return output;
 	}
 	
 	public static String link_to_string(String link_)
 	{
-		return (link_is_ok(link_) ? types.remove_type(link_, types.DB_WHERE_LINK).toUpperCase() : strings.DEFAULT);
+		return (link_is_ok(link_) ? _types.remove_type(link_, _types.DB_WHERE_LINK).toUpperCase() : strings.DEFAULT);
 	}
 	
 	public static boolean are_equal(db_where where1_, db_where where2_)
@@ -159,12 +159,12 @@ public class db_where
 	
 	public static String check_operand(String operand_)
 	{
-		return types.check_subtype(operand_, types.get_subtypes(types.DB_WHERE_OPERAND, null), null, null);
+		return _types.check_subtype(operand_, _types.get_subtypes(_types.DB_WHERE_OPERAND, null), null, null);
 	}
 	
 	public static String check_link(String link_)
 	{
-		return types.check_subtype(link_, types.get_subtypes(types.DB_WHERE_LINK, null), null, null);
+		return _types.check_subtype(link_, _types.get_subtypes(_types.DB_WHERE_LINK, null), null, null);
 	}
 	
 	private static boolean is_ok(String source_, String key_, String operand_, Object value_)

@@ -6,13 +6,15 @@ import java.time.format.DateTimeFormatter;
 
 public abstract class dates 
 {
-	public static final String TIME = "time";
-	public static final String TIME_SHORT = "time_short";
-	public static final String TIME_FULL = TIME;
-	public static final String DATE = "date";
-	public static final String DATE_TIME = DATE + misc.SEPARATOR_NAME + TIME;
-	public static final String DEFAULT = defaults.TIME_DATE;
-
+	public static final String FORMAT_DEFAULT = _defaults.DATES_FORMAT;
+	
+	public static final String FORMAT_TIME = _types.DATES_FORMAT_TIME;
+	public static final String FORMAT_TIME_FULL = _types.DATES_FORMAT_TIME_FULL;
+	public static final String FORMAT_TIME_SHORT = _types.DATES_FORMAT_TIME_SHORT;
+	public static final String FORMAT_DATE = _types.DATES_FORMAT_DATE;
+	public static final String FORMAT_DATE_TIME = _types.DATES_FORMAT_DATE_TIME;
+	
+	
 	static { ini.load(); }
 
 	public static String get_current_time(String format_, int offset_)
@@ -66,13 +68,13 @@ public abstract class dates
 	{
 		String pattern = strings.DEFAULT;
 
-		String format = format_;
-		if (!strings.is_ok(format)) format = DEFAULT;
-
-		if (format.equals(TIME_FULL) || format.equals(TIME)) pattern = "HH:mm:ss";
-		if (format.equals(TIME_SHORT)) pattern = "HH:mm";
-		if (format.equals(DATE_TIME)) pattern = "yyyy-MM-dd HH:mm:ss";
-		if (format.equals(DATE)) pattern = "yyyy-MM-dd";
+		String format = _types.check_subtype(format_, _types.get_subtypes(_types.DATES_FORMAT, null), null, null);
+		if (!strings.is_ok(format)) format = FORMAT_DEFAULT;
+		
+		if (format.equals(FORMAT_TIME_FULL) || format.equals(FORMAT_TIME)) pattern = "HH:mm:ss";
+		if (format.equals(FORMAT_TIME_SHORT)) pattern = "HH:mm";
+		if (format.equals(FORMAT_DATE_TIME)) pattern = "yyyy-MM-dd HH:mm:ss";
+		if (format.equals(FORMAT_DATE)) pattern = "yyyy-MM-dd";
 
 		return pattern;
 	} 

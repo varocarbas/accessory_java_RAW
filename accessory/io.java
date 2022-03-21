@@ -32,7 +32,7 @@ public abstract class io
 		} 
 		catch (Exception e) 
 		{
-			errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false);
+			errors.manage_io(_types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false);
 		}
 	}
 
@@ -59,7 +59,7 @@ public abstract class io
 		} 
 		catch (Exception e) 
 		{
-			errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false);
+			errors.manage_io(_types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false);
 		}
 	}
 
@@ -104,7 +104,7 @@ public abstract class io
 		catch (Exception e) 
 		{ 
 			lines = null; 
-			errors.manage_io(types.ERROR_FILE_READ, path_, e, errors_to_file_, false);
+			errors.manage_io(_types.ERROR_FILE_READ, path_, e, errors_to_file_, false);
 		}
 
 		return (arrays.is_ok(lines) ? arrays.to_array(lines) : null);

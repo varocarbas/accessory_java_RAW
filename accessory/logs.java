@@ -12,9 +12,9 @@ public abstract class logs
 		if (!strings.is_ok(message_)) return;
 
 		String id = id_;
-		if (!strings.is_ok(id)) id = _config.get_basic(types._CONFIG_BASIC_NAME);
+		if (!strings.is_ok(id)) id = config.get_basic(_types.CONFIG_BASIC_NAME);
 
-		if (tests._running || out_is_ok(types._CONFIG_LOGS_OUT_SCREEN)) update_screen(message_);
+		if (tests._running || out_is_ok(_types.CONFIG_LOGS_OUT_SCREEN)) update_screen(message_);
 		
 		if (tests._running)
 		{	
@@ -23,24 +23,24 @@ public abstract class logs
 			return;
 		}
 		
-		if (out_is_ok(types._CONFIG_LOGS_OUT_FILE)) update_file(message_, id);
+		if (out_is_ok(_types.CONFIG_LOGS_OUT_FILE)) update_file(message_, id);
 		
-		if (out_is_ok(types._CONFIG_LOGS_OUT_DB)) 
+		if (out_is_ok(_types.CONFIG_LOGS_OUT_DB)) 
 		{
-			String type = types._CONFIG_DB_SETUP;
-			String current = _config.get_db(type);
+			String type = _types.CONFIG_DB_SETUP;
+			String current = config.get_db(type);
 			
-			_config.update_db(type, types._CONFIG_DB_SETUP_LOGS);
+			config.update_db(type, _types.CONFIG_DB_SETUP_LOGS);
 			
 			update_db(message_, id);
 			
-			_config.update_db(type, current);
+			config.update_db(type, current);
 		}
 	}
 
 	public static HashMap<String, Boolean> change_conn_info(HashMap<String, String> params_)
 	{
-		return _config.update_db_conn_info(params_, types._CONFIG_LOGS_DB);
+		return config.update_db_conn_info(params_, _types.CONFIG_LOGS_DB);
 	}
 
 	public static void update_screen(String message_)
@@ -66,11 +66,11 @@ public abstract class logs
 		String message = strings.remove_escape_many(new String[] { "'", "\"" }, message_, true);
 		if (!strings.is_ok(message)) return;
 		
-		String source = types._CONFIG_LOGS_DB_SOURCE;
-		HashMap<String, String> vals = db.adapt_inputs(source, null, types._CONFIG_LOGS_DB_FIELD_ID, id_);
+		String source = _types.CONFIG_LOGS_DB_SOURCE;
+		HashMap<String, String> vals = db.adapt_inputs(source, null, _types.CONFIG_LOGS_DB_FIELD_ID, id_);
 		if (!arrays.is_ok(vals)) return;
 		
-		vals = db.adapt_inputs(source, vals, types._CONFIG_LOGS_DB_FIELD_MESSAGE, message);
+		vals = db.adapt_inputs(source, vals, _types.CONFIG_LOGS_DB_FIELD_MESSAGE, message);
 		if (!arrays.is_ok(vals)) return;
 		
 		db.insert(db.get_table(source), vals);
@@ -83,7 +83,7 @@ public abstract class logs
 
 		ArrayList<String> pieces = new ArrayList<String>();
 
-		String dir = _config.get_basic(types._CONFIG_LOGS_DIR);
+		String dir = config.get_basic(_types.CONFIG_LOGS_DIR);
 		if (strings.is_ok(dir)) pieces.add(dir);
 		pieces.add(file);
 
@@ -92,8 +92,8 @@ public abstract class logs
 
 	private static boolean out_is_ok(String type_)
 	{
-		String type = types.check_aliases(type_);
+		String type = _types.check_aliases(type_);
 
-		return strings.to_boolean(_config.get_logs(type));
+		return strings.to_boolean(config.get_logs(type));
 	}
 }

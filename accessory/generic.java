@@ -30,6 +30,16 @@ public abstract class generic
 	{
 		return arrays.is_ok(input_);
 	}
+
+	public static boolean is_ok(Class<?> input_)
+	{
+		return (input_ != null);
+	}
+
+	public static <x, y> boolean is_ok(HashMap<x, y> input_)
+	{
+		return arrays.is_ok(input_);
+	}
 	
 	public static boolean is_ok(Object input_)
 	{
@@ -47,16 +57,6 @@ public abstract class generic
 		else is_ok = true;
 
 		return is_ok;
-	}
-
-	public static boolean is_ok(Class<?> input_)
-	{
-		return (input_ != null);
-	}
-
-	public static <x, y> boolean is_ok(HashMap<x, y> input_)
-	{
-		return arrays.is_ok(input_);
 	}
 
 	public static boolean is_class(Class<?> input_)
@@ -350,6 +350,7 @@ public abstract class generic
 		return type;
 	}
 
+	//Targeting all the classes equivalent to Array.class/Object[].class, not the case of native small like double[].
 	public static boolean is_array_class(Class<?> class_)
 	{
 		if (class_ == null) return false;
@@ -431,7 +432,7 @@ public abstract class generic
 		{ 
 			errors.manage
 			(
-				types.ERROR_GENERIC_METHOD_GET, e, new String[] 
+				_types.ERROR_GENERIC_METHOD_GET, e, new String[] 
 				{ 
 					name_, strings.to_string(params_) 
 				},
@@ -455,7 +456,7 @@ public abstract class generic
 		{ 
 			errors.manage
 			(
-				types.ERROR_GENERIC_METHOD_CALL, e, new String[] 
+				_types.ERROR_GENERIC_METHOD_CALL, e, new String[] 
 				{ 
 					method_.getName(), strings.to_string(args_)
 				},
@@ -468,6 +469,8 @@ public abstract class generic
 	
 	private static boolean is_common(Object input_, Class<?>[] classes_, boolean is_class_)
 	{
+		if (input_ == null) return false;
+		
 		for (Class<?> type: classes_)
 		{
 			if ((is_class_ && classes_are_equal((Class<?>)input_, type)) || (!is_class_ && is_instance(input_, type))) return true;
@@ -476,6 +479,9 @@ public abstract class generic
 		return false;
 	}
 
+	//This method returns "true" for classes which are indeed virtually identical, at least for most purposes.
+	//But there are still some caveats which have to be fully understood before calling it. For example, the
+	//peculiarities when dealing with native big/small types (e.g., Double[]/double[]), assumed to be identical here.
 	private static boolean classes_are_equal(Class<?> class1_, Class<?> class2_)
 	{
 		boolean is_ok1 = is_ok(class1_);
@@ -484,14 +490,14 @@ public abstract class generic
 
 		if (class1_.equals(class2_)) return true;
 		
-		for (Entry<Class<?>, Class<?>> equivalent: get_class_equals().entrySet())
+		for (Entry<Class<?>, Class<?>> item: get_class_equals().entrySet())
 		{
-			Class<?> key = equivalent.getKey();
-			Class<?> val = equivalent.getValue();
+			Class<?> key = item.getKey();
+			Class<?> val = item.getValue();
 			if 
 			(
 				(class1_.equals(key) && class2_.equals(val)) || 
-				(class2_.equals(key) && class1_.equals(val))
+				(class1_.equals(val) && class2_.equals(key))
 			)
 			{ return true; }
 		}
@@ -503,8 +509,7 @@ public abstract class generic
 	{
 		return new String[]
 		{
-			"wait", "equals", "toString", "hashCode", 
-			"getClass", "notify", "notifyAll"
+			"wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll"
 		};
 	}
 	

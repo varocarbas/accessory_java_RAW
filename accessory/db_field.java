@@ -173,7 +173,7 @@ public class db_field
 	
 	public static String check_further(String further_)
 	{
-		return types.check_subtype(further_, types.get_subtypes(types.DB_FIELD_FURTHER, null), null, null);
+		return _types.check_subtype(further_, _types.get_subtypes(_types.DB_FIELD_FURTHER, null), null, null);
 	}
 	
 	public static int check_size(String type_, int size_)
@@ -202,7 +202,7 @@ public class db_field
 		{
 			is_ok = (strings.get_length((String)default_) <= max);
 		}
-		else if (type_.equals(types.DATA_BOOLEAN))
+		else if (type_.equals(_types.DATA_BOOLEAN))
 		{
 			if (generic.is_boolean(default_)) is_ok = true;
 			else if (generic.is_number(default_))
@@ -236,7 +236,7 @@ public class db_field
 		}
 		
 		int size = size_;
-		int max = (int)info.get(keys.MAX);
+		int max = (int)info.get(_keys.MAX);
 		if (size > max) size = max;
 		
 		update_temp(type_, size, decimals_);

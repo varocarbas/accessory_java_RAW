@@ -6,8 +6,8 @@ public class db_order
 	
 	public String _source = strings.DEFAULT;
 	public String _value = strings.DEFAULT; //Always stored as a field and only converted to col before outputting a string.
-	public String _order = defaults.DB_ORDER;
-	public boolean _is_field = defaults.DB_ORDER_FIELD; //_value being a field/col vs. something else like a condition.
+	public String _order = _defaults.DB_ORDER;
+	public boolean _is_field = _defaults.DB_ORDER_FIELD; //_value being a field/col vs. something else like a condition.
 	
 	private static String _source_temp = strings.DEFAULT;
 	
@@ -97,12 +97,12 @@ public class db_order
 	
 	public static String check_order(String order_)
 	{
-		return types.check_subtype(order_, types.get_subtypes(types.DB_ORDER, null), null, null);
+		return _types.check_subtype(order_, _types.get_subtypes(_types.DB_ORDER, null), null, null);
 	}
 
 	public static String order_to_string(String order_)
 	{
-		return (order_is_ok(order_) ? types.remove_type(order_, types.DB_ORDER).toUpperCase() : strings.DEFAULT);
+		return (order_is_ok(order_) ? _types.remove_type(order_, _types.DB_ORDER).toUpperCase() : strings.DEFAULT);
 	}
 	
 	private static boolean is_ok(String source_, String value_, String order_)

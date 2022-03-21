@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public abstract class types 
+public abstract class _types 
 {
 	public static final String SEPARATOR = misc.SEPARATOR_NAME;
 
@@ -15,62 +15,62 @@ public abstract class types
 	//Note for DB types: the sources/fields are the types/ids, constant, used in most of the code. 
 	//The tables/cols are the values, variable, only used when performing the corresponding query.
 	
-	public static final String _CONFIG_CREDENTIALS = "_config_credentials";
-	public static final String _CONFIG_CREDENTIALS_ENCRYPTED = "_config_credentials_encrypted";
-	public static final String _CONFIG_CREDENTIALS_WHERE = "_config_credentials_where";
-	public static final String _CONFIG_CREDENTIALS_WHERE_DB = "_config_credentials_where_db";
-	public static final String _CONFIG_CREDENTIALS_WHERE_FILE = "_config_credentials_where_file"; 
-	public static final String _CONFIG_CREDENTIALS_FILE = "_config_credentials_file";
-	public static final String _CONFIG_CREDENTIALS_FILE_DIR = "_config_credentials_file_dir";
-	public static final String _CONFIG_CREDENTIALS_FILE_EXTENSION = "_config_credentials_file_extension";
-	public static final String _CONFIG_CREDENTIALS_FILE_SEPARATOR = "_config_credentials_file_separator";
-	public static final String _CONFIG_CREDENTIALS_FILE_USERNAME = "_config_credentials_file_username";
-	public static final String _CONFIG_CREDENTIALS_FILE_PASSWORD = "_config_credentials_file_password";
-	public static final String _CONFIG_CREDENTIALS_FILE_ENCRYPTED = "_config_credentials_file_encrypted";
+	public static final String CONFIG_CREDENTIALS = "_config_credentials";
+	public static final String CONFIG_CREDENTIALS_ENCRYPTED = "_config_credentials_encrypted";
+	public static final String CONFIG_CREDENTIALS_WHERE = "_config_credentials_where";
+	public static final String CONFIG_CREDENTIALS_WHERE_DB = "_config_credentials_where_db";
+	public static final String CONFIG_CREDENTIALS_WHERE_FILE = "_config_credentials_where_file"; 
+	public static final String CONFIG_CREDENTIALS_FILE = "_config_credentials_file";
+	public static final String CONFIG_CREDENTIALS_FILE_DIR = "_config_credentials_file_dir";
+	public static final String CONFIG_CREDENTIALS_FILE_EXTENSION = "_config_credentials_file_extension";
+	public static final String CONFIG_CREDENTIALS_FILE_SEPARATOR = "_config_credentials_file_separator";
+	public static final String CONFIG_CREDENTIALS_FILE_USERNAME = "_config_credentials_file_username";
+	public static final String CONFIG_CREDENTIALS_FILE_PASSWORD = "_config_credentials_file_password";
+	public static final String CONFIG_CREDENTIALS_FILE_ENCRYPTED = "_config_credentials_file_encrypted";
 
-	public static final String _CONFIG_BASIC = "_config_basic";
-	public static final String _CONFIG_BASIC_NAME = "_config_basic_name";
-	public static final String _CONFIG_BASIC_DIR_APP = "_config_basic_dir_app";
-	public static final String _CONFIG_BASIC_DIR_INI = "_config_basic_dir_ini";
+	public static final String CONFIG_BASIC = "_config_basic";
+	public static final String CONFIG_BASIC_NAME = "_config_basic_name";
+	public static final String CONFIG_BASIC_DIR_APP = "_config_basic_dir_app";
+	public static final String CONFIG_BASIC_DIR_INI = "_config_basic_dir_ini";
 
-	public static final String _CONFIG_LOGS = "_config_logs";
-	public static final String _CONFIG_LOGS_DIR = "_config_logs_dir";
-	public static final String _CONFIG_LOGS_DB = "_config_logs_db";
-	public static final String _CONFIG_LOGS_DB_SOURCE = "_config_logs_db_source";
-	public static final String _CONFIG_LOGS_DB_FIELD_ID = "_config_logs_db_field_id";
-	public static final String _CONFIG_LOGS_DB_FIELD_MESSAGE = "_config_logs_db_field_message";
-	public static final String _CONFIG_LOGS_OUT = "_config_logs_out";
-	public static final String _CONFIG_LOGS_OUT_SCREEN = "_config_logs_out_screen";
-	public static final String _CONFIG_LOGS_OUT_FILE = "_config_logs_out_file";
-	public static final String _CONFIG_LOGS_OUT_DB = "_config_logs_out_db";
+	public static final String CONFIG_LOGS = "_config_logs";
+	public static final String CONFIG_LOGS_DIR = "_config_logs_dir";
+	public static final String CONFIG_LOGS_DB = "_config_logs_db";
+	public static final String CONFIG_LOGS_DB_SOURCE = "_config_logs_db_source";
+	public static final String CONFIG_LOGS_DB_FIELD_ID = "_config_logs_db_field_id";
+	public static final String CONFIG_LOGS_DB_FIELD_MESSAGE = "_config_logs_db_field_message";
+	public static final String CONFIG_LOGS_OUT = "_config_logs_out";
+	public static final String CONFIG_LOGS_OUT_SCREEN = "_config_logs_out_screen";
+	public static final String CONFIG_LOGS_OUT_FILE = "_config_logs_out_file";
+	public static final String CONFIG_LOGS_OUT_DB = "_config_logs_out_db";
 
-	public static final String _CONFIG_DB = "_config_db";
-	public static final String _CONFIG_DB_MAX_POOL = "_config_db_max_pool";
-	public static final String _CONFIG_DB_NAME = "_config_db_name";
-	public static final String _CONFIG_DB_HOST = "_config_db_host";
-	public static final String _CONFIG_DB_USER = "_config_db_user";
-	public static final String _CONFIG_DB_ERROR_EXIT = "_config_db_error_exit";
-	public static final String _CONFIG_DB_SETUP = "_config_db_setup";
-	public static final String _CONFIG_DB_SETUP_MAIN = _CONFIG_DB;
-	public static final String _CONFIG_DB_SETUP_LOGS = _CONFIG_LOGS;
-	public static final String _CONFIG_DB_TYPE = "_config_db_type";
-	public static final String _CONFIG_DB_TYPE_MYSQL = "_config_db_type_mysql";
-	public static final String _CONFIG_DB_CREDENTIALS = "_config_db_credentials";
-	public static final String _CONFIG_DB_CREDENTIALS_TYPE = "_config_db_credentials_type";
-	public static final String _CONFIG_DB_CREDENTIALS_WHERE = "_config_db_credentials_where";
-	public static final String _CONFIG_DB_CREDENTIALS_ENCRYPTED = "_config_db_credentials_encrypted";
-	public static final String _CONFIG_DB_CREDENTIALS_USERNAME = "_config_db_credentials_username";
-	public static final String _CONFIG_DB_CREDENTIALS_PASSWORD = "_config_db_credentials_password";
-	public static final String _CONFIG_DB_FIELDS_DEFAULT = "_config_db_fields_default";
-	public static final String _CONFIG_DB_FIELDS_DEFAULT_ID = "_config_db_fields_default_id";
-	public static final String _CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP = "_config_db_fields_default_timestamp";
+	public static final String CONFIG_DB = "_config_db";
+	public static final String CONFIG_DB_MAX_POOL = "_config_db_max_pool";
+	public static final String CONFIG_DB_NAME = "_config_db_name";
+	public static final String CONFIG_DB_HOST = "_config_db_host";
+	public static final String CONFIG_DB_USER = "_config_db_user";
+	public static final String CONFIG_DB_ERROR_EXIT = "_config_db_error_exit";
+	public static final String CONFIG_DB_SETUP = "_config_db_setup";
+	public static final String CONFIG_DB_SETUP_MAIN = CONFIG_DB;
+	public static final String CONFIG_DB_SETUP_LOGS = CONFIG_LOGS;
+	public static final String CONFIG_DB_TYPE = "_config_db_type";
+	public static final String CONFIG_DB_TYPE_MYSQL = "_config_db_type_mysql";
+	public static final String CONFIG_DB_CREDENTIALS = "_config_db_credentials";
+	public static final String CONFIG_DB_CREDENTIALS_TYPE = "_config_db_credentials_type";
+	public static final String CONFIG_DB_CREDENTIALS_WHERE = "_config_db_credentials_where";
+	public static final String CONFIG_DB_CREDENTIALS_ENCRYPTED = "_config_db_credentials_encrypted";
+	public static final String CONFIG_DB_CREDENTIALS_USERNAME = "_config_db_credentials_username";
+	public static final String CONFIG_DB_CREDENTIALS_PASSWORD = "_config_db_credentials_password";
+	public static final String CONFIG_DB_FIELDS_DEFAULT = "_config_db_fields_default";
+	public static final String CONFIG_DB_FIELDS_DEFAULT_ID = "_config_db_fields_default_id";
+	public static final String CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP = "_config_db_fields_default_timestamp";
 	
-	public static final String _CONFIG_TESTS = "_config_tests";
-	public static final String _CONFIG_TESTS_DB = "_config_tests_db";
-	public static final String _CONFIG_TESTS_DB_SOURCE = "_config_tests_db_source";
-	public static final String _CONFIG_TESTS_DB_FIELD_INT = "_config_tests_db_field_int";
-	public static final String _CONFIG_TESTS_DB_FIELD_STRING = "_config_tests_db_field_string";
-	public static final String _CONFIG_TESTS_DB_FIELD_DECIMAL = "_config_tests_db_field_decimal";
+	public static final String CONFIG_TESTS = "_config_tests";
+	public static final String CONFIG_TESTS_DB = "_config_tests_db";
+	public static final String CONFIG_TESTS_DB_SOURCE = "_config_tests_db_source";
+	public static final String CONFIG_TESTS_DB_FIELD_INT = "_config_tests_db_field_int";
+	public static final String CONFIG_TESTS_DB_FIELD_STRING = "_config_tests_db_field_string";
+	public static final String CONFIG_TESTS_DB_FIELD_DECIMAL = "_config_tests_db_field_decimal";
 	//------
 	
 	public static final String DB = "db";
@@ -94,7 +94,6 @@ public abstract class types
 	public static final String DB_FIELD_FURTHER_KEY_UNIQUE = "db_field_further_key_unique";
 	public static final String DB_FIELD_FURTHER_AUTO_INCREMENT = "db_field_further_auto_increment";
 	public static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";
-	
 	public static final String DB_QUERY = "db_query";
 	public static final String DB_QUERY_SELECT = "db_query_select";
 	public static final String DB_QUERY_INSERT = "db_query_insert";
@@ -125,6 +124,14 @@ public abstract class types
 	public static final String DATA_BOOLEAN = "data_boolean";
 	public static final String DATA_BOOLEAN_TRUE = "data_boolean_true";
 	public static final String DATA_BOOLEAN_FALSE = "data_boolean_false";
+	
+	public static final String DATES = "dates";
+	public static final String DATES_FORMAT = "dates_format";
+	public static final String DATES_FORMAT_TIME = "dates_format_time";
+	public static final String DATES_FORMAT_TIME_FULL = "dates_format_time_full";
+	public static final String DATES_FORMAT_TIME_SHORT = "dates_format_time_short";
+	public static final String DATES_FORMAT_DATE = "dates_format_date";
+	public static final String DATES_FORMAT_DATE_TIME = "dates_format_date_time";
 	
 	public static final String ACTIONS = "actions";
 	public static final String ACTIONS_ADD = "actions_add";
@@ -166,19 +173,15 @@ public abstract class types
 	public static final String ERROR_DB_SOURCE = "error_db_source";
 	public static final String ERROR_DB_FIELD = "error_db_field";
 	public static final String ERROR_DB_VALS = "error_db_vals";
-	
 	public static final String ERROR_FILE = "error_file";
 	public static final String ERROR_FILE_WRITE = "error_file_write";
 	public static final String ERROR_FILE_READ = "error_file_read";
-
 	public static final String ERROR_STRING = "error_string";
 	public static final String ERROR_STRING_SPLIT = "error_string_split";
-	
 	public static final String ERROR_GENERIC = "error_generic";
 	public static final String ERROR_GENERIC_METHOD = "error_generic_method";	
 	public static final String ERROR_GENERIC_METHOD_GET = "error_generic_method_get";
 	public static final String ERROR_GENERIC_METHOD_CALL = "error_generic_method_call";
-
 	public static final String ERROR_TEST = "error_test";
 	public static final String ERROR_TEST_RUN = "error_test_run";
 	
@@ -186,8 +189,9 @@ public abstract class types
 
 	private static HashMap<String, String> aliases = new HashMap<String, String>();
 
-	static { ini.load(); }
-
+	//Method meant to force this class to be loaded when required (e.g., when ini.load() is called).
+	public static void load() { } 
+	
 	public static String check_aliases(String candidate_)
 	{
 		if (!strings.is_ok(candidate_)) return strings.DEFAULT;
@@ -211,17 +215,17 @@ public abstract class types
 
 	public static String check_what(String what_)
 	{
-		return check_subtype(what_, types.get_subtypes(WHAT, null), null, null);
+		return check_subtype(what_, _types.get_subtypes(WHAT, null), null, null);
 	}
 	
 	public static String what_to_key(String what_)
 	{
-		return check_subtype(what_, types.get_subtypes(WHAT, null), ACTIONS_REMOVE, WHAT);
+		return check_subtype(what_, _types.get_subtypes(WHAT, null), ACTIONS_REMOVE, WHAT);
 	}
 	
 	public static String check_action(String action_)
 	{
-		return check_subtype(action_, types.get_subtypes(ACTIONS, null), null, null);
+		return check_subtype(action_, _types.get_subtypes(ACTIONS, null), null, null);
 	}
 	
 	public static String check_subtype(String subtype_, String[] subtypes_, String action_add_remove_, String type_add_remove_)
@@ -317,43 +321,43 @@ public abstract class types
 	{
 		return new String[]
 		{						
-			//_CONFIG_CREDENTIALS
-			_CONFIG_CREDENTIALS_ENCRYPTED, 
-			//_CONFIG_CREDENTIALS_WHERE
-			_CONFIG_CREDENTIALS_WHERE_FILE, _CONFIG_CREDENTIALS_WHERE_DB,
-			//_CONFIG_CREDENTIALS_FILE
-			_CONFIG_CREDENTIALS_FILE_DIR, _CONFIG_CREDENTIALS_FILE_EXTENSION, 
-			_CONFIG_CREDENTIALS_FILE_SEPARATOR, _CONFIG_CREDENTIALS_FILE_USERNAME, 
-			_CONFIG_CREDENTIALS_FILE_PASSWORD, _CONFIG_CREDENTIALS_FILE_ENCRYPTED,
+			//CONFIG_CREDENTIALS
+			CONFIG_CREDENTIALS_ENCRYPTED, 
+			//CONFIG_CREDENTIALS_WHERE
+			CONFIG_CREDENTIALS_WHERE_FILE, CONFIG_CREDENTIALS_WHERE_DB,
+			//CONFIG_CREDENTIALS_FILE
+			CONFIG_CREDENTIALS_FILE_DIR, CONFIG_CREDENTIALS_FILE_EXTENSION, 
+			CONFIG_CREDENTIALS_FILE_SEPARATOR, CONFIG_CREDENTIALS_FILE_USERNAME, 
+			CONFIG_CREDENTIALS_FILE_PASSWORD, CONFIG_CREDENTIALS_FILE_ENCRYPTED,
 
-			//_CONFIG_BASIC
-			_CONFIG_BASIC_NAME, _CONFIG_BASIC_DIR_APP, _CONFIG_BASIC_DIR_INI,
+			//CONFIG_BASIC
+			CONFIG_BASIC_NAME, CONFIG_BASIC_DIR_APP, CONFIG_BASIC_DIR_INI,
 
-			//_CONFIG_LOGS
-			_CONFIG_LOGS_DIR, 
-			//_CONFIG_LOGS_OUT
-			_CONFIG_LOGS_OUT_SCREEN, _CONFIG_LOGS_OUT_FILE, _CONFIG_LOGS_OUT_DB,
-			//_CONFIG_LOGS_DB
-			_CONFIG_LOGS_DB_SOURCE, _CONFIG_LOGS_DB_FIELD_ID, _CONFIG_LOGS_DB_FIELD_MESSAGE,
+			//CONFIG_LOGS
+			CONFIG_LOGS_DIR, 
+			//CONFIG_LOGS_OUT
+			CONFIG_LOGS_OUT_SCREEN, CONFIG_LOGS_OUT_FILE, CONFIG_LOGS_OUT_DB,
+			//CONFIG_LOGS_DB
+			CONFIG_LOGS_DB_SOURCE, CONFIG_LOGS_DB_FIELD_ID, CONFIG_LOGS_DB_FIELD_MESSAGE,
 
-			//_CONFIG_DB
-			_CONFIG_DB_MAX_POOL, _CONFIG_DB_NAME, _CONFIG_DB_HOST,  
-			_CONFIG_DB_USER, _CONFIG_DB_ERROR_EXIT, _CONFIG_DB_TYPE,
-			//_CONFIG_DB_SETUP
-			_CONFIG_DB_SETUP_MAIN, _CONFIG_DB_SETUP_LOGS,
-			//_CONFIG_DB_TYPE
-			_CONFIG_DB_TYPE_MYSQL,
-			//_CONFIG_DB_CREDENTIALS
-			_CONFIG_DB_CREDENTIALS_TYPE, _CONFIG_DB_CREDENTIALS_ENCRYPTED, 
-			_CONFIG_DB_CREDENTIALS_USERNAME, _CONFIG_DB_CREDENTIALS_PASSWORD,
-			_CONFIG_DB_CREDENTIALS_WHERE,
-			//_CONFIG_DB_FIELDS_DEFAULT 
-			_CONFIG_DB_FIELDS_DEFAULT_ID, _CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, 
+			//CONFIG_DB
+			CONFIG_DB_MAX_POOL, CONFIG_DB_NAME, CONFIG_DB_HOST,  
+			CONFIG_DB_USER, CONFIG_DB_ERROR_EXIT, CONFIG_DB_TYPE,
+			//CONFIG_DB_SETUP
+			CONFIG_DB_SETUP_MAIN, CONFIG_DB_SETUP_LOGS,
+			//CONFIG_DB_TYPE
+			CONFIG_DB_TYPE_MYSQL,
+			//CONFIG_DB_CREDENTIALS
+			CONFIG_DB_CREDENTIALS_TYPE, CONFIG_DB_CREDENTIALS_ENCRYPTED, 
+			CONFIG_DB_CREDENTIALS_USERNAME, CONFIG_DB_CREDENTIALS_PASSWORD,
+			CONFIG_DB_CREDENTIALS_WHERE,
+			//CONFIG_DB_FIELDS_DEFAULT 
+			CONFIG_DB_FIELDS_DEFAULT_ID, CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, 
 
-			//_CONFIG_TESTS 
-			//_CONFIG_TESTS_DB
-			_CONFIG_TESTS_DB_SOURCE, _CONFIG_TESTS_DB_FIELD_INT,
-			_CONFIG_TESTS_DB_FIELD_STRING, _CONFIG_TESTS_DB_FIELD_DECIMAL,
+			//CONFIG_TESTS 
+			//CONFIG_TESTS_DB
+			CONFIG_TESTS_DB_SOURCE, CONFIG_TESTS_DB_FIELD_INT,
+			CONFIG_TESTS_DB_FIELD_STRING, CONFIG_TESTS_DB_FIELD_DECIMAL,
 			
 			//DB
 			//DB_WHERE
@@ -380,6 +384,11 @@ public abstract class types
 			DATA_STRING, DATA_STRING_BIG, DATA_INT, DATA_LONG, DATA_DECIMAL, DATA_TIMESTAMP,
 			DATA_BOOLEAN,
 			DATA_BOOLEAN_TRUE, DATA_BOOLEAN_FALSE,
+			
+			//DATES
+			//DATES_FORMAT
+			DATES_FORMAT_TIME, DATES_FORMAT_TIME_FULL, DATES_FORMAT_TIME_SHORT,
+			DATES_FORMAT_DATE, DATES_FORMAT_DATE_TIME,
 			
 			//ACTIONS
 			ACTIONS_ADD, ACTIONS_REMOVE, ACTIONS_ENCRYPT, ACTIONS_DECRYPT,

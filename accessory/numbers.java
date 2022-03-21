@@ -4,17 +4,17 @@ import java.util.Random;
 
 public abstract class numbers 
 {
-	public static final double DEFAULT_DEC = defaults.DECIMAL;
+	public static final double DEFAULT_DEC = _defaults.DECIMAL;
 	public static final double MIN_DEC = -1 * Double.MAX_VALUE; //!!!
 	public static final double MAX_DEC = Double.MAX_VALUE;
 	public static final int MAX_DIGITS_DEC = 308;
 
-	public static final long DEFAULT_LONG = defaults.LONG;
+	public static final long DEFAULT_LONG = _defaults.LONG;
 	public static final long MIN_LONG = Long.MIN_VALUE;
 	public static final long MAX_LONG = Long.MAX_VALUE;
 	public static final int MAX_DIGITS_LONG = 19;
 
-	public static final int DEFAULT_INT = defaults.INT;
+	public static final int DEFAULT_INT = _defaults.INT;
 	public static final int MIN_INT = Integer.MIN_VALUE;
 	public static final int MAX_INT = Integer.MAX_VALUE;
 	public static final int MAX_DIGITS_INT = 10;
@@ -109,7 +109,7 @@ public abstract class numbers
 	
 	public static double get_random_decimal(double min_, double max_)
 	{
-		return get_random_decimal(new size(min_, max_, defaults.SIZE_DECIMALS));
+		return get_random_decimal(new size(min_, max_, _defaults.SIZE_DECIMALS));
 	}
 	
 	public static double get_random_decimal(size size_)

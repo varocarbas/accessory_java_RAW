@@ -7,9 +7,9 @@ import java.util.HashMap;
 
 public abstract class strings 
 {
-	public static final String DEFAULT = defaults.STRING;
+	public static final String DEFAULT = _defaults.STRING;
 	
-	public static final int SIZE_DEFAULT = defaults.SIZE_STRING;
+	public static final int SIZE_DEFAULT = _defaults.SIZE_STRING;
 	public static final int SIZE_SMALL = 10;
 	public static final int SIZE_BIG = 500;
 
@@ -184,7 +184,7 @@ public abstract class strings
 		}
 		catch (Exception e)
 		{
-			errors.manage(types.ERROR_STRING_SPLIT, e, new String[] { haystack_, regex_ }, false);
+			errors.manage(_types.ERROR_STRING_SPLIT, e, new String[] { haystack_, regex_ }, false);
 
 			output = null;
 		}
@@ -294,9 +294,9 @@ public abstract class strings
 
 	public static boolean is_boolean(String string_)
 	{
-		String[] targets = types.get_subtypes(types.DATA_BOOLEAN, null);
+		String[] targets = _types.get_subtypes(_types.DATA_BOOLEAN, null);
 
-		String string = types.check_subtype(string_, targets, types.ACTIONS_ADD, types.DATA_BOOLEAN);
+		String string = _types.check_subtype(string_, targets, _types.ACTIONS_ADD, _types.DATA_BOOLEAN);
 		
 		for (String target: targets)
 		{
@@ -345,10 +345,10 @@ public abstract class strings
 	{
 		boolean output = false;
 
-		String string = types.check_subtype(string_, types.get_subtypes(types.DATA_BOOLEAN, null), types.ACTIONS_ADD, types.DATA_BOOLEAN);
+		String string = _types.check_subtype(string_, _types.get_subtypes(_types.DATA_BOOLEAN, null), _types.ACTIONS_ADD, _types.DATA_BOOLEAN);
 		
-		if (are_equal(string, types.DATA_BOOLEAN_TRUE)) output = true;
-		else if (are_equivalent(string_, types.DATA_BOOLEAN_FALSE)) output = false;
+		if (are_equal(string, _types.DATA_BOOLEAN_TRUE)) output = true;
+		else if (are_equivalent(string_, _types.DATA_BOOLEAN_FALSE)) output = false;
 
 		return output;
 	}
@@ -415,18 +415,17 @@ public abstract class strings
 	
 	public static String to_string(Object input_)
 	{
+		String output = DEFAULT;
+		
 		if (generic.is_string(input_)) 
 		{
 			String temp = (String)input_;
 			
-			return (is_ok(temp) ? temp : DEFAULT);
+			return (is_ok(temp) ? temp : output);
 		}
 
-		String output = DEFAULT;
-		if (!generic.is_ok(input_)) return output;
-
 		Class<?> type = generic.get_class(input_);
-		if (!generic.is_ok(type)) return output;
+		if (type == null || !generic.is_ok(input_)) return output;
 
 		if (generic.is_array(type)) 
 		{

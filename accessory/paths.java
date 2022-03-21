@@ -81,47 +81,47 @@ public abstract class paths
 
 	public static String get_main_dir(String what_)
 	{
-		String what = types.check_aliases(what_);
+		String what = _types.check_aliases(what_);
 		HashMap<String, String> params = get_update_main_dir_params(what);
 
 		return 
 		(
-			!arrays.is_ok(params) ? strings.DEFAULT : _config.get
+			!arrays.is_ok(params) ? strings.DEFAULT : config.get
 			(
-				params.get(keys.TYPE), params.get(keys.KEY)
+				params.get(_keys.TYPE), params.get(_keys.KEY)
 			)
 		);
 	}
 
 	public static <x> boolean update_main_dir(String what_, x val_)
 	{
-		String what = types.check_aliases(what_);
+		String what = _types.check_aliases(what_);
 		HashMap<String, String> params = get_update_main_dir_params(what);
 
 		return 
 		(
-			!arrays.is_ok(params) ? false : _config.update
+			!arrays.is_ok(params) ? false : config.update
 			(
-				params.get(keys.TYPE), params.get(keys.KEY), val_
+				params.get(_keys.TYPE), params.get(_keys.KEY), val_
 			)
 		);
 	}
 
 	static String get_default_dir(String what_)
 	{
-		String what = types.check_what(what_);
+		String what = _types.check_what(what_);
 		
 		if (!strings.is_ok(what)) return strings.DEFAULT;
-		if (strings.are_equal(what, types.WHAT_DIR_APP)) return get_dir_app_default();
+		if (strings.are_equal(what, _types.WHAT_DIR_APP)) return get_dir_app_default();
 
-		String[] targets = { types.WHAT_DIR_CREDENTIALS, types.WHAT_DIR_INI, types.WHAT_DIR_LOGS };
+		String[] targets = { _types.WHAT_DIR_CREDENTIALS, _types.WHAT_DIR_INI, _types.WHAT_DIR_LOGS };
 
 		for (String target: targets)
 		{
 			if (strings.are_equal(what, target))
 			{
 				String[] parts = { HOME, target };
-				if (target.equals(types.WHAT_DIR_LOGS)) parts = new String[] { get_dir_app_default() };
+				if (target.equals(_types.WHAT_DIR_LOGS)) parts = new String[] { get_dir_app_default() };
 
 				return build(parts, false);
 			}
@@ -149,12 +149,12 @@ public abstract class paths
 	{
 		if (!strings.is_ok(key_)) return null;
 
-		String type = types._CONFIG_BASIC;
-		if (key_.equals(types._CONFIG_CREDENTIALS_FILE_DIR)) type = types._CONFIG_CREDENTIALS;
+		String type = _types.CONFIG_BASIC;
+		if (key_.equals(_types.CONFIG_CREDENTIALS_FILE_DIR)) type = _types.CONFIG_CREDENTIALS;
 
 		HashMap<String, String> output = new HashMap<String, String>();
-		output.put(keys.KEY, key_);
-		output.put(keys.TYPE, type);
+		output.put(_keys.KEY, key_);
+		output.put(_keys.TYPE, type);
 
 		return output;
 	}

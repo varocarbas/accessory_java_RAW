@@ -119,7 +119,7 @@ public class data
 	
 	public static String check_type(String type_)
 	{
-		return types.check_subtype(type_, types.get_subtypes(types.DATA, null), null, null);
+		return _types.check_subtype(type_, _types.get_subtypes(_types.DATA, null), null, null);
 	}
 
 	public static size get_default_size(String type_)
@@ -129,12 +129,12 @@ public class data
 
 	public static boolean is_numeric(String type_)
 	{
-		return is_common(type_, new String[] { types.DATA_DECIMAL, types.DATA_LONG, types.DATA_INT });
+		return is_common(type_, new String[] { _types.DATA_DECIMAL, _types.DATA_LONG, _types.DATA_INT });
 	}
 	
 	public static boolean is_string(String type_)
 	{
-		return is_common(type_, new String[] { types.DATA_STRING, types.DATA_STRING_BIG });		
+		return is_common(type_, new String[] { _types.DATA_STRING, _types.DATA_STRING_BIG });		
 	}
 
 	private static boolean is_common(String type_, String[] targets_)
@@ -183,36 +183,36 @@ public class data
 
 	private static size get_boundaries(String type_)
 	{
-		size boundaries = new size(0.0, 0.0, defaults.SIZE_DECIMALS);
+		size boundaries = new size(0.0, 0.0, _defaults.SIZE_DECIMALS);
 		
 		String type = check_type(type_);
 		if (!strings.is_ok(type)) return boundaries;
 		
 		if (is_string(type)) boundaries._max = (double)Integer.MAX_VALUE;
-		else if (generic.are_equal(type, types.DATA_INT))
+		else if (generic.are_equal(type, _types.DATA_INT))
 		{
 			boundaries._min = (double)numbers.MIN_INT;
 			boundaries._max = (double)numbers.MAX_INT;
 		}
-		else if (generic.are_equal(type, types.DATA_LONG))
+		else if (generic.are_equal(type, _types.DATA_LONG))
 		{
 			boundaries._min = (double)numbers.MIN_LONG;
 			boundaries._max = (double)numbers.MAX_LONG;
 		}
-		else if (generic.are_equal(type, types.DATA_DECIMAL))
+		else if (generic.are_equal(type, _types.DATA_DECIMAL))
 		{
 			boundaries._min = (double)numbers.MIN_DEC;
 			boundaries._max = (double)numbers.MAX_DEC;
 		}
-		else if (generic.are_equal(type, types.DATA_BOOLEAN)) 
+		else if (generic.are_equal(type, _types.DATA_BOOLEAN)) 
 		{
 			boundaries._min = 2.0;
 			boundaries._max = 2.0;	
 		}
-		else if (generic.are_equal(type, types.DATA_TIMESTAMP)) 
+		else if (generic.are_equal(type, _types.DATA_TIMESTAMP)) 
 		{
 			boundaries._min = 0.0;
-			boundaries._max = dates.get_time_pattern(dates.DATE_TIME).length();	
+			boundaries._max = dates.get_time_pattern(dates.FORMAT_DATE_TIME).length();	
 		}
 		
 		return boundaries;
@@ -261,12 +261,12 @@ public class data
 		if (arrays.is_ok(_all_classes)) return;
 
 		_all_classes = new HashMap<String, Class<?>>();
-		_all_classes.put(types.DATA_STRING, String.class);
-		_all_classes.put(types.DATA_STRING_BIG, String.class);
-		_all_classes.put(types.DATA_INT, Integer.class);
-		_all_classes.put(types.DATA_LONG, Long.class);
-		_all_classes.put(types.DATA_DECIMAL, Double.class);
-		_all_classes.put(types.DATA_BOOLEAN, Boolean.class);
-		_all_classes.put(types.DATA_TIMESTAMP, String.class);
+		_all_classes.put(_types.DATA_STRING, String.class);
+		_all_classes.put(_types.DATA_STRING_BIG, String.class);
+		_all_classes.put(_types.DATA_INT, Integer.class);
+		_all_classes.put(_types.DATA_LONG, Long.class);
+		_all_classes.put(_types.DATA_DECIMAL, Double.class);
+		_all_classes.put(_types.DATA_BOOLEAN, Boolean.class);
+		_all_classes.put(_types.DATA_TIMESTAMP, String.class);
 	}
 }

@@ -11,16 +11,16 @@ public abstract class credentials
 		HashMap<String, String> credentials = null;
 		if (!strings.are_ok(new String[] { type_, user_})) return credentials;
 
-		String type = types.check_aliases(type_);
-		String where = types.check_aliases(where_);
+		String type = _types.check_aliases(type_);
+		String where = _types.check_aliases(where_);
 
 		String username = get_username_password(type, user_, encrypted_, where, true);
 		String password = get_username_password(type, user_, encrypted_, where, false);
 		if (!strings.are_ok(new String[] { username, password })) return credentials;
 
 		credentials = new HashMap<String, String>();
-		credentials.put(keys.USERNAME, username);
-		credentials.put(keys.PASSWORD, password);
+		credentials.put(_keys.USERNAME, username);
+		credentials.put(_keys.PASSWORD, password);
 
 		return credentials;
 	}
@@ -29,8 +29,8 @@ public abstract class credentials
 	{
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 
-		String type = types.check_aliases(type_);
-		String where = types.check_aliases(where_);
+		String type = _types.check_aliases(type_);
+		String where = _types.check_aliases(where_);
 
 		return get_username_password(type, user_, encrypted_, where, true);
 	}
@@ -39,16 +39,16 @@ public abstract class credentials
 	{
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 
-		String type = types.check_aliases(type_);
+		String type = _types.check_aliases(type_);
 
-		return get_username_password(type, user_, encrypted_, types._CONFIG_CREDENTIALS_WHERE_FILE, true);
+		return get_username_password(type, user_, encrypted_, _types.CONFIG_CREDENTIALS_WHERE_FILE, true);
 	}
 
 	public static String get_path_username(String type_, String user_, boolean encrypted_)
 	{
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 
-		String type = types.check_aliases(type_);
+		String type = _types.check_aliases(type_);
 
 		return get_path_username_password(type, user_, encrypted_, true);
 	}
@@ -57,8 +57,8 @@ public abstract class credentials
 	{
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 
-		String type = types.check_aliases(type_);
-		String where = types.check_aliases(where_);
+		String type = _types.check_aliases(type_);
+		String where = _types.check_aliases(where_);
 
 		return get_username_password(type, user_, encrypted_, where, false);
 	}
@@ -67,16 +67,16 @@ public abstract class credentials
 	{
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 
-		String type = types.check_aliases(type_);
+		String type = _types.check_aliases(type_);
 
-		return get_username_password(type, user_, encrypted_, types._CONFIG_CREDENTIALS_WHERE_FILE, false);
+		return get_username_password(type, user_, encrypted_, _types.CONFIG_CREDENTIALS_WHERE_FILE, false);
 	}
 
 	public static String get_path_password(String type_, String user_, boolean encrypted_)
 	{
 		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
 
-		String type = types.check_aliases(type_);
+		String type = _types.check_aliases(type_);
 
 		return get_path_username_password(type, user_, encrypted_, false);    	
 	}
@@ -85,9 +85,9 @@ public abstract class credentials
 	{
 		String output = strings.DEFAULT;
 
-		String where = (strings.is_ok(where_) ? where_ : defaults.CREDENTIALS_WHERE);
+		String where = (strings.is_ok(where_) ? where_ : _defaults.CREDENTIALS_WHERE);
 
-		if (strings.are_equivalent(where, types._CONFIG_CREDENTIALS_WHERE_FILE)) 
+		if (strings.are_equivalent(where, _types.CONFIG_CREDENTIALS_WHERE_FILE)) 
 		{
 			output = get_username_password_file(type_, user_, encrypted_, is_username_);
 		}
@@ -110,23 +110,23 @@ public abstract class credentials
 
 	private static String get_path_username_password(String type_, String user_, boolean encrypted_, boolean is_username_)
 	{   
-		String separator = _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_SEPARATOR);
-		String extension = _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_EXTENSION);
+		String separator = config.get_credentials(_types.CONFIG_CREDENTIALS_FILE_SEPARATOR);
+		String extension = config.get_credentials(_types.CONFIG_CREDENTIALS_FILE_EXTENSION);
 
 		String file = type_ + separator + user_;
 
 		file += separator + 
 		(
-			is_username_ ? _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_USERNAME) : 
-			_config.get_credentials(types._CONFIG_CREDENTIALS_FILE_PASSWORD)
+			is_username_ ? config.get_credentials(_types.CONFIG_CREDENTIALS_FILE_USERNAME) : 
+			config.get_credentials(_types.CONFIG_CREDENTIALS_FILE_PASSWORD)
 		);
 
-		if (encrypted_) file += separator + _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_ENCRYPTED);  	
+		if (encrypted_) file += separator + config.get_credentials(_types.CONFIG_CREDENTIALS_FILE_ENCRYPTED);  	
 		if (strings.is_ok(extension)) file += extension;
 
 		return paths.build
 		(
-			new String[] { _config.get_credentials(types._CONFIG_CREDENTIALS_FILE_DIR), file }, true
+			new String[] { config.get_credentials(_types.CONFIG_CREDENTIALS_FILE_DIR), file }, true
 		);
 	}
 }
