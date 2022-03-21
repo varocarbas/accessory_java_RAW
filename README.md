@@ -1,5 +1,8 @@
 # accessory
-Library containing a set of miscellaneous resources accessorily used by most of my Java code. **--- CURRENTLY UNDER DEVELOPMENT**
+
+**CURRENTLY UNDER DEVELOPMENT**
+
+Library containing a set of miscellaneous resources accessorily used by most of my Java code. 
 
 Required external dependencies:
 - MySQL Java connector (v. 8.0.21).
