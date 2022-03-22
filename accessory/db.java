@@ -12,7 +12,37 @@ public abstract class db
 	//On the other hand, table/col names are assumed to be variable and managed via tables/cols.
 	//A valid source is one included within the sources currently considered by the library, in memory.
 	//A valid table is one really existing in the given DB.
+	
+	public static final String FIELD_ID = types.CONFIG_DB_FIELDS_DEFAULT_ID;
+	public static final String FIELD_TIMESTAMP = types.CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP;
+	
+	public static final String MYSQL = types.CONFIG_DB_TYPE_MYSQL;
+	public static final String MAX_POOL = types.CONFIG_DB_MAX_POOL;
+	public static final String NAME = types.CONFIG_DB_NAME;
+	public static final String HOST = types.CONFIG_DB_HOST;
+	public static final String USER = types.CONFIG_DB_USER; //Only indirectly related to credentials (e.g., file name containing credentials).
+	public static final String USERNAME = types.CONFIG_CREDENTIALS_FILE_USERNAME;
+	public static final String PASSWORD = types.CONFIG_CREDENTIALS_FILE_PASSWORD;
+	
+	public static final String SELECT = types.DB_QUERY_SELECT;
+	public static final String INSERT = types.DB_QUERY_INSERT;
+	public static final String UPDATE = types.DB_QUERY_UPDATE;
+	public static final String DELETE = types.DB_QUERY_DELETE;	
+	public static final String TABLE_EXISTS = types.DB_QUERY_TABLE_EXISTS;
+	public static final String TABLE_CREATE = types.DB_QUERY_TABLE_CREATE;
+	public static final String TABLE_DROP = types.DB_QUERY_TABLE_DROP;
+	public static final String TABLE_TRUNCATE = types.DB_QUERY_TABLE_TRUNCATE;
 
+	public static final String DEFAULT_FIELD_ID = _defaults.DB_FIELDS_DEFAULT_ID;
+	public static final String DEFAULT_FIELD_TIMESTAMP = _defaults.DB_FIELDS_DEFAULT_TIMESTAMP;
+	public static final String DEFAULT_TYPE = _defaults.DB_TYPE;
+	public static final String DEFAULT_MAX_POOL = _defaults.DB_MAX_POOL;
+	public static final String DEFAULT_NAME = _defaults.DB_NAME;
+	public static final String DEFAULT_HOST = _defaults.DB_HOST;
+	public static final String DEFAULT_USER = _defaults.DB_USER;
+	public static final String DEFAULT_USERNAME = _defaults.DB_CREDENTIALS_USERNAME;
+	public static final String DEFAULT_PASSWORD = _defaults.DB_CREDENTIALS_PASSWORD;
+	
 	public static boolean _is_ok = false;
 	public static String _cur_source = strings.DEFAULT;
 	
@@ -27,10 +57,10 @@ public abstract class db
 	public static boolean update_conn_info(String username_, String password_, String database_, String host_)
 	{
 		HashMap<String, String> params = new HashMap<String, String>();
-		if (strings.is_ok(username_)) params.put(_types.CONFIG_DB_CREDENTIALS_USERNAME, username_);
-		if (password_ != null) params.put(_types.CONFIG_DB_CREDENTIALS_PASSWORD, password_);
-		if (strings.is_ok(database_)) params.put(_types.CONFIG_DB_NAME, database_);
-		if (strings.is_ok(host_)) params.put(_types.CONFIG_DB_HOST, host_);
+		if (strings.is_ok(username_)) params.put(db.USERNAME, username_);
+		if (password_ != null) params.put(db.PASSWORD, password_);
+		if (strings.is_ok(database_)) params.put(db.NAME, database_);
+		if (strings.is_ok(host_)) params.put(db.HOST, host_);
 		
 		HashMap<String, Boolean> temp = update_conn_info(params);
 		
@@ -46,34 +76,34 @@ public abstract class db
 		
 		error = "WRONG " + error;
 		
-		manage_error(_types.ERROR_DB_INFO, null, null, error);
+		manage_error(types.ERROR_DB_INFO, null, null, error);
 		
 		return false;
 	}
 
 	public static HashMap<String, Boolean> update_conn_info(HashMap<String, String> params_)
 	{
-		return config.update_db_conn_info(params_, config.get_db(_types.CONFIG_DB_SETUP));
+		return config.update_db_conn_info(params_, config.get_db(types.CONFIG_DB_SETUP));
 	}
 
 	public static String select_one_string(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (String)db_queries.select_one_common(source_, field_, wheres_, orders_, _types.DATA_STRING);
+		return (String)db_queries.select_one_common(source_, field_, wheres_, orders_, data.STRING);
 	}
 	
 	public static double select_one_decimal(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (double)db_queries.select_one_common(source_, field_, wheres_, orders_, _types.DATA_DECIMAL);
+		return (double)db_queries.select_one_common(source_, field_, wheres_, orders_, data.DECIMAL);
 	}
 	
 	public static long select_one_long(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (long)db_queries.select_one_common(source_, field_, wheres_, orders_, _types.DATA_LONG);
+		return (long)db_queries.select_one_common(source_, field_, wheres_, orders_, data.LONG);
 	}
 	
 	public static int select_one_int(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
-		return (int)db_queries.select_one_common(source_, field_, wheres_, orders_, _types.DATA_INT);
+		return (int)db_queries.select_one_common(source_, field_, wheres_, orders_, data.INT);
 	}
 	
 	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_)
@@ -152,11 +182,11 @@ public abstract class db
 	{
 		String value = strings.DEFAULT;
 
-		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
 		{
 			value = db_mysql.get_value(input_);
 		}
-		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 
 		return value;
 	}
@@ -181,11 +211,11 @@ public abstract class db
 	{
 		String variable = strings.DEFAULT;
 
-		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
 		{
 			variable = db_mysql.get_variable(input_);
 		}
-		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
 		return variable; 	
 	} 
@@ -194,11 +224,11 @@ public abstract class db
 	{
 		HashMap<String, Object> output = null;
 
-		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
 		{
 			output = db_mysql.get_data_type(data_type_);
 		}
-		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
 		return output; 
 	}
@@ -207,11 +237,11 @@ public abstract class db
 	{
 		int output = 0;
 
-		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
 		{
 			output = db_mysql.get_default_size(type_);
 		}
-		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
 		return output; 
 	}
@@ -220,11 +250,11 @@ public abstract class db
 	{
 		int output = 0;
 
-		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
 		{
 			output = db_mysql.get_max_size(type_);
 		}
-		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
 		return output; 
 	}
@@ -245,7 +275,7 @@ public abstract class db
 		
 		if (!strings.is_ok(_cur_source) || !_sources.containsKey(_cur_source)) _cur_source = strings.DEFAULT;
 		
-		String source = _types.check_aliases(source_);
+		String source = source_;
 		if (!strings.is_ok(source) || !_sources.containsKey(source)) source = strings.DEFAULT;
 		
 		if (!strings.is_ok(source) && strings.is_ok(_cur_source)) source = _cur_source;
@@ -276,7 +306,7 @@ public abstract class db
 			
 			if (!field._is_ok)
 			{
-				manage_error(_types.ERROR_DB_FIELD, null, null, field.toString());
+				manage_error(types.ERROR_DB_FIELD, null, null, field.toString());
 				
 				return;
 			}
@@ -315,24 +345,8 @@ public abstract class db
 	{
 		HashMap<String, db_field> fields = new HashMap<String, db_field>();
 
-		fields.put
-		(
-			_types.CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, new db_field
-			(
-				_types.DATA_TIMESTAMP, new String[] { _types.DB_FIELD_FURTHER_TIMESTAMP }
-			)
-		);
-		
-		fields.put
-		(
-			_types.CONFIG_DB_FIELDS_DEFAULT_ID, new db_field
-			(
-				_types.DATA_INT, new String[] 
-				{ 
-					_types.DB_FIELD_FURTHER_KEY_PRIMARY, _types.DB_FIELD_FURTHER_AUTO_INCREMENT 
-				}
-			)
-		);
+		fields.put(FIELD_TIMESTAMP, new db_field(data.TIMESTAMP, new String[] { db_field.TIMESTAMP }));
+		fields.put(FIELD_ID, new db_field(data.INT, new String[] { db_field.KEY_PRIMARY, db_field.AUTO_INCREMENT }));
 
 		return fields;
 	}
@@ -340,17 +354,15 @@ public abstract class db
 	public static String get_col(String source_, String field_)
 	{
 		String source = check_source(source_); 
-		String field = _types.check_aliases(field_);
 	
-		return config.get(get_source_main(source), field);
+		return config.get(get_source_main(source), field_);
 	}
 
 	public static String get_field(String source_, String field_)
 	{
 		String source = check_source(source_); 
-		String field = _types.check_aliases(field_);
 		
-		return config.get(get_source_main(source), field);
+		return config.get(get_source_main(source), field_);
 	}
 	
 	public static String get_table(String source_)
@@ -406,7 +418,7 @@ public abstract class db
 
 		String source = check_source(source_);
 		
-		String id = _types.check_aliases(field_);
+		String id = field_;
 		if (!fields_.containsKey(id)) return null;
 	
 		db_field field = arrays.get_value(fields_, id);
@@ -431,21 +443,21 @@ public abstract class db
 		String output = input_;
 		if (!strings.is_ok(output)) return output;
 		
-		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
 		{
 			output = db_mysql.sanitise_string(output);
 		}
-		else manage_error(_types.ERROR_DB_TYPE, null, null, null);
+		else manage_error(types.ERROR_DB_TYPE, null, null, null);
 
 		return output; 
 	}
 
 	public static String check_type(String input_)
 	{
-		return _types.check_subtype
+		return types.check_subtype
 		(
-			input_, _types.get_subtypes(_types.DB_QUERY, null), 
-			_types.ACTIONS_ADD, _types.DB_QUERY
+			input_, types.get_subtypes(types.DB_QUERY, null), 
+			types.ACTIONS_ADD, types.DB_QUERY
 		);
 	}
 	
@@ -453,22 +465,22 @@ public abstract class db
 	{
 		HashMap<String, String> output = new HashMap<String, String>();
 
-		String user = config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_USER);
-		String username = config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_CREDENTIALS_USERNAME);
-		String password = config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_CREDENTIALS_PASSWORD);
+		String user = config.get(config.get_db(types.CONFIG_DB_SETUP), db.USER);
+		String username = config.get(config.get_db(types.CONFIG_DB_SETUP), db.USERNAME);
+		String password = config.get(config.get_db(types.CONFIG_DB_SETUP), db.PASSWORD);
 
 		if (strings.is_ok(username) && strings.is_ok(password))
 		{
-			output.put(_keys.USERNAME, username);
-			output.put(_keys.PASSWORD, password);
+			output.put(generic.USERNAME, username);
+			output.put(generic.PASSWORD, password);
 		}
 		else if (strings.is_ok(user))
 		{
 			output = credentials.get
 			(
-				config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_CREDENTIALS_TYPE), user, 
-				strings.to_boolean(config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_CREDENTIALS_ENCRYPTED)),
-				config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_CREDENTIALS_WHERE)
+				config.get(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_CREDENTIALS_TYPE), user, 
+				strings.to_boolean(config.get(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_CREDENTIALS_ENCRYPTED)),
+				config.get(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_CREDENTIALS_WHERE)
 			);
 		}
 
@@ -484,10 +496,10 @@ public abstract class db
 	
 	static boolean query_returns_data(String type_)
 	{
-		String type = _types.check_subtype(type_, _types.get_subtypes(_types.DB_QUERY, null), null, null);
+		String type = types.check_subtype(type_, types.get_subtypes(types.DB_QUERY, null), null, null);
 		if (!strings.is_ok(type)) return false;
 		
-		String[] targets = new String[] { _types.DB_QUERY_SELECT, _types.DB_QUERY_TABLE_EXISTS };
+		String[] targets = new String[] { SELECT, TABLE_EXISTS };
 		
 		for (String target: targets)
 		{
@@ -500,19 +512,18 @@ public abstract class db
 	private static <x> HashMap<String, String> adapt_inputs_input(String source_, HashMap<String, String> old_, String field_, x val_)
 	{
 		String source = check_source(source_);
-		String field = _types.check_aliases(field_);
 		
 		HashMap<String, db_field> fields = get_source_fields(source);
-		if (!arrays.is_ok(fields) || !strings.is_ok(field)) return null;
+		if (!arrays.is_ok(fields) || !strings.is_ok(field_)) return null;
 
-		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field, val_, fields);
+		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field_, val_, fields);
 	}
 	
 	static String check_source_error(String source_)
 	{
 		_is_ok = true;
 		String source = check_source(source_);
-		if (!strings.is_ok(source)) manage_error(_types.ERROR_DB_SOURCE, null, null, null);
+		if (!strings.is_ok(source)) manage_error(types.ERROR_DB_SOURCE, null, null, null);
 		
 		return source;
 	}
@@ -520,7 +531,7 @@ public abstract class db
 	static <x> HashMap<String, String> check_vals_error(String source_, HashMap<String, x> vals_raw_)
 	{
 		HashMap<String, String> vals = adapt_inputs(source_, null, vals_raw_);
-		if (!arrays.is_ok(vals)) manage_error(_types.ERROR_DB_VALS, null, null, null);
+		if (!arrays.is_ok(vals)) manage_error(types.ERROR_DB_VALS, null, null, null);
 		
 		return vals;
 	}

@@ -7,9 +7,21 @@ import java.util.Map.Entry;
 
 public abstract class tests 
 {
+	public static final String DEFAULT_SOURCE = _defaults.TESTS_DB_SOURCE;
+	public static final String DEFAULT_FIELD_DECIMAL = _defaults.TESTS_DB_FIELD_DECIMAL;
+	public static final String DEFAULT_FIELD_INT = _defaults.TESTS_DB_FIELD_INT;
+	public static final String DEFAULT_FIELD_STRING = _defaults.TESTS_DB_FIELD_STRING;
+	
+	public static final String SOURCE = types.CONFIG_TESTS_DB_SOURCE;
+	public static final String FIELD_DECIMAL = types.CONFIG_TESTS_DB_FIELD_DECIMAL;
+	public static final String FIELD_INT = types.CONFIG_TESTS_DB_FIELD_INT;
+	public static final String FIELD_STRING = types.CONFIG_TESTS_DB_FIELD_STRING;
+	
 	public static boolean _running = false;
 	
 	private static int _overload = 0;
+
+	static { ini.load(); }
 	
 	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all(boolean db_too_)
 	{	
@@ -60,7 +72,7 @@ public abstract class tests
 		Class<?>[] classes = new Class<?>[] 
 		{ 
 			strings.class, arrays.class, dates.class, generic.class,
-			io.class, numbers.class, paths.class, _types.class
+			io.class, numbers.class, paths.class, types.class
 		}; 
 		
 		for (Class<?> type: classes)
@@ -75,7 +87,7 @@ public abstract class tests
 	{
 		Class<?> type = db.class;
 		
-		String source = _types.CONFIG_TESTS_DB_SOURCE;
+		String source = types.CONFIG_TESTS_DB_SOURCE;
 		db._cur_source = source;
 		
 		String name = "create_table";
@@ -107,10 +119,10 @@ public abstract class tests
 		
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		int max = 123456;
-		vals.put(_types.CONFIG_TESTS_DB_FIELD_INT, numbers.get_random_int(-1 * max, max));
-		vals.put(_types.CONFIG_TESTS_DB_FIELD_STRING, strings.get_random(strings.SIZE_SMALL));
+		vals.put(FIELD_INT, numbers.get_random_int(-1 * max, max));
+		vals.put(FIELD_STRING, strings.get_random(strings.SIZE_SMALL));
 		double max2 = 123456789.123;
-		vals.put(_types.CONFIG_TESTS_DB_FIELD_DECIMAL, numbers.get_random_decimal(-1 * max2, max2));		
+		vals.put(FIELD_DECIMAL, numbers.get_random_decimal(-1 * max2, max2));		
 		args2.add(vals);
 		
 		args.add(args2);
@@ -125,10 +137,10 @@ public abstract class tests
 				
 		int val = numbers.get_random_int(-1 * max, max);
 
-		vals.put(_types.CONFIG_TESTS_DB_FIELD_INT, val);		
+		vals.put(FIELD_INT, val);		
 
 		db._cur_source = source;
-		db_where where = new db_where(null, _types.CONFIG_DB_FIELDS_DEFAULT_ID, 1);
+		db_where where = new db_where(null, db.FIELD_ID, 1);
 		db_where[] wheres = new db_where[] { where };
 		
 		args2.add(wheres);
@@ -145,7 +157,7 @@ public abstract class tests
 		
 		args2 = new ArrayList<Object>();
 		args2.add(source);
-		args2.add(_types.CONFIG_TESTS_DB_FIELD_INT);
+		args2.add(FIELD_INT);
 		args2.add(wheres);
 		args2.add(null);
 		args.add(args2);
@@ -159,7 +171,7 @@ public abstract class tests
 		params = new Class<?>[] { String.class };
 		method = generic.get_method(type, name, params, false);	
 
-		String field = _types.CONFIG_TESTS_DB_FIELD_INT;
+		String field = FIELD_INT;
 		String col = db.get_col(source, field);
 
 		String table = db.get_variable_table(source);
@@ -167,8 +179,8 @@ public abstract class tests
 		db._cur_source = source;
 		db_order[] orders = new db_order[] 
 		{ 
-			new db_order(null, field, _types.DB_ORDER_DESC, true), 
-			new db_order(null, where.toString(), _types.DB_ORDER_ASC, false)
+			new db_order(null, field, db_order.DESC, true), 
+			new db_order(null, where.toString(), db_order.ASC, false)
 		};
 		
 		String query = "SELECT " + db.get_variable(col) + " FROM " + table;
@@ -202,14 +214,14 @@ public abstract class tests
 		
 		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
 		ArrayList<Object> args2 = new ArrayList<Object>();
-		args2.add(strings.SIZE_DEFAULT);
+		args2.add(strings.DEFAULT_SIZE);
 		args2.add(true);
 		args2.add(true);
 		args2.add(true);
 		args.add(args2);
 		
 		args2 = new ArrayList<Object>();
-		args2.add(strings.SIZE_DEFAULT);
+		args2.add(strings.DEFAULT_SIZE);
 		args.add(args2);
 		
 		args_all.put(name, args);
@@ -258,7 +270,7 @@ public abstract class tests
 	
 	public static HashMap<String, Boolean> run_accessory_types()
 	{
-		return run(_types.class);
+		return run(types.class);
 	}
 	
 	public static HashMap<String, Boolean> run(Class<?> class_)
@@ -287,7 +299,7 @@ public abstract class tests
 		
 		if (!arrays.is_ok(methods))
 		{
-			errors.manage(_types.ERROR_TEST_RUN, null, (generic.is_ok(class_) ? new String[] { class_.getName() } : null), false);
+			errors.manage(types.ERROR_TEST_RUN, null, (generic.is_ok(class_) ? new String[] { class_.getName() } : null), false);
 			
 			return run_outs;
 		}
@@ -453,7 +465,7 @@ public abstract class tests
 		else if (class_.equals(io.class)) output = run_accessory_io();
 		else if (class_.equals(numbers.class)) output = run_accessory_numbers();
 		else if (class_.equals(paths.class)) output = run_accessory_paths();
-		else if (class_.equals(_types.class)) output = run_accessory_types();
+		else if (class_.equals(types.class)) output = run_accessory_types();
 		else if (class_.equals(db.class)) output = run_accessory_db();
 
 		return output;
@@ -466,7 +478,7 @@ public abstract class tests
 		if (!generic.is_ok(method_))
 		{
 			HashMap<String, String> info = new HashMap<String, String>();
-			info.put(_keys.TYPE, _types.ERROR_TEST_RUN);
+			info.put(generic.TYPE, types.ERROR_TEST_RUN);
 			info.put("method", strings.to_string(method_name_));
 			info.put("class", (generic.is_ok(class_) ? class_.getName() : strings.DEFAULT));
 

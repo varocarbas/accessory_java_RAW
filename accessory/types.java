@@ -1,10 +1,8 @@
 package accessory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
-public abstract class _types 
+public abstract class types 
 {
 	public static final String SEPARATOR = misc.SEPARATOR_NAME;
 
@@ -90,10 +88,8 @@ public abstract class _types
 	public static final String DB_ORDER_DESC = "db_order_desc";
 	public static final String DB_FIELD_FURTHER = "db_field_further";
 	public static final String DB_FIELD_FURTHER_KEY = "db_field_further_key";
-	static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_further_key_primary"; //Added via default fields.
 	public static final String DB_FIELD_FURTHER_KEY_UNIQUE = "db_field_further_key_unique";
 	public static final String DB_FIELD_FURTHER_AUTO_INCREMENT = "db_field_further_auto_increment";
-	public static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";
 	public static final String DB_QUERY = "db_query";
 	public static final String DB_QUERY_SELECT = "db_query_select";
 	public static final String DB_QUERY_INSERT = "db_query_insert";
@@ -138,6 +134,8 @@ public abstract class _types
 	public static final String ACTIONS_REMOVE = "actions_remove";
 	public static final String ACTIONS_ENCRYPT = "actions_encrypt";
 	public static final String ACTIONS_DECRYPT = "actions_decrypt";
+	public static final String ACTIONS_START = "actions_start";
+	public static final String ACTIONS_STOP = "actions_stop";
 	
 	public static final String WHAT = "what";
 	public static final String WHAT_USER = "what_user";
@@ -184,59 +182,39 @@ public abstract class _types
 	public static final String ERROR_GENERIC_METHOD_CALL = "error_generic_method_call";
 	public static final String ERROR_TEST = "error_test";
 	public static final String ERROR_TEST_RUN = "error_test_run";
-	
+
+	//Only added via default fields.
+	static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_further_key_primary";
+	static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";
+	//---
 	//---------------------------
 
-	private static HashMap<String, String> aliases = new HashMap<String, String>();
-
-	//Method meant to force this class to be loaded when required (e.g., when ini.load() is called).
-	public static void load() { } 
+	static { ini.load(); }
 	
-	public static String check_aliases(String candidate_)
-	{
-		if (!strings.is_ok(candidate_)) return strings.DEFAULT;
-
-		for (Entry<String, String> item: aliases.entrySet())
-		{
-			if (candidate_.equals(item.getKey())) return item.getValue();
-		}
-
-		return candidate_;
-	}
-
-	public static boolean update_aliases(String alias_, String type_)
-	{
-		if (!strings.is_ok(alias_) || !strings.is_ok(type_)) return false;
-
-		aliases.put(alias_, type_);
-
-		return true;
-	}
-
 	public static String check_what(String what_)
 	{
-		return check_subtype(what_, _types.get_subtypes(WHAT, null), null, null);
+		return check_subtype(what_, types.get_subtypes(WHAT, null), null, null);
 	}
 	
 	public static String what_to_key(String what_)
 	{
-		return check_subtype(what_, _types.get_subtypes(WHAT, null), ACTIONS_REMOVE, WHAT);
+		return check_subtype(what_, types.get_subtypes(WHAT, null), ACTIONS_REMOVE, WHAT);
 	}
 	
 	public static String check_action(String action_)
 	{
-		return check_subtype(action_, _types.get_subtypes(ACTIONS, null), null, null);
+		return check_subtype(action_, types.get_subtypes(ACTIONS, null), null, null);
 	}
 	
 	public static String check_subtype(String subtype_, String[] subtypes_, String action_add_remove_, String type_add_remove_)
 	{	
 		String output = strings.DEFAULT;
 		
-		String subtype2 = check_aliases(strings.normalise(subtype_));
+		String subtype2 = strings.normalise(subtype_);
 		if (!strings.is_ok(subtype2)) return output;
 		
-		String type_add_remove = check_aliases(strings.normalise(type_add_remove_));
-		String action = check_aliases(strings.normalise(action_add_remove_));
+		String type_add_remove = strings.normalise(type_add_remove_);
+		String action = strings.normalise(action_add_remove_);
 		
 		for (String subtype: get_subtypes(strings.DEFAULT, subtypes_))
 		{
@@ -268,23 +246,19 @@ public abstract class _types
 	{
 		if (!strings.is_ok(subtype_) || !strings.is_ok(type_)) return subtype_;
 
-		String subtype = check_aliases(subtype_);
-		String type = check_aliases(type_);
-		if (!strings.contains_start(type, subtype, false)) return subtype_;
+		String type = type_;
+		if (!strings.contains_start(type, subtype_, false)) return subtype_;
 		
 		type += SEPARATOR;
 
-		return strings.get_end(subtype, type.length());
+		return strings.get_end(subtype_, type.length());
 	}
 
 	public static String add_type(String subtype_, String type_)
 	{
 		if (!strings.is_ok(subtype_) || !strings.is_ok(type_) || strings.contains_start(type_, subtype_, false)) return subtype_;
 
-		String subtype = check_aliases(subtype_);
-		String type = check_aliases(type_);
-
-		return (type + SEPARATOR + subtype);
+		return (type_ + SEPARATOR + subtype_);
 	}
 
 	public static String[] get_subtypes(String[] types_, String[] all_)
@@ -295,7 +269,7 @@ public abstract class _types
 
 		for (String type: types_)
 		{
-			subtypes.addAll(arrays.to_arraylist(get_subtypes(check_aliases(type), all_)));		
+			subtypes.addAll(arrays.to_arraylist(get_subtypes(type, all_)));		
 		}
 
 		return arrays.to_array(subtypes);
@@ -303,15 +277,12 @@ public abstract class _types
 
 	public static String[] get_subtypes(String type_, String[] all_)
 	{
-		String type = check_aliases(type_);
-
 		ArrayList<String> subtypes = new ArrayList<String>();
-		String heading = (strings.is_ok(type) ? type + SEPARATOR : null);
+		String heading = (strings.is_ok(type_) ? type_ + SEPARATOR : null);
 
 		for (String subtype: (arrays.is_ok(all_) ? all_ : get_all_subtypes()))
 		{
-			String subtype2 = check_aliases(subtype);
-			if (!strings.is_ok(heading) || strings.contains_start(heading, subtype2, false)) subtypes.add(subtype2);
+			if (!strings.is_ok(heading) || strings.contains_start(heading, subtype, false)) subtypes.add(subtype);
 		}
 
 		return arrays.to_array(subtypes);
@@ -392,6 +363,7 @@ public abstract class _types
 			
 			//ACTIONS
 			ACTIONS_ADD, ACTIONS_REMOVE, ACTIONS_ENCRYPT, ACTIONS_DECRYPT,
+			ACTIONS_START, ACTIONS_STOP,
 			
 			//WHAT
 			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 

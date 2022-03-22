@@ -9,9 +9,22 @@ import java.util.Map.Entry;
 
 abstract class db_mysql 
 {	
-	public static String QUOTE_VARIABLE = "`";
-	public static String QUOTE_VALUE = "'";
+	private static final String VARCHAR = types.DB_MYSQL_DATA_VARCHAR;
+	private static final String TEXT = types.DB_MYSQL_DATA_TEXT;
+	private static final String INT = types.DB_MYSQL_DATA_INT;
+	private static final String TINYINT = types.DB_MYSQL_DATA_TINYINT;
+	private static final String BIGINT = types.DB_MYSQL_DATA_BIGINT;
+	private static final String DECIMAL = types.DB_MYSQL_DATA_DECIMAL;
+	private static final String TIMESTAMP = types.DB_MYSQL_DATA_TIMESTAMP;
+	
+	private static final String QUOTE_VARIABLE = "`";
+	private static final String QUOTE_VALUE = "'";
 
+	private static final int DEFAULT_SIZE_NUMBER = _defaults.SIZE_MYSQL_NUMBER;
+	private static final int DEFAULT_SIZE_DECIMALS = _defaults.SIZE_MYSQL_DECIMALS;
+	private static final int DEFAULT_SIZE_VARCHAR = _defaults.SIZE_MYSQL_VARCHAR;
+	private static final int DEFAULT_SIZE_TEXT = _defaults.SIZE_MYSQL_TEXT;
+	
 	static { ini.load(); }
 	
 	public static ArrayList<HashMap<String, String>> execute_query(String query_)
@@ -23,13 +36,13 @@ abstract class db_mysql
 
 		if (!strings.is_ok(type))
 		{
-			db.manage_error(_types.ERROR_DB_QUERY, query_, null, null);
+			db.manage_error(types.ERROR_DB_QUERY, query_, null, null);
 			
 			return null;
 		}
  
 		String[] cols = null;
-		if (type.equals(_types.DB_QUERY_SELECT))
+		if (type.equals(db.SELECT))
 		{
 			String[] temp2 = strings.split(temp[1], ",");
 			if (arrays.get_size(temp2) >= 1 && !temp2[0].trim().equals("*"))
@@ -74,21 +87,21 @@ abstract class db_mysql
 	{
 		HashMap<String, Object> output = new HashMap<String, Object>();
 		
-		String data_type = _types.check_subtype(data_type_, _types.get_subtypes(_types.DATA, null), null, null);
+		String data_type = types.check_subtype(data_type_, types.get_subtypes(types.DATA, null), null, null);
 		if (!strings.is_ok(data_type)) return output;
 		
 		String type = null;
-		if (data_type.equals(_types.DATA_BOOLEAN)) type = _types.DB_MYSQL_DATA_TINYINT;
-		else if (data_type.equals(_types.DATA_STRING)) type = _types.DB_MYSQL_DATA_VARCHAR;
-		else if (data_type.equals(_types.DATA_STRING_BIG)) type = _types.DB_MYSQL_DATA_TEXT;
-		else if (data_type.equals(_types.DATA_TIMESTAMP)) type = _types.DB_MYSQL_DATA_TIMESTAMP;
-		else if (data_type.equals(_types.DATA_INT)) type = _types.DB_MYSQL_DATA_INT;
-		else if (data_type.equals(_types.DATA_LONG)) type = _types.DB_MYSQL_DATA_BIGINT;
-		else if (data_type.equals(_types.DATA_DECIMAL)) type = _types.DB_MYSQL_DATA_DECIMAL;
+		if (data_type.equals(data.BOOLEAN)) type = TINYINT;
+		else if (data_type.equals(data.STRING)) type = VARCHAR;
+		else if (data_type.equals(data.STRING_BIG)) type = TEXT;
+		else if (data_type.equals(data.TIMESTAMP)) type = TIMESTAMP;
+		else if (data_type.equals(data.INT)) type = INT;
+		else if (data_type.equals(data.LONG)) type = BIGINT;
+		else if (data_type.equals(data.DECIMAL)) type = DECIMAL;
 		else return output;
 	
-		output.put(_keys.TYPE, type);
-		output.put(_keys.MAX, get_max_size(data_type_));
+		output.put(generic.TYPE, type);
+		output.put(generic.MAX, get_max_size(data_type_));
 		
 		return output;
 	}
@@ -100,11 +113,11 @@ abstract class db_mysql
 		String type = data.check_type(data_type_);
 		if (!strings.is_ok(type)) return size;
 		
-		if (type.equals(_types.DATA_BOOLEAN)) size = 1;
-		else if (type.equals(_types.DATA_STRING)) size = _defaults.SIZE_MYSQL_VARCHAR;
-		else if (type.equals(_types.DATA_STRING_BIG)) size = _defaults.SIZE_MYSQL_TEXT;
-		else if (type.equals(_types.DATA_TIMESTAMP)) size = dates.get_time_pattern(dates.FORMAT_DATE_TIME).length();
-		else if (data.is_numeric(type)) size = _defaults.SIZE_MYSQL_NUMBER;
+		if (type.equals(data.BOOLEAN)) size = 1;
+		else if (type.equals(data.STRING)) size = DEFAULT_SIZE_VARCHAR;
+		else if (type.equals(data.STRING_BIG)) size = DEFAULT_SIZE_TEXT;
+		else if (type.equals(data.TIMESTAMP)) size = dates.get_time_pattern(dates.DATE_TIME).length();
+		else if (data.is_numeric(type)) size = DEFAULT_SIZE_NUMBER;
 		
 		return size;
 	}
@@ -116,13 +129,13 @@ abstract class db_mysql
 		String data_type = data.check_type(data_type_);
 		if (!strings.is_ok(data_type)) return max;
 		
-		if (data_type.equals(_types.DATA_BOOLEAN)) max = 1;
-		else if (data_type.equals(_types.DATA_TIMESTAMP)) max = get_default_size(data_type_);		
-		else if (data_type.equals(_types.DATA_DECIMAL)) max = 64;
-		else if (data_type.equals(_types.DATA_INT)) max = numbers.MAX_DIGITS_INT;
-		else if (data_type.equals(_types.DATA_LONG)) max = numbers.MAX_DIGITS_LONG;
-		else if (data_type.equals(_types.DATA_STRING)) max = 255;
-		else if (data_type.equals(_types.DATA_STRING_BIG)) max = 65535;
+		if (data_type.equals(data.BOOLEAN)) max = 1;
+		else if (data_type.equals(data.TIMESTAMP)) max = get_default_size(data_type_);		
+		else if (data_type.equals(data.DECIMAL)) max = 64;
+		else if (data_type.equals(data.INT)) max = numbers.MAX_DIGITS_INT;
+		else if (data_type.equals(data.LONG)) max = numbers.MAX_DIGITS_LONG;
+		else if (data_type.equals(data.STRING)) max = 255;
+		else if (data_type.equals(data.STRING_BIG)) max = 65535;
 		
 		return max;
 	}
@@ -151,7 +164,7 @@ abstract class db_mysql
 		} 
 		catch (Exception e) 
 		{
-			db.manage_error(_types.ERROR_DB_CONN, null, e, null); 
+			db.manage_error(types.ERROR_DB_CONN, null, e, null); 
 			conn = null;
 		}
 
@@ -166,7 +179,7 @@ abstract class db_mysql
 		HashMap<String, Object> info = get_data_type(field_._type);
 		if (!arrays.is_ok(info)) return output;
 		
-		output = _types.remove_type((String)info.get(_keys.TYPE), _types.DB_MYSQL_DATA);
+		output = types.remove_type((String)info.get(generic.TYPE), types.DB_MYSQL_DATA);
 		String size = get_data_type_size(field_);
 		if (!strings.is_ok(size)) return output;
 		
@@ -179,24 +192,24 @@ abstract class db_mysql
 	{
 		String output = strings.DEFAULT;
 
-		int max = (field_._size > (double)numbers.MAX_INT ? 0 : field_._size);
+		int max = (field_._size > (double)size.MAX_INT ? 0 : field_._size);
 		String type = field_._type;
-		if (type.equals(_types.DATA_TIMESTAMP)) return output;
+		if (type.equals(data.TIMESTAMP)) return output;
 			
 		HashMap<String, Object> info = get_data_type(type);
-		int max2 = (int)info.get(_keys.MAX);
+		int max2 = (int)info.get(generic.MAX);
 		
 		int size_def = get_default_size(type);
 		
-		if (type.equals(_types.DATA_BOOLEAN)) output = (String)info.get(_keys.MAX);
-		else if (type.equals(_types.DATA_DECIMAL))
+		if (type.equals(data.BOOLEAN)) output = (String)info.get(generic.MAX);
+		else if (type.equals(data.DECIMAL))
 		{
 			int m = ((max > max2 || max < 1) ? size_def : max);
 			int d = field_._decimals;
 			
 			if (d < 0 || d > 30 || d > m)
 			{
-				d = _defaults.SIZE_MYSQL_DECIMALS;
+				d = DEFAULT_SIZE_DECIMALS;
 				if (d > m) d = m - 1;
 			}
 			
@@ -217,7 +230,7 @@ abstract class db_mysql
 
 		boolean is_ok = false;
 
-		if (type_.equals(_types.DB_QUERY_SELECT))
+		if (type_.equals(db.SELECT))
 		{
 			query = "SELECT ";
 			query += (arrays.is_ok(cols_) ? get_query_cols(cols_) : "*");     	
@@ -229,16 +242,16 @@ abstract class db_mysql
 
 			is_ok = true;
 		}
-		else if (type_.equals(_types.DB_QUERY_INSERT))
+		else if (type_.equals(db.INSERT))
 		{
 			query = "INSERT INTO " + get_variable(table_); 
-			String temp = get_query_cols(vals_, _keys.KEY);
+			String temp = get_query_cols(vals_, generic.KEY);
 
 			if (strings.is_ok(temp)) 
 			{
 				query += "(" + temp + ")";
 
-				temp = get_query_cols(vals_, _keys.VALUE);
+				temp = get_query_cols(vals_, generic.VALUE);
 				if (strings.is_ok(temp)) 
 				{
 					query += " VALUES (" + temp + ")"; 
@@ -246,11 +259,11 @@ abstract class db_mysql
 				}      		
 			} 
 		}
-		else if (type_.equals(_types.DB_QUERY_UPDATE))
+		else if (type_.equals(db.UPDATE))
 		{
 			query = "UPDATE " + get_variable(table_); 
 			
-			String temp = get_query_cols(vals_, _keys.FURTHER);
+			String temp = get_query_cols(vals_, generic.FURTHER);
 			if (strings.is_ok(temp)) 
 			{
 				query += " SET " + temp;
@@ -259,19 +272,19 @@ abstract class db_mysql
 			
 			if (strings.is_ok(where_)) query += " WHERE " + where_;
 		}
-		else if (type_.equals(_types.DB_QUERY_DELETE))
+		else if (type_.equals(db.DELETE))
 		{
 			query = "DELETE FROM " + get_variable(table_);
 			query += " WHERE " + where_;
 
 			is_ok = true;
 		}
-		else if (type_.equals(_types.DB_QUERY_TABLE_EXISTS))
+		else if (type_.equals(db.TABLE_EXISTS))
 		{
 			query = "SHOW TABLES LIKE " + get_value(table_);			
 			is_ok = true;
 		}
-		else if (type_.equals(_types.DB_QUERY_TABLE_CREATE))
+		else if (type_.equals(db.TABLE_CREATE))
 		{
 			query = "";
 
@@ -290,8 +303,8 @@ abstract class db_mysql
 				String[] further = create_table_check_further(field._further);	
 				String def_val = strings.DEFAULT;
 				
-				if (type.equals(_types.DATA_TIMESTAMP)) def_val = "current_timestamp";
-				else if (!arrays.value_exists(further, _types.DB_FIELD_FURTHER_AUTO_INCREMENT))
+				if (type.equals(data.TIMESTAMP)) def_val = "current_timestamp";
+				else if (!arrays.value_exists(further, db_field.AUTO_INCREMENT))
 				{
 					if (generic.is_ok(field._default)) def_val = strings.to_string(field._default);
 					else if (data.is_numeric(type)) def_val = "0";
@@ -315,12 +328,12 @@ abstract class db_mysql
 			}
 			else is_ok = false;
 		}
-		else if (type_.equals(_types.DB_QUERY_TABLE_DROP))
+		else if (type_.equals(db.TABLE_DROP))
 		{
 			query = "DROP TABLE " + get_variable(table_);			
 			is_ok = true;
 		}
-		else if (type_.equals(_types.DB_QUERY_TABLE_TRUNCATE))
+		else if (type_.equals(db.TABLE_TRUNCATE))
 		{
 			query = "TRUNCATE TABLE " + get_variable(table_);			
 			is_ok = true;
@@ -328,7 +341,7 @@ abstract class db_mysql
 
 		if (!is_ok)
 		{
-			db.manage_error(_types.ERROR_DB_QUERY, null, null, query);
+			db.manage_error(types.ERROR_DB_QUERY, null, null, query);
 			query = strings.DEFAULT;
 		}
 		
@@ -361,24 +374,24 @@ abstract class db_mysql
 			String further2 = db_field.check_further(further);
 			if (!strings.is_ok(further2)) continue;
 			
-			if (further2.equals(_types.DB_FIELD_FURTHER_KEY_PRIMARY))
+			if (further2.equals(db_field.KEY_PRIMARY))
 			{
 				output = "primary key";
 				break;
 			}
-			else if (further2.equals(_types.DB_FIELD_FURTHER_KEY_UNIQUE)) 
+			else if (further2.equals(db_field.KEY_UNIQUE)) 
 			{
 				output = "unique key";
 				break;
 			}
 		}
 		
-		if (arrays.value_exists(further_, _types.DB_FIELD_FURTHER_AUTO_INCREMENT))
+		if (arrays.value_exists(further_, db_field.AUTO_INCREMENT))
 		{
 			if (!output.equals("")) output += " ";
-			output += _types.remove_type(_types.DB_FIELD_FURTHER_AUTO_INCREMENT, _types.DB_FIELD_FURTHER);
+			output += types.remove_type(db_field.AUTO_INCREMENT, types.DB_FIELD_FURTHER);
 		}
-		else if (arrays.value_exists(further_, _types.DB_FIELD_FURTHER_TIMESTAMP))
+		else if (arrays.value_exists(further_, db_field.TIMESTAMP))
 		{
 			if (!output.equals("")) output += " ";
 			output += "on update current_timestamp";
@@ -389,8 +402,8 @@ abstract class db_mysql
 
 	private static String get_connect_url()
 	{   
-		String host = config.get_db(_types.CONFIG_DB_HOST);
-		String name = config.get_db(_types.CONFIG_DB_NAME);
+		String host = config.get_db(db.HOST);
+		String name = config.get_db(db.NAME);
 
 		String message = ""; 
 		if (!strings.is_ok(name)) message = "WRONG DB";
@@ -398,7 +411,7 @@ abstract class db_mysql
 
 		if (!message.equals(""))
 		{
-			db.manage_error(_types.ERROR_DB_INFO, null, null, message);
+			db.manage_error(types.ERROR_DB_INFO, null, null, message);
 
 			return strings.DEFAULT;
 		}
@@ -440,15 +453,15 @@ abstract class db_mysql
 		{    		
 			String item = "";
 
-			if (type_.equals(_keys.KEY)) 
+			if (type_.equals(generic.KEY)) 
 			{
 				item = get_variable(entry.getKey());
 			}
-			else if (type_.equals(_keys.VALUE)) 
+			else if (type_.equals(generic.VALUE)) 
 			{
 				item = get_value(entry.getValue());
 			}
-			else if (type_.equals(_keys.FURTHER)) 
+			else if (type_.equals(generic.FURTHER)) 
 			{
 				item = get_variable(entry.getKey()) + "=";
 				item += get_value(entry.getValue());

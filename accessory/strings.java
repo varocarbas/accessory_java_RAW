@@ -8,8 +8,8 @@ import java.util.HashMap;
 public abstract class strings 
 {
 	public static final String DEFAULT = _defaults.STRING;
+	public static final int DEFAULT_SIZE = _defaults.SIZE_STRING;
 	
-	public static final int SIZE_DEFAULT = _defaults.SIZE_STRING;
 	public static final int SIZE_SMALL = 10;
 	public static final int SIZE_BIG = 500;
 
@@ -184,7 +184,7 @@ public abstract class strings
 		}
 		catch (Exception e)
 		{
-			errors.manage(_types.ERROR_STRING_SPLIT, e, new String[] { haystack_, regex_ }, false);
+			errors.manage(types.ERROR_STRING_SPLIT, e, new String[] { haystack_, regex_ }, false);
 
 			output = null;
 		}
@@ -294,9 +294,9 @@ public abstract class strings
 
 	public static boolean is_boolean(String string_)
 	{
-		String[] targets = _types.get_subtypes(_types.DATA_BOOLEAN, null);
+		String[] targets = types.get_subtypes(data.BOOLEAN, null);
 
-		String string = _types.check_subtype(string_, targets, _types.ACTIONS_ADD, _types.DATA_BOOLEAN);
+		String string = types.check_subtype(string_, targets, types.ACTIONS_ADD, data.BOOLEAN);
 		
 		for (String target: targets)
 		{
@@ -313,7 +313,7 @@ public abstract class strings
 
 	public static double to_number_decimal(String string_)
 	{
-		return (is_decimal(string_) ? Double.parseDouble(string_) : numbers.DEFAULT_DEC);
+		return (is_decimal(string_) ? Double.parseDouble(string_) : numbers.DEFAULT_DECIMAL);
 	}
 
 	public static String from_number_long(long input_)
@@ -345,10 +345,10 @@ public abstract class strings
 	{
 		boolean output = false;
 
-		String string = _types.check_subtype(string_, _types.get_subtypes(_types.DATA_BOOLEAN, null), _types.ACTIONS_ADD, _types.DATA_BOOLEAN);
+		String string = types.check_subtype(string_, types.get_subtypes(data.BOOLEAN, null), types.ACTIONS_ADD, types.DATA_BOOLEAN);
 		
-		if (are_equal(string, _types.DATA_BOOLEAN_TRUE)) output = true;
-		else if (are_equivalent(string_, _types.DATA_BOOLEAN_FALSE)) output = false;
+		if (are_equal(string, data.TRUE)) output = true;
+		else if (are_equivalent(string_, data.FALSE)) output = false;
 
 		return output;
 	}
@@ -568,7 +568,7 @@ public abstract class strings
 		}
 		if (group_count != group_no && group_count != group_max) return false;
 
-		int digit_limit = numbers.MAX_DIGITS_DEC;
+		int digit_limit = numbers.MAX_DIGITS_DECIMAL;
 		if (is_long_) digit_limit = numbers.MAX_DIGITS_LONG;
 		else if (is_integer_) digit_limit = numbers.MAX_DIGITS_INT;
 

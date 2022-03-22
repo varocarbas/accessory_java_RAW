@@ -17,9 +17,9 @@ abstract class db_sql
 		if 
 		(
 			!(
-				!strings.is_ok(table_) || (what_.equals(_types.DB_QUERY_DELETE) && !strings.is_ok(where_)) ||
-				((what_.equals(_types.DB_QUERY_INSERT) || what_.equals(_types.DB_QUERY_UPDATE)) && !arrays.is_ok(vals_)) ||
-				(what_.equals(_types.DB_QUERY_TABLE_CREATE) && !arrays.is_ok(cols_info_))
+				!strings.is_ok(table_) || (what_.equals(db.DELETE) && !strings.is_ok(where_)) ||
+				((what_.equals(db.INSERT) || what_.equals(db.UPDATE)) && !arrays.is_ok(vals_)) ||
+				(what_.equals(db.TABLE_CREATE) && !arrays.is_ok(cols_info_))
 			)
 		)
 		{ return true; }
@@ -28,26 +28,26 @@ abstract class db_sql
 
 		items.put("table", strings.to_string(table_));
 		
-		if (what_.equals(_types.DB_QUERY_SELECT)) 
+		if (what_.equals(db.SELECT)) 
 		{
 			items.put("cols", strings.to_string(cols_));
 			items.put("max_rows", strings.to_string(max_rows_));
 			items.put("order", strings.to_string(order_));
 		}
 		
-		if (what_.equals(_types.DB_QUERY_DELETE) || what_.equals(_types.DB_QUERY_UPDATE) || what_.equals(_types.DB_QUERY_SELECT)) 
+		if (what_.equals(db.DELETE) || what_.equals(db.UPDATE) || what_.equals(db.SELECT)) 
 		{
 			items.put("where", strings.to_string(where_));
 		}
 		
-		if (what_.equals(_types.DB_QUERY_INSERT) || what_.equals(_types.DB_QUERY_UPDATE)) items.put(_keys.VALUE, strings.to_string(vals_));
-		if (what_.equals(_types.DB_QUERY_TABLE_CREATE)) items.put(_keys.INFO, strings.to_string(cols_info_));
+		if (what_.equals(db.INSERT) || what_.equals(db.UPDATE)) items.put(generic.VALUE, strings.to_string(vals_));
+		if (what_.equals(db.TABLE_CREATE)) items.put(generic.INFO, strings.to_string(cols_info_));
 		
-		String message = "Wrong " + _types.remove_type(what_, _types.DB_QUERY).toUpperCase() + " query" + misc.SEPARATOR_CONTENT;
+		String message = "Wrong " + types.remove_type(what_, types.DB_QUERY).toUpperCase() + " query" + misc.SEPARATOR_CONTENT;
 		String temp = strings.to_string(items);
 		if (strings.is_ok(temp)) message += temp;
 
-		db.manage_error(_types.ERROR_DB_QUERY, null, null, message);
+		db.manage_error(types.ERROR_DB_QUERY, null, null, message);
 
 		return false;
 	}
@@ -109,12 +109,12 @@ abstract class db_sql
 			}
 			catch (Exception e) 
 			{
-				db.manage_error(_types.ERROR_DB_QUERY, query_, e, null);
+				db.manage_error(types.ERROR_DB_QUERY, query_, e, null);
 			}
 		} 
 		catch (Exception e) 
 		{
-			db.manage_error(_types.ERROR_DB_QUERY, query_, e, null);
+			db.manage_error(types.ERROR_DB_QUERY, query_, e, null);
 		} 
 		finally { disconnect(conn); }
 
@@ -133,11 +133,11 @@ abstract class db_sql
 	{
 		Connection conn = null; 
 
-		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
 		{
 			conn = db_mysql.connect(properties);
 		}
-		else db.manage_error(_types.ERROR_DB_TYPE, null, null, null);
+		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
 
 		return conn;
 	}
@@ -146,21 +146,21 @@ abstract class db_sql
 	{	
 		HashMap<String, String> credentials = db.get_credentials();
 
-		String username = arrays.get_value(credentials, _keys.USERNAME);
-		String password = arrays.get_value(credentials, _keys.PASSWORD);
-		String max_pool = config.get(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_MAX_POOL);
+		String username = arrays.get_value(credentials, generic.USERNAME);
+		String password = arrays.get_value(credentials, generic.PASSWORD);
+		String max_pool = config.get(config.get_db(types.CONFIG_DB_SETUP), db.MAX_POOL);
 
 		String type = null;
 		String message = ""; 
 
 		if (!strings.is_int(max_pool))
 		{
-			type = _types.ERROR_DB_INFO;
+			type = types.ERROR_DB_INFO;
 			message = "MaxPooledStatements";
 		}
 		else if (!strings.is_ok(username) || !strings.is_ok(password))
 		{
-			type = _types.ERROR_DB_CREDENTIALS;
+			type = types.ERROR_DB_CREDENTIALS;
 			message = "credentials";
 		}
 
@@ -191,7 +191,7 @@ abstract class db_sql
 		} 
 		catch (Exception e) 
 		{
-			db.manage_error(_types.ERROR_DB_CONN, null, e, null);
+			db.manage_error(types.ERROR_DB_CONN, null, e, null);
 		}
 	}
 
@@ -214,7 +214,7 @@ abstract class db_sql
 		{
 			cols = null;
 
-			db.manage_error(_types.ERROR_DB_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns");
+			db.manage_error(types.ERROR_DB_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns");
 		}
 
 		return arrays.to_array(cols);

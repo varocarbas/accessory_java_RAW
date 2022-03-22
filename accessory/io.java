@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public abstract class io 
-{	
+{		
 	static { ini.load(); }
 
 	public static void array_to_file(String path_, ArrayList<String> vals_, boolean append_, boolean errors_to_file_)
@@ -32,7 +32,7 @@ public abstract class io
 		} 
 		catch (Exception e) 
 		{
-			errors.manage_io(_types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false);
+			errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false);
 		}
 	}
 
@@ -59,7 +59,7 @@ public abstract class io
 		} 
 		catch (Exception e) 
 		{
-			errors.manage_io(_types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false);
+			errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false);
 		}
 	}
 
@@ -104,7 +104,7 @@ public abstract class io
 		catch (Exception e) 
 		{ 
 			lines = null; 
-			errors.manage_io(_types.ERROR_FILE_READ, path_, e, errors_to_file_, false);
+			errors.manage_io(types.ERROR_FILE_READ, path_, e, errors_to_file_, false);
 		}
 
 		return (arrays.is_ok(lines) ? arrays.to_array(lines) : null);

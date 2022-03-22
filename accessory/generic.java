@@ -9,6 +9,18 @@ import java.util.Map.Entry;
 
 public abstract class generic 
 {
+	public static final String TYPE = types.what_to_key(types.WHAT_TYPE);
+	public static final String KEY = types.what_to_key(types.WHAT_KEY);
+	public static final String VALUE = types.what_to_key(types.WHAT_VALUE);
+	public static final String FURTHER = types.what_to_key(types.WHAT_FURTHER);
+	public static final String INFO = types.what_to_key(types.WHAT_INFO);
+	public static final String MIN = types.what_to_key(types.WHAT_MIN);
+	public static final String MAX = types.what_to_key(types.WHAT_MAX);	
+	public static final String USERNAME = types.what_to_key(types.WHAT_USERNAME);
+	public static final String PASSWORD = types.what_to_key(types.WHAT_PASSWORD);
+	public static final String ID = types.what_to_key(types.WHAT_ID);
+	public static final String QUERY = types.what_to_key(types.WHAT_QUERY);
+	
 	static { ini.load(); }
 	
 	public static boolean is_ok(double[] input_)
@@ -432,7 +444,7 @@ public abstract class generic
 		{ 
 			errors.manage
 			(
-				_types.ERROR_GENERIC_METHOD_GET, e, new String[] 
+				types.ERROR_GENERIC_METHOD_GET, e, new String[] 
 				{ 
 					name_, strings.to_string(params_) 
 				},
@@ -456,7 +468,7 @@ public abstract class generic
 		{ 
 			errors.manage
 			(
-				_types.ERROR_GENERIC_METHOD_CALL, e, new String[] 
+				types.ERROR_GENERIC_METHOD_CALL, e, new String[] 
 				{ 
 					method_.getName(), strings.to_string(args_)
 				},

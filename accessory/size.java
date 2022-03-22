@@ -1,12 +1,23 @@
 package accessory;
 
 public class size 
-{
+{				
+	public static final long MIN_LONG = Long.MIN_VALUE;
+	public static final double MIN_DECIMAL = numbers.MIN_DECIMAL;
+	public static final int MIN_INT = Integer.MIN_VALUE;
+	
+	public static final double MAX_DECIMAL = numbers.MAX_DECIMAL;
+	public static final long MAX_LONG = Long.MAX_VALUE;
+	public static final int MAX_INT = Integer.MAX_VALUE;
+
+	public static final int DEFAULT_DECIMALS = _defaults.SIZE_DECIMALS;
+	public static final int DEFAULT_STRING = strings.DEFAULT_SIZE;
+	
 	public boolean _is_ok = false;
 	
-	public double _min = Double.MIN_VALUE;
-	public double _max = Double.MAX_VALUE;
-	public int _decimals = _defaults.SIZE_DECIMALS;
+	public double _min = MIN_DECIMAL;
+	public double _max = MAX_DECIMAL;
+	public int _decimals = DEFAULT_DECIMALS;
 	
 	public size(size input_)
 	{
@@ -75,12 +86,12 @@ public class size
 	
 	public static size get_default(Class<?> class_)
 	{
-		size output = new size(numbers.MIN_DEC, numbers.MAX_DEC, _defaults.SIZE_DECIMALS);
+		size output = new size(MIN_DECIMAL, MAX_DECIMAL, DEFAULT_DECIMALS);
 		if (!generic.is_ok(class_)) return output;
 		
-		if (generic.are_equal(class_, Integer.class)) output = new size(numbers.MIN_INT, numbers.MAX_INT, 0);
-		else if (generic.are_equal(class_, Long.class)) output = new size(numbers.MIN_LONG, numbers.MAX_LONG, 0);
-		else if (generic.are_equal(class_, String.class)) output = new size(0, strings.SIZE_DEFAULT, 0);
+		if (generic.are_equal(class_, Integer.class)) output = new size(MIN_INT, MAX_INT, 0);
+		else if (generic.are_equal(class_, Long.class)) output = new size(MIN_LONG, MAX_LONG, 0);
+		else if (generic.are_equal(class_, String.class)) output = new size(0, DEFAULT_STRING, 0);
 		
 		return output;
 	}

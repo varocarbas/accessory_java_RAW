@@ -5,15 +5,14 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public abstract class dates 
-{
-	public static final String FORMAT_DEFAULT = _defaults.DATES_FORMAT;
-	
-	public static final String FORMAT_TIME = _types.DATES_FORMAT_TIME;
-	public static final String FORMAT_TIME_FULL = _types.DATES_FORMAT_TIME_FULL;
-	public static final String FORMAT_TIME_SHORT = _types.DATES_FORMAT_TIME_SHORT;
-	public static final String FORMAT_DATE = _types.DATES_FORMAT_DATE;
-	public static final String FORMAT_DATE_TIME = _types.DATES_FORMAT_DATE_TIME;
-	
+{	
+	public static final String TIME = types.DATES_FORMAT_TIME;
+	public static final String TIME_FULL = types.DATES_FORMAT_TIME_FULL;
+	public static final String TIME_SHORT = types.DATES_FORMAT_TIME_SHORT;
+	public static final String DATE = types.DATES_FORMAT_DATE;
+	public static final String DATE_TIME = types.DATES_FORMAT_DATE_TIME;
+
+	public static final String DEFAULT_FORMAT = _defaults.DATES_FORMAT;
 	
 	static { ini.load(); }
 
@@ -68,13 +67,13 @@ public abstract class dates
 	{
 		String pattern = strings.DEFAULT;
 
-		String format = _types.check_subtype(format_, _types.get_subtypes(_types.DATES_FORMAT, null), null, null);
-		if (!strings.is_ok(format)) format = FORMAT_DEFAULT;
+		String format = types.check_subtype(format_, types.get_subtypes(types.DATES_FORMAT, null), null, null);
+		if (!strings.is_ok(format)) format = DEFAULT_FORMAT;
 		
-		if (format.equals(FORMAT_TIME_FULL) || format.equals(FORMAT_TIME)) pattern = "HH:mm:ss";
-		if (format.equals(FORMAT_TIME_SHORT)) pattern = "HH:mm";
-		if (format.equals(FORMAT_DATE_TIME)) pattern = "yyyy-MM-dd HH:mm:ss";
-		if (format.equals(FORMAT_DATE)) pattern = "yyyy-MM-dd";
+		if (format.equals(TIME_FULL) || format.equals(TIME)) pattern = "HH:mm:ss";
+		if (format.equals(TIME_SHORT)) pattern = "HH:mm";
+		if (format.equals(DATE_TIME)) pattern = "yyyy-MM-dd HH:mm:ss";
+		if (format.equals(DATE)) pattern = "yyyy-MM-dd";
 
 		return pattern;
 	} 

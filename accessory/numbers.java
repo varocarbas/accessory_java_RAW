@@ -3,21 +3,22 @@ package accessory;
 import java.util.Random;
 
 public abstract class numbers 
-{
-	public static final double DEFAULT_DEC = _defaults.DECIMAL;
-	public static final double MIN_DEC = -1 * Double.MAX_VALUE; //!!!
-	public static final double MAX_DEC = Double.MAX_VALUE;
-	public static final int MAX_DIGITS_DEC = 308;
-
-	public static final long DEFAULT_LONG = _defaults.LONG;
+{	
+	public static final double MIN_DECIMAL = -1 * Double.MAX_VALUE; //!!!
 	public static final long MIN_LONG = Long.MIN_VALUE;
-	public static final long MAX_LONG = Long.MAX_VALUE;
-	public static final int MAX_DIGITS_LONG = 19;
-
-	public static final int DEFAULT_INT = _defaults.INT;
 	public static final int MIN_INT = Integer.MIN_VALUE;
+	
+	public static final double MAX_DECIMAL = Double.MAX_VALUE;
+	public static final long MAX_LONG = Long.MAX_VALUE;
 	public static final int MAX_INT = Integer.MAX_VALUE;
-	public static final int MAX_DIGITS_INT = 10;
+	public static final int MAX_DIGITS_DECIMAL = 308;
+	public static final int MAX_DIGITS_LONG = 19;
+	public static final int MAX_DIGITS_INT = 10;	
+	
+	public static final double DEFAULT_DECIMAL = _defaults.DECIMAL;
+	public static final long DEFAULT_LONG = _defaults.LONG;
+	public static final int DEFAULT_INT = _defaults.INT;
+	public static final int DEFAULT_DECIMALS = _defaults.SIZE_DECIMALS;
 	
 	static { ini.load(); }
 
@@ -31,7 +32,7 @@ public abstract class numbers
 
 	public static boolean is_ok(double input_, double min_, double max_)
 	{
-		return ((input_ >= min_ || min_ == MIN_DEC) && (input_ <= max_ || max_ == MAX_DEC));
+		return ((input_ >= min_ || min_ == MIN_DECIMAL) && (input_ <= max_ || max_ == MAX_DECIMAL));
 	}
 
 	public static boolean is_ok(long input_, long min_, long max_)
@@ -72,7 +73,7 @@ public abstract class numbers
 		Object output = null;
 		if (!generic.is_number(class_)) return output;
 		
-		if (generic.are_equal(class_, Double.class)) output = get_random_decimal(MIN_DEC, MAX_DEC);
+		if (generic.are_equal(class_, Double.class)) output = get_random_decimal(MIN_DECIMAL, MAX_DECIMAL);
 		else if (generic.are_equal(class_, Long.class)) output = get_random_long(MIN_LONG, MAX_LONG);
 		else if (generic.are_equal(class_, Integer.class)) output = get_random_int(MIN_INT, MAX_INT);
 
@@ -109,7 +110,7 @@ public abstract class numbers
 	
 	public static double get_random_decimal(double min_, double max_)
 	{
-		return get_random_decimal(new size(min_, max_, _defaults.SIZE_DECIMALS));
+		return get_random_decimal(new size(min_, max_, size.DEFAULT_DECIMALS));
 	}
 	
 	public static double get_random_decimal(size size_)

@@ -4,6 +4,9 @@ import java.util.HashMap;
 
 public class db_field 
 {
+	public static final String KEY_UNIQUE = types.DB_FIELD_FURTHER_KEY_UNIQUE;
+	public static final String AUTO_INCREMENT = types.DB_FIELD_FURTHER_AUTO_INCREMENT;
+	
 	public boolean _is_ok = false;
 	
 	public String _type = strings.DEFAULT;
@@ -11,6 +14,11 @@ public class db_field
 	public int _decimals = 0;
 	public Object _default = null;
 	public String[] _further = null;
+
+	//Only added via default fields.
+	static final String KEY_PRIMARY = types.DB_FIELD_FURTHER_KEY_PRIMARY;
+	static final String TIMESTAMP = types.DB_FIELD_FURTHER_TIMESTAMP;
+	//---
 	
 	private static int _size_temp = 0;
 	private static int _decimals_temp = 0;
@@ -173,7 +181,7 @@ public class db_field
 	
 	public static String check_further(String further_)
 	{
-		return _types.check_subtype(further_, _types.get_subtypes(_types.DB_FIELD_FURTHER, null), null, null);
+		return types.check_subtype(further_, types.get_subtypes(types.DB_FIELD_FURTHER, null), null, null);
 	}
 	
 	public static int check_size(String type_, int size_)
@@ -202,7 +210,7 @@ public class db_field
 		{
 			is_ok = (strings.get_length((String)default_) <= max);
 		}
-		else if (type_.equals(_types.DATA_BOOLEAN))
+		else if (type_.equals(data.BOOLEAN))
 		{
 			if (generic.is_boolean(default_)) is_ok = true;
 			else if (generic.is_number(default_))
@@ -236,7 +244,7 @@ public class db_field
 		}
 		
 		int size = size_;
-		int max = (int)info.get(_keys.MAX);
+		int max = (int)info.get(generic.MAX);
 		if (size > max) size = max;
 		
 		update_temp(type_, size, decimals_);

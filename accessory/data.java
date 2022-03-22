@@ -4,7 +4,18 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class data 
-{
+{	
+	public static final String STRING = types.DATA_STRING;
+	public static final String STRING_BIG  = types.DATA_STRING_BIG;
+	public static final String INT = types.DATA_INT;	
+	public static final String LONG = types.DATA_LONG;
+	public static final String DECIMAL = types.DATA_DECIMAL;
+	public static final String TIMESTAMP = types.DATA_TIMESTAMP;
+	public static final String BOOLEAN = types.DATA_BOOLEAN;
+	
+	public static final String TRUE = types.DATA_BOOLEAN_TRUE;
+	public static final String FALSE = types.DATA_BOOLEAN_FALSE;
+	
 	public boolean _is_ok = false;
 	
 	public String _type = null;
@@ -119,7 +130,7 @@ public class data
 	
 	public static String check_type(String type_)
 	{
-		return _types.check_subtype(type_, _types.get_subtypes(_types.DATA, null), null, null);
+		return types.check_subtype(type_, types.get_subtypes(types.DATA, null), null, null);
 	}
 
 	public static size get_default_size(String type_)
@@ -129,12 +140,12 @@ public class data
 
 	public static boolean is_numeric(String type_)
 	{
-		return is_common(type_, new String[] { _types.DATA_DECIMAL, _types.DATA_LONG, _types.DATA_INT });
+		return is_common(type_, new String[] { DECIMAL, LONG, INT });
 	}
 	
 	public static boolean is_string(String type_)
 	{
-		return is_common(type_, new String[] { _types.DATA_STRING, _types.DATA_STRING_BIG });		
+		return is_common(type_, new String[] { STRING, STRING_BIG });		
 	}
 
 	private static boolean is_common(String type_, String[] targets_)
@@ -183,36 +194,36 @@ public class data
 
 	private static size get_boundaries(String type_)
 	{
-		size boundaries = new size(0.0, 0.0, _defaults.SIZE_DECIMALS);
+		size boundaries = new size(0.0, 0.0, size.DEFAULT_DECIMALS);
 		
 		String type = check_type(type_);
 		if (!strings.is_ok(type)) return boundaries;
 		
 		if (is_string(type)) boundaries._max = (double)Integer.MAX_VALUE;
-		else if (generic.are_equal(type, _types.DATA_INT))
+		else if (generic.are_equal(type, INT))
 		{
-			boundaries._min = (double)numbers.MIN_INT;
-			boundaries._max = (double)numbers.MAX_INT;
+			boundaries._min = (double)size.MIN_INT;
+			boundaries._max = (double)size.MAX_INT;
 		}
-		else if (generic.are_equal(type, _types.DATA_LONG))
+		else if (generic.are_equal(type, LONG))
 		{
-			boundaries._min = (double)numbers.MIN_LONG;
-			boundaries._max = (double)numbers.MAX_LONG;
+			boundaries._min = (double)size.MIN_LONG;
+			boundaries._max = (double)size.MAX_LONG;
 		}
-		else if (generic.are_equal(type, _types.DATA_DECIMAL))
+		else if (generic.are_equal(type, DECIMAL))
 		{
-			boundaries._min = (double)numbers.MIN_DEC;
-			boundaries._max = (double)numbers.MAX_DEC;
+			boundaries._min = (double)size.MIN_DECIMAL;
+			boundaries._max = (double)size.MAX_DECIMAL;
 		}
-		else if (generic.are_equal(type, _types.DATA_BOOLEAN)) 
+		else if (generic.are_equal(type, BOOLEAN)) 
 		{
 			boundaries._min = 2.0;
 			boundaries._max = 2.0;	
 		}
-		else if (generic.are_equal(type, _types.DATA_TIMESTAMP)) 
+		else if (generic.are_equal(type, TIMESTAMP)) 
 		{
 			boundaries._min = 0.0;
-			boundaries._max = dates.get_time_pattern(dates.FORMAT_DATE_TIME).length();	
+			boundaries._max = dates.get_time_pattern(dates.DATE_TIME).length();	
 		}
 		
 		return boundaries;
@@ -261,12 +272,12 @@ public class data
 		if (arrays.is_ok(_all_classes)) return;
 
 		_all_classes = new HashMap<String, Class<?>>();
-		_all_classes.put(_types.DATA_STRING, String.class);
-		_all_classes.put(_types.DATA_STRING_BIG, String.class);
-		_all_classes.put(_types.DATA_INT, Integer.class);
-		_all_classes.put(_types.DATA_LONG, Long.class);
-		_all_classes.put(_types.DATA_DECIMAL, Double.class);
-		_all_classes.put(_types.DATA_BOOLEAN, Boolean.class);
-		_all_classes.put(_types.DATA_TIMESTAMP, String.class);
+		_all_classes.put(STRING, String.class);
+		_all_classes.put(STRING_BIG, String.class);
+		_all_classes.put(INT, Integer.class);
+		_all_classes.put(LONG, Long.class);
+		_all_classes.put(DECIMAL, Double.class);
+		_all_classes.put(BOOLEAN, Boolean.class);
+		_all_classes.put(TIMESTAMP, String.class);
 	}
 }

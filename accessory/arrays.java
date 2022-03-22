@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 
 public abstract class arrays 
 {
-	public static final int SIZE_DEFAULT = _defaults.SIZE_ARRAY;
+	public static final int DEFAULT_SIZE = _defaults.SIZE_ARRAY;
 	
 	static { ini.load(); }
 
@@ -295,9 +295,9 @@ public abstract class arrays
 		
 		if (generic.are_equal(class_, Array.class) || generic.are_equal(class_, String[].class))
 		{
-			String[] temp = new String[SIZE_DEFAULT];
+			String[] temp = new String[DEFAULT_SIZE];
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = strings.get_random(strings.SIZE_SMALL);
 			}
@@ -306,9 +306,9 @@ public abstract class arrays
 		}
 		else if (class_.equals(double[].class))
 		{
-			double[] temp = new double[SIZE_DEFAULT];
+			double[] temp = new double[DEFAULT_SIZE];
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = (double)numbers.get_random(Double.class);
 			}
@@ -317,9 +317,9 @@ public abstract class arrays
 		}
 		else if (class_.equals(Double[].class))
 		{
-			Double[] temp = new Double[SIZE_DEFAULT];
+			Double[] temp = new Double[DEFAULT_SIZE];
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = (Double)numbers.get_random(Double.class);
 			}
@@ -328,9 +328,9 @@ public abstract class arrays
 		}
 		else if (class_.equals(long[].class))
 		{
-			long[] temp = new long[SIZE_DEFAULT];
+			long[] temp = new long[DEFAULT_SIZE];
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = (long)numbers.get_random(Long.class);
 			}
@@ -339,9 +339,9 @@ public abstract class arrays
 		}
 		else if (class_.equals(Long[].class))
 		{
-			Long[] temp = new Long[SIZE_DEFAULT];
+			Long[] temp = new Long[DEFAULT_SIZE];
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = (Long)numbers.get_random(Long.class);
 			}
@@ -350,9 +350,9 @@ public abstract class arrays
 		}
 		else if (class_.equals(int[].class))
 		{
-			int[] temp = new int[SIZE_DEFAULT];
+			int[] temp = new int[DEFAULT_SIZE];
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = (int)numbers.get_random(Integer.class);
 			}
@@ -361,9 +361,9 @@ public abstract class arrays
 		}
 		else if (class_.equals(Integer[].class))
 		{
-			Integer[] temp = new Integer[SIZE_DEFAULT];
+			Integer[] temp = new Integer[DEFAULT_SIZE];
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = (Integer)numbers.get_random(Integer.class);
 			}
@@ -372,9 +372,9 @@ public abstract class arrays
 		}
 		else if (class_.equals(boolean[].class))
 		{
-			boolean[] temp = new boolean[SIZE_DEFAULT];
+			boolean[] temp = new boolean[DEFAULT_SIZE];
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = generic.get_random_boolean();
 			}
@@ -383,9 +383,9 @@ public abstract class arrays
 		}
 		else if (class_.equals(Boolean[].class))
 		{
-			Boolean[] temp = new Boolean[SIZE_DEFAULT];
+			Boolean[] temp = new Boolean[DEFAULT_SIZE];
 
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = (Boolean)generic.get_random_boolean();
 			}
@@ -394,9 +394,9 @@ public abstract class arrays
 		}
 		else if (generic.are_equal(class_, Class[].class))
 		{
-			Class<?>[] temp = new Class<?>[SIZE_DEFAULT];
+			Class<?>[] temp = new Class<?>[DEFAULT_SIZE];
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = generic.get_random_class();
 			}
@@ -411,7 +411,7 @@ public abstract class arrays
 	{
 		ArrayList<Object> output = new ArrayList<Object>();
 		
-		for (int i = 0; i < SIZE_DEFAULT; i++)
+		for (int i = 0; i < DEFAULT_SIZE; i++)
 		{
 			output.add(strings.get_random(strings.SIZE_SMALL));
 		}
@@ -423,7 +423,7 @@ public abstract class arrays
 	{
 		HashMap<Object, Object> output = new HashMap<Object, Object>();
 		
-		for (int i = 0; i < SIZE_DEFAULT; i++)
+		for (int i = 0; i < DEFAULT_SIZE; i++)
 		{
 			output.put(Integer.toString(i), strings.get_random(strings.SIZE_SMALL));
 		}
@@ -438,9 +438,9 @@ public abstract class arrays
 
 		if (generic.are_equal(class_, Array.class) || generic.are_equal(class_, String[].class))
 		{
-			String[] temp = new String[SIZE_DEFAULT];
+			String[] temp = new String[DEFAULT_SIZE];
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp[i] = strings.get_random(strings.SIZE_SMALL);
 			}
@@ -451,7 +451,7 @@ public abstract class arrays
 		{
 			ArrayList<String> temp = new ArrayList<String>();
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp.add(strings.get_random(strings.SIZE_SMALL));
 			}
@@ -462,7 +462,7 @@ public abstract class arrays
 		{
 			HashMap<String, String> temp = new HashMap<String, String>();
 			
-			for (int i = 0; i < SIZE_DEFAULT; i++)
+			for (int i = 0; i < DEFAULT_SIZE; i++)
 			{
 				temp.put(Integer.toString(i), strings.get_random(strings.SIZE_SMALL));
 			}

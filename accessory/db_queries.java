@@ -136,11 +136,11 @@ abstract class db_queries
 		
 		ArrayList<HashMap<String, String>> output = null;
 
-		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
 		{
 			output = db_mysql.execute_query(query_);
 		}
-		else db.manage_error(_types.ERROR_DB_TYPE, null, null, null);
+		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
 		return output;
 	}
@@ -150,9 +150,9 @@ abstract class db_queries
 		Object output = null;
 		
 		if (data.is_string(what_)) output = strings.DEFAULT;
-		else if (what_.equals(_types.DATA_DECIMAL)) output = numbers.DEFAULT_DEC;
-		else if (what_.equals(_types.DATA_LONG)) output = numbers.DEFAULT_LONG;
-		else if (what_.equals(_types.DATA_INT)) output = numbers.DEFAULT_INT;
+		else if (what_.equals(data.DECIMAL)) output = numbers.DEFAULT_DECIMAL;
+		else if (what_.equals(data.LONG)) output = numbers.DEFAULT_LONG;
+		else if (what_.equals(data.INT)) output = numbers.DEFAULT_INT;
 		
 		if (!strings.is_ok(field_)) 
 		{
@@ -168,9 +168,9 @@ abstract class db_queries
 			String temp2 = temp.get(field_);
 			
 			if (data.is_string(what_)) output = temp2;
-			else if (what_.equals(_types.DATA_DECIMAL)) output = numbers.decimal_from_string(temp2);
-			else if (what_.equals(_types.DATA_LONG)) output = numbers.long_from_string(temp2);
-			else if (what_.equals(_types.DATA_INT)) output = numbers.int_from_string(temp2);	
+			else if (what_.equals(data.DECIMAL)) output = numbers.decimal_from_string(temp2);
+			else if (what_.equals(data.LONG)) output = numbers.long_from_string(temp2);
+			else if (what_.equals(data.INT)) output = numbers.int_from_string(temp2);	
 		}
 		
 		return output;
@@ -178,53 +178,53 @@ abstract class db_queries
 	
 	private static ArrayList<HashMap<String, String>> select_internal(String table_, String[] cols_, String where_, int max_rows_, String order_)
 	{
-		return adapt_outputs(table_to_source(table_), execute_type(_types.DB_QUERY_SELECT, table_, cols_, null, where_, max_rows_, order_, null));
+		return adapt_outputs(table_to_source(table_), execute_type(db.SELECT, table_, cols_, null, where_, max_rows_, order_, null));
 	}
 	
 	private static void insert_internal(String table_, HashMap<String, String> vals_)
 	{
-		execute_type(_types.DB_QUERY_INSERT, table_, null, vals_, null, 0, null, null);
+		execute_type(db.INSERT, table_, null, vals_, null, 0, null, null);
 	}
 	
 	private static void update_internal(String table_, HashMap<String, String> vals_, String where_)
 	{
-		execute_type(_types.DB_QUERY_UPDATE, table_, null, vals_, where_, 0, null, null);
+		execute_type(db.UPDATE, table_, null, vals_, where_, 0, null, null);
 	}
 
 	private static void delete_internal(String table_, String where_)
 	{
-		execute_type(_types.DB_QUERY_DELETE, table_, null, null, where_, 0, null, null);
+		execute_type(db.DELETE, table_, null, null, where_, 0, null, null);
 	}
 	
 	private static boolean table_exists_internal(String table_)
 	{
-		return arrays.is_ok(execute_type(_types.DB_QUERY_TABLE_EXISTS, table_, null, null, null, 0, null, null));
+		return arrays.is_ok(execute_type(db.TABLE_EXISTS, table_, null, null, null, 0, null, null));
 	} 
 	
 	private static void create_table_internal(String table_, HashMap<String, db_field> cols_)
 	{
-		execute_type(_types.DB_QUERY_TABLE_CREATE, table_, null, null, null, 0, null, cols_);
+		execute_type(db.TABLE_CREATE, table_, null, null, null, 0, null, cols_);
 	} 
 	
 	private static void drop_table_internal(String table_)
 	{
-		execute_type(_types.DB_QUERY_TABLE_DROP, table_, null, null, null, 0, null, null);
+		execute_type(db.TABLE_DROP, table_, null, null, null, 0, null, null);
 	} 
 	
 	private static void truncate_table_internal(String table_)
 	{
-		execute_type(_types.DB_QUERY_TABLE_TRUNCATE, table_, null, null, null, 0, null, null);
+		execute_type(db.TABLE_TRUNCATE, table_, null, null, null, 0, null, null);
 	}
 	
 	private static ArrayList<HashMap<String, String>> execute_type(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
 		ArrayList<HashMap<String, String>> output = null;
 		
-		if (config.matches(config.get_db(_types.CONFIG_DB_SETUP), _types.CONFIG_DB_TYPE, _types.CONFIG_DB_TYPE_MYSQL))
+		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
 		{
 			output = db_mysql.execute(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 		}
-		else db.manage_error(_types.ERROR_DB_TYPE, null, null, null);
+		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
 		
 		return output;
 	}
