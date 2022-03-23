@@ -38,8 +38,8 @@ public abstract class _defaults
 	static final String DB_NAME = STRING;
 	static final String DB_HOST = "localhost";
 	static final String DB_USER = STRING;
-	static final String DB_FIELDS_DEFAULT_ID = "_id";
-	static final String DB_FIELDS_DEFAULT_TIMESTAMP = "_timestamp";
+	static final String DB_DEFAULT_COL_ID = "_id";
+	static final String DB_DEFAULT_COL_TIMESTAMP = "_timestamp";
 	static final String DB_CREDENTIALS_TYPE = types.remove_type(DB_TYPE, types.CONFIG_DB_TYPE);
 	static final String DB_CREDENTIALS_WHERE = CREDENTIALS_WHERE;
 	static final String DB_CREDENTIALS_USERNAME = STRING;
@@ -52,14 +52,14 @@ public abstract class _defaults
 	static final String DB_WHERE_OPERAND = db_where.EQUAL;
 	static final boolean DB_WHERE_LITERAL = true;
 	
-	static final String LOGS_DB_SOURCE = "logs";
-	static final String LOGS_DB_FIELD_ID = "id";
-	static final String LOGS_DB_FIELD_MESSAGE = "message";
+	static final String LOGS_DB_TABLE = "logs";
+	static final String LOGS_DB_COL_ID = "id";
+	static final String LOGS_DB_COL_MESSAGE = "message";
 	
-	static final String TESTS_DB_SOURCE = "tests";
-	static final String TESTS_DB_FIELD_INT = "int";
-	static final String TESTS_DB_FIELD_STRING = "string";
-	static final String TESTS_DB_FIELD_DECIMAL = "decimal";
+	static final String TESTS_DB_TABLE = "tests";
+	static final String TESTS_DB_COL_INT = "int";
+	static final String TESTS_DB_COL_STRING = "string";
+	static final String TESTS_DB_COL_DECIMAL = "decimal";
 
 	static final boolean LOGS_SCREEN = true;
 	static final boolean LOGS_FILE = true;

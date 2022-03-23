@@ -6,16 +6,16 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public abstract class tests 
-{
-	public static final String DEFAULT_SOURCE = _defaults.TESTS_DB_SOURCE;
-	public static final String DEFAULT_FIELD_DECIMAL = _defaults.TESTS_DB_FIELD_DECIMAL;
-	public static final String DEFAULT_FIELD_INT = _defaults.TESTS_DB_FIELD_INT;
-	public static final String DEFAULT_FIELD_STRING = _defaults.TESTS_DB_FIELD_STRING;
-	
+{	
 	public static final String SOURCE = types.CONFIG_TESTS_DB_SOURCE;
 	public static final String FIELD_DECIMAL = types.CONFIG_TESTS_DB_FIELD_DECIMAL;
 	public static final String FIELD_INT = types.CONFIG_TESTS_DB_FIELD_INT;
 	public static final String FIELD_STRING = types.CONFIG_TESTS_DB_FIELD_STRING;
+
+	public static final String DEFAULT_TABLE = _defaults.TESTS_DB_TABLE;
+	public static final String DEFAULT_COL_DECIMAL = _defaults.TESTS_DB_COL_DECIMAL;
+	public static final String DEFAULT_COL_INT = _defaults.TESTS_DB_COL_INT;
+	public static final String DEFAULT_COL_STRING = _defaults.TESTS_DB_COL_STRING;
 	
 	public static boolean _running = false;
 	

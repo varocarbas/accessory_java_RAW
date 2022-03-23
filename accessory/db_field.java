@@ -28,25 +28,16 @@ public class db_field
 		_is_ok = false;
 		if (!is_ok(input_)) return;
 
-		_is_ok = true;
-		_type = input_._type;
-		_size = _size_temp;
-		_decimals = _decimals_temp;
-		_default = generic.get_new(input_._default);
-		_further = (String[])generic.get_new(input_._further);
+		populate_main(input_._type, input_._default, input_._further);
 	}
 
+	
 	public db_field(String type_)
 	{
 		_is_ok = false;
 		if (!is_ok(type_, 0, 0, null)) return;
 
-		_is_ok = true;
-		_type = data.check_type(type_);
-		_size = _size_temp;
-		_decimals = _decimals_temp;
-		_default = null;
-		_further = null;	
+		populate_main(type_, null, null);
 	}
 	
 	public db_field(String type_, String[] further_)
@@ -54,12 +45,7 @@ public class db_field
 		_is_ok = false;
 		if (!is_ok(type_, 0, 0, further_)) return;
 
-		_is_ok = true;
-		_type = data.check_type(type_);
-		_size = _size_temp;
-		_decimals = _decimals_temp;
-		_default = null;
-		_further = (String[])generic.get_new(further_);
+		populate_main(type_, null, further_);
 	}
 	
 	public db_field(String type_, int size_, int decimals_)
@@ -67,12 +53,7 @@ public class db_field
 		_is_ok = false;
 		if (!is_ok(type_, size_, decimals_, null)) return;
 
-		_is_ok = true;
-		_type = data.check_type(type_);
-		_size = _size_temp;
-		_decimals = _decimals_temp;
-		_default = null;
-		_further = null;
+		populate_main(type_, null, null);
 	}
 
 	public db_field(String type_, int size_, int decimals_, Object default_, String[] further_)
@@ -80,12 +61,7 @@ public class db_field
 		_is_ok = false;
 		if (!is_ok(type_, size_, decimals_, default_, further_)) return;
 
-		_is_ok = true;
-		_type = data.check_type(type_);
-		_size = _size_temp;
-		_decimals = _decimals_temp;
-		_default = generic.get_new(default_);
-		_further = (String[])generic.get_new(further_);
+		populate_main(type_, default_, further_);
 	}
 	
 	public String toString()
@@ -231,6 +207,17 @@ public class db_field
 		}
 		
 		return is_ok;
+	}	
+
+	private void populate_main(String type_, Object default_, String[] further_)
+	{
+		_is_ok = true;
+		
+		_type = data.check_type(type_);
+		_size = _size_temp;
+		_decimals = _decimals_temp;
+		_default = generic.get_new(default_);
+		_further = (String[])generic.get_new(further_);
 	}
 	
 	private static void check_size(String type_, int size_, int decimals_)

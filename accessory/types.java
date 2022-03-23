@@ -1,17 +1,23 @@
 package accessory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public abstract class types 
 {
 	public static final String SEPARATOR = misc.SEPARATOR_NAME;
 
-	//------ To be synced with get_all_subtypes().
+	//--------- To be synced with get_all_subtypes().
 
-	//--- To be synced with the corresponding _ini and _config methods/variables.
+	//------ To be synced with the corresponding config methods/variables, mainly via config_ini.
 
 	//Note for DB types: the sources/fields are the types/ids, constant, used in most of the code. 
 	//The tables/cols are the values, variable, only used when performing the corresponding query.
+	//The config class deals with the main in-memory setup, including that source-table/field-col mapping.
+	//That is, the given type, the key which remains constant, (e.g., CONFIG_DB_FIELD_WHATEVER) is the 
+	//source/field and the associated value, which can be modified at runtime, (e.g., "whatever") is the 
+	//table/col.
 	
 	public static final String CONFIG_CREDENTIALS = "_config_credentials";
 	public static final String CONFIG_CREDENTIALS_ENCRYPTED = "_config_credentials_encrypted";
@@ -59,9 +65,9 @@ public abstract class types
 	public static final String CONFIG_DB_CREDENTIALS_ENCRYPTED = "_config_db_credentials_encrypted";
 	public static final String CONFIG_DB_CREDENTIALS_USERNAME = "_config_db_credentials_username";
 	public static final String CONFIG_DB_CREDENTIALS_PASSWORD = "_config_db_credentials_password";
-	public static final String CONFIG_DB_FIELDS_DEFAULT = "_config_db_fields_default";
-	public static final String CONFIG_DB_FIELDS_DEFAULT_ID = "_config_db_fields_default_id";
-	public static final String CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP = "_config_db_fields_default_timestamp";
+	public static final String CONFIG_DB_DEFAULT_FIELD = "_config_db_default_field";
+	public static final String CONFIG_DB_DEFAULT_FIELD_ID = "_config_db_default_field_id";
+	public static final String CONFIG_DB_DEFAULT_FIELD_TIMESTAMP = "_config_db_default_field_timestamp";
 	
 	public static final String CONFIG_TESTS = "_config_tests";
 	public static final String CONFIG_TESTS_DB = "_config_tests_db";
@@ -183,11 +189,11 @@ public abstract class types
 	public static final String ERROR_TEST = "error_test";
 	public static final String ERROR_TEST_RUN = "error_test_run";
 
-	//Only added via default fields.
+	//--- Only added via default fields.
 	static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_further_key_primary";
 	static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";
 	//---
-	//---------------------------
+	//---------
 
 	static { ini.load(); }
 	
@@ -204,6 +210,29 @@ public abstract class types
 	public static String check_action(String action_)
 	{
 		return check_subtype(action_, types.get_subtypes(ACTIONS, null), null, null);
+	}
+	
+	public static String action_to_key(String action_)
+	{
+		return check_subtype(action_, types.get_subtypes(ACTIONS, null), ACTIONS_REMOVE, ACTIONS);
+	}
+	
+	public static String check_multiple(String subtype_, HashMap<String, String[]> targets_)
+	{
+		String output = strings.DEFAULT;
+		if (!arrays.is_ok(targets_)) return output;
+		
+		for (Entry<String, String[]> item: targets_.entrySet())
+		{
+			String key = item.getKey();
+			
+			for (String val: item.getValue())
+			{
+				if (strings.matches_any(subtype_, new String[] { key, val }, true)) return key;
+			}
+		}
+		
+		return output;
 	}
 	
 	public static String check_subtype(String subtype_, String[] subtypes_, String action_add_remove_, String type_add_remove_)
@@ -322,8 +351,8 @@ public abstract class types
 			CONFIG_DB_CREDENTIALS_TYPE, CONFIG_DB_CREDENTIALS_ENCRYPTED, 
 			CONFIG_DB_CREDENTIALS_USERNAME, CONFIG_DB_CREDENTIALS_PASSWORD,
 			CONFIG_DB_CREDENTIALS_WHERE,
-			//CONFIG_DB_FIELDS_DEFAULT 
-			CONFIG_DB_FIELDS_DEFAULT_ID, CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP, 
+			//CONFIG_DB_DEFAULT_FIELD 
+			CONFIG_DB_DEFAULT_FIELD_ID, CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, 
 
 			//CONFIG_TESTS 
 			//CONFIG_TESTS_DB

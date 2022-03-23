@@ -24,10 +24,7 @@ public class size
 		_is_ok = false;
 		if (!is_ok(input_)) return;
 
-		_is_ok = true;
-		_min = input_._min;
-		_max = input_._max;
-		_decimals = input_._decimals;
+		populate_main(input_._min, input_._max, input_._decimals);
 	}
 
 	public size(double min_, double max_, int decimals_)
@@ -35,7 +32,13 @@ public class size
 		_is_ok = false;
 		if (!is_ok(min_, max_, decimals_)) return;
 
+		populate_main(min_, max_, decimals_);
+	}
+
+	private void populate_main(double min_, double max_, int decimals_)
+	{
 		_is_ok = true;
+		
 		_min = min_;
 		_max = max_;
 		_decimals = decimals_;

@@ -14,8 +14,8 @@ public abstract class db_ini
 	//Method expected to be called together with each load_config_sources_[source]().
 	public static void load_config_sources_default_fields(String main_)
 	{
-		config.update_ini(main_, db.FIELD_ID, db.DEFAULT_FIELD_ID);
-		config.update_ini(main_, db.FIELD_TIMESTAMP, db.DEFAULT_FIELD_TIMESTAMP);	
+		config.update_ini(main_, db.FIELD_ID, db.DEFAULT_COL_ID);
+		config.update_ini(main_, db.FIELD_TIMESTAMP, db.DEFAULT_COL_TIMESTAMP);	
 	}
 
 	private static void load_sources()
@@ -91,18 +91,18 @@ public abstract class db_ini
 
 	private static void load_config_sources_logs(String main_)
 	{
-		config.update_ini(main_, logs.SOURCE, logs.DEFAULT_SOURCE);
-		config.update_ini(main_, logs.FIELD_ID, logs.DEFAULT_FIELD_ID);
-		config.update_ini(main_, logs.FIELD_MESSAGE, logs.DEFAULT_FIELD_MESSAGE);
+		config.update_ini(main_, logs.SOURCE, logs.DEFAULT_TABLE);
+		config.update_ini(main_, logs.FIELD_ID, logs.DEFAULT_COL_ID);
+		config.update_ini(main_, logs.FIELD_MESSAGE, logs.DEFAULT_COL_MESSAGE);
 	}
 
 	private static void load_config_sources_tests(String main_)
 	{
 		config.update_ini(main_, types.CONFIG_TESTS_DB, db.DEFAULT_NAME);
-		config.update_ini(main_, tests.SOURCE, tests.DEFAULT_SOURCE);
-		config.update_ini(main_, tests.FIELD_INT, tests.DEFAULT_FIELD_INT);
-		config.update_ini(main_, tests.FIELD_STRING, tests.DEFAULT_FIELD_STRING);
-		config.update_ini(main_, tests.FIELD_DECIMAL, tests.DEFAULT_FIELD_DECIMAL);
+		config.update_ini(main_, tests.SOURCE, tests.DEFAULT_TABLE);
+		config.update_ini(main_, tests.FIELD_INT, tests.DEFAULT_COL_INT);
+		config.update_ini(main_, tests.FIELD_STRING, tests.DEFAULT_COL_STRING);
+		config.update_ini(main_, tests.FIELD_DECIMAL, tests.DEFAULT_COL_DECIMAL);
 	}
 	
 	private static void load_sources_all(HashMap<String, String> source_mains_)

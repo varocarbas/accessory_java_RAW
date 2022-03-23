@@ -13,16 +13,17 @@ public abstract class db
 	//A valid source is one included within the sources currently considered by the library, in memory.
 	//A valid table is one really existing in the given DB.
 	
-	public static final String FIELD_ID = types.CONFIG_DB_FIELDS_DEFAULT_ID;
-	public static final String FIELD_TIMESTAMP = types.CONFIG_DB_FIELDS_DEFAULT_TIMESTAMP;
+	public static final String FIELD_ID = types.CONFIG_DB_DEFAULT_FIELD_ID;
+	public static final String FIELD_TIMESTAMP = types.CONFIG_DB_DEFAULT_FIELD_TIMESTAMP;
 	
-	public static final String MYSQL = types.CONFIG_DB_TYPE_MYSQL;
 	public static final String MAX_POOL = types.CONFIG_DB_MAX_POOL;
 	public static final String NAME = types.CONFIG_DB_NAME;
 	public static final String HOST = types.CONFIG_DB_HOST;
 	public static final String USER = types.CONFIG_DB_USER; //Only indirectly related to credentials (e.g., file name containing credentials).
 	public static final String USERNAME = types.CONFIG_CREDENTIALS_FILE_USERNAME;
 	public static final String PASSWORD = types.CONFIG_CREDENTIALS_FILE_PASSWORD;
+	public static final String MYSQL = types.CONFIG_DB_TYPE_MYSQL;
+	public static final String TYPE_MYSQL = MYSQL;
 	
 	public static final String SELECT = types.DB_QUERY_SELECT;
 	public static final String INSERT = types.DB_QUERY_INSERT;
@@ -32,9 +33,18 @@ public abstract class db
 	public static final String TABLE_CREATE = types.DB_QUERY_TABLE_CREATE;
 	public static final String TABLE_DROP = types.DB_QUERY_TABLE_DROP;
 	public static final String TABLE_TRUNCATE = types.DB_QUERY_TABLE_TRUNCATE;
-
-	public static final String DEFAULT_FIELD_ID = _defaults.DB_FIELDS_DEFAULT_ID;
-	public static final String DEFAULT_FIELD_TIMESTAMP = _defaults.DB_FIELDS_DEFAULT_TIMESTAMP;
+	public static final String QUERY_SELECT = SELECT;
+	public static final String QUERY_INSERT = INSERT;
+	public static final String QUERY_UPDATE = UPDATE;
+	public static final String QUERY_DELETE = DELETE;	
+	public static final String QUERY_TABLE_EXISTS = TABLE_EXISTS;
+	public static final String QUERY_TABLE_CREATE = TABLE_CREATE;
+	public static final String QUERY_TABLE_DROP = TABLE_DROP;
+	public static final String QUERY_TABLE_TRUNCATE = TABLE_TRUNCATE;
+	
+	public static final String DEFAULT_COL_ID = _defaults.DB_DEFAULT_COL_ID;
+	public static final String DEFAULT_COL_TIMESTAMP = _defaults.DB_DEFAULT_COL_TIMESTAMP;
+	
 	public static final String DEFAULT_TYPE = _defaults.DB_TYPE;
 	public static final String DEFAULT_MAX_POOL = _defaults.DB_MAX_POOL;
 	public static final String DEFAULT_NAME = _defaults.DB_NAME;

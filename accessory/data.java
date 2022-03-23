@@ -12,9 +12,18 @@ public class data
 	public static final String DECIMAL = types.DATA_DECIMAL;
 	public static final String TIMESTAMP = types.DATA_TIMESTAMP;
 	public static final String BOOLEAN = types.DATA_BOOLEAN;
+	public static final String TYPE_STRING = STRING;
+	public static final String TYPE_STRING_BIG = STRING_BIG;
+	public static final String TYPE_INT = INT;	
+	public static final String TYPE_LONG = LONG;
+	public static final String TYPE_DECIMAL = DECIMAL;
+	public static final String TYPE_TIMESTAMP = TIMESTAMP;
+	public static final String TYPE_BOOLEAN = BOOLEAN;
 	
 	public static final String TRUE = types.DATA_BOOLEAN_TRUE;
 	public static final String FALSE = types.DATA_BOOLEAN_FALSE;
+	public static final String BOOLEAN_TRUE = TRUE;
+	public static final String BOOLEAN_FALSE = FALSE;
 	
 	public boolean _is_ok = false;
 	
@@ -29,10 +38,7 @@ public class data
 		_is_ok = false;
 		if (!is_ok(input_._type, input_._class, input_._size, false)) return;
 
-		_is_ok = true;
-		_type = input_._type;
-		_class = input_._class;
-		_size = update_size(_type, input_._size);
+		populate_main(input_._type, input_._class, input_._size);
 	}
 
 	public data(String type_, size size_)
@@ -44,10 +50,7 @@ public class data
 		
 		if (!is_ok(type_, temp, size_, false)) return;
 
-		_is_ok = true;
-		_type = type;
-		_class = temp;
-		_size = update_size(type, size_);
+		populate_main(type, temp, size_);
 	}
 	
 	public String toString()
@@ -148,6 +151,15 @@ public class data
 		return is_common(type_, new String[] { STRING, STRING_BIG });		
 	}
 
+	private void populate_main(String type_, Class<?> class_, size size_)
+	{
+		_is_ok = true;
+		
+		_type = type_;
+		_class = class_;
+		_size = update_size(type_, size_);
+	}
+	
 	private static boolean is_common(String type_, String[] targets_)
 	{
 		String type = check_type(type_);

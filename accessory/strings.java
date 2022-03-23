@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class strings 
-{
-	public static final String DEFAULT = _defaults.STRING;
-	public static final int DEFAULT_SIZE = _defaults.SIZE_STRING;
-	
+{	
 	public static final int SIZE_SMALL = 10;
 	public static final int SIZE_BIG = 500;
 
+	public static final String DEFAULT = _defaults.STRING;
+	public static final String DEFAULT_STRING = DEFAULT;
+	public static final int DEFAULT_SIZE = _defaults.SIZE_STRING;
+	
 	static { ini.load(); }
 
 	public static boolean is_ok(String string_)

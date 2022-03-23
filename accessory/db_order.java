@@ -4,8 +4,11 @@ public class db_order
 {	
 	public static final String ASC = types.DB_ORDER_ASC;
 	public static final String DESC = types.DB_ORDER_DESC;
-
+	public static final String ORDER_ASC = ASC;
+	public static final String ORDER_DESC = DESC;
+	
 	public static final String DEFAULT = _defaults.DB_ORDER;
+	public static final String DEFAULT_ORDER = DEFAULT;
 	
 	public boolean _is_ok = false;
 	
@@ -21,11 +24,7 @@ public class db_order
 		_is_ok = false;
 		if (!is_ok(input_)) return;
 
-		_is_ok = true;
-		_source = _source_temp;
-		_value = input_._value;
-		_order = input_._order;
-		_is_field = input_._is_field;
+		populate_main(input_._value, input_._order, input_._is_field);
 	}
 	
 	public db_order(String source_, String value_, String order_, boolean is_field_)
@@ -33,11 +32,7 @@ public class db_order
 		_is_ok = false;
 		if (!is_ok(source_, value_, order_)) return;
 
-		_is_ok = true;
-		_source = _source_temp;
-		_value = value_;
-		_order = check_order(order_);
-		_is_field = is_field_;
+		populate_main(value_, order_, is_field_);
 	}
 	
 	public String toString()
@@ -110,6 +105,16 @@ public class db_order
 		return (order_is_ok(order_) ? types.remove_type(order_, types.DB_ORDER).toUpperCase() : strings.DEFAULT);
 	}
 	
+	private void populate_main(String value_, String order_, boolean is_field_)
+	{
+		_is_ok = true;
+		
+		_source = _source_temp;
+		_value = value_;
+		_order = check_order(order_);
+		_is_field = is_field_;
+	}
+
 	private static boolean is_ok(String source_, String value_, String order_)
 	{
 		_source_temp = db.check_source(source_);
