@@ -55,20 +55,7 @@ public abstract class generic
 	
 	public static boolean is_ok(Object input_)
 	{
-		boolean is_ok = false;
-		if (input_ == null) return is_ok;
-
-		if (is_string(input_)) is_ok = strings.is_ok((String)input_);
-		else if (is_array(input_)) is_ok = arrays.is_ok(input_);
-		else if (is_boolean(input_) || is_number(input_)) is_ok = true;
-		else if (is_data(input_)) is_ok = data.is_ok((data)input_);
-		else if (is_size(input_)) is_ok = size.is_ok((size)input_);
-		else if (is_db_field(input_)) is_ok = db_field.is_ok((db_field)input_);
-		else if (is_db_where(input_)) is_ok = db_where.is_ok((db_where)input_);
-		else if (is_db_order(input_)) is_ok = db_order.is_ok((db_order)input_);
-		else is_ok = true;
-
-		return is_ok;
+		return is_ok(input_, false);
 	}
 
 	public static boolean is_class(Class<?> input_)
@@ -229,7 +216,7 @@ public abstract class generic
 	public static Object get_new(Object input_)
 	{
 		Object output = null;
-		if (!is_ok(input_)) return output;
+		if (!is_ok(input_, true)) return output;
 		
 		Class<?> type = get_class(input_);
 		if (type == null) return output;
@@ -283,8 +270,8 @@ public abstract class generic
 
 	public static boolean are_equal(Object input1_, Object input2_)
 	{
-		boolean is_ok1 = is_ok(input1_);
-		boolean is_ok2 = is_ok(input2_);
+		boolean is_ok1 = is_ok(input1_, true);
+		boolean is_ok2 = is_ok(input2_, true);
 		if (!is_ok1 || !is_ok2) return (is_ok1 == is_ok2);
 
 		boolean output = false;
@@ -478,7 +465,29 @@ public abstract class generic
 
 		return output;
 	}
-	
+		
+	private static boolean is_ok(Object input_, boolean minimal_)
+	{
+		boolean is_ok = false;
+		if (input_ == null) return is_ok;
+		
+		if (is_string(input_)) is_ok = strings.is_ok((String)input_);
+		else if (is_array(input_)) is_ok = arrays.is_ok(input_);
+		else if (is_boolean(input_) || is_number(input_)) is_ok = true;
+		else if (minimal_) is_ok = true;
+		
+		if (minimal_) return is_ok;
+		
+		if (is_data(input_)) is_ok = data.is_ok((data)input_);
+		else if (is_size(input_)) is_ok = size.is_ok((size)input_);
+		else if (is_db_field(input_)) is_ok = db_field.is_ok((db_field)input_);
+		else if (is_db_where(input_)) is_ok = db_where.is_ok((db_where)input_);
+		else if (is_db_order(input_)) is_ok = db_order.is_ok((db_order)input_);
+		else is_ok = true;
+
+		return is_ok;
+	}
+
 	private static boolean is_common(Object input_, Class<?>[] classes_, boolean is_class_)
 	{
 		if (input_ == null) return false;

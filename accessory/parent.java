@@ -1,76 +1,78 @@
 package accessory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract class parent 
+abstract class parent
 {
 	public boolean _is_ok = false;
-	
-	protected static ArrayList<Integer> _temp_size_all = new ArrayList<Integer>();
-	protected static ArrayList<Integer> _temp_decimals_all = new ArrayList<Integer>();
-	
-	private static HashMap<Class<?>, Integer> _temp_i_all = new HashMap<Class<?>, Integer>();
-	private static HashMap<Class<?>, Boolean> _temp_blocked = new HashMap<Class<?>, Boolean>();
-	private static int _temp_i_max = 1000;
-	private static int _temp_wait_max = 10;
-	
-	protected int start()
-	{
-		boolean is_ok = false;
-		
-		int count = 0;
-		
-		Class<?> type = this.getClass();
-		if (!_temp_blocked.containsKey(type)) 
-		{
-			_temp_blocked.put(type, true);
-			
-			count = _temp_wait_max;
-			is_ok = true;
-		}
-		
-		while (count < _temp_wait_max)
-		{
-			count++;
-			
-			if (!_temp_blocked.get(type))
-			{
-				_temp_blocked.put(type, true);
-				is_ok = true;
-				
-				break;
-			}
-			
-			misc.pause_min();
-		}
 
-		return (is_ok ? start_temp(type) : -1);
+	protected String _temp_string1 = strings.DEFAULT;	
+	protected String _temp_string2 = strings.DEFAULT;
+	
+	//Despite the abstract method absence, equals() is also expected to be always implemented.
+	public abstract String toString();
+	public abstract boolean is_ok();
+	
+	protected static boolean are_equal_common(Object input1_, Object input2_)
+	{
+		return generic.are_equal(input1_, input2_);
 	}
 	
-	private int start_temp(Class<?> class_)
+	protected static boolean val_is_ok_common(String val_, String type_, String default_)
 	{
-		int i = -1;
+		return (strings.is_ok(check_val_common(val_, type_, default_)));
+	}
+	
+	protected static boolean val_is_ok_common(String val_, HashMap<String, String[]> types_, String default_)
+	{
+		return (strings.is_ok(check_val_common(val_, types_, default_)));
+	}
+	
+	protected static String check_val_common(String val_, String type_, String default_)
+	{
+		return check_internal(types.check_subtype(val_, types.get_subtypes(type_, null), null, null), default_);
+	}
+	
+	protected static String check_val_common(String val_, HashMap<String, String[]> types_, String default_)
+	{
+		return check_internal(types.check_multiple(val_, types_), default_);
+	}
+	
+	protected static String val_to_string_common(String val_, String type_, String default_)
+	{
+		return (val_is_ok_common(val_, type_, default_) ? to_string_internal(types.remove_type(val_, type_)) : strings.DEFAULT);
+	}
+	
+	protected static String val_to_string_common(String val_, HashMap<String, String[]> types_, String default_)
+	{
+		String val = check_val_common(val_, types_, default_);
 
-		if (class_.equals(db_field.class))
-		{
-			i = _temp_size_all.size();
-			
-			if (i > _temp_i_max)
-			{
-				i = 0;
-				
-				_temp_size_all = new ArrayList<Integer>();
-				_temp_decimals_all = new ArrayList<Integer>();
-			}
-			
-			_temp_size_all.add(0);
-			_temp_decimals_all.add(0);
-		}
-		else return i;
+		return ((!strings.is_ok(val) || !arrays.key_exists(types_, val)) ? to_string_internal(types_.get(val)[0]) : strings.DEFAULT);
+	}
+	
+	protected void instantiate_common()
+	{
+		_is_ok = false;
 		
-		_temp_i_all.put(class_, i);
+		_temp_string1 = strings.DEFAULT; 
+		_temp_string2 = strings.DEFAULT; 
+	}
 
-		return i;
+	private static String check_internal(String output_, String default_)
+	{
+		String output = output_;
+		
+		if (!strings.is_ok(output) && strings.is_ok(default_)) output = default_;
+		
+		return output;
+	}
+	
+	private static String to_string_internal(String output_)
+	{
+		String output = output_;
+		
+		if (strings.is_ok(output)) output = output.toUpperCase();
+		
+		return output;
 	}
 }

@@ -283,7 +283,7 @@ public abstract class arrays
 			output = get_random_array(class_);
 		}
 		else if (generic.are_equal(class_, ArrayList.class)) output = get_random_arraylist();
-		else if (generic.are_equal(class_, HashMap.class)) output = get_random_hashmap();
+		else if (generic.are_equal(class_, HashMap.class)) output = get_random_hashmap(); 
 
 		return output;
 	}
