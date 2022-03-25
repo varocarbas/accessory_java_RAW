@@ -2,182 +2,95 @@ package accessory;
 
 import java.util.HashMap;
 
-public class db_field 
+public class db_field extends parent
 {
+	public static final int MAX_DECIMALS = numbers.MAX_DIGITS_DECIMALS;
+	public static final int MIN_DECIMALS = size.MIN_DECIMALS;
+	public static final int MIN_SIZE = 0;
+
+	public static final String WRONG_TYPE = strings.DEFAULT;
+	public static final int WRONG_SIZE = numbers.DEFAULT_INT;
+	public static final int WRONG_DECIMALS = size.WRONG_DECIMALS;
+
 	public static final String KEY_UNIQUE = types.DB_FIELD_FURTHER_KEY_UNIQUE;
 	public static final String AUTO_INCREMENT = types.DB_FIELD_FURTHER_AUTO_INCREMENT;
-	
-	public boolean _is_ok = false;
-	
-	public String _type = strings.DEFAULT;
-	public int _size = 0;
-	public int _decimals = 0;
+
+	public static final String DEFAULT_TYPE = data.TYPE_STRING;
+	public static final int DEFAULT_DECIMALS = size.DEFAULT_DECIMALS;
+	public static final int DEFAULT_SIZE = _defaults.SIZE_DB_STRING;
+	public static final double DEFAULT_SIZE_DECIMAL = _defaults.SIZE_DB_DECIMAL;
+	public static final double DEFAULT_SIZE_LONG = _defaults.SIZE_DB_LONG;
+	public static final double DEFAULT_SIZE_INT = _defaults.SIZE_DB_INT;
+	public static final int DEFAULT_SIZE_STRING = _defaults.SIZE_DB_STRING;
+	public static final int DEFAULT_SIZE_STRING_BIG = _defaults.SIZE_DB_STRING_BIG;
+	public static final int DEFAULT_SIZE_BOOLEAN = _defaults.SIZE_DB_BOOLEAN;
+	public static final int DEFAULT_SIZE_TIMESTAMP = _defaults.SIZE_DB_TIMESTAMP;
+
+	public String _type = WRONG_TYPE;
+	public int _size = WRONG_SIZE;
+	public int _decimals = WRONG_DECIMALS;
 	public Object _default = null;
 	public String[] _further = null;
 
-	//Only added via default fields.
+	//--- Only added via default fields.
 	static final String KEY_PRIMARY = types.DB_FIELD_FURTHER_KEY_PRIMARY;
 	static final String TIMESTAMP = types.DB_FIELD_FURTHER_TIMESTAMP;
 	//---
-	
+
 	private static int _size_temp = 0;
 	private static int _decimals_temp = 0;
-	
-	public db_field(db_field input_)
-	{
-		_is_ok = false;
-		if (!is_ok(input_)) return;
 
-		populate_main(input_._type, input_._default, input_._further);
-	}
-
-	
-	public db_field(String type_)
-	{
-		_is_ok = false;
-		if (!is_ok(type_, 0, 0, null)) return;
-
-		populate_main(type_, null, null);
-	}
-	
-	public db_field(String type_, String[] further_)
-	{
-		_is_ok = false;
-		if (!is_ok(type_, 0, 0, further_)) return;
-
-		populate_main(type_, null, further_);
-	}
-	
-	public db_field(String type_, int size_, int decimals_)
-	{
-		_is_ok = false;
-		if (!is_ok(type_, size_, decimals_, null)) return;
-
-		populate_main(type_, null, null);
-	}
-
-	public db_field(String type_, int size_, int decimals_, Object default_, String[] further_)
-	{
-		_is_ok = false;
-		if (!is_ok(type_, size_, decimals_, default_, further_)) return;
-
-		populate_main(type_, default_, further_);
-	}
-	
-	public String toString()
-	{
-		String output = "";
-		
-		String type = data.check_type(_type);
-		if (strings.is_ok(type)) output = type.toString();		
-		if (!output.equals("")) output += misc.SEPARATOR_ITEM;
-		
-		String size = strings.to_string(_size);
-		if (_decimals > 0) size += ", " + _decimals;
-		output += "(" + size + ")";
-				
-		if (generic.is_ok(_further)) 
-		{
-			output += misc.SEPARATOR_ITEM;
-			output += arrays.to_string(_further, null);
-		} 
-		if (!strings.is_ok(output)) return strings.DEFAULT;
-
-		return (misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE);
-	}
-
-	public boolean equals(db_field field2_)
-	{
-		if (!is_ok(field2_)) return false;
-		
-		return 
-		(
-			strings.are_equal(data.check_type(_type), field2_._type) &&
-			(_size == field2_._size) && 
-			(_decimals == field2_._decimals) &&
-			generic.are_equal(_default, field2_._default) &&
-			arrays.are_equal(_further, field2_._further)
-		);		
-	}
-	
-	public static String to_string(db_field field_)
-	{
-		return (is_ok(field_) ? field_.toString() : strings.DEFAULT);	
-	}
-	
 	public static boolean are_equal(db_field field1_, db_field field2_)
 	{
 		return generic.are_equal(field1_, field2_);
 	}
 	
-	public static boolean is_ok(db_field input_)
-	{
-		return (input_ != null && db_field.is_ok(input_._type, input_._size, input_._decimals, input_._default, input_._further));
-	}
-
-	public static db_field adapt(db_field input_)
-	{
-		db_field output = new db_field(input_);
-		if (!output._is_ok) return output;
-		
-		check_size(input_._type, input_._size, input_._decimals);
-		
-		output._size = _size_temp;
-		output._decimals = _decimals_temp;
-		
-		return output;
-	}
-	
-	public static <x> boolean complies(x val_, db_field field_)
-	{
-		if (!generic.is_ok(val_) || !is_ok(field_)) return false;
-		
-		double val = Math.pow(10, field_._size);
-		size size = new size(-1 * val, val, field_._decimals);
-
-		return data.complies(val_, new data(field_._type, size));
-	}
-
 	public static boolean further_is_ok(String[] further_)
 	{
 		if (!arrays.is_ok(further_)) return true;
-		
+
 		for (String further: further_)
 		{
 			if (!further_is_ok(further)) return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public static boolean further_is_ok(String further_)
 	{
-		return (!strings.is_ok(further_) || strings.is_ok(check_further(further_)));
+		return (!strings.is_ok(further_) || val_is_ok_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT));
 	}
-	
+
 	public static String check_further(String further_)
 	{
-		return types.check_subtype(further_, types.get_subtypes(types.DB_FIELD_FURTHER, null), null, null);
+		return check_val_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT);
 	}
-	
+
 	public static int check_size(String type_, int size_)
 	{
-		check_size(type_, size_, 0);
-		
-		return _size_temp;
+		int size = size_;
+
+		HashMap<String, Object> info = db.get_data_type(type_);
+		if (!arrays.is_ok(info)) return 0;
+
+		int max = (int)info.get(generic.MAX);
+		if (size > max) size = max;
+
+		return size;
 	}
-	
+
 	public static boolean default_is_ok(String type_, int size_, Object default_)
 	{
-		check_size(type_, size_);		
-	
-		if (_size_temp <= 0) return false;
 		if (default_ == null) return true;
-		
+
+		int size = check_size(type_, size_);		
+		if (size <= 0) return false;
+
 		boolean is_ok = false;		
-		int max = _size_temp;
+		int max = size;
 		if (max <= 0) return is_ok;
-		
+
 		if (data.is_numeric(type_) && generic.is_number(default_)) 
 		{
 			is_ok = (numbers.to_number(default_) <= max);
@@ -205,56 +118,164 @@ public class db_field
 				}
 			}
 		}
-		
+
 		return is_ok;
 	}	
 
-	private void populate_main(String type_, Object default_, String[] further_)
+	public static int get_max_size(String type_)
 	{
-		_is_ok = true;
-		
-		_type = data.check_type(type_);
-		_size = _size_temp;
-		_decimals = _decimals_temp;
-		_default = generic.get_new(default_);
-		_further = (String[])generic.get_new(further_);
+		return db.get_max_size(type_);
+	}
+
+	public static db_field adapt(db_field input_)
+	{
+		db_field output = new db_field(input_);
+		if (!output._is_ok) return output;
+
+		output._size = check_size(input_._type, input_._size);
+		output._decimals = adapt_decimals(input_._decimals);
+
+		return output;
+	}
+
+	public static int adapt_decimals(int decimals_)
+	{
+		return ((decimals_ <= MIN_DECIMALS && decimals_ >= MAX_DECIMALS) ? decimals_ : WRONG_DECIMALS);
+	}
+
+	public static <x> boolean complies(x val_, db_field field_)
+	{
+		if (!generic.is_ok(val_) || !is_ok(field_)) return false;
+
+		double val = Math.pow(10, field_._size);
+		size size = new size(-1 * val, val, field_._decimals);
+
+		return data.complies(val_, new data(field_._type, size));
 	}
 	
-	private static void check_size(String type_, int size_, int decimals_)
+	public db_field(db_field input_)
 	{
-		HashMap<String, Object> info = db.get_data_type(type_);
-		if (!arrays.is_ok(info))
+		instantiate(input_);
+	}
+
+	public db_field(String type_)
+	{
+		instantiate(type_, null);
+	}
+
+	public db_field(String type_, String[] further_)
+	{
+		instantiate(type_, further_);
+	}
+
+	public db_field(String type_, int size_, int decimals_)
+	{
+		instantiate(type_, size_, decimals_, null, null);
+	}
+
+	public db_field(String type_, int size_, int decimals_, Object default_, String[] further_)
+	{
+		instantiate(type_, size_, decimals_, default_, further_);
+	}
+
+	public String toString()
+	{
+		String output = "";
+
+		String type = data.check_type(_type);
+		if (strings.is_ok(type)) output = type.toString();		
+		if (!output.equals("")) output += misc.SEPARATOR_ITEM;
+
+		String size = strings.to_string(_size);
+		if (_decimals > 0) size += ", " + _decimals;
+		output += "(" + size + ")";
+
+		if (generic.is_ok(_further)) 
 		{
-			update_temp(type_, 0, 0);
-			
-			return;
-		}
-		
-		int size = size_;
-		int max = (int)info.get(generic.MAX);
-		if (size > max) size = max;
-		
-		update_temp(type_, size, decimals_);
+			output += misc.SEPARATOR_ITEM;
+			output += arrays.to_string(_further, null);
+		} 
+		if (!strings.is_ok(output)) return strings.DEFAULT;
+
+		return (misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE);
 	}
-	
+
+	public boolean equals(db_field field2_)
+	{
+		if (!is_ok(field2_)) return false;
+
+		return 
+		(
+			strings.are_equal(data.check_type(_type), field2_._type) &&
+			(_size == field2_._size) && 
+			(_decimals == field2_._decimals) &&
+			generic.are_equal(_default, field2_._default) &&
+			arrays.are_equal(_further, field2_._further)
+		);		
+	}
+
+	public boolean is_ok()
+	{
+		_is_ok = is_ok(_type, _size, _decimals, _default, _further);
+
+		return _is_ok;
+	}
+
 	private static void update_temp(String type_, int size_, int decimals_)
 	{
 		_size_temp = (size_ > 0 ? size_ : db.get_default_size(type_));
 		_decimals_temp = (decimals_ > 0 ? decimals_ : 0);
 	}
-	
-	private static boolean is_ok(String type_, int size_, int decimals_, Object default_, String[] further_)
-	{
-		check_size(type_, size_, decimals_);
-		if (_size_temp < 1) return false;
 
-		return (default_is_ok(type_, _size_temp, default_) && further_is_ok(further_));
+	private void instantiate(db_field input_)
+	{
+		instantiate_common();
+		if (!is_ok(input_)) return;
+
+		populate(input_._type, input_._default, input_._further);
 	}
 
-	private static boolean is_ok(String type_, int size_, int decimals_, String[] further_)
+	private void instantiate(String type_, int size_, int decimals_, Object default_, String[] further_)
 	{
-		update_temp(type_, size_, decimals_);
-		
+		instantiate_common();
+		if (!is_ok(type_, size_, decimals_, default_, further_)) return;
+
+		populate(type_, default_, further_);
+	}
+
+	private void instantiate(String type_, String[] further_)
+	{
+		instantiate_common();
+		if (!is_ok(type_, further_)) return;
+
+		populate(type_, null, further_);
+	}
+
+	private boolean is_ok(String type_, int size_, int decimals_, Object default_, String[] further_)
+	{
+		int size = check_size(type_, size_);
+		if (size < 1) return false;
+
+		update_temp(type_, size, decimals_);
+
+		return (default_is_ok(type_, size, default_) && further_is_ok(further_));
+	}
+
+	private boolean is_ok(String type_, String[] further_)
+	{
+		update_temp(type_, 0, 0);
+
 		return (data.type_is_ok(type_) && further_is_ok(further_));
+	}	
+
+	private void populate(String type_, Object default_, String[] further_)
+	{
+		_is_ok = true;
+
+		_type = data.check_type(type_);
+		_size = _size_temp;
+		_decimals = _decimals_temp;
+		_default = generic.get_new(default_);
+		_further = (String[])generic.get_new(further_);
 	}
 }

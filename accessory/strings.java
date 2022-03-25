@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class strings 
-{	
+{
+	public static final int MIN_SIZE = 0;
+	public static final int MAX_SIZE = 65535;
+	
 	public static final int SIZE_SMALL = 10;
 	public static final int SIZE_BIG = 500;
 

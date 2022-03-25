@@ -7,6 +7,7 @@ public abstract class numbers
 	public static final double MIN_DECIMAL = -1 * Double.MAX_VALUE; //!!!
 	public static final long MIN_LONG = Long.MIN_VALUE;
 	public static final int MIN_INT = Integer.MIN_VALUE;
+	public static final int MIN_DIGITS_DECIMALS = 0;
 	
 	public static final double MAX_DECIMAL = Double.MAX_VALUE;
 	public static final long MAX_LONG = Long.MAX_VALUE;
@@ -14,6 +15,7 @@ public abstract class numbers
 	public static final int MAX_DIGITS_DECIMAL = 308;
 	public static final int MAX_DIGITS_LONG = 19;
 	public static final int MAX_DIGITS_INT = 10;	
+	public static final int MAX_DIGITS_DECIMALS = 10;
 	
 	public static final double DEFAULT_DECIMAL = _defaults.DECIMAL;
 	public static final long DEFAULT_LONG = _defaults.LONG;
