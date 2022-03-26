@@ -12,8 +12,6 @@ public abstract class _defaults
 	public static final int SIZE_STRING = 100;
 	public static final int SIZE_ARRAY = 5;
 	public static final int SIZE_DECIMALS = 3;
-	public static final double SIZE_MIN = numbers.MIN_DECIMAL;
-	public static final double SIZE_MAX = numbers.MAX_DECIMAL;
 	
 	public static final double SIZE_DB_DECIMAL = db.get_default_size(data.DECIMAL);
 	public static final double SIZE_DB_LONG = db.get_default_size(data.LONG);

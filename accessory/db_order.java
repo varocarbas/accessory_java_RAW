@@ -17,7 +17,7 @@ public class db_order extends parent
 
 	public static boolean are_equal(db_order order1_, db_order order2_)
 	{
-		return generic.are_equal(order1_, order2_);
+		return are_equal_common(order1_, order2_);
 	}
 
 	public static String to_string(db_order[] orders_)
@@ -95,9 +95,9 @@ public class db_order extends parent
 	private void instantiate(db_order input_)
 	{
 		instantiate_common();
-		if (!is_ok(input_)) return;
+		if (input_ == null || !input_.is_ok()) return;
 
-		populate(input_._value, input_._order, input_._is_field);
+		populate(input_._temp_string1, input_._value, input_._order, input_._is_field);
 	}
 
 	private void instantiate(String source_, String value_, String order_, boolean is_field_)
@@ -105,7 +105,7 @@ public class db_order extends parent
 		instantiate_common();
 		if (!is_ok(source_, value_, order_)) return;
 
-		populate(value_, order_, is_field_);
+		populate(_temp_string1, value_, order_, is_field_);
 	}
 
 	private boolean is_ok(String source_, String value_, String order_)
@@ -115,11 +115,11 @@ public class db_order extends parent
 		return (strings.is_ok(_temp_string1) && strings.is_ok(value_) && order_is_ok(order_));
 	}
 
-	private void populate(String value_, String order_, boolean is_field_)
+	private void populate(String source_, String value_, String order_, boolean is_field_)
 	{
 		_is_ok = true;
 
-		_source = _temp_string1;
+		_source = source_;
 		_value = value_;
 		_order = check_order(order_);
 		_is_field = is_field_;

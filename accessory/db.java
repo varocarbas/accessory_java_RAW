@@ -60,7 +60,7 @@ public abstract class db
 	static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
 	
 	private static HashMap<String, String> _source_mains = new HashMap<String, String>();
-	//------
+	//---
 	
 	static { ini.load(); }
 
@@ -312,8 +312,7 @@ public abstract class db
 		
 		for (Entry<String, db_field> item: fields_.entrySet())
 		{
-			db_field field = db_field.adapt(new db_field(item.getValue()));
-			
+			db_field field = db_field.adapt(new db_field(item.getValue()));			
 			if (!field._is_ok)
 			{
 				manage_error(types.ERROR_DB_FIELD, null, null, field.toString());
@@ -435,7 +434,7 @@ public abstract class db
 		if (!generic.is_ok(field) || !db_field.complies(val_, field)) return null;
 
 		String val2 = strings.DEFAULT;
-		if (data.is_numeric(field._type)) val2 = strings.to_string(val_);
+		if (data.is_number(field._type)) val2 = strings.to_string(val_);
 		else val2 = sanitise_string(strings.to_string(val_));
 		
 		if (!strings.is_ok(val2)) return null;

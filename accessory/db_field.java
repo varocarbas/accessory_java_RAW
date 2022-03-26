@@ -2,18 +2,22 @@ package accessory;
 
 import java.util.HashMap;
 
+//All the min/max/size values in this class refer to specific DB types and, as such, are defined 
+//according to the given rules. For example, MySQL's data size being the max number of characters 
+//allowed in the given column.
+
 public class db_field extends parent
 {
-	public static final int MAX_DECIMALS = numbers.MAX_DIGITS_DECIMALS;
+	public static final String KEY_UNIQUE = types.DB_FIELD_FURTHER_KEY_UNIQUE;
+	public static final String AUTO_INCREMENT = types.DB_FIELD_FURTHER_AUTO_INCREMENT;
+	
+	public static final int MAX_DECIMALS = size.MAX_DECIMALS;
 	public static final int MIN_DECIMALS = size.MIN_DECIMALS;
 	public static final int MIN_SIZE = 0;
 
 	public static final String WRONG_TYPE = strings.DEFAULT;
 	public static final int WRONG_SIZE = numbers.DEFAULT_INT;
 	public static final int WRONG_DECIMALS = size.WRONG_DECIMALS;
-
-	public static final String KEY_UNIQUE = types.DB_FIELD_FURTHER_KEY_UNIQUE;
-	public static final String AUTO_INCREMENT = types.DB_FIELD_FURTHER_AUTO_INCREMENT;
 
 	public static final String DEFAULT_TYPE = data.TYPE_STRING;
 	public static final int DEFAULT_DECIMALS = size.DEFAULT_DECIMALS;
@@ -37,12 +41,9 @@ public class db_field extends parent
 	static final String TIMESTAMP = types.DB_FIELD_FURTHER_TIMESTAMP;
 	//---
 
-	private static int _size_temp = 0;
-	private static int _decimals_temp = 0;
-
 	public static boolean are_equal(db_field field1_, db_field field2_)
 	{
-		return generic.are_equal(field1_, field2_);
+		return are_equal_common(field1_, field2_);
 	}
 	
 	public static boolean further_is_ok(String[] further_)
@@ -72,11 +73,11 @@ public class db_field extends parent
 		int size = size_;
 
 		HashMap<String, Object> info = db.get_data_type(type_);
-		if (!arrays.is_ok(info)) return 0;
+		if (!arrays.is_ok(info)) return DEFAULT_SIZE;
 
 		int max = (int)info.get(generic.MAX);
-		if (size > max) size = max;
-
+		if (size <= MIN_SIZE || size > max) size = db.get_default_size(type_);
+		
 		return size;
 	}
 
@@ -91,7 +92,7 @@ public class db_field extends parent
 		int max = size;
 		if (max <= 0) return is_ok;
 
-		if (data.is_numeric(type_) && generic.is_number(default_)) 
+		if (data.is_number(type_) && generic.is_number(default_)) 
 		{
 			is_ok = (numbers.to_number(default_) <= max);
 		}
@@ -140,7 +141,7 @@ public class db_field extends parent
 
 	public static int adapt_decimals(int decimals_)
 	{
-		return ((decimals_ <= MIN_DECIMALS && decimals_ >= MAX_DECIMALS) ? decimals_ : WRONG_DECIMALS);
+		return (numbers.is_ok(decimals_, MIN_DECIMALS, MAX_DECIMALS) ? decimals_ : DEFAULT_DECIMALS);
 	}
 
 	public static <x> boolean complies(x val_, db_field field_)
@@ -160,12 +161,12 @@ public class db_field extends parent
 
 	public db_field(String type_)
 	{
-		instantiate(type_, null);
+		instantiate(type_, WRONG_SIZE, DEFAULT_DECIMALS, null, null);
 	}
 
 	public db_field(String type_, String[] further_)
 	{
-		instantiate(type_, further_);
+		instantiate(type_, WRONG_SIZE, DEFAULT_DECIMALS, null, further_);
 	}
 
 	public db_field(String type_, int size_, int decimals_)
@@ -221,18 +222,12 @@ public class db_field extends parent
 		return _is_ok;
 	}
 
-	private static void update_temp(String type_, int size_, int decimals_)
-	{
-		_size_temp = (size_ > 0 ? size_ : db.get_default_size(type_));
-		_decimals_temp = (decimals_ > 0 ? decimals_ : 0);
-	}
-
 	private void instantiate(db_field input_)
 	{
 		instantiate_common();
-		if (!is_ok(input_)) return;
+		if (input_ == null || !input_.is_ok()) return;
 
-		populate(input_._type, input_._default, input_._further);
+		populate(input_._temp_string1, input_._temp_int1, input_._temp_int2, input_._default, input_._further);
 	}
 
 	private void instantiate(String type_, int size_, int decimals_, Object default_, String[] further_)
@@ -240,41 +235,25 @@ public class db_field extends parent
 		instantiate_common();
 		if (!is_ok(type_, size_, decimals_, default_, further_)) return;
 
-		populate(type_, default_, further_);
-	}
-
-	private void instantiate(String type_, String[] further_)
-	{
-		instantiate_common();
-		if (!is_ok(type_, further_)) return;
-
-		populate(type_, null, further_);
+		populate(_temp_string1, _temp_int1, _temp_int2, default_, further_);
 	}
 
 	private boolean is_ok(String type_, int size_, int decimals_, Object default_, String[] further_)
 	{
-		int size = check_size(type_, size_);
-		if (size < 1) return false;
-
-		update_temp(type_, size, decimals_);
-
-		return (default_is_ok(type_, size, default_) && further_is_ok(further_));
+		_temp_string1 = data.check_type(type_);
+		_temp_int1 = check_size(type_, size_);
+		_temp_int2 = adapt_decimals(decimals_);
+		
+		return (default_is_ok(_temp_string1, _temp_int1, default_) && further_is_ok(further_));
 	}
 
-	private boolean is_ok(String type_, String[] further_)
-	{
-		update_temp(type_, 0, 0);
-
-		return (data.type_is_ok(type_) && further_is_ok(further_));
-	}	
-
-	private void populate(String type_, Object default_, String[] further_)
+	private void populate(String type_, int size_, int decimals_, Object default_, String[] further_)
 	{
 		_is_ok = true;
 
-		_type = data.check_type(type_);
-		_size = _size_temp;
-		_decimals = _decimals_temp;
+		_type = type_;
+		_size = size_;
+		_decimals = decimals_;
 		_default = generic.get_new(default_);
 		_further = (String[])generic.get_new(further_);
 	}

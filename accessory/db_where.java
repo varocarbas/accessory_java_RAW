@@ -40,7 +40,7 @@ public class db_where extends parent
 
 	public static boolean are_equal(db_where where1_, db_where where2_)
 	{
-		return generic.are_equal(where1_, where2_);
+		return are_equal_common(where1_, where2_);
 	}
 	
 	public static String to_string(db_where[] wheres_)
@@ -181,9 +181,9 @@ public class db_where extends parent
 	private void instantiate(db_where input_)
 	{
 		instantiate_common();
-		if (!is_ok(input_)) return;
+		if (input_ == null || !input_.is_ok()) return;
 
-		populate(input_._key, input_._value, input_._is_literal);
+		populate(input_._temp_string1, input_._key, input_._temp_string2, input_._value, input_._temp_string3, input_._is_literal);
 	}
 	
 	private void instantiate(String source_, String key_, String operand_, Object value_, boolean is_literal_, String link_)
@@ -191,7 +191,7 @@ public class db_where extends parent
 		instantiate_common();
 		if (!is_ok(source_, key_, operand_, value_, link_)) return;
 
-		populate(key_, value_, is_literal_);
+		populate(_temp_string1, key_, _temp_string2, value_, _temp_string3, is_literal_);
 	}
 	
 	private boolean is_ok(String source_, String key_, String operand_, Object value_, String link_)
@@ -209,15 +209,15 @@ public class db_where extends parent
 		);
 	}
 		
-	private void populate(String key_, Object value_, boolean is_literal_)
+	private void populate(String source_, String key_, String operand_, Object value_, String link_, boolean is_literal_)
 	{
 		_is_ok = true;
 		
-		_source = _temp_string1;
+		_source = source_;
 		_key = key_;
-		_operand = _temp_string2;
+		_operand = operand_;
 		_value = value_;	
 		_is_literal = is_literal_;
-		_link = _temp_string3;
+		_link = link_;
 	}
 }

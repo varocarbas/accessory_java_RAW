@@ -12,6 +12,8 @@ public abstract class parent
 
 	private String DEFAULT_STRING = strings.DEFAULT;
 	private int DEFAULT_INT = numbers.DEFAULT_INT;
+	private Class<?> DEFAULT_CLASS = null;
+	private size DEFAULT_SIZE = null;
 	
 	protected String _temp_string1 = DEFAULT_STRING;	
 	protected String _temp_string2 = DEFAULT_STRING;
@@ -20,6 +22,10 @@ public abstract class parent
 	protected int _temp_int1 = DEFAULT_INT;	
 	protected int _temp_int2 = DEFAULT_INT;	
 
+	protected Class<?> _temp_class1 = DEFAULT_CLASS;
+	
+	protected size _temp_size1 = DEFAULT_SIZE;	
+	
 	public static boolean is_ok(parent input_)
 	{
 		boolean output = false;
@@ -84,6 +90,10 @@ public abstract class parent
 		
 		_temp_int1 = DEFAULT_INT; 
 		_temp_int2 = DEFAULT_INT;
+		
+		_temp_class1 = DEFAULT_CLASS;
+		
+		_temp_size1 = DEFAULT_SIZE;
 	}
 
 	private static String check_internal(String output_, String default_)

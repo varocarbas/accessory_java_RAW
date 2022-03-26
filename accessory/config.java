@@ -10,7 +10,7 @@ public abstract class config
 	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
 	private static HashMap<String, String[]> _subtypes = new HashMap<String, String[]>();
 	private static HashMap<String, String[]> _linked = new HashMap<String, String[]>();
-	//------
+	//---
 
 	static { ini.load(); }
 

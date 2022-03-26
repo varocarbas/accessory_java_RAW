@@ -3,20 +3,11 @@ package accessory;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class data 
+//All the min/max/size values in this class refer to generic types and, as such, are defined  
+//according to intrinsic or pragmatic limitations of the language or the intended approach. 
+
+public class data extends parent
 {
-	public static final double MIN_DECIMAL = size.MIN_DECIMAL;
-	public static final double MIN_LONG = size.MIN_LONG;
-	public static final double MIN_INT = size.MIN_INT;
-	public static final int MIN_DECIMALS = size.MIN_DECIMALS;
-	public static final int MIN_STRING = size.MIN_STRING;
-	
-	public static final double MAX_DECIMAL = size.MAX_DECIMAL;
-	public static final double MAX_LONG = size.MAX_LONG;
-	public static final double MAX_INT = size.MAX_INT;
-	public static final int MAX_DECIMALS = size.MAX_DECIMALS;
-	public static final int MAX_STRING = size.MAX_STRING;
-	
 	public static final String STRING = types.DATA_STRING;
 	public static final String STRING_BIG  = types.DATA_STRING_BIG;
 	public static final String INT = types.DATA_INT;	
@@ -37,32 +28,47 @@ public class data
 	public static final String BOOLEAN_TRUE = TRUE;
 	public static final String BOOLEAN_FALSE = FALSE;
 	
-	public boolean _is_ok = false;
+	//--- For numeric types, min/max values (e.g., max decimal value). For other types, min/max
+	//lengths or number of elements (e.g., max string length). 
+	public static final double MIN_DECIMAL = size.MIN;
+	public static final double MIN_LONG = numbers.MIN_LONG;
+	public static final double MIN_INT = numbers.MIN_INT;
+	public static final double MIN_STRING = strings.MIN_SIZE;
+	public static final double MIN_BOOLEAN = 2.0;
+	public static final double MIN_TIMESTAMP = dates.MIN;
+	
+	public static final double MAX_DECIMAL = size.MAX;
+	public static final double MAX_LONG = numbers.MAX_LONG;
+	public static final double MAX_INT = numbers.MAX_INT;
+	public static final double MAX_STRING = strings.MAX_SIZE;
+	public static final double MAX_BOOLEAN = 2.0;
+	public static final double MAX_TIMESTAMP = dates.MAX_TIMESTAMP;
+	//---
 
+	public static final String DEFAULT_TYPE = STRING;
+	
 	public String _type = strings.DEFAULT;
 	public Class<?> _class = null;
 	public size _size = null;
 
 	private static HashMap<String, Class<?>> _all_classes = new HashMap<String, Class<?>>();
+	private static HashMap<Class<?>, Class<?>> _all_compatible = new HashMap<Class<?>, Class<?>>();
+	
+	static { ini(); }
+
+	public static boolean are_equal(data data1_, data data2_)
+	{
+		return generic.are_equal(data1_, data2_);
+	}	
 
 	public data(data input_)
 	{
-		_is_ok = false;
-		if (!is_ok(input_._type, input_._class, input_._size, false)) return;
-
-		populate_main(input_._type, input_._class, input_._size);
+		instantiate(input_);
 	}
 
 	public data(String type_, size size_)
 	{
-		_is_ok = false;
-
-		String type = check_type(type_);
-		Class<?> temp = get_class(type);
-
-		if (!is_ok(type_, temp, size_, false)) return;
-
-		populate_main(type, temp, size_);
+		instantiate(type_, null, size_);
 	}
 
 	public String toString()
@@ -98,21 +104,6 @@ public class data
 		);		
 	}
 
-	public static String to_string(data data_)
-	{
-		return (is_ok(data_) ? data_.toString() : strings.DEFAULT);	
-	}
-
-	public static boolean are_equal(data data1_, data data2_)
-	{
-		return generic.are_equal(data1_, data2_);
-	}
-
-	public static boolean is_ok(data input_)
-	{
-		return ((input_ == null) ? false : is_ok(input_._type, input_._class, input_._size, true));
-	}
-
 	public static <x> boolean complies(x val_, data data_)
 	{
 		boolean is_ok = false;
@@ -124,7 +115,7 @@ public class data
 			double size = 0;
 
 			if (generic.are_equal(data_._class, String.class)) size = ((String)val_).length();
-			else if (is_numeric(data_._class)) 
+			else if (generic.is_number(data_._class)) 
 			{
 				if (generic.are_equal(data_._class, Integer.class)) size = (double)((int)val_); //!!!
 				else if (generic.are_equal(data_._class, Long.class)) size = (double)((long)val_); //!!!
@@ -140,20 +131,32 @@ public class data
 
 	public static boolean type_is_ok(String type_)
 	{
-		return (strings.is_ok(check_type(type_)));
+		return val_is_ok_common(type_, types.DATA, DEFAULT_TYPE);
 	}
 
 	public static String check_type(String type_)
 	{
-		return types.check_subtype(type_, types.get_subtypes(types.DATA, null), null, null);
+		return check_val_common(type_, types.DATA, DEFAULT_TYPE);
+	}
+
+	public static boolean size_is_ok(String type_, size size_)
+	{
+		return size.complies(size_, get_boundaries(type_));
+	}
+
+	public static size check_size(String type_, size size_)
+	{
+		size boundaries = get_boundaries(type_);
+
+		return new size(size.complies(size_, boundaries) ? size_ : boundaries);
 	}
 
 	public static size get_default_size(String type_)
 	{
 		return get_boundaries(type_);
 	}
-
-	public static boolean is_numeric(String type_)
+	
+	public static boolean is_number(String type_)
 	{
 		return is_common(type_, new String[] { DECIMAL, LONG, INT });
 	}
@@ -162,14 +165,17 @@ public class data
 	{
 		return is_common(type_, new String[] { STRING, STRING_BIG });		
 	}
-
-	private void populate_main(String type_, Class<?> class_, size size_)
+	
+	public boolean is_ok()
 	{
-		_is_ok = true;
+		_is_ok = is_ok(_type, _class, _size);
 
-		_type = type_;
-		_class = class_;
-		_size = update_size(type_, size_);
+		return _is_ok;
+	}
+	
+	private static void ini()
+	{
+		populate_globals();
 	}
 
 	private static boolean is_common(String type_, String[] targets_)
@@ -185,69 +191,43 @@ public class data
 		return false;
 	}
 
-	private static boolean is_ok(String type_, Class<?> class_, size size_, boolean check_size_)
-	{
-		return 
-		(
-			strings.is_ok(type_) && class_is_ok(class_) &&
-			(!check_size_ || (check_size_ && size_is_ok(type_, size_)))
-		);
-	}
-
-	private static size update_size(String type_, size size_)
-	{
-		size boundaries = get_boundaries(type_);
-
-		return new size(size.complies(size_, boundaries) ? size_ : boundaries);
-	}
-
-	private static boolean size_is_ok(String type_, size size_)
-	{
-		return size.complies(size_, get_boundaries(type_));
-	}
-
-	private static boolean is_numeric(Class<?> class_)
-	{
-		for (Class<?> item: numbers.get_all_classes())
-		{
-			if (generic.are_equal(class_, item)) return true;
-		}
-
-		return false;
-	}
-
 	private static size get_boundaries(String type_)
 	{
-		size boundaries = new size(0.0, 0.0, size.DEFAULT_DECIMALS);
+		size boundaries = new size(size.WRONG_MIN, size.WRONG_MAX, size.WRONG_DECIMALS);
 
 		String type = check_type(type_);
 		if (!strings.is_ok(type)) return boundaries;
 
-		if (is_string(type)) boundaries._max = (double)strings.MAX_SIZE;
+		if (is_string(type)) 
+		{
+			boundaries._min = MIN_STRING;
+			boundaries._max = MAX_STRING;
+		}
 		else if (generic.are_equal(type, INT))
 		{
-			boundaries._min = (double)size.MIN_INT;
-			boundaries._max = (double)size.MAX_INT;
+			boundaries._min = MIN_INT;
+			boundaries._max = MAX_INT;
 		}
 		else if (generic.are_equal(type, LONG))
 		{
-			boundaries._min = (double)size.MIN_LONG;
-			boundaries._max = (double)size.MAX_LONG;
+			boundaries._min = MIN_LONG;
+			boundaries._max = MAX_LONG;
 		}
 		else if (generic.are_equal(type, DECIMAL))
 		{
-			boundaries._min = (double)size.MIN_DECIMAL;
-			boundaries._max = (double)size.MAX_DECIMAL;
+			boundaries._min = MIN_DECIMAL;
+			boundaries._max = MAX_DECIMAL;
+			boundaries._decimals = size.DEFAULT_DECIMALS;
 		}
 		else if (generic.are_equal(type, BOOLEAN)) 
 		{
-			boundaries._min = 2.0;
-			boundaries._max = 2.0;	
+			boundaries._min = MIN_BOOLEAN;
+			boundaries._max = MAX_BOOLEAN;	
 		}
 		else if (generic.are_equal(type, TIMESTAMP)) 
 		{
-			boundaries._min = 0.0;
-			boundaries._max = dates.get_time_pattern(dates.DATE_TIME).length();	
+			boundaries._min = MIN_TIMESTAMP;
+			boundaries._max = MAX_TIMESTAMP;		
 		}
 
 		return boundaries;
@@ -255,8 +235,6 @@ public class data
 
 	private static boolean class_is_ok(Class<?> class_)
 	{
-		populate_all_classes();
-
 		return (class_ != null && _all_classes.containsValue(class_));
 	}
 
@@ -265,7 +243,7 @@ public class data
 		if (input_ == null || target_ == null) return false;
 		if (input_.equals(target_)) return true;
 
-		for (Entry<Class<?>, Class<?>> item: class_complies_get_compatible().entrySet())
+		for (Entry<Class<?>, Class<?>> item: _all_compatible.entrySet())
 		{
 			if (target_.equals(item.getKey()) && input_.equals(item.getValue())) return true;
 		}
@@ -273,29 +251,15 @@ public class data
 		return false;
 	}
 
-	private static HashMap<Class<?>, Class<?>> class_complies_get_compatible()
-	{
-		HashMap<Class<?>, Class<?>> output = new HashMap<Class<?>, Class<?>>();
-
-		output.put(Double.class, Integer.class);
-		output.put(Double.class, Long.class);
-		output.put(Long.class, Integer.class);
-
-		return output;
-	}
-
 	private static Class<?> get_class(String type_)
 	{
-		populate_all_classes();
-
 		return (_all_classes.containsKey(type_) ? _all_classes.get(type_) : null);
 	}
 
-	private static void populate_all_classes()
+	private static void populate_globals()
 	{
-		if (arrays.is_ok(_all_classes)) return;
+		if (_all_classes.size() > 0) return;
 
-		_all_classes = new HashMap<String, Class<?>>();
 		_all_classes.put(STRING, String.class);
 		_all_classes.put(STRING_BIG, String.class);
 		_all_classes.put(INT, Integer.class);
@@ -303,5 +267,43 @@ public class data
 		_all_classes.put(DECIMAL, Double.class);
 		_all_classes.put(BOOLEAN, Boolean.class);
 		_all_classes.put(TIMESTAMP, String.class);
+		
+		_all_compatible.put(Double.class, Integer.class);
+		_all_compatible.put(Double.class, Long.class);
+		_all_compatible.put(Long.class, Integer.class);
+	}
+
+	private void instantiate(data input_)
+	{
+		instantiate_common();
+		if (input_ == null || !input_.is_ok()) return;
+
+		populate(input_._temp_string1, input_._temp_class1, input_._temp_size1);
+	}
+	
+	private void instantiate(String type_, Class<?> class_, size size_)
+	{
+		instantiate_common();
+		if (!is_ok(type_, class_, size_)) return;
+
+		populate(_temp_string1, _temp_class1, _temp_size1);
+	}
+	
+	private boolean is_ok(String type_, Class<?> class_, size size_)
+	{
+		_temp_string1 = check_type(type_);
+		_temp_class1 = (class_is_ok(class_) ? class_ : get_class(_temp_string1));
+		_temp_size1 = check_size(_temp_string1, size_);
+		
+		return (strings.is_ok(_temp_string1) && class_is_ok(_temp_class1) && size_is_ok(_temp_string1, _temp_size1));
+	}
+
+	private void populate(String type_, Class<?> class_, size size_)
+	{
+		_is_ok = true;
+
+		_type = type_;
+		_class = class_;
+		_size = new size(size_);
 	}
 }

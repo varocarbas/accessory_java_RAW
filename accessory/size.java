@@ -1,27 +1,19 @@
 package accessory;
 
 public class size extends parent 
-{				
+{	
 	public static final double MIN = numbers.MIN_DECIMAL;
-	public static final double MIN_DECIMAL = MIN;
-	public static final double MIN_LONG = numbers.MIN_LONG;
-	public static final double MIN_INT = numbers.MIN_INT;
 	public static final int MIN_DECIMALS = numbers.MIN_DIGITS_DECIMALS;
-	public static final int MIN_STRING = strings.MIN_SIZE;
 	
 	public static final double MAX = numbers.MAX_DECIMAL;
-	public static final double MAX_DECIMAL = MAX;
-	public static final double MAX_LONG = numbers.MAX_LONG;
-	public static final double MAX_INT = numbers.MAX_INT;
 	public static final int MAX_DECIMALS = numbers.MAX_DIGITS_DECIMALS;
-	public static final int MAX_STRING = strings.MAX_SIZE;
 	
 	public static final double WRONG_MIN = numbers.DEFAULT_DECIMAL;
 	public static final double WRONG_MAX = numbers.DEFAULT_DECIMAL;
 	public static final int WRONG_DECIMALS = numbers.DEFAULT_INT;
 	
-	public static final double DEFAULT_MIN = _defaults.SIZE_MIN;
-	public static final double DEFAULT_MAX = _defaults.SIZE_MAX;
+	public static final double DEFAULT_MIN = numbers.MIN_DECIMAL;
+	public static final double DEFAULT_MAX = numbers.MAX_DECIMAL;
 	public static final int DEFAULT_DECIMALS = _defaults.SIZE_DECIMALS;
 
 	public double _min = WRONG_MIN;
@@ -88,23 +80,10 @@ public class size extends parent
 		return (brackets[0] + arrays.to_string(new Object[] { _min, _max, _decimals }, misc.SEPARATOR_ITEM) + brackets[1]);
 	}
 
-	public size get_default(Class<?> class_)
-	{
-		size output = new size(WRONG_MIN, WRONG_MAX, WRONG_DECIMALS);
-		if (!generic.is_ok(class_)) return output;
-
-		if (generic.are_equal(class_, Double.class)) output = new size(MIN_DECIMAL, MAX_DECIMAL, DEFAULT_DECIMALS);
-		else if (generic.are_equal(class_, Integer.class)) output = new size(MIN_INT, MAX_INT, 0);
-		else if (generic.are_equal(class_, Long.class)) output = new size(MIN_LONG, MAX_LONG, 0);
-		else if (generic.are_equal(class_, String.class)) output = new size(MIN_STRING, MAX_STRING, 0);
-
-		return output;
-	}
-
 	private void instantiate(size input_)
 	{
 		instantiate_common();
-		if (!is_ok(input_)) return;
+		if (input_ == null || !input_.is_ok()) return;
 
 		populate(input_._min, input_._max, input_._decimals);
 	}

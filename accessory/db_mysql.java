@@ -117,7 +117,7 @@ abstract class db_mysql
 		else if (type.equals(data.STRING)) size = DEFAULT_SIZE_VARCHAR;
 		else if (type.equals(data.STRING_BIG)) size = DEFAULT_SIZE_TEXT;
 		else if (type.equals(data.TIMESTAMP)) size = dates.get_time_pattern(dates.DATE_TIME).length();
-		else if (data.is_numeric(type)) size = DEFAULT_SIZE_NUMBER;
+		else if (data.is_number(type)) size = DEFAULT_SIZE_NUMBER;
 		
 		return size;
 	}
@@ -130,7 +130,7 @@ abstract class db_mysql
 		if (!strings.is_ok(data_type)) return max;
 		
 		if (data_type.equals(data.BOOLEAN)) max = 1;
-		else if (data_type.equals(data.TIMESTAMP)) max = get_default_size(data_type_);		
+		else if (data_type.equals(data.TIMESTAMP)) max = dates.MAX_TIMESTAMP;		
 		else if (data_type.equals(data.DECIMAL)) max = 64;
 		else if (data_type.equals(data.INT)) max = numbers.MAX_DIGITS_INT;
 		else if (data_type.equals(data.LONG)) max = numbers.MAX_DIGITS_LONG;
@@ -192,7 +192,7 @@ abstract class db_mysql
 	{
 		String output = strings.DEFAULT;
 
-		int max = (field_._size > (double)size.MAX_INT ? 0 : field_._size);
+		int max = (field_._size > (double)data.MAX_INT ? 0 : field_._size);
 		String type = field_._type;
 		if (type.equals(data.TIMESTAMP)) return output;
 			
@@ -215,7 +215,7 @@ abstract class db_mysql
 			
 			output = (strings.to_string(m) + "," + strings.to_string(d));
 		}
-		else if (data.is_numeric(type) || data.is_string(type))
+		else if (data.is_number(type) || data.is_string(type))
 		{
 			output = strings.to_string(max > max2 ? size_def : max);
 		}
@@ -307,7 +307,7 @@ abstract class db_mysql
 				else if (!arrays.value_exists(further, db_field.AUTO_INCREMENT))
 				{
 					if (generic.is_ok(field._default)) def_val = strings.to_string(field._default);
-					else if (data.is_numeric(type)) def_val = "0";
+					else if (data.is_number(type)) def_val = "0";
 					else if (data.is_string(type)) def_val = get_variable_value(" ", false);
 					
 					if (strings.is_ok(def_val)) def_val = get_value(def_val);

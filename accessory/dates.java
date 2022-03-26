@@ -11,6 +11,14 @@ public abstract class dates
 	public static final String TIME_SHORT = types.DATES_FORMAT_TIME_SHORT;
 	public static final String DATE = types.DATES_FORMAT_DATE;
 	public static final String DATE_TIME = types.DATES_FORMAT_DATE_TIME;
+	
+	public static final int MIN = 0;
+	public static final int MAX_TIME = dates.get_time_pattern(TIME).length();
+	public static final int MAX_TIME_FULL = dates.get_time_pattern(TIME_FULL).length();
+	public static final int MAX_TIME_SHORT = dates.get_time_pattern(TIME_SHORT).length();
+	public static final int MAX_DATE = dates.get_time_pattern(DATE).length();
+	public static final int MAX_DATE_TIME = dates.get_time_pattern(DATE_TIME).length();
+	public static final int MAX_TIMESTAMP = MAX_DATE_TIME;
 
 	public static final String DEFAULT_FORMAT = _defaults.DATES_FORMAT;
 	
