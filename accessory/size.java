@@ -1,6 +1,6 @@
 package accessory;
 
-public class size extends parent 
+public class size extends parent
 {	
 	public static final double MIN = numbers.MIN_DECIMAL;
 	public static final int MIN_DECIMALS = numbers.MIN_DIGITS_DECIMALS;

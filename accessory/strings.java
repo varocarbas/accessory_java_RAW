@@ -21,9 +21,9 @@ public abstract class strings
 
 	public static boolean is_ok(String string_)
 	{
-		return (get_length(string_, true) > 0);
+		return is_ok(string_, false);
 	}
-
+	
 	public static boolean are_ok(String[] strings_)
 	{
 		if (!arrays.is_ok(strings_)) return false;
@@ -53,14 +53,9 @@ public abstract class strings
 
 	public static String normalise(String string_)
 	{
-		String string = string_;
-
-		if (!is_ok(string_)) string = DEFAULT;
-		else string = string.trim().toLowerCase();
-
-		return string;
+		return normalise(string_, false);
 	}
-
+	
 	public static boolean matches_all(String string_, String[] targets_, boolean normalise_)
 	{
 		return matches(string_, targets_, normalise_, true);
@@ -73,8 +68,8 @@ public abstract class strings
 
 	public static boolean are_equal(String string1_, String string2_)
 	{
-		boolean is_ok1 = is_ok(string1_);
-		boolean is_ok2 = is_ok(string2_);
+		boolean is_ok1 = is_ok(string1_, true);
+		boolean is_ok2 = is_ok(string2_, true);
 		
 		return ((!is_ok1 || !is_ok2) ? (is_ok1 == is_ok2) : string1_.equals(string2_));
 	}
@@ -129,81 +124,71 @@ public abstract class strings
 		return (length_ > 0 ? string_.substring(start_, start_ + length_) : string_.substring(start_));
 	}
 
-	public static String[] split(String haystack_, String regex_)
+	public static String[] split(String needle_, String haystack_)
 	{
-		return split(haystack_, regex_, false, 0, false, false);
+		return split(needle_, haystack_, false);
 	}
-	
-	public static String[] split(String haystack_, String regex_, boolean trim_)
+		
+	public static String[] split(String needle_, String haystack_, boolean normalise_)
 	{
-		return split(haystack_, regex_, false, 0, trim_, false);
-	}
-	
-	public static String[] split(String haystack_, String regex_, boolean trim_, boolean remove_wrong_)
-	{
-		return split(haystack_, regex_, false, 0, trim_, remove_wrong_);
-	}
-	
-	public static String[] split(String haystack_, String regex_, boolean normalise_, int max_size_, boolean trim_, boolean remove_wrong_)
-	{
-		String[] output = null; 
+		if (!is_ok(needle_, true) || !is_ok(haystack_, true) || !contains(needle_, haystack_, normalise_)) return null; 
 
-		try
+		ArrayList<String> output = new ArrayList<String>(); 
+		
+		int i = 0;
+		
+		while (true)
 		{
-			if 
-			(
-				haystack_ == null || regex_ == null ||
-				(
-					is_ok(haystack_) && is_ok(regex_) && 
-					!contains(regex_, haystack_, normalise_)
-				)
-			) 
-			{ return output; }
-			
-			String haystack = haystack_;
-			String regex = regex_;
-			
-			if (normalise_)
+			int temp = index_of(needle_, haystack_, i, normalise_);
+			if (temp < 0) 
 			{
-				haystack = normalise(haystack);
-				regex = normalise(regex);
-			}			
-			
-			output = haystack.split(regex);
-			int size = arrays.get_size(output);
-			if (size < 2) return output;
+				output.add((i == 0 ? haystack_ : substring_after(haystack_, i - 1)));
+				break;
+			}
 
-			if (trim_ || remove_wrong_) output = arrays.clean(output, trim_, remove_wrong_);
-
-			if (max_size_ > 1 && size > max_size_)
-			{
-				String[] temp = arrays.get_range(output, max_size_ - 1, 0);
-				String[] temp2 = arrays.get_range(output, 0, max_size_ - 1);
-
-				ArrayList<String> temp3 = arrays.to_arraylist(temp2);
-				temp3.add(String.join(regex, temp));
-
-				output = arrays.to_array(temp3);
-			}			
+			output.add(substring_between(haystack_, i, temp, true));
+			i = temp + 1;			
 		}
-		catch (Exception e)
-		{
-			errors.manage(types.ERROR_STRING_SPLIT, e, new String[] { haystack_, regex_ }, false);
-
-			output = null;
-		}
-
-		return output;
+		
+		return arrays.to_array(output);
 	}	
-
-	public static String substring_before(String string_, String target_, int count_, boolean normalise_)
+	
+	public static String substring_between(String string_, int start_, int end_, boolean end_excluded_)
 	{
-		return substring_before_after(string_, target_, count_, normalise_, true);
+		int length = end_ - start_;
+		if (!end_excluded_) length++;
+		
+		return substring(string_, start_, length);
+	}
+	
+	public static String substring_before(String string_, int i_)
+	{
+		return substring_before_after(string_, i_, true);
+	}
+	
+	public static String substring_before(String needle_, String haystack_, boolean normalise_)
+	{
+		return substring_before_after(needle_, haystack_, normalise_, true);
 	}
 
-	public static String substring_after(String string_, String target_, int count_, boolean normalise_)
+	public static String substring_before(String needle_, String haystack_, boolean normalise_, int times_)
 	{
-		return substring_before_after(string_, target_, count_, normalise_, false);
+		return substring_before_after(needle_, haystack_, normalise_, times_, true);
+	}
+	
+	public static String substring_after(String string_, int i_)
+	{
+		return substring_before_after(string_, i_, false);
+	}
+	
+	public static String substring_after(String needle_, String haystack_, boolean normalise_)
+	{
+		return substring_before_after(needle_, haystack_, normalise_, false);
+	}
+	
+	public static String substring_after(String needle_, String haystack_, boolean normalise_, int times_)
+	{
+		return substring_before_after(needle_, haystack_, normalise_, times_, false);
 	}	
 
 	public static String get_random(int length_)
@@ -236,7 +221,7 @@ public abstract class strings
 	public static int index_of_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_)
 	{
 		int output = index_of(needle_, haystack_, normalise_);
-		if (output < 0 || !is_ok(start_) || !is_ok(end_)) return output;
+		if (output < 0 || !is_ok(start_, true) || !is_ok(end_, true)) return output;
 		
 		output = 0;
 		
@@ -263,14 +248,14 @@ public abstract class strings
 	
 	public static int index_of(String needle_, String haystack_, int start_, boolean normalise_)
 	{
-		if (!is_ok(needle_) || !is_ok(haystack_)) return -1;
+		if (!is_ok(needle_, true) || !is_ok(haystack_, true)) return -1;
 
 		String haystack = haystack_; 
 		String needle = needle_;
 		if (normalise_)
 		{
-			haystack = normalise(haystack);
-			needle = normalise(needle);
+			haystack = normalise(haystack, true);
+			needle = normalise(needle, true);
 		}
 
 		return (start_ > 0 ? haystack.indexOf(needle, start_) : haystack.indexOf(needle));
@@ -473,7 +458,7 @@ public abstract class strings
 
 	public static String remove_escape_many(String[] needles_, String haystack_, boolean remove_)
 	{
-		if (!arrays.is_ok(needles_) || !is_ok(haystack_)) return DEFAULT;
+		if (!arrays.is_ok(needles_) || !is_ok(haystack_, true)) return DEFAULT;
 
 		String output = haystack_;
 
@@ -487,7 +472,7 @@ public abstract class strings
 
 	public static String remove_escape(String needle_, String haystack_, boolean remove_)
 	{
-		if (!is_ok(needle_) || !is_ok(haystack_)) return DEFAULT;
+		if (!is_ok(needle_, true) || !is_ok(haystack_, true)) return DEFAULT;
 
 		String output = haystack_;
 		String replacement = (remove_ ? "" : "\\" + needle_);
@@ -497,6 +482,25 @@ public abstract class strings
 		return output;
 	}
 
+	private static String normalise(String string_, boolean minimal_)
+	{
+		String string = string_;
+
+		if (!is_ok(string_, minimal_)) string = DEFAULT;
+		else 
+		{
+			if (!minimal_) string = string.trim();
+			string = string.toLowerCase();
+		}
+
+		return string;
+	}
+
+	private static boolean is_ok(String string_, boolean minimal_)
+	{
+		return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0));
+	}
+	
 	private static boolean matches(String string_, String[] targets_, boolean normalise_, boolean all_)
 	{
 		if (!is_ok(string_) || !arrays.is_ok(targets_)) return false;
@@ -598,8 +602,8 @@ public abstract class strings
 	{
 		boolean contains = false;
 
-		int length = get_length(haystack_, normalise_);
-		int length2 = get_length(needle_, normalise_);
+		int length = get_length(haystack_);
+		int length2 = get_length(needle_);
 		if (length <= 0 || length2 <= 0) return contains;
 
 		int i = index_of(needle_, haystack_, normalise_);
@@ -609,23 +613,46 @@ public abstract class strings
 		return contains;
 	}
 
-	private static String substring_before_after(String string_, String target_, int count_, boolean normalise_, boolean is_before_)
+	private static String substring_before_after(String needle_, String haystack_, boolean normalise_, boolean is_before_)
+	{
+		return (contains(needle_, haystack_, normalise_) ? substring_before_after(haystack_, index_of(needle_, haystack_, normalise_), is_before_) : DEFAULT);
+	}
+	
+	private static String substring_before_after(String string_, int i_, boolean is_before_)
+	{
+		if (i_ < 0) return DEFAULT;
+		
+		int start = 0;
+		int length = i_;
+		if (!is_before_)
+		{
+			start = i_ + 1;
+			length = 0;
+		}
+
+		return substring(string_, start, length);
+	}
+	
+	private static String substring_before_after(String needle_, String haystack_, boolean normalise_, int times_, boolean is_before_)
 	{
 		String output = DEFAULT;
 
-		String[] temp = split(string_, target_, normalise_, 0, false, false);
+		int times = times_;
+		if (times <= 0) times = 1;
+
+		String[] temp = split(needle_, haystack_, normalise_);
 		int size0 = arrays.get_size(temp);
-		if (size0 <= count_ || count_ < 1) return output;
+		if (size0 <= times) return output;
 
 		int start_i = 0;
-		int size = count_;
+		int size = times;
 
 		if (!is_before_)
 		{
-			start_i = count_;
+			start_i = times;
 			size = 0;		
 		}
 
-		return String.join(target_, arrays.get_range(temp, start_i, size));
+		return String.join(needle_, arrays.get_range(temp, start_i, size));
 	}
 }

@@ -75,8 +75,8 @@ public abstract class io
 
 		for (String line: lines)
 		{
-			String[] temp = strings.split(line, misc.SEPARATOR_KEYVAL, false, 2, true, true);
-			if (!arrays.is_ok(temp)) continue;
+			String[] temp = strings.split(misc.SEPARATOR_KEYVAL, line, true);
+			if (arrays.get_size(temp) < 2) continue;
 
 			String key = temp[0];
 			String value = temp[1];

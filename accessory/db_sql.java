@@ -54,7 +54,7 @@ abstract class db_sql
 
 	static ArrayList<HashMap<String, String>> execute_query(String query_, boolean return_data_, String[] cols_)
 	{
-		db._is_ok = false;
+		db.update_is_ok(false);
 
 		ArrayList<HashMap<String, String>> output = null;
 
@@ -69,7 +69,7 @@ abstract class db_sql
 			{
 				statement.executeUpdate();
 
-				db._is_ok = true;
+				db.update_is_ok(true);
 
 				return output;
 			}
@@ -105,7 +105,7 @@ abstract class db_sql
 					output.add(row);
 				}	
 
-				db._is_ok = true;
+				db.update_is_ok(true);
 			}
 			catch (Exception e) 
 			{
@@ -131,15 +131,7 @@ abstract class db_sql
 
 	private static Connection connect_type(Properties properties) 
 	{
-		Connection conn = null; 
-
-		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
-		{
-			conn = db_mysql.connect(properties);
-		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
-
-		return conn;
+		return db._cur_db.connect(properties);
 	}
 
 	private static Properties get_properties() 

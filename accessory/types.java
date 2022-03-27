@@ -181,7 +181,6 @@ public abstract class types
 	public static final String ERROR_FILE_WRITE = "error_file_write";
 	public static final String ERROR_FILE_READ = "error_file_read";
 	public static final String ERROR_STRING = "error_string";
-	public static final String ERROR_STRING_SPLIT = "error_string_split";
 	public static final String ERROR_GENERIC = "error_generic";
 	public static final String ERROR_GENERIC_METHOD = "error_generic_method";	
 	public static final String ERROR_GENERIC_METHOD_GET = "error_generic_method_get";
@@ -409,7 +408,6 @@ public abstract class types
 			ERROR_FILE_WRITE, ERROR_FILE_READ,
 			
 			//ERROR_STRING
-			ERROR_STRING_SPLIT,
 			
 			//ERROR_GENERIC
 			//ERROR_GENERIC_METHOD

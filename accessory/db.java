@@ -56,6 +56,7 @@ public abstract class db
 	public static boolean _is_ok = false;
 	public static String _cur_source = strings.DEFAULT;
 	
+	static parent_db _cur_db = new db_mysql();
 	//--- Populated via the corresponding db_ini method (e.g., load_sources()).
 	static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
 	
@@ -190,15 +191,7 @@ public abstract class db
 
 	public static String get_value(String input_)
 	{
-		String value = strings.DEFAULT;
-
-		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
-		{
-			value = db_mysql.get_value(input_);
-		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-
-		return value;
+		return _cur_db.get_value(input_);
 	}
 
 	public static String get_variable_table(String source_)
@@ -219,54 +212,22 @@ public abstract class db
 	
 	public static String get_variable(String input_)
 	{
-		String variable = strings.DEFAULT;
-
-		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
-		{
-			variable = db_mysql.get_variable(input_);
-		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-		
-		return variable; 	
+		return _cur_db.get_variable(input_);	
 	} 
 
 	public static HashMap<String, Object> get_data_type(String data_type_)
 	{
-		HashMap<String, Object> output = null;
-
-		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
-		{
-			output = db_mysql.get_data_type(data_type_);
-		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-		
-		return output; 
+		return _cur_db.get_data_type(data_type_); 
 	}
 
 	public static int get_default_size(String type_)
 	{
-		int output = 0;
-
-		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
-		{
-			output = db_mysql.get_default_size(type_);
-		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-		
-		return output; 
+		return _cur_db.get_default_size(type_);
 	}
 
 	public static int get_max_size(String type_)
 	{
-		int output = 0;
-
-		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
-		{
-			output = db_mysql.get_max_size(type_);
-		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-		
-		return output; 
+		return _cur_db.get_max_size(type_);
 	}
 	
 	public static boolean source_is_ok(String source_)
@@ -449,16 +410,7 @@ public abstract class db
 	
 	public static String sanitise_string(String input_)
 	{
-		String output = input_;
-		if (!strings.is_ok(output)) return output;
-		
-		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
-		{
-			output = db_mysql.sanitise_string(output);
-		}
-		else manage_error(types.ERROR_DB_TYPE, null, null, null);
-
-		return output; 
+		return _cur_db.sanitise_string(input_);
 	}
 
 	public static String check_type(String input_)
@@ -468,6 +420,11 @@ public abstract class db
 			input_, types.get_subtypes(types.DB_QUERY, null), 
 			types.ACTIONS_ADD, types.DB_QUERY
 		);
+	}
+	
+	static void update_is_ok(boolean _is_ok)
+	{
+		_cur_db.update_is_ok(_is_ok);
 	}
 	
 	static HashMap<String, String> get_credentials()
@@ -498,7 +455,7 @@ public abstract class db
 
 	static void manage_error(String type_, String query_, Exception e_, String message_)
 	{
-		_is_ok = false;
+		update_is_ok(false);
 
 		errors.manage_db(type_, query_, e_, message_);
 	}
@@ -530,7 +487,7 @@ public abstract class db
 	
 	static String check_source_error(String source_)
 	{
-		_is_ok = true;
+		update_is_ok(true);
 		String source = check_source(source_);
 		if (!strings.is_ok(source)) manage_error(types.ERROR_DB_SOURCE, null, null, null);
 		

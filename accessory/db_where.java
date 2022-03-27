@@ -2,7 +2,7 @@ package accessory;
 
 import java.util.HashMap;
 
-public class db_where extends parent 
+public class db_where extends parent
 {	
 	public static final String EQUAL = types.DB_WHERE_OPERAND_EQUAL;
 	public static final String NOT_EQUAL = types.DB_WHERE_OPERAND_NOT_EQUAL;

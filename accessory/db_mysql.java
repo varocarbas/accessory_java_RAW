@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Map.Entry;
 
-abstract class db_mysql 
+class db_mysql extends parent_db
 {	
 	private static final String VARCHAR = types.DB_MYSQL_DATA_VARCHAR;
 	private static final String TEXT = types.DB_MYSQL_DATA_TEXT;
@@ -25,65 +25,56 @@ abstract class db_mysql
 	private static final int DEFAULT_SIZE_VARCHAR = _defaults.SIZE_MYSQL_VARCHAR;
 	private static final int DEFAULT_SIZE_TEXT = _defaults.SIZE_MYSQL_TEXT;
 	
-	static { ini.load(); }
-	
-	public static ArrayList<HashMap<String, String>> execute_query(String query_)
+	public ArrayList<HashMap<String, String>> execute_query_type(String type_, String query_)
 	{
-		String type = strings.DEFAULT;
-				
-		String[] temp = strings.split(query_, " ");
-		if (arrays.get_size(temp) >= 2) type = db.check_type(temp[0]);
+		String query = strings.substring_after(type_, query_, true);
 
-		if (!strings.is_ok(type))
-		{
-			db.manage_error(types.ERROR_DB_QUERY, query_, null, null);
-			
-			return null;
-		}
- 
 		String[] cols = null;
-		if (type.equals(db.SELECT))
+		if (type_.equals(db.SELECT))
 		{
-			String[] temp2 = strings.split(temp[1], ",");
-			if (arrays.get_size(temp2) >= 1 && !temp2[0].trim().equals("*"))
-			{
-				ArrayList<String> cols2 = new ArrayList<String>();
-				
-				for (String item: temp2)
-				{
-					if (!strings.is_ok(item)) continue;
-									
-					int i = strings.index_of_outside(" from ", item, true, QUOTE_VARIABLE, QUOTE_VARIABLE);
-					String item2 = strings.remove_escape(QUOTE_VARIABLE, item, true);
+			String temp = strings.substring_before(query, strings.index_of_outside(" from ", query, true, QUOTE_VARIABLE, QUOTE_VARIABLE));
 
-					if (i < 0) cols2.add(item2);
-					else 
+			if (strings.is_ok(temp))
+			{
+				String[] temp2 = strings.split(",", temp);
+				if (arrays.get_size(temp2) > 1)
+				{
+					ArrayList<String> cols2 = new ArrayList<String>();
+					
+					for (String item: temp2)
 					{
-						cols2.add(strings.substring(item2, 0, i));
-						break;
+						if (!strings.is_ok(item)) continue;
+
+						String item2 = strings.remove_escape(QUOTE_VARIABLE, item, true).trim();
+						cols2.add(item2); 
 					}
+					
+					cols = arrays.to_array(cols2);
 				}
-				
-				cols = arrays.to_array(cols2);
+				else 
+				{
+					String item = temp.trim();
+					if (!item.equals("*")) cols = new String[] { item };
+				}
 			}
 		}
 		
-		return db_sql.execute_query(query_, db.query_returns_data(type), cols);
+		return db_sql.execute_query(query_, db.query_returns_data(type_), cols);
 	}
 	
-	public static String sanitise_string(String input_)
+	public String sanitise_string(String input_)
 	{
 		return strings.remove_escape_many(new String[] { "'", "\"" }, input_, false);
 	}
 	
-	public static ArrayList<HashMap<String, String>> execute(String type_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	public ArrayList<HashMap<String, String>> execute(String type_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
 		String query = get_query(type_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 
 		return (strings.is_ok(query) ? db_sql.execute_query(query, db.query_returns_data(type_), cols_) : null);
 	}
 	
-	public static HashMap<String, Object> get_data_type(String data_type_)
+	public HashMap<String, Object> get_data_type(String data_type_)
 	{
 		HashMap<String, Object> output = new HashMap<String, Object>();
 		
@@ -106,7 +97,7 @@ abstract class db_mysql
 		return output;
 	}
 	
-	public static int get_default_size(String data_type_)
+	public int get_default_size(String data_type_)
 	{
 		int size = 0;
 		
@@ -122,7 +113,7 @@ abstract class db_mysql
 		return size;
 	}
 
-	public static int get_max_size(String data_type_)
+	public int get_max_size(String data_type_)
 	{
 		int max = 0;
 		
@@ -140,17 +131,17 @@ abstract class db_mysql
 		return max;
 	}
 	
-	static String get_value(String input_)
+	public String get_value(String input_)
 	{
 		return get_variable_value(input_, false);
 	}
 
-	static String get_variable(String input_)
+	public String get_variable(String input_)
 	{
 		return get_variable_value(input_, true);   	
 	} 
 
-	static Connection connect(Properties properties) 
+	public Connection connect(Properties properties) 
 	{
 		Connection conn = null;
 
@@ -171,7 +162,30 @@ abstract class db_mysql
 		return conn;
 	} 
 
-	private static String data_type_to_string(db_field field_)
+	private String get_connect_url()
+	{   
+		String host = config.get_db(db.HOST);
+		String name = config.get_db(db.NAME);
+
+		String message = ""; 
+		if (!strings.is_ok(name)) message = "WRONG DB";
+		else if (!strings.is_ok(host)) message = "WRONG host";
+
+		if (!message.equals(""))
+		{
+			db.manage_error(types.ERROR_DB_INFO, null, null, message);
+
+			return strings.DEFAULT;
+		}
+
+		String url = "jdbc:mysql://" + host + ":3306/" + name;
+		url += "?useUnicode=true&useJDBCCompliantTimezoneShift=true";
+		url += "&useLegacyDatetimeCode=false&serverTimezone=UTC";
+
+		return url;
+	}
+	
+	private String data_type_to_string(db_field field_)
 	{
 		String output = "";
 		if (!db_field.is_ok(field_)) return output;
@@ -188,7 +202,7 @@ abstract class db_mysql
 		return output;
 	}
 	
-	private static String get_data_type_size(db_field field_)
+	private String get_data_type_size(db_field field_)
 	{
 		String output = strings.DEFAULT;
 
@@ -223,7 +237,7 @@ abstract class db_mysql
 		return output;
 	}
 
-	private static String get_query(String type_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	private String get_query(String type_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{	
 		String query = strings.DEFAULT;
 		if (!db_sql.params_are_ok(type_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_)) return query;
@@ -348,7 +362,7 @@ abstract class db_mysql
 		return query;
 	}
 
-	private static String[] create_table_check_further(String[] further_)
+	private String[] create_table_check_further(String[] further_)
 	{
 		ArrayList<String> output = new ArrayList<String>();
 		if (!arrays.is_ok(further_)) return null;
@@ -364,7 +378,7 @@ abstract class db_mysql
 		return arrays.to_array(output);
 	}
 	
-	private static String create_table_further_to_query(String[] further_)
+	private String create_table_further_to_query(String[] further_)
 	{	
 		String output = "";
 		if (!arrays.is_ok(further_)) return output;
@@ -400,37 +414,14 @@ abstract class db_mysql
 		return output;
 	}
 
-	private static String get_connect_url()
-	{   
-		String host = config.get_db(db.HOST);
-		String name = config.get_db(db.NAME);
-
-		String message = ""; 
-		if (!strings.is_ok(name)) message = "WRONG DB";
-		else if (!strings.is_ok(host)) message = "WRONG host";
-
-		if (!message.equals(""))
-		{
-			db.manage_error(types.ERROR_DB_INFO, null, null, message);
-
-			return strings.DEFAULT;
-		}
-
-		String url = "jdbc:mysql://" + host + ":3306/" + name;
-		url += "?useUnicode=true&useJDBCCompliantTimezoneShift=true";
-		url += "&useLegacyDatetimeCode=false&serverTimezone=UTC";
-
-		return url;
-	}
-
-	private static String get_variable_value(String input_, boolean is_variable_)
+	private String get_variable_value(String input_, boolean is_variable_)
 	{
 		String quote = (is_variable_ ? QUOTE_VARIABLE : QUOTE_VALUE);
 
 		return (quote + input_ + quote);
 	}
 
-	private static String get_query_cols(String[] array_)
+	private String get_query_cols(String[] array_)
 	{
 		String output = "";	
 
@@ -445,7 +436,7 @@ abstract class db_mysql
 		return output;
 	}
 
-	private static String get_query_cols(HashMap<String, String> array_, String type_)
+	private String get_query_cols(HashMap<String, String> array_, String type_)
 	{
 		String output = "";
 

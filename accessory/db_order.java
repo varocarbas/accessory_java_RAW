@@ -1,6 +1,6 @@
 package accessory;
 
-public class db_order extends parent 
+public class db_order extends parent
 {	
 	public static final String ASC = types.DB_ORDER_ASC;
 	public static final String DESC = types.DB_ORDER_DESC;
