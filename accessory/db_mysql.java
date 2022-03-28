@@ -25,12 +25,26 @@ class db_mysql extends parent_db
 	private static final int DEFAULT_SIZE_VARCHAR = _defaults.SIZE_MYSQL_VARCHAR;
 	private static final int DEFAULT_SIZE_TEXT = _defaults.SIZE_MYSQL_TEXT;
 	
-	public ArrayList<HashMap<String, String>> execute_query_type(String type_, String query_)
+	public boolean is_ok()
 	{
-		String query = strings.substring_after(type_, query_, true);
+		return _is_ok;
+	}
+	
+	public ArrayList<HashMap<String, String>> execute_query(String query_)
+	{
+		String type = db.check_type(strings.substring_before(" ", query_, true));
 
+		if (!strings.is_ok(type))
+		{
+			db.manage_error(types.ERROR_DB_QUERY, query_, null, null);
+			
+			return null;
+		}
+		
+		String query = strings.substring_after(type, query_, true);
+		
 		String[] cols = null;
-		if (type_.equals(db.SELECT))
+		if (type.equals(db.SELECT))
 		{
 			String temp = strings.substring_before(query, strings.index_of_outside(" from ", query, true, QUOTE_VARIABLE, QUOTE_VARIABLE));
 
@@ -59,7 +73,7 @@ class db_mysql extends parent_db
 			}
 		}
 		
-		return db_sql.execute_query(query_, db.query_returns_data(type_), cols);
+		return db_sql.execute_query(query_, db.query_returns_data(type), cols);
 	}
 	
 	public String sanitise_string(String input_)
@@ -141,7 +155,7 @@ class db_mysql extends parent_db
 		return get_variable_value(input_, true);   	
 	} 
 
-	public Connection connect(Properties properties) 
+	protected Connection connect_internal(Properties properties_) 
 	{
 		Connection conn = null;
 
@@ -151,7 +165,7 @@ class db_mysql extends parent_db
 		try 
 		{
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn = DriverManager.getConnection(url, properties);
+			conn = DriverManager.getConnection(url, properties_);
 		} 
 		catch (Exception e) 
 		{

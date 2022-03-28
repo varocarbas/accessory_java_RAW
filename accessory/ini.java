@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 public abstract class ini 
 {
-	//Method expected to be called every time a non-ini, non-first abstract class is loaded.
+	//Method expected to be called every time a non-ini, non-first, non-parent abstract class is loaded.
 	//It has to include all the load() methods of all the ini classes.
 	public static void load() 
 	{

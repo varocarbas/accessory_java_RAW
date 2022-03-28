@@ -131,18 +131,8 @@ abstract class db_queries
 	}
 
 	public static ArrayList<HashMap<String, String>> execute_query(String query_)
-	{
-		db.update_is_ok(false);
-		
-		ArrayList<HashMap<String, String>> output = null;
-
-		if (config.matches(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_TYPE, db.MYSQL))
-		{
-			output = db._cur_db.execute_query(query_); //db_mysql.execute_query(query_);
-		}
-		else db.manage_error(types.ERROR_DB_TYPE, null, null, null);
-		
-		return output;
+	{		
+		return db.get_current_db().execute_query(query_);
 	}
 	
 	static Object select_one_common(String source_, String field_, db_where[] wheres_, db_order[] orders_, String what_)
@@ -218,7 +208,7 @@ abstract class db_queries
 	
 	private static ArrayList<HashMap<String, String>> execute_type(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
-		return db._cur_db.execute(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
+		return db.get_current_db().execute(what_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 	}
 	
 	private static String[] get_cols(String source_, String[] fields_)

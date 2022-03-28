@@ -56,7 +56,8 @@ public abstract class db
 	public static boolean _is_ok = false;
 	public static String _cur_source = strings.DEFAULT;
 	
-	static parent_db _cur_db = new db_mysql();
+	private static HashMap<String, parent_db> _all_dbs = start_all_db();
+
 	//--- Populated via the corresponding db_ini method (e.g., load_sources()).
 	static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
 	
@@ -191,7 +192,7 @@ public abstract class db
 
 	public static String get_value(String input_)
 	{
-		return _cur_db.get_value(input_);
+		return get_current_db().get_value(input_);
 	}
 
 	public static String get_variable_table(String source_)
@@ -212,22 +213,22 @@ public abstract class db
 	
 	public static String get_variable(String input_)
 	{
-		return _cur_db.get_variable(input_);	
+		return get_current_db().get_variable(input_);	
 	} 
 
 	public static HashMap<String, Object> get_data_type(String data_type_)
 	{
-		return _cur_db.get_data_type(data_type_); 
+		return get_current_db().get_data_type(data_type_); 
 	}
 
 	public static int get_default_size(String type_)
 	{
-		return _cur_db.get_default_size(type_);
+		return get_current_db().get_default_size(type_);
 	}
 
 	public static int get_max_size(String type_)
 	{
-		return _cur_db.get_max_size(type_);
+		return get_current_db().get_max_size(type_);
 	}
 	
 	public static boolean source_is_ok(String source_)
@@ -410,7 +411,7 @@ public abstract class db
 	
 	public static String sanitise_string(String input_)
 	{
-		return _cur_db.sanitise_string(input_);
+		return get_current_db().sanitise_string(input_);
 	}
 
 	public static String check_type(String input_)
@@ -421,10 +422,17 @@ public abstract class db
 			types.ACTIONS_ADD, types.DB_QUERY
 		);
 	}
+
+	public static parent_db get_current_db()
+	{	
+		parent_db output = arrays.get_value(_all_dbs, get_current_setup());
+		
+		return (output != null ? output : instantiate_db(DEFAULT_TYPE));
+	}
 	
 	static void update_is_ok(boolean _is_ok)
 	{
-		_cur_db.update_is_ok(_is_ok);
+		get_current_db().update_is_ok(_is_ok);
 	}
 	
 	static HashMap<String, String> get_credentials()
@@ -475,19 +483,22 @@ public abstract class db
 		return false;
 	}
 	
-	private static <x> HashMap<String, String> adapt_inputs_input(String source_, HashMap<String, String> old_, String field_, x val_)
+	static parent_db instantiate_db(String type_)
 	{
-		String source = check_source(source_);
+		parent_db output = null;
 		
-		HashMap<String, db_field> fields = get_source_fields(source);
-		if (!arrays.is_ok(fields) || !strings.is_ok(field_)) return null;
-
-		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field_, val_, fields);
+		String type = types.check_subtype(type_, types.get_subtypes(types.CONFIG_DB_TYPE, null), null, null);
+		if (!strings.is_ok(type)) type = DEFAULT_TYPE;
+		
+		if (type.equals(types.CONFIG_DB_TYPE_MYSQL)) output = new db_mysql();
+		
+		return output;
 	}
 	
 	static String check_source_error(String source_)
 	{
 		update_is_ok(true);
+		
 		String source = check_source(source_);
 		if (!strings.is_ok(source)) manage_error(types.ERROR_DB_SOURCE, null, null, null);
 		
@@ -500,5 +511,41 @@ public abstract class db
 		if (!arrays.is_ok(vals)) manage_error(types.ERROR_DB_VALS, null, null, null);
 		
 		return vals;
+	}
+	
+	private static <x> HashMap<String, String> adapt_inputs_input(String source_, HashMap<String, String> old_, String field_, x val_)
+	{
+		String source = check_source(source_);
+		
+		HashMap<String, db_field> fields = get_source_fields(source);
+		if (!arrays.is_ok(fields) || !strings.is_ok(field_)) return null;
+
+		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field_, val_, fields);
+	}
+	
+	private static HashMap<String, parent_db> start_all_db()
+	{
+		HashMap<String, parent_db> all_db = new HashMap<String, parent_db>();
+		
+		String[] setups = new String[] { types.CONFIG_DB_SETUP_MAIN, types.CONFIG_DB_SETUP_LOGS };
+		
+		for (String setup: setups)
+		{
+			String type = config.get(setup, types.CONFIG_DB_TYPE);
+			
+			all_db.put(setup, instantiate_db(type));
+		}
+		
+		return all_db;
+	}
+	
+	private static String get_current_setup()
+	{
+		String type = types.CONFIG_DB_SETUP;
+		
+		String output = config.get_db(type);
+		if (!strings.is_ok(types.check_subtype(output, types.get_subtypes(type, null), null, null))) output = DEFAULT_TYPE;
+
+		return output;
 	}
 }

@@ -142,15 +142,18 @@ public abstract class strings
 			int temp = index_of(needle_, haystack_, i, normalise_);
 			if (temp < 0) 
 			{
-				output.add((i == 0 ? haystack_ : substring_after(haystack_, i - 1)));
-				break;
+				if (i == 0) return null;
+				else
+				{
+					output.add(substring_after(haystack_, i - 1));
+					
+					return arrays.to_array(output);					
+				}
 			}
 
 			output.add(substring_between(haystack_, i, temp, true));
 			i = temp + 1;			
 		}
-		
-		return arrays.to_array(output);
 	}	
 	
 	public static String substring_between(String string_, int start_, int end_, boolean end_excluded_)
@@ -615,7 +618,7 @@ public abstract class strings
 
 	private static String substring_before_after(String needle_, String haystack_, boolean normalise_, boolean is_before_)
 	{
-		return (contains(needle_, haystack_, normalise_) ? substring_before_after(haystack_, index_of(needle_, haystack_, normalise_), is_before_) : DEFAULT);
+		return (contains(needle_, haystack_, normalise_) ? substring_before_after(haystack_, (index_of(needle_, haystack_, normalise_) + needle_.length() - 1), is_before_) : DEFAULT);
 	}
 	
 	private static String substring_before_after(String string_, int i_, boolean is_before_)
