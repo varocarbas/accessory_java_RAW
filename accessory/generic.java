@@ -25,32 +25,32 @@ public abstract class generic
 	
 	public static boolean is_ok(double[] input_)
 	{
-		return arrays.is_ok(input_);
+		return is_ok(input_, false);
 	}
 	
 	public static boolean is_ok(long[] input_)
 	{
-		return arrays.is_ok(input_);
+		return is_ok(input_, false);
 	}
 	
 	public static boolean is_ok(int[] input_)
 	{
-		return arrays.is_ok(input_);
+		return is_ok(input_, false);
 	}
 	
 	public static boolean is_ok(boolean[] input_)
 	{
-		return arrays.is_ok(input_);
+		return is_ok(input_, false);
 	}
 
 	public static boolean is_ok(Class<?> input_)
 	{
-		return (input_ != null);
+		return is_ok(input_, false);
 	}
 
 	public static <x, y> boolean is_ok(HashMap<x, y> input_)
 	{
-		return arrays.is_ok(input_);
+		return is_ok(input_, false);
 	}
 	
 	public static boolean is_ok(Object input_)
@@ -465,17 +465,46 @@ public abstract class generic
 
 		return output;
 	}
-		
-	private static boolean is_ok(Object input_, boolean minimal_)
+	
+	static boolean is_ok(double[] input_, boolean minimal_)
+	{
+		return arrays.is_ok(input_, minimal_);
+	}
+	
+	static boolean is_ok(long[] input_, boolean minimal_)
+	{
+		return arrays.is_ok(input_, minimal_);
+	}
+	
+	static boolean is_ok(int[] input_, boolean minimal_)
+	{
+		return arrays.is_ok(input_, minimal_);
+	}
+	
+	static boolean is_ok(boolean[] input_, boolean minimal_)
+	{
+		return arrays.is_ok(input_, minimal_);
+	}
+
+	static boolean is_ok(Class<?> input_, boolean minimal_)
+	{
+		return (input_ != null);
+	}
+
+	static <x, y> boolean is_ok(HashMap<x, y> input_, boolean minimal_)
+	{
+		return arrays.is_ok(input_, minimal_);
+	}
+
+	static boolean is_ok(Object input_, boolean minimal_)
 	{
 		boolean is_ok = false;
 		if (input_ == null) return is_ok;
 		
-		if (is_string(input_)) is_ok = strings.is_ok((String)input_);
-		else if (is_array(input_)) is_ok = arrays.is_ok(input_);
+		if (is_string(input_)) is_ok = strings.is_ok((String)input_, minimal_);
+		else if (is_array(input_)) is_ok = arrays.is_ok(input_, minimal_);
 		else if (is_boolean(input_) || is_number(input_)) is_ok = true;
-		else if (minimal_) is_ok = true;
-		
+		else if (minimal_) is_ok = true;		
 		if (minimal_) return is_ok;
 		
 		if (is_data(input_)) is_ok = data.is_ok((data)input_);

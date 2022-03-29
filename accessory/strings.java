@@ -485,6 +485,11 @@ public abstract class strings
 		return output;
 	}
 
+	static boolean is_ok(String string_, boolean minimal_)
+	{
+		return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0));
+	}
+	
 	private static String normalise(String string_, boolean minimal_)
 	{
 		String string = string_;
@@ -497,11 +502,6 @@ public abstract class strings
 		}
 
 		return string;
-	}
-
-	private static boolean is_ok(String string_, boolean minimal_)
-	{
-		return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0));
 	}
 	
 	private static boolean matches(String string_, String[] targets_, boolean normalise_, boolean all_)
