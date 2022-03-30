@@ -540,16 +540,19 @@ public abstract class generic
 
 		if (class1_.equals(class2_)) return true;
 		
-		for (Entry<Class<?>, Class<?>> item: get_class_equals().entrySet())
+		for (Entry<Class<?>, Class<?>[]> item: get_class_equals().entrySet())
 		{
 			Class<?> key = item.getKey();
-			Class<?> val = item.getValue();
-			if 
-			(
-				(class1_.equals(key) && class2_.equals(val)) || 
-				(class1_.equals(val) && class2_.equals(key))
-			)
-			{ return true; }
+			
+			for (Class<?> val: item.getValue())
+			{
+				if 
+				(
+					(class1_.equals(key) && class2_.equals(val)) || 
+					(class1_.equals(val) && class2_.equals(key))
+				)
+				{ return true; }	
+			}
 		}
 		
 		return false;
@@ -563,20 +566,25 @@ public abstract class generic
 		};
 	}
 	
-	private static HashMap<Class<?>, Class<?>> get_class_equals()
+	private static HashMap<Class<?>, Class<?>[]> get_class_equals()
 	{
-		HashMap<Class<?>, Class<?>> output = new HashMap<Class<?>, Class<?>>();
+		HashMap<Class<?>, Class<?>[]> output = new HashMap<Class<?>, Class<?>[]>();
 		
-		output.put(Double.class, double.class);
-		output.put(Long.class, long.class);
-		output.put(Integer.class, int.class);
-		output.put(Boolean.class, boolean.class);
-		output.put(Double[].class, double[].class);
-		output.put(Long[].class, long[].class);
-		output.put(Integer[].class, int[].class);
-		output.put(Boolean[].class, boolean[].class);
-		output.put(Object[].class, Array.class);
+		output.put(Double.class, new Class<?>[] { double.class });
+		output.put(Long.class, new Class<?>[] { long.class });
+		output.put(Integer.class, new Class<?>[] { int.class });
+		output.put(Boolean.class, new Class<?>[] { boolean.class });
+		output.put(Double[].class, new Class<?>[] { double[].class });
+		output.put(Long[].class, new Class<?>[] { long[].class });
+		output.put(Integer[].class, new Class<?>[] { int[].class });
+		output.put(Boolean[].class, new Class<?>[] { boolean[].class });
 		
+		Class<?>[] vals = arrays.get_all_classes_array();
+		for (Class<?> key: new Class<?>[] { Object[].class, Array.class })
+		{
+			output.put(key, vals);
+		}
+				
 		return output;
 	}
 }

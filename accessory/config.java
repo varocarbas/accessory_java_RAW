@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 public abstract class config 
 {	
-	//--- Initialiased via _config_ini.load().
+	//--- Initialiased via config_ini.load().
 	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
 	private static HashMap<String, String[]> _subtypes = new HashMap<String, String[]>();
 	private static HashMap<String, String[]> _linked = new HashMap<String, String[]>();
@@ -93,11 +93,13 @@ public abstract class config
 	public static <x> x get(String type_, String key_)
 	{		
 		x output = null;
-		if (!strings.is_ok(type_) || !strings.is_ok(key_)) return output;
 		
-		if (_info.containsKey(type_) && _info.get(type_).containsKey(key_)) 
+		String type = check_type(type_);
+		if (!strings.is_ok(type) || !strings.is_ok(key_)) return output;
+		
+		if (_info.containsKey(type) && _info.get(type).containsKey(key_)) 
 		{
-			output = (x)_info.get(type_).get(key_);
+			output = (x)_info.get(type).get(key_);
 		}
 
 		return output;
@@ -105,12 +107,15 @@ public abstract class config
 
 	public static <x> boolean update(String type_, String key_, x val_)
 	{	
-		if (!strings.is_ok(type_) || !strings.is_ok(key_)) return false;
+		boolean is_ok = false;
+		
+		String type = check_type(type_);
+		if (!strings.is_ok(type) || !strings.is_ok(key_)) return is_ok;
 
-		boolean is_ok = update_matches(type_, key_, val_, true, false);
+		is_ok = update_matches(type, key_, val_, true, false);
 		if (!is_ok) return is_ok;
 
-		String[] secs = get_linked(type_);
+		String[] secs = get_linked(type);
 		if (!arrays.is_ok(secs)) return is_ok;
 
 		for (String sec: secs)
@@ -131,15 +136,17 @@ public abstract class config
 
 	public static String[] get_linked(String main_)
 	{
-		return ((strings.is_ok(main_) && _linked.containsKey(main_)) ? _linked.get(main_) : null);
+		String main = check_type(main_);
+		
+		return ((strings.is_ok(main) && _linked.containsKey(main)) ? _linked.get(main) : null);
 	}
 
 	public static String get_linked_main(String type_)
 	{
 		String output = strings.DEFAULT;
-		if (!strings.is_ok(type_) || !arrays.is_ok(_linked)) return output;
-
-		String type = type_;
+		
+		String type = check_type(type_);
+		if (!strings.is_ok(type) || !arrays.is_ok(_linked)) return output;
 		
 		for (Entry<String, String[]> item: _linked.entrySet())
 		{
@@ -154,7 +161,7 @@ public abstract class config
 
 	public static <x> boolean update_linked(String main_, String[] secs_)
 	{
-		String main = main_;
+		String main = check_type(main_);
 		if (!strings.is_ok(main) || !arrays.is_ok(secs_)) return false;
 
 		_linked.put(main, secs_);
@@ -200,6 +207,11 @@ public abstract class config
 		}
 
 		return output;
+	}
+
+	private static String check_type(String type_)
+	{
+		return types.check_subtype(type_, types.get_subtypes(types.CONFIG, null), null, null);
 	}
 	
 	private static <x> boolean update_matches(String type_, String key_, x val_, boolean update_, boolean ini_)

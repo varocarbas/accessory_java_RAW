@@ -511,6 +511,46 @@ public abstract class arrays
 		return (size > size0 ? null : Arrays.copyOfRange(input_, start_i, size));
 	}
 
+	public static <x, y> HashMap<x, y> remove_key(HashMap<x, y> array_, x key_, boolean normalise_)
+	{
+		return remove_key_value(array_, key_, normalise_, true);
+	}
+
+	public static <x, y> HashMap<x, y> remove_value(HashMap<x, y> array_, y value_, boolean normalise_)
+	{
+		return remove_key_value(array_, value_, normalise_, false);
+	}
+
+	public static <x> Object remove_key(Object array_, x key_, boolean normalise_)
+	{
+		return remove_key_value(array_, key_, normalise_, generic.are_equal(generic.get_class(array_), HashMap.class));
+	}
+
+	public static double[] remove_value(double[] array_, double value_, boolean normalise_)
+	{
+		return arrays.to_small((Double[])remove_key_value(arrays.to_big(array_), value_, normalise_, false));
+	}
+
+	public static long[] remove_value(long[] array_, long value_, boolean normalise_)
+	{
+		return arrays.to_small((Long[])remove_key_value(arrays.to_big(array_), value_, normalise_, false));
+	}
+
+	public static int[] remove_value(int[] array_, int value_, boolean normalise_)
+	{
+		return arrays.to_small((Integer[])remove_key_value(arrays.to_big(array_), value_, normalise_, false));
+	}
+
+	public static boolean[] remove_value(boolean[] array_, boolean value_, boolean normalise_)
+	{
+		return arrays.to_small((Boolean[])remove_key_value(arrays.to_big(array_), value_, normalise_, false));
+	}
+	
+	public static <x> Object remove_value(Object array_, x value_, boolean normalise_)
+	{
+		return remove_key_value(array_, value_, normalise_, false);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <x, y> y get_value(HashMap<x, y> array_, x key_)
 	{
@@ -868,7 +908,7 @@ public abstract class arrays
 		else if (type.equals(int[].class)) is_ok = is_ok((int[])input_);
 		else if (type.equals(boolean[].class)) is_ok = is_ok((boolean[])input_);
 		else is_ok = (get_size(input_) > 0);
-
+		
 		return is_ok;
 	}
 
@@ -1164,6 +1204,107 @@ public abstract class arrays
 		}
 
 		if (!first_time) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
+		
+		return output;
+	}
+	
+	private static <x, y> HashMap<x, y> remove_key_value(HashMap<x, y> array_, Object key_val_, boolean normalise_, boolean is_key_)
+	{
+		HashMap<x, y> output = new HashMap<x, y>();
+
+		Object val01 = key_val_;
+		
+		for (Entry<x, y> item: array_.entrySet())
+		{
+			x key2 = item.getKey();
+			y val2 = item.getValue();
+
+			boolean found = remove_key_value_loop(val01, (is_key_ ? key2 : val2), normalise_);
+			if (found) continue;
+			
+			output.put(key2, val2);
+		}
+		
+		return output;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <x> Object remove_key_value(Object array_, Object key_val_, boolean normalise_, boolean is_key_)
+	{
+		Object output = null;
+		
+		Class<?> type = generic.get_class(array_);
+		if (!generic.is_array(type)) return output;
+		
+		Object val01 = key_val_;
+		
+		if (generic.are_equal(type, HashMap.class))
+		{
+			HashMap<x, x> output2 = new HashMap<x, x>();
+			
+			for (Entry<x, x> item: ((HashMap<x, x>)array_).entrySet())
+			{
+				x key2 = item.getKey();
+				x val2 = item.getValue();
+
+				boolean found = remove_key_value_loop(val01, (is_key_ ? key2 : val2), normalise_);
+				if (found) continue;
+				
+				output2.put(key2, val2);
+			}
+			
+			output = output2;
+		}
+		else if (generic.are_equal(type, ArrayList.class))
+		{
+			ArrayList<x> output2 = new ArrayList<x>();
+			
+			for (x item: (ArrayList<x>)array_)
+			{
+				boolean found = remove_key_value_loop(val01, item, normalise_);
+				if (found) continue;
+
+				output2.add(item);
+			}
+			
+			output = output2;
+		}
+		else if (generic.are_equal(type, Array.class))
+		{
+			ArrayList<x> output2 = new ArrayList<x>();
+			
+			for (x item: (x[])array_)
+			{
+				boolean found = remove_key_value_loop(val01, item, normalise_);
+				if (found) continue;
+				
+				output2.add(item);
+			}
+			
+			output = to_array(output2);
+		}
+		
+		return output;
+	}
+	
+	private static boolean remove_key_value_loop(Object val01_, Object val02_, boolean normalise_)
+	{
+		boolean output = true;
+
+		Class<?> type1 = generic.get_class(val01_);
+		Class<?> type2 = generic.get_class(val02_);
+		
+		if (!generic.are_equal(val01_, val02_))
+		{
+			if (!normalise_ || !generic.are_equal(type1, String.class) || !generic.are_equal(type2, String.class)) output = false;
+			else
+			{
+				String val21 = (String)val01_;
+				String val22 = (String)val02_;
+				
+				if (!strings.are_equivalent(val21, val22)) output = false;	
+			}
+		}
 		
 		return output;
 	}
