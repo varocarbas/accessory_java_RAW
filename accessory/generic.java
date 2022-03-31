@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.Map.Entry;
 
 public abstract class generic 
-{
+{	
 	public static final String TYPE = types.what_to_key(types.WHAT_TYPE);
 	public static final String KEY = types.what_to_key(types.WHAT_KEY);
 	public static final String VALUE = types.what_to_key(types.WHAT_VALUE);
@@ -20,7 +20,7 @@ public abstract class generic
 	public static final String PASSWORD = types.what_to_key(types.WHAT_PASSWORD);
 	public static final String ID = types.what_to_key(types.WHAT_ID);
 	public static final String QUERY = types.what_to_key(types.WHAT_QUERY);
-	
+
 	static { ini.load(); }
 	
 	public static boolean is_ok(double[] input_)
@@ -369,34 +369,7 @@ public abstract class generic
 
 	public static Class<?>[] get_all_classes()
 	{
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-
-		classes.add(Class.class);
-		classes.add(Method.class);
-		classes.add(Exception.class);
-
-		classes.add(size.class);
-		classes.add(data.class);
-		classes.add(db_field.class);
-		classes.add(db_where.class);
-		classes.add(db_order.class);
-		
-		classes.add(String.class);
-		classes.add(Boolean.class);
-		classes.add(boolean.class);
-		classes.add(Object.class);
-		
-		for (Class<?> type: numbers.get_all_classes())
-		{
-			classes.add(type);
-		}
-
-		for (Class<?> type: arrays.get_all_classes())
-		{
-			classes.add(type);
-		}
-
-		return classes.toArray(new Class<?>[classes.size()]);
+		return _alls._generic_classes;
 	}
 	
 	public static Method[] get_all_methods(Class<?> class_, String[] skip_)
@@ -405,7 +378,7 @@ public abstract class generic
 
 		ArrayList<Method> methods = new ArrayList<Method>();
 
-		ArrayList<String> skip = arrays.to_arraylist(get_default_method_names());
+		ArrayList<String> skip = arrays.to_arraylist(get_all_default_methods());
 		skip.addAll(arrays.to_arraylist(skip_));
 
 		for (Method method: class_.getMethods())
@@ -517,6 +490,65 @@ public abstract class generic
 		return is_ok;
 	}
 
+	static Class<?>[] populate_all_classes()
+	{
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+
+		classes.add(Class.class);
+		classes.add(Method.class);
+		classes.add(Exception.class);
+
+		classes.add(size.class);
+		classes.add(data.class);
+		classes.add(db_field.class);
+		classes.add(db_where.class);
+		classes.add(db_order.class);
+		
+		classes.add(String.class);
+		classes.add(Boolean.class);
+		classes.add(boolean.class);
+		classes.add(Object.class);
+		
+		for (Class<?> type: numbers.get_all_classes())
+		{
+			classes.add(type);
+		}
+
+		for (Class<?> type: arrays.get_all_classes())
+		{
+			classes.add(type);
+		}
+
+		return classes.toArray(new Class<?>[classes.size()]);
+	}
+	
+	static String[] populate_all_default_methods()
+	{
+		return new String[] { "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll" };
+	}
+	
+	static HashMap<Class<?>, Class<?>[]> populate_all_class_equivalents()
+	{
+		HashMap<Class<?>, Class<?>[]> output = new HashMap<Class<?>, Class<?>[]>();
+		
+		output.put(Double.class, new Class<?>[] { double.class });
+		output.put(Long.class, new Class<?>[] { long.class });
+		output.put(Integer.class, new Class<?>[] { int.class });
+		output.put(Boolean.class, new Class<?>[] { boolean.class });
+		output.put(Double[].class, new Class<?>[] { double[].class });
+		output.put(Long[].class, new Class<?>[] { long[].class });
+		output.put(Integer[].class, new Class<?>[] { int[].class });
+		output.put(Boolean[].class, new Class<?>[] { boolean[].class });
+		
+		Class<?>[] vals = arrays.get_all_classes_array();
+		for (Class<?> key: new Class<?>[] { Object[].class, Array.class })
+		{
+			output.put(key, vals);
+		}
+				
+		return output;
+	}
+	
 	private static boolean is_common(Object input_, Class<?>[] classes_, boolean is_class_)
 	{
 		if (input_ == null) return false;
@@ -540,7 +572,7 @@ public abstract class generic
 
 		if (class1_.equals(class2_)) return true;
 		
-		for (Entry<Class<?>, Class<?>[]> item: get_class_equals().entrySet())
+		for (Entry<Class<?>, Class<?>[]> item: get_all_class_equivalents().entrySet())
 		{
 			Class<?> key = item.getKey();
 			
@@ -557,34 +589,14 @@ public abstract class generic
 		
 		return false;
 	}
-
-	private static String[] get_default_method_names()
+	
+	private static String[] get_all_default_methods()
 	{
-		return new String[]
-		{
-			"wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll"
-		};
+		return _alls._generic_default_method_names;
 	}
 	
-	private static HashMap<Class<?>, Class<?>[]> get_class_equals()
+	private static HashMap<Class<?>, Class<?>[]> get_all_class_equivalents()
 	{
-		HashMap<Class<?>, Class<?>[]> output = new HashMap<Class<?>, Class<?>[]>();
-		
-		output.put(Double.class, new Class<?>[] { double.class });
-		output.put(Long.class, new Class<?>[] { long.class });
-		output.put(Integer.class, new Class<?>[] { int.class });
-		output.put(Boolean.class, new Class<?>[] { boolean.class });
-		output.put(Double[].class, new Class<?>[] { double[].class });
-		output.put(Long[].class, new Class<?>[] { long[].class });
-		output.put(Integer[].class, new Class<?>[] { int[].class });
-		output.put(Boolean[].class, new Class<?>[] { boolean[].class });
-		
-		Class<?>[] vals = arrays.get_all_classes_array();
-		for (Class<?> key: new Class<?>[] { Object[].class, Array.class })
-		{
-			output.put(key, vals);
-		}
-				
-		return output;
+		return _alls._generic_class_equivalents;
 	}
 }

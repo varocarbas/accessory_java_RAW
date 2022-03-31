@@ -34,12 +34,7 @@ public class size extends parent
 	{
 		if (!is_ok(input_) || !is_ok(boundaries_)) return false;
 
-		return 
-		(
-			(input_._min >= boundaries_._min) && 
-			(input_._max <= boundaries_._max) && 
-			(input_._decimals == boundaries_._decimals)
-		);
+		return ((input_._min >= boundaries_._min) && (input_._max <= boundaries_._max) && (input_._decimals == boundaries_._decimals));
 	}
 
 	public size(size input_)

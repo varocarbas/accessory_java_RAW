@@ -23,13 +23,10 @@ public abstract class numbers
 	public static final int DEFAULT_DECIMALS = _defaults.SIZE_DECIMALS;
 	
 	static { ini.load(); }
-
+	
 	public static final Class<?>[] get_all_classes()
 	{
-		return new Class<?>[] 
-		{ 
-			Integer.class, int.class, Long.class, long.class, Double.class, double.class 
-		};
+		return _alls._numbers_classes;
 	}
 
 	public static boolean is_ok(double input_, double min_, double max_)
@@ -161,28 +158,14 @@ public abstract class numbers
 	{
 		double output = Math.ceil(input_);
 		
-		return (long)
-		(
-			(
-				output >= (double)numbers.MIN_LONG && 
-				output <= (double)numbers.MAX_LONG
-			) 
-			? output : DEFAULT_LONG
-		);	
+		return (long)((output >= (double)numbers.MIN_LONG && output <= (double)numbers.MAX_LONG) ? output : DEFAULT_LONG);	
 	}
 	
 	public static int to_int(double input_)
 	{	
 		double output = Math.ceil(input_);
 	
-		return (int)
-		(
-			(
-				output >= (double)numbers.MIN_INT && 
-				output <= (double)numbers.MAX_INT
-			) 
-			? output : DEFAULT_INT
-		);
+		return (int)((output >= (double)numbers.MIN_INT && output <= (double)numbers.MAX_INT) ? output : DEFAULT_INT);
 	}
 	
 	public static String to_integer_string(double input_)
@@ -220,5 +203,10 @@ public abstract class numbers
 	public static int int_from_string(String input_)
 	{
 		return strings.to_number_int(input_);
+	}
+	
+	static final Class<?>[] populate_all_classes()
+	{
+		return new Class<?>[] { Integer.class, int.class, Long.class, long.class, Double.class, double.class };
 	}
 }

@@ -50,12 +50,7 @@ public class data extends parent
 	public String _type = strings.DEFAULT;
 	public Class<?> _class = null;
 	public size _size = null;
-
-	private static HashMap<String, Class<?>> _all_classes = new HashMap<String, Class<?>>();
-	private static HashMap<Class<?>, Class<?>> _all_compatible = new HashMap<Class<?>, Class<?>>();
 	
-	static { ini(); }
-
 	public static boolean are_equal(data data1_, data data2_)
 	{
 		return generic.are_equal(data1_, data2_);
@@ -173,9 +168,30 @@ public class data extends parent
 		return _is_ok;
 	}
 	
-	private static void ini()
+	static HashMap<String, Class<?>> populate_all_classes()
 	{
-		populate_globals();
+		HashMap<String, Class<?>> classes = new HashMap<String, Class<?>>();
+		
+		classes.put(STRING, String.class);
+		classes.put(STRING_BIG, String.class);
+		classes.put(INT, Integer.class);
+		classes.put(LONG, Long.class);
+		classes.put(DECIMAL, Double.class);
+		classes.put(BOOLEAN, Boolean.class);
+		classes.put(TIMESTAMP, String.class);
+		
+		return classes;
+	}
+	
+	static HashMap<Class<?>, Class<?>> populate_all_compatible()
+	{
+		HashMap<Class<?>, Class<?>> classes = new HashMap<Class<?>, Class<?>>();
+		
+		classes.put(Double.class, Integer.class);
+		classes.put(Double.class, Long.class);
+		classes.put(Long.class, Integer.class);
+		
+		return classes;
 	}
 
 	private static boolean is_common(String type_, String[] targets_)
@@ -235,7 +251,7 @@ public class data extends parent
 
 	private static boolean class_is_ok(Class<?> class_)
 	{
-		return (class_ != null && _all_classes.containsValue(class_));
+		return (class_ != null && get_all_classes().containsValue(class_));
 	}
 
 	private static boolean class_complies(Class<?> input_, Class<?> target_)
@@ -243,7 +259,7 @@ public class data extends parent
 		if (input_ == null || target_ == null) return false;
 		if (input_.equals(target_)) return true;
 
-		for (Entry<Class<?>, Class<?>> item: _all_compatible.entrySet())
+		for (Entry<Class<?>, Class<?>> item: get_all_compatible().entrySet())
 		{
 			if (target_.equals(item.getKey()) && input_.equals(item.getValue())) return true;
 		}
@@ -253,24 +269,17 @@ public class data extends parent
 
 	private static Class<?> get_class(String type_)
 	{
-		return (_all_classes.containsKey(type_) ? _all_classes.get(type_) : null);
+		return (get_all_classes().containsKey(type_) ? get_all_classes().get(type_) : null);
 	}
 
-	private static void populate_globals()
+	private static HashMap<String, Class<?>> get_all_classes()
 	{
-		if (_all_classes.size() > 0) return;
+		return _alls._data_classes;
+	}
 
-		_all_classes.put(STRING, String.class);
-		_all_classes.put(STRING_BIG, String.class);
-		_all_classes.put(INT, Integer.class);
-		_all_classes.put(LONG, Long.class);
-		_all_classes.put(DECIMAL, Double.class);
-		_all_classes.put(BOOLEAN, Boolean.class);
-		_all_classes.put(TIMESTAMP, String.class);
-		
-		_all_compatible.put(Double.class, Integer.class);
-		_all_compatible.put(Double.class, Long.class);
-		_all_compatible.put(Long.class, Integer.class);
+	private static HashMap<Class<?>, Class<?>> get_all_compatible()
+	{
+		return _alls._data_compatible;
 	}
 
 	private void instantiate(data input_)

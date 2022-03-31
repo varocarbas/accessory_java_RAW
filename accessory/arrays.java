@@ -13,46 +13,33 @@ public abstract class arrays
 	
 	static { ini.load(); }
 
-	public static final Class<?>[] get_all_classes()
+	public static Class<?>[] get_all_classes()
 	{
-		ArrayList<Class<?>> output = new ArrayList<Class<?>>();
-		
-		output.add(HashMap.class);
-		output.add(ArrayList.class);
-		
-		output.addAll(new ArrayList<Class<?>>(Arrays.asList(get_all_classes_array())));
-		output.addAll(new ArrayList<Class<?>>(Arrays.asList(get_all_classes_small())));
-		
-		return to_array(output);
+		return _alls._arrays_classes;
 	}
-	
+
 	//All these classes require a special treatment. In some cases, they are assumed to be equivalent to their big counterparts.
 	//Their instances can only be used as Object/x[] after having been converted into their corresponding big counterparts.
 	//Methods with Object/x[] parameters have to include specific overloads for all these classes. Additionally, they have 
 	//to internally (i.e., in the overload including the Object parameter) account for these scenarios too, because some calls 
 	//might not be reaching the specific overloads (e.g., Object val = new int[] { 1, 2, 3 } going to method(Object input_)).
 	//!!!
-	public static final Class<?>[] get_all_classes_small()
+	public static Class<?>[] get_all_classes_small()
 	{
-		return new Class<?>[] { double[].class, long[].class, int[].class, boolean[].class };
+		return _alls._arrays_classes_small;
 	}
 	
 	//All these classes are equivalent to Array.class and their instances can be used as Object/x[].
-	public static final Class<?>[] get_all_classes_array()
+	public static Class<?>[] get_all_classes_array()
 	{
-		return new Class<?>[]
-		{
-			Array.class, String[].class, Boolean[].class, Integer[].class, Long[].class, Double[].class, 
-			Class[].class, Method[].class, Exception[].class, size[].class, data[].class, db_field[].class,
-			db_where[].class, db_order[].class		
-		};
+		return _alls._arrays_classes_array;
 	}
 	
-	public static final Class<?>[] get_all_classes_numeric()
+	public static Class<?>[] get_all_classes_numeric()
 	{
-		return new Class<?>[] { Double[].class, double[].class, Long[].class, long[].class, Integer[].class, int[].class };		
+		return _alls._arrays_classes_numeric;
 	}
-
+	
 	public static <x> boolean is_ok(ArrayList<ArrayList<x>> input_)
 	{
 		return is_ok(input_, false);
@@ -912,6 +899,39 @@ public abstract class arrays
 		return is_ok;
 	}
 
+	static final Class<?>[] populate_all_classes()
+	{
+		ArrayList<Class<?>> output = new ArrayList<Class<?>>();
+		
+		output.add(HashMap.class);
+		output.add(ArrayList.class);
+		
+		output.addAll(new ArrayList<Class<?>>(Arrays.asList(get_all_classes_array())));
+		output.addAll(new ArrayList<Class<?>>(Arrays.asList(get_all_classes_small())));
+		
+		return output.toArray(new Class<?>[output.size()]);		
+	}
+	
+	static Class<?>[] populate_all_classes_small()
+	{
+		return new Class<?>[] { double[].class, long[].class, int[].class, boolean[].class };
+	}
+	
+	static Class<?>[] populate_all_classes_array()
+	{
+		return new Class<?>[]
+		{
+			Array.class, String[].class, Boolean[].class, Integer[].class, Long[].class, 
+			Double[].class, Class[].class, Method[].class, Exception[].class, size[].class, 
+			data[].class, db_field[].class, db_where[].class, db_order[].class		
+		};
+	}
+	
+	static Class<?>[] populate_all_classes_numeric()
+	{
+		return new Class<?>[] { Double[].class, double[].class, Long[].class, long[].class, Integer[].class, int[].class };		
+	}
+
 	//Method to filter out ArrayList<x> instances being used as ArrayList<ArrayList<x>> args.
 	//!!!
 	private static <x> boolean is_arraylist_xx(ArrayList<ArrayList<x>> input_)
@@ -1235,6 +1255,11 @@ public abstract class arrays
 		
 		Class<?> type = generic.get_class(array_);
 		if (!generic.is_array(type)) return output;
+
+		if (type.equals(double[].class)) output = remove_value((double[])array_, (double)key_val_, normalise_);
+		else if (type.equals(long[].class)) output = remove_value((long[])array_, (long)key_val_, normalise_);
+		else if (type.equals(int[].class)) output = remove_value((int[])array_, (int)key_val_, normalise_);
+		else if (type.equals(boolean[].class)) output = remove_value((boolean[])array_, (boolean)key_val_, normalise_);
 		
 		Object val01 = key_val_;
 		
