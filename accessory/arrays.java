@@ -2,6 +2,8 @@ package accessory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -921,9 +923,9 @@ public abstract class arrays
 	{
 		return new Class<?>[]
 		{
-			Array.class, String[].class, Boolean[].class, Integer[].class, Long[].class, 
-			Double[].class, Class[].class, Method[].class, Exception[].class, size[].class, 
-			data[].class, db_field[].class, db_where[].class, db_order[].class		
+			Array.class, String[].class, Boolean[].class, Integer[].class, Long[].class, Double[].class, 
+			Class[].class, Method[].class, Exception[].class, LocalTime[].class, LocalDateTime[].class, 
+			size[].class, data[].class, db_field[].class, db_where[].class, db_order[].class		
 		};
 	}
 	

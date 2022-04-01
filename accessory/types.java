@@ -308,12 +308,13 @@ public abstract class types
 	public static String[] get_subtypes(String type_, String[] all_)
 	{
 		ArrayList<String> subtypes = new ArrayList<String>();
-		String heading = (strings.is_ok(type_) ? type_ + SEPARATOR : null);
-		boolean all = !strings.is_ok(heading);
 		
-		for (String subtype: (arrays.is_ok(all_) ? all_ : get_all_subtypes()))
+		String heading = (strings.is_ok(type_) ? type_ + SEPARATOR : null);
+		boolean add_all = !strings.is_ok(heading);
+		
+		for (String subtype: (String[])arrays.remove_value((arrays.is_ok(all_) ? all_ : get_all_subtypes()), heading, false))
 		{
-			if (all || (!strings.are_equal(heading, subtype) && strings.contains_start(heading, subtype, false))) subtypes.add(subtype);
+			if (add_all || strings.contains_start(heading, subtype, false)) subtypes.add(subtype);
 		}
 
 		return arrays.to_array(subtypes);

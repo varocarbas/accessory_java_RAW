@@ -2,6 +2,8 @@ package accessory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -319,6 +321,8 @@ public abstract class generic
 		else if (input_ instanceof Class<?>) type = Class.class;
 		else if (input_ instanceof Method) type = Method.class;
 		else if (input_ instanceof Exception) type = Exception.class;
+		else if (input_ instanceof LocalTime) type = LocalTime.class;
+		else if (input_ instanceof LocalDateTime) type = LocalDateTime.class;
 		else if (input_ instanceof size) type = size.class;
 		else if (input_ instanceof data) type = data.class;
 		else if (input_ instanceof db_field) type = db_field.class;
@@ -338,6 +342,8 @@ public abstract class generic
 		else if (input_ instanceof Class[]) type = Class[].class;
 		else if (input_ instanceof Method[]) type = Method[].class;
 		else if (input_ instanceof Exception[]) type = Exception[].class;
+		else if (input_ instanceof LocalTime[]) type = LocalTime[].class;
+		else if (input_ instanceof LocalDateTime[]) type = LocalDateTime[].class;
 		else if (input_ instanceof size[]) type = size[].class;
 		else if (input_ instanceof data[]) type = data[].class;
 		else if (input_ instanceof db_field[]) type = db_field[].class;
@@ -497,7 +503,9 @@ public abstract class generic
 		classes.add(Class.class);
 		classes.add(Method.class);
 		classes.add(Exception.class);
-
+		classes.add(LocalTime.class);
+		classes.add(LocalDateTime.class);
+		
 		classes.add(size.class);
 		classes.add(data.class);
 		classes.add(db_field.class);

@@ -9,10 +9,11 @@ public abstract class credentials
 	public static HashMap<String, String> get(String type_, String user_, boolean encrypted_, String where_)
 	{
 		HashMap<String, String> credentials = null;
-		if (!strings.are_ok(new String[] { type_, user_})) return credentials;
+		
+		String type = check_type(type_);
+		if (!strings.are_ok(new String[] { type, user_})) return credentials;
 
-		String type = type_;
-		String where = where_;
+		String where = check_where(where_);
 
 		String username = get_username_password(type, user_, encrypted_, where, true);
 		String password = get_username_password(type, user_, encrypted_, where, false);
@@ -23,48 +24,6 @@ public abstract class credentials
 		credentials.put(generic.PASSWORD, password);
 
 		return credentials;
-	}
-
-	public static String get_username(String type_, String user_, boolean encrypted_, String where_)
-	{
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
-
-		return get_username_password(type_, user_, encrypted_, where_, true);
-	}
-
-	public static String get_username_file(String type_, String user_, boolean encrypted_)
-	{
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
-
-		return get_username_password(type_, user_, encrypted_, types.CONFIG_CREDENTIALS_WHERE_FILE, true);
-	}
-
-	public static String get_path_username(String type_, String user_, boolean encrypted_)
-	{
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
-
-		return get_path_username_password(type_, user_, encrypted_, true);
-	}
-
-	public static String get_password(String type_, String user_, boolean encrypted_, String where_)
-	{
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
-
-		return get_username_password(type_, user_, encrypted_, where_, false);
-	}
-
-	public static String get_password_file(String type_, String user_, boolean encrypted_)
-	{
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
-
-		return get_username_password(type_, user_, encrypted_, types.CONFIG_CREDENTIALS_WHERE_FILE, false);
-	}
-
-	public static String get_path_password(String type_, String user_, boolean encrypted_)
-	{
-		if (!strings.are_ok(new String[] { type_, user_})) return strings.DEFAULT;
-
-		return get_path_username_password(type_, user_, encrypted_, false);    	
 	}
 
 	private static String get_username_password(String type_, String user_, boolean encrypted_, String where_, boolean is_username_)
@@ -110,9 +69,16 @@ public abstract class credentials
 		if (encrypted_) file += separator + config.get_credentials(types.CONFIG_CREDENTIALS_FILE_ENCRYPTED);  	
 		if (strings.is_ok(extension)) file += extension;
 
-		return paths.build
-		(
-			new String[] { config.get_credentials(types.CONFIG_CREDENTIALS_FILE_DIR), file }, true
-		);
+		return paths.build(new String[] { config.get_credentials(types.CONFIG_CREDENTIALS_FILE_DIR), file }, true);
+	}
+	
+	private static String check_type(String type_)
+	{
+		return types.check_subtype(type_, types.get_subtypes(types.CONFIG_CREDENTIALS, null), null, null);
+	}
+	
+	private static String check_where(String where_)
+	{
+		return types.check_subtype(where_, types.get_subtypes(types.CONFIG_CREDENTIALS_WHERE, null), null, null);
 	}
 }

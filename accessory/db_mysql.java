@@ -121,7 +121,7 @@ class db_mysql extends parent_db
 		if (type.equals(data.BOOLEAN)) size = 1;
 		else if (type.equals(data.STRING)) size = DEFAULT_SIZE_VARCHAR;
 		else if (type.equals(data.STRING_BIG)) size = DEFAULT_SIZE_TEXT;
-		else if (type.equals(data.TIMESTAMP)) size = dates.get_time_pattern(dates.DATE_TIME).length();
+		else if (type.equals(data.TIMESTAMP)) size = dates.SIZE_DATE_TIME;
 		else if (data.is_number(type)) size = DEFAULT_SIZE_NUMBER;
 		
 		return size;
@@ -135,7 +135,7 @@ class db_mysql extends parent_db
 		if (!strings.is_ok(data_type)) return max;
 		
 		if (data_type.equals(data.BOOLEAN)) max = 1;
-		else if (data_type.equals(data.TIMESTAMP)) max = dates.MAX_TIMESTAMP;		
+		else if (data_type.equals(data.TIMESTAMP)) max = dates.SIZE_TIMESTAMP;		
 		else if (data_type.equals(data.DECIMAL)) max = 64;
 		else if (data_type.equals(data.INT)) max = numbers.MAX_DIGITS_INT;
 		else if (data_type.equals(data.LONG)) max = numbers.MAX_DIGITS_LONG;

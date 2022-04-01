@@ -2,11 +2,12 @@ package accessory;
 
 import java.util.HashMap;
 
-//This class is the counterpart for _defaults which deals with arrays. The main reason for this difference is the 
+//This class is the counterpart of _defaults dealing with arrays. The main reason for this difference is the 
 //unclear, irregular treatment given by Java to the initialisation of global static final variables involving arrays.
 //The rules in this class are, consequently, different than the ones in _defaults:
-//- All the populations will happen in the load method (called at the very beginning) via local methods.
+//- All the populations will happen in the load method (called at the very beginning) which calls the corresponding local methods.
 //- All the variables will be accessed directly in this class (i.e., no local copies like in _defaults) via local methods.
+//!!!
 abstract class _alls 
 {
 	public static Class<?>[] _arrays_classes_small = null;
@@ -22,6 +23,8 @@ abstract class _alls
 	
 	public static HashMap<String, Class<?>> _data_classes = null;
 	public static HashMap<Class<?>, Class<?>> _data_compatible = null;
+
+	public static HashMap<String, parent_db> _db_dbs = null;
 	
 	public static void load() 
 	{ 
@@ -38,5 +41,7 @@ abstract class _alls
 		
 		_data_classes = data.populate_all_classes();
 		_data_compatible = data.populate_all_compatible();
+		
+		_db_dbs = db.populate_all_dbs();
 	} 
 }

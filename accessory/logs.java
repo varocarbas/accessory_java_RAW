@@ -75,9 +75,7 @@ public abstract class logs
 		String message = message_;
 		if (!strings.is_ok(message)) return;
 
-		String path = get_path(id_);
-
-		io.line_to_file(path, message, true, null, false);
+		io.line_to_file(get_path(id_), dates.add_timestamp(message, null, false), true, null, false);
 	}
 
 	public static void update_db(String message_, String id_)

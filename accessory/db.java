@@ -55,8 +55,6 @@ public abstract class db
 	
 	public static boolean _is_ok = false;
 	public static String _cur_source = strings.DEFAULT;
-	
-	private static HashMap<String, parent_db> _all_dbs = start_all_db();
 
 	//--- Populated via the corresponding db_ini method (e.g., load_sources()).
 	static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
@@ -95,7 +93,7 @@ public abstract class db
 
 	public static HashMap<String, Boolean> update_conn_info(HashMap<String, String> params_)
 	{
-		return config.update_db_conn_info(params_, config.get_db(types.CONFIG_DB_SETUP));
+		return config.update_db_conn_info(params_, get_current_setup());
 	}
 
 	public static String select_one_string(String source_, String field_, db_where[] wheres_, db_order[] orders_)
@@ -425,7 +423,7 @@ public abstract class db
 
 	public static parent_db get_current_db()
 	{	
-		parent_db output = arrays.get_value(_all_dbs, get_current_setup());
+		parent_db output = arrays.get_value(get_all_dbs(), get_current_setup());
 		
 		return (output != null ? output : instantiate_db(DEFAULT_TYPE));
 	}
@@ -438,10 +436,12 @@ public abstract class db
 	static HashMap<String, String> get_credentials()
 	{
 		HashMap<String, String> output = new HashMap<String, String>();
-
-		String user = config.get(config.get_db(types.CONFIG_DB_SETUP), db.USER);
-		String username = config.get(config.get_db(types.CONFIG_DB_SETUP), db.USERNAME);
-		String password = config.get(config.get_db(types.CONFIG_DB_SETUP), db.PASSWORD);
+		
+		String setup = db.get_current_setup();
+		
+		String user = config.get(setup, db.USER);
+		String username = config.get(setup, db.USERNAME);
+		String password = config.get(setup, db.PASSWORD);
 
 		if (strings.is_ok(username) && strings.is_ok(password))
 		{
@@ -452,9 +452,9 @@ public abstract class db
 		{
 			output = credentials.get
 			(
-				config.get(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_CREDENTIALS_TYPE), user, 
-				strings.to_boolean(config.get(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_CREDENTIALS_ENCRYPTED)),
-				config.get(config.get_db(types.CONFIG_DB_SETUP), types.CONFIG_DB_CREDENTIALS_WHERE)
+				config.get(setup, types.CONFIG_DB_CREDENTIALS_TYPE), user, 
+				strings.to_boolean(config.get(setup, types.CONFIG_DB_CREDENTIALS_ENCRYPTED)),
+				config.get(setup, types.CONFIG_DB_CREDENTIALS_WHERE)
 			);
 		}
 
@@ -513,17 +513,7 @@ public abstract class db
 		return vals;
 	}
 	
-	private static <x> HashMap<String, String> adapt_inputs_input(String source_, HashMap<String, String> old_, String field_, x val_)
-	{
-		String source = check_source(source_);
-		
-		HashMap<String, db_field> fields = get_source_fields(source);
-		if (!arrays.is_ok(fields) || !strings.is_ok(field_)) return null;
-
-		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field_, val_, fields);
-	}
-	
-	private static HashMap<String, parent_db> start_all_db()
+	static HashMap<String, parent_db> populate_all_dbs()
 	{
 		HashMap<String, parent_db> all_db = new HashMap<String, parent_db>();
 		
@@ -537,6 +527,21 @@ public abstract class db
 		}
 		
 		return all_db;
+	}
+	
+	static HashMap<String, parent_db> get_all_dbs()
+	{
+		return _alls._db_dbs;
+	}
+	
+	private static <x> HashMap<String, String> adapt_inputs_input(String source_, HashMap<String, String> old_, String field_, x val_)
+	{
+		String source = check_source(source_);
+		
+		HashMap<String, db_field> fields = get_source_fields(source);
+		if (!arrays.is_ok(fields) || !strings.is_ok(field_)) return null;
+
+		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field_, val_, fields);
 	}
 	
 	private static String get_current_setup()

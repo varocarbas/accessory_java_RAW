@@ -171,7 +171,7 @@ public abstract class config
 
 	public static <x> boolean update_subtypes(String main_, String[] subtypes_)
 	{
-		String main = main_;
+		String main = check_type(main_);
 		if (!strings.is_ok(main) || !arrays.is_ok(subtypes_)) return false;
 
 		_subtypes.put(main, (String[])arrays.get_new(subtypes_));
@@ -181,27 +181,26 @@ public abstract class config
 
 	public static <x> boolean update_ini(String type_, String key_, x val_)
 	{
-		return update_matches(type_, key_, val_, true, true);
+		return update_matches(check_type(type_), key_, val_, true, true);
 	}
 
 	static HashMap<String, Boolean> update_db_conn_info(HashMap<String, String> params_, String type_)
 	{
 		HashMap<String, Boolean> output = null;
-		if (!arrays.is_ok(params_) || !strings.is_ok(type_)) return output;
-
-		if (!strings.are_equal(get_linked_main(type_), types.CONFIG_DB)) return output;
+		
+		String type = check_type(type_);
+		if (!arrays.is_ok(params_) || !strings.is_ok(type) || !strings.are_equal(get_linked_main(type), types.CONFIG_DB)) return output;
 
 		output = new HashMap<String, Boolean>();
 
 		for (Entry<String, String> param: params_.entrySet())
 		{
 			String key = param.getKey();
-
 			String val = param.getValue();
 
 			boolean is_ok = false;
-			if (type_.equals(types.CONFIG_DB)) is_ok = update_db(key, val);
-			else if (type_.equals(types.CONFIG_LOGS_DB)) is_ok = update_logs_db(key, val);
+			if (type.equals(types.CONFIG_DB)) is_ok = update_db(key, val);
+			else if (type.equals(types.CONFIG_LOGS_DB)) is_ok = update_logs_db(key, val);
 
 			output.put(key, is_ok);
 		}

@@ -35,14 +35,14 @@ public class data extends parent
 	public static final double MIN_INT = numbers.MIN_INT;
 	public static final double MIN_STRING = strings.MIN_SIZE;
 	public static final double MIN_BOOLEAN = 2.0;
-	public static final double MIN_TIMESTAMP = dates.MIN;
+	public static final double MIN_TIMESTAMP = 0.0;
 	
 	public static final double MAX_DECIMAL = size.MAX;
 	public static final double MAX_LONG = numbers.MAX_LONG;
 	public static final double MAX_INT = numbers.MAX_INT;
 	public static final double MAX_STRING = strings.MAX_SIZE;
 	public static final double MAX_BOOLEAN = 2.0;
-	public static final double MAX_TIMESTAMP = dates.MAX_TIMESTAMP;
+	public static final double MAX_TIMESTAMP = dates.SIZE_TIMESTAMP;
 	//---
 
 	public static final String DEFAULT_TYPE = STRING;
