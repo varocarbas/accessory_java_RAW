@@ -197,7 +197,8 @@ public abstract class config
 		{
 			String key = param.getKey();
 			String val = param.getValue();
-
+			if (val == null) continue;
+			
 			boolean is_ok = false;
 			if (type.equals(types.CONFIG_DB)) is_ok = update_db(key, val);
 			else if (type.equals(types.CONFIG_LOGS_DB)) is_ok = update_logs_db(key, val);

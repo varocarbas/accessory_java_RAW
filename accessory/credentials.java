@@ -3,20 +3,23 @@ package accessory;
 import java.util.HashMap;
 
 public abstract class credentials 
-{   	
+{   
+	public static final String DIR = types.CONFIG_CREDENTIALS_FILE_DIR;
+	public static final String WHERE = types.CONFIG_CREDENTIALS_WHERE;
+	public static final String ENCRYPTED = types.CONFIG_CREDENTIALS_ENCRYPTED;	
+	
 	static { ini.load(); }
 
 	public static HashMap<String, String> get(String type_, String user_, boolean encrypted_, String where_)
 	{
 		HashMap<String, String> credentials = null;
-		
-		String type = check_type(type_);
-		if (!strings.are_ok(new String[] { type, user_})) return credentials;
+
+		if (!strings.are_ok(new String[] { type_, user_})) return credentials;
 
 		String where = check_where(where_);
 
-		String username = get_username_password(type, user_, encrypted_, where, true);
-		String password = get_username_password(type, user_, encrypted_, where, false);
+		String username = get_username_password(type_, user_, encrypted_, where, true);
+		String password = get_username_password(type_, user_, encrypted_, where, false);
 		if (!strings.are_ok(new String[] { username, password })) return credentials;
 
 		credentials = new HashMap<String, String>();
@@ -43,7 +46,7 @@ public abstract class credentials
 	private static String get_username_password_file(String type_, String user_, boolean encrypted_, boolean is_username_)
 	{   
 		String path = get_path_username_password(type_, user_, encrypted_, is_username_);
-
+		
 		String[] lines = io.file_to_array(path, true);
 		if (!arrays.is_ok(lines) || !strings.is_ok(lines[0])) return strings.DEFAULT;
 
@@ -70,11 +73,6 @@ public abstract class credentials
 		if (strings.is_ok(extension)) file += extension;
 
 		return paths.build(new String[] { config.get_credentials(types.CONFIG_CREDENTIALS_FILE_DIR), file }, true);
-	}
-	
-	private static String check_type(String type_)
-	{
-		return types.check_subtype(type_, types.get_subtypes(types.CONFIG_CREDENTIALS, null), null, null);
 	}
 	
 	private static String check_where(String where_)

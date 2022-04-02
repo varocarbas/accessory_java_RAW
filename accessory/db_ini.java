@@ -14,8 +14,8 @@ public abstract class db_ini
 	//Method expected to be called together with each load_config_sources_[source]().
 	public static void load_config_sources_default_fields(String main_)
 	{
-		config.update_ini(main_, db.FIELD_ID, db.DEFAULT_COL_ID);
-		config.update_ini(main_, db.FIELD_TIMESTAMP, db.DEFAULT_COL_TIMESTAMP);	
+		config.update_ini(main_, db.FIELD_ID, _defaults.DB_DEFAULT_COL_ID);
+		config.update_ini(main_, db.FIELD_TIMESTAMP, _defaults.DB_DEFAULT_COL_TIMESTAMP);	
 	}
 
 	private static void load_sources()
@@ -60,18 +60,17 @@ public abstract class db_ini
 	{
 		HashMap<String, String> vals = new HashMap<String, String>();
 
-		vals.put(types.CONFIG_DB_TYPE, db.DEFAULT_TYPE);
+		vals.put(types.CONFIG_DB_TYPE, _defaults.DB_TYPE);
 		vals.put(types.CONFIG_DB_SETUP, _defaults.DB_SETUP);
-		vals.put(db.MAX_POOL, db.DEFAULT_MAX_POOL);
-		vals.put(db.NAME, db.DEFAULT_NAME);
-		vals.put(db.HOST, db.DEFAULT_HOST);
-		vals.put(db.USER, db.DEFAULT_USER);
+		vals.put(db.MAX_POOL, _defaults.DB_MAX_POOL);
+		vals.put(db.NAME, _defaults.DB_NAME);
+		vals.put(db.HOST, _defaults.DB_HOST);
+		vals.put(db.USER, _defaults.DB_USER);
 		vals.put(types.CONFIG_DB_ERROR_EXIT, strings.from_boolean(_defaults.DB_ERROR_EXIT));
-		vals.put(types.CONFIG_DB_CREDENTIALS_TYPE, db.DEFAULT_TYPE);
 		vals.put(types.CONFIG_DB_CREDENTIALS_WHERE, _defaults.DB_CREDENTIALS_WHERE);
 		vals.put(types.CONFIG_DB_CREDENTIALS_ENCRYPTED, strings.from_boolean(_defaults.DB_CREDENTIALS_ENCRYPTED));
-		vals.put(db.USERNAME, db.DEFAULT_USERNAME);
-		vals.put(db.PASSWORD, db.DEFAULT_PASSWORD);
+		vals.put(db.USERNAME, _defaults.DB_CREDENTIALS_USERNAME);
+		vals.put(db.PASSWORD, _defaults.DB_CREDENTIALS_PASSWORD);
 
 		return vals;
 	}
@@ -91,18 +90,18 @@ public abstract class db_ini
 
 	private static void load_config_sources_logs(String main_)
 	{
-		config.update_ini(main_, logs.SOURCE, logs.DEFAULT_TABLE);
-		config.update_ini(main_, logs.FIELD_ID, logs.DEFAULT_COL_ID);
-		config.update_ini(main_, logs.FIELD_MESSAGE, logs.DEFAULT_COL_MESSAGE);
+		config.update_ini(main_, logs.SOURCE, _defaults.LOGS_DB_TABLE);
+		config.update_ini(main_, logs.FIELD_ID, _defaults.LOGS_DB_COL_ID);
+		config.update_ini(main_, logs.FIELD_MESSAGE, _defaults.LOGS_DB_COL_MESSAGE);
 	}
 
 	private static void load_config_sources_tests(String main_)
 	{
-		config.update_ini(main_, types.CONFIG_TESTS_DB, db.DEFAULT_NAME);
-		config.update_ini(main_, tests.SOURCE, tests.DEFAULT_TABLE);
-		config.update_ini(main_, tests.FIELD_INT, tests.DEFAULT_COL_INT);
-		config.update_ini(main_, tests.FIELD_STRING, tests.DEFAULT_COL_STRING);
-		config.update_ini(main_, tests.FIELD_DECIMAL, tests.DEFAULT_COL_DECIMAL);
+		config.update_ini(main_, types.CONFIG_TESTS_DB, _defaults.DB_NAME);
+		config.update_ini(main_, tests.SOURCE, _defaults.TESTS_DB_TABLE);
+		config.update_ini(main_, tests.FIELD_INT, _defaults.TESTS_DB_COL_INT);
+		config.update_ini(main_, tests.FIELD_STRING, _defaults.TESTS_DB_COL_STRING);
+		config.update_ini(main_, tests.FIELD_DECIMAL, _defaults.TESTS_DB_COL_DECIMAL);
 	}
 	
 	private static void load_sources_all(HashMap<String, String> source_mains_)

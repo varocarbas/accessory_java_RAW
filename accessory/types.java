@@ -20,6 +20,14 @@ public abstract class types
 	//table/col.
 
 	public static final String CONFIG = "config";
+	public static final String CONFIG_BASIC = "config_basic";
+	public static final String CONFIG_BASIC_NAME = "config_basic_name";
+	public static final String CONFIG_BASIC_DIR = "config_basic_dir";
+	public static final String CONFIG_BASIC_DIR_APP = "config_basic_dir_app";
+	public static final String CONFIG_BASIC_DIR_INI = "config_basic_dir_ini";
+	public static final String CONFIG_BASIC_DIR_CREDENTIALS = "config_basic_dir_credentials";
+	public static final String CONFIG_BASIC_DIR_LOGS = "config_basic_dir_logs";
+	
 	public static final String CONFIG_CREDENTIALS = "config_credentials";
 	public static final String CONFIG_CREDENTIALS_ENCRYPTED = "config_credentials_encrypted";
 	public static final String CONFIG_CREDENTIALS_WHERE = "config_credentials_where";
@@ -32,12 +40,7 @@ public abstract class types
 	public static final String CONFIG_CREDENTIALS_FILE_USERNAME = "config_credentials_file_username";
 	public static final String CONFIG_CREDENTIALS_FILE_PASSWORD = "config_credentials_file_password";
 	public static final String CONFIG_CREDENTIALS_FILE_ENCRYPTED = "config_credentials_file_encrypted";
-
-	public static final String CONFIG_BASIC = "config_basic";
-	public static final String CONFIG_BASIC_NAME = "config_basic_name";
-	public static final String CONFIG_BASIC_DIR_APP = "config_basic_dir_app";
-	public static final String CONFIG_BASIC_DIR_INI = "config_basic_dir_ini";
-
+	
 	public static final String CONFIG_LOGS = "config_logs";
 	public static final String CONFIG_LOGS_DIR = "config_logs_dir";
 	public static final String CONFIG_LOGS_DB = "config_logs_db";
@@ -61,7 +64,6 @@ public abstract class types
 	public static final String CONFIG_DB_TYPE = "config_db_type";
 	public static final String CONFIG_DB_TYPE_MYSQL = "config_db_type_mysql";
 	public static final String CONFIG_DB_CREDENTIALS = "config_db_credentials";
-	public static final String CONFIG_DB_CREDENTIALS_TYPE = "config_db_credentials_type";
 	public static final String CONFIG_DB_CREDENTIALS_WHERE = "config_db_credentials_where";
 	public static final String CONFIG_DB_CREDENTIALS_ENCRYPTED = "config_db_credentials_encrypted";
 	public static final String CONFIG_DB_CREDENTIALS_USERNAME = "config_db_credentials_username";
@@ -163,12 +165,7 @@ public abstract class types
 	public static final String WHAT_APP = "what_app";
 	public static final String WHAT_SERVER = "what_server";
 	public static final String WHAT_ID = "what_id";
-	public static final String WHAT_DIR = "what_dir";
-	public static final String WHAT_DIR_CREDENTIALS = "what_dir_credentials";
-	public static final String WHAT_DIR_INI = "what_dir_ini";
-	public static final String WHAT_DIR_LOGS = "what_dir_logs";
-	public static final String WHAT_DIR_APP = "what_dir_app";
-	
+
 	public static final String ERROR = "error";
 	public static final String ERROR_DB = "error_db";
 	public static final String ERROR_DB_INFO = "error_db_info";
@@ -325,6 +322,11 @@ public abstract class types
 		return new String[]
 		{	
 			CONFIG,
+			CONFIG_BASIC,
+			CONFIG_BASIC_NAME, 
+			CONFIG_BASIC_DIR,
+			CONFIG_BASIC_DIR_APP, CONFIG_BASIC_DIR_INI,CONFIG_BASIC_DIR_CREDENTIALS, 
+			CONFIG_BASIC_DIR_LOGS,
 			CONFIG_CREDENTIALS, 
 			CONFIG_CREDENTIALS_ENCRYPTED, CONFIG_CREDENTIALS_WHERE, 
 			CONFIG_CREDENTIALS_WHERE_FILE, CONFIG_CREDENTIALS_WHERE_DB,
@@ -332,8 +334,6 @@ public abstract class types
 			CONFIG_CREDENTIALS_FILE_DIR, CONFIG_CREDENTIALS_FILE_EXTENSION, 
 			CONFIG_CREDENTIALS_FILE_SEPARATOR, CONFIG_CREDENTIALS_FILE_USERNAME, 
 			CONFIG_CREDENTIALS_FILE_PASSWORD, CONFIG_CREDENTIALS_FILE_ENCRYPTED,
-			CONFIG_BASIC,
-			CONFIG_BASIC_NAME, CONFIG_BASIC_DIR_APP, CONFIG_BASIC_DIR_INI,
 			CONFIG_LOGS,
 			CONFIG_LOGS_DIR, 
 			CONFIG_LOGS_OUT,
@@ -348,7 +348,7 @@ public abstract class types
 			CONFIG_DB_TYPE,
 			CONFIG_DB_TYPE_MYSQL,
 			CONFIG_DB_CREDENTIALS,
-			CONFIG_DB_CREDENTIALS_TYPE, CONFIG_DB_CREDENTIALS_ENCRYPTED, 
+			CONFIG_DB_CREDENTIALS_ENCRYPTED, 
 			CONFIG_DB_CREDENTIALS_USERNAME, CONFIG_DB_CREDENTIALS_PASSWORD,
 			CONFIG_DB_CREDENTIALS_WHERE,
 			CONFIG_DB_DEFAULT_FIELD, 
@@ -397,8 +397,6 @@ public abstract class types
 			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 
 			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER,
 			WHAT_TYPE, WHAT_APP, WHAT_SERVER, WHAT_ID,
-			WHAT_DIR,
-			WHAT_DIR_CREDENTIALS, WHAT_DIR_INI, WHAT_DIR_LOGS, WHAT_DIR_APP,
 			
 			ERROR,
 			ERROR_DB,

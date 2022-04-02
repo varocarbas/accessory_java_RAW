@@ -29,18 +29,19 @@ public abstract class config_ini
 		String type = types.CONFIG_BASIC;
 
 		config.update_ini(type, types.CONFIG_BASIC_NAME, _defaults.APP_NAME);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_APP, paths.DEFAULT_DIR_APP);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_INI, paths.DEFAULT_DIR_INI);
-		config.update_ini(type, types.CONFIG_LOGS_DIR, paths.DEFAULT_DIR_LOGS);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_APP, _defaults.DIR_APP);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_INI, _defaults.DIR_INI);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS, _defaults.DIR_LOGS);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_CREDENTIALS, _defaults.DIR_CREDENTIALS);
 	}
 
 	private static void load_config_credentials()
 	{
 		String type = types.CONFIG_CREDENTIALS;
 
-		config.update_ini(type, types.CONFIG_CREDENTIALS_ENCRYPTED, _defaults.CREDENTIALS_ENCRYPTED);
-		config.update_ini(type, types.CONFIG_CREDENTIALS_WHERE, _defaults.CREDENTIALS_WHERE);
-		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_DIR, paths.DEFAULT_DIR_CREDENTIALS);
+		config.update_ini(type, credentials.ENCRYPTED, _defaults.CREDENTIALS_ENCRYPTED);
+		config.update_ini(type, credentials.WHERE, _defaults.CREDENTIALS_WHERE);
+		config.update_ini(type, credentials.DIR, _defaults.DIR_CREDENTIALS);
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_EXTENSION, _defaults.CREDENTIALS_FILE_EXTENSION);
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_SEPARATOR, _defaults.CREDENTIALS_FILE_SEPARATOR);
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_USERNAME, _defaults.CREDENTIALS_FILE_USERNAME);
@@ -52,10 +53,10 @@ public abstract class config_ini
 	{
 		String type = types.CONFIG_LOGS;
 
-		config.update_ini(type, types.CONFIG_LOGS_DIR, paths.DEFAULT_DIR_LOGS);
-		config.update_ini(type, logs.SCREEN, strings.from_boolean(logs.DEFAULT_SCREEN));
-		config.update_ini(type, logs.FILE, strings.from_boolean(logs.DEFAULT_FILE));
-		config.update_ini(type, logs.DB, strings.from_boolean(logs.DEFAULT_DB));
+		config.update_ini(type, logs.DIR, _defaults.DIR_LOGS);
+		config.update_ini(type, logs.SCREEN, strings.from_boolean(_defaults.LOGS_SCREEN));
+		config.update_ini(type, logs.FILE, strings.from_boolean(_defaults.LOGS_FILE));
+		config.update_ini(type, logs.DB, strings.from_boolean(_defaults.LOGS_DB));
 	}	
 	
 	private static void load_config_subtypes()

@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 public abstract class logs 
 {	
+	public static final String DIR = types.CONFIG_LOGS_DIR;
 	public static final String SOURCE = types.CONFIG_LOGS_DB_SOURCE;
 	public static final String FIELD_ID = types.CONFIG_LOGS_DB_FIELD_ID;
 	public static final String FIELD_MESSAGE = types.CONFIG_LOGS_DB_FIELD_MESSAGE;

@@ -64,36 +64,29 @@ public abstract class db
 	
 	static { ini.load(); }
 
+	public static boolean update_conn_info(String user_, String database_, String host_)
+	{
+		HashMap<String, String> params = new HashMap<String, String>();
+		
+		if (strings.is_ok(user_)) params.put(db.USER, user_);
+		if (strings.is_ok(database_)) params.put(db.NAME, database_);
+		if (strings.is_ok(host_)) params.put(db.HOST, host_); 
+
+		update_conn_info(params);
+
+		return true;
+	}
+	
 	public static boolean update_conn_info(String username_, String password_, String database_, String host_)
 	{
 		HashMap<String, String> params = new HashMap<String, String>();
+
 		if (strings.is_ok(username_)) params.put(db.USERNAME, username_);
 		if (password_ != null) params.put(db.PASSWORD, password_);
 		if (strings.is_ok(database_)) params.put(db.NAME, database_);
 		if (strings.is_ok(host_)) params.put(db.HOST, host_);
 		
-		HashMap<String, Boolean> temp = update_conn_info(params);
-		
-		String error = "";
-		
-		for (Entry<String, Boolean> item: temp.entrySet())
-		{
-			if (!error.equals("")) error += ",";
-			if (!item.getValue()) error += item.getKey();
-		}
-		
-		if (error.equals("")) return true;
-		
-		error = "WRONG " + error;
-		
-		manage_error(types.ERROR_DB_INFO, null, null, error);
-		
-		return false;
-	}
-
-	public static HashMap<String, Boolean> update_conn_info(HashMap<String, String> params_)
-	{
-		return config.update_db_conn_info(params_, get_current_setup());
+		return update_conn_info(params);
 	}
 
 	public static String select_one_string(String source_, String field_, db_where[] wheres_, db_order[] orders_)
@@ -452,15 +445,30 @@ public abstract class db
 		{
 			output = credentials.get
 			(
-				config.get(setup, types.CONFIG_DB_CREDENTIALS_TYPE), user, 
-				strings.to_boolean(config.get(setup, types.CONFIG_DB_CREDENTIALS_ENCRYPTED)),
-				config.get(setup, types.CONFIG_DB_CREDENTIALS_WHERE)
+				types.remove_type(get_current_type(), types.CONFIG_DB_TYPE), user, 
+				strings.to_boolean(config.get(setup, credentials.ENCRYPTED)),
+				config.get(setup, credentials.WHERE)
 			);
 		}
 
 		return output;
 	}
 
+	static String get_host()
+	{
+		return config.get(get_current_setup(), db.HOST);
+	}
+
+	static String get_name()
+	{
+		return config.get(get_current_setup(), db.NAME);
+	}
+
+	static String get_max_pool()
+	{
+		return config.get(get_current_setup(), db.MAX_POOL);
+	}
+	
 	static void manage_error(String type_, String query_, Exception e_, String message_)
 	{
 		update_is_ok(false);
@@ -533,7 +541,31 @@ public abstract class db
 	{
 		return _alls._db_dbs;
 	}
+
+	private static boolean update_conn_info(HashMap<String, String> params_)
+	{		
+		String error = "";
 	
+		HashMap<String, Boolean> output = (arrays.is_ok(params_) ? config.update_db_conn_info(params_, get_current_setup()) : null);
+
+		if (arrays.is_ok(output))
+		{
+			for (Entry<String, Boolean> item: output.entrySet())
+			{
+				if (!error.equals("")) error += ",";
+				if (!item.getValue()) error += item.getKey();
+			}	
+			
+			if (error.equals("")) return true;
+		}	
+		
+		error = (error.equals("") ? "ERROR" : "WRONG " + error);
+		
+		manage_error(types.ERROR_DB_INFO, null, null, error);
+		
+		return false;
+	}
+
 	private static <x> HashMap<String, String> adapt_inputs_input(String source_, HashMap<String, String> old_, String field_, x val_)
 	{
 		String source = check_source(source_);
@@ -552,5 +584,13 @@ public abstract class db
 		if (!strings.is_ok(types.check_subtype(output, types.get_subtypes(type, null), null, null))) output = DEFAULT_TYPE;
 
 		return output;
+	}
+	
+	private static String get_current_type()
+	{
+		String type = config.get(get_current_setup(), types.CONFIG_DB_TYPE);
+		if (!strings.is_ok(type)) type = DEFAULT_TYPE;
+		
+		return type;
 	}
 }

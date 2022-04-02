@@ -178,8 +178,8 @@ class db_mysql extends parent_db
 
 	private String get_connect_url()
 	{   
-		String host = config.get_db(db.HOST);
-		String name = config.get_db(db.NAME);
+		String host = db.get_host();
+		String name = db.get_name();
 
 		String message = ""; 
 		if (!strings.is_ok(name)) message = "WRONG DB";

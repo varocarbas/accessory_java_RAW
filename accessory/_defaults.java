@@ -30,13 +30,14 @@ public abstract class _defaults
 	public static final String DATES_FORMAT = dates.DATE;
 	
 	public static final String APP_NAME = "app";
-	public static final String DIR_APP = paths.get_default_dir(types.WHAT_DIR_APP);
-	public static final String DIR_INI = paths.get_default_dir(types.WHAT_DIR_INI);
-	public static final String DIR_LOGS = paths.get_default_dir(types.WHAT_DIR_LOGS);
+	public static final String DIR_APP = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_APP, strings.DEFAULT);
+	public static final String DIR_INI = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_INI, "ini");
+	public static final String DIR_LOGS = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_LOGS, strings.DEFAULT);
+	public static final String DIR_CREDENTIALS = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_CREDENTIALS, "credentials");
 	
 	static final boolean CREDENTIALS_ENCRYPTED = false;
 	static final String CREDENTIALS_WHERE = types.CONFIG_CREDENTIALS_WHERE_FILE;
-	static final String CREDENTIALS_FILE_DIR = paths.get_default_dir(types.WHAT_DIR_CREDENTIALS);
+	static final String CREDENTIALS_FILE_DIR = DIR_CREDENTIALS;
 	static final String CREDENTIALS_FILE_EXTENSION = STRING;
 	static final String CREDENTIALS_FILE_SEPARATOR = misc.SEPARATOR_NAME;
 	static final String CREDENTIALS_FILE_USERNAME = "username";

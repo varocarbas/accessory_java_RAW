@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 public abstract class paths 
 {	
-	public static final String DIR_HOME = get_home_dir();
 	public static final String DIR_SEPARATOR = get_dir_separator();
+	public static final String DIR_HOME = get_home_dir();
 	
 	public static final String EXTENSION_TEXT = ".txt";
 	public static final String EXTENSION_JAR = ".jar";
@@ -17,7 +17,7 @@ public abstract class paths
 	public static final String DEFAULT_DIR_APP = _defaults.DIR_APP;
 	public static final String DEFAULT_DIR_INI = _defaults.DIR_INI;
 	public static final String DEFAULT_DIR_LOGS = _defaults.DIR_LOGS;
-	public static final String DEFAULT_DIR_CREDENTIALS = _defaults.CREDENTIALS_FILE_DIR;
+	public static final String DEFAULT_DIR_CREDENTIALS = _defaults.DIR_CREDENTIALS;
 	
 	static { ini.load(); }
 
@@ -110,27 +110,14 @@ public abstract class paths
 		return output;
 	}
 
-	static String get_default_dir(String what_)
+	static String get_default_dir_ini(String type_, String name_)
 	{
-		String what = types.check_what(what_);
+		String type = types.check_subtype(type_, types.get_subtypes(types.CONFIG_BASIC_DIR, null), null, null);
 		
-		if (!strings.is_ok(what)) return strings.DEFAULT;
-		if (strings.are_equal(what, types.WHAT_DIR_APP)) return get_dir_app_default();
+		if (!strings.is_ok(type)) return strings.DEFAULT;
+		if (strings.are_equal(type, types.CONFIG_BASIC_DIR_APP) || strings.are_equal(type, types.CONFIG_BASIC_DIR_LOGS)) return get_dir_app_default();
 
-		String[] targets = { types.WHAT_DIR_CREDENTIALS, types.WHAT_DIR_INI, types.WHAT_DIR_LOGS };
-
-		for (String target: targets)
-		{
-			if (strings.are_equal(what, target))
-			{
-				String[] parts = { DIR_HOME, target };
-				if (target.equals(types.WHAT_DIR_LOGS)) parts = new String[] { get_dir_app_default() };
-
-				return build(parts, false);
-			}
-		}
-
-		return strings.DEFAULT;
+		return (strings.is_ok(name_) ? build(new String[] { DIR_HOME, name_ }, false) : DIR_HOME);
 	}
 
 	private static String get_dir_separator()
