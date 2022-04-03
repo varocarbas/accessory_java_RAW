@@ -140,7 +140,7 @@ public abstract class paths
 		if (!strings.is_ok(key_)) return null;
 
 		String type = types.CONFIG_BASIC;
-		if (key_.equals(types.CONFIG_CREDENTIALS_FILE_DIR)) type = types.CONFIG_CREDENTIALS;
+		if (key_.equals(credentials.DIR)) type = types.CONFIG_CREDENTIALS;
 
 		HashMap<String, String> output = new HashMap<String, String>();
 		output.put(generic.KEY, key_);

@@ -72,6 +72,11 @@ public abstract class arrays
 		return is_ok(input_, false);
 	}
 	
+	public static boolean is_ok(byte[] input_)
+	{
+		return is_ok(input_, false);
+	}
+	
 	public static boolean is_ok(Object input_)
 	{
 		return is_ok(input_, false);
@@ -107,6 +112,11 @@ public abstract class arrays
 		return (input_ == null ? 0 : input_.length);
 	}
 	
+	public static int get_size(byte[] input_)
+	{
+		return (input_ == null ? 0 : input_.length);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <x> int get_size(Object input_)
 	{
@@ -119,6 +129,7 @@ public abstract class arrays
 		else if (type.equals(long[].class)) size = get_size((long[])input_);
 		else if (type.equals(int[].class)) size = get_size((int[])input_);
 		else if (type.equals(boolean[].class)) size = get_size((boolean[])input_);
+		else if (type.equals(byte[].class)) size = get_size((byte[])input_);
 		else if (generic.are_equal(type, ArrayList.class)) size = get_size_arraylist((ArrayList<x>)input_);
 		else if (generic.are_equal(type, HashMap.class)) size = get_size_hashmap_xx((HashMap<x, x>)input_); 
 		else size = ((Object[])input_).length;
@@ -170,6 +181,11 @@ public abstract class arrays
 		return are_equal(to_big(input1_), to_big(input2_));
 	}
 	
+	public static boolean are_equal(byte[] input1_, byte[] input2_)
+	{
+		return are_equal(to_big(input1_), to_big(input2_));
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <x> boolean are_equal(Object input1_, Object input2_)
 	{
@@ -185,6 +201,7 @@ public abstract class arrays
 		else if (type.equals(long[].class)) return are_equal((long[])input1_, (long[])input2_);
 		else if (type.equals(int[].class)) return are_equal((int[])input1_, (int[])input2_);
 		else if (type.equals(boolean[].class)) return are_equal((boolean[])input1_, (boolean[])input2_);
+		else if (type.equals(byte[].class)) return are_equal((byte[])input1_, (byte[])input2_);
 		else if (generic.are_equal(type, HashMap.class))
 		{
 			return 
@@ -425,6 +442,11 @@ public abstract class arrays
 		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
 	}
 	
+	public static byte[] get_new(byte[] input_)
+	{
+		return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length));
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <x> Object get_new(Object input_)
 	{
@@ -438,6 +460,7 @@ public abstract class arrays
 		else if (type.equals(long[].class)) output = get_new((long[])input_);
 		else if (type.equals(int[].class)) output = get_new((int[])input_);
 		else if (type.equals(boolean[].class)) output = get_new((boolean[])input_);
+		else if (type.equals(byte[].class)) output = get_new((byte[])input_);
 		else if (generic.are_equal(type, ArrayList.class)) output = get_new_arraylist((ArrayList<x>)input_);
 		else if (generic.are_equal(type, HashMap.class)) output = get_new_hashmap((HashMap<x, x>)input_); 
 		else output = get_new_array((x[])input_);
@@ -465,6 +488,11 @@ public abstract class arrays
 		return (is_ok(input_) ? new ArrayList<Boolean>(Arrays.asList((Boolean[])to_big(input_))) : new ArrayList<Boolean>());
 	}
 	
+	public static ArrayList<Byte> to_arraylist(byte[] input_)
+	{
+		return (is_ok(input_) ? new ArrayList<Byte>(Arrays.asList((Byte[])to_big(input_))) : new ArrayList<Byte>());
+	}
+	
 	public static <x> ArrayList<x> to_arraylist(x[] input_)
 	{
 		return (is_ok(input_) ? new ArrayList<x>(Arrays.asList(input_)) : new ArrayList<x>());
@@ -488,6 +516,11 @@ public abstract class arrays
 	public static boolean[] get_range(boolean[] input_, int start_i, int size_)
 	{
 		return (boolean[])to_small(get_range((Boolean[])to_big(input_), start_i, size_));
+	}
+
+	public static byte[] get_range(byte[] input_, int start_i, int size_)
+	{
+		return (byte[])to_small(get_range((Byte[])to_big(input_), start_i, size_));
 	}
 	
 	public static <x> x[] get_range(x[] input_, int start_i, int size_)
@@ -533,6 +566,11 @@ public abstract class arrays
 	public static boolean[] remove_value(boolean[] array_, boolean value_, boolean normalise_)
 	{
 		return arrays.to_small((Boolean[])remove_key_value(arrays.to_big(array_), value_, normalise_, false));
+	}
+
+	public static byte[] remove_value(byte[] array_, byte value_, boolean normalise_)
+	{
+		return arrays.to_small((Byte[])remove_key_value(arrays.to_big(array_), value_, normalise_, false));
 	}
 	
 	public static <x> Object remove_value(Object array_, x value_, boolean normalise_)
@@ -649,6 +687,11 @@ public abstract class arrays
 	public static boolean value_exists(boolean[] array_, boolean value_)
 	{
 		return value_exists(to_big(array_), (Boolean)value_);
+	}
+	
+	public static boolean value_exists(byte[] array_, byte value_)
+	{
+		return value_exists(to_big(array_), (Byte)value_);
 	}
 	
 	public static <x> boolean value_exists(Object array_, x value_)
@@ -793,6 +836,21 @@ public abstract class arrays
 		return output;
 	}
 	
+	public static Byte[] to_big(byte[] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+		
+		Byte[] output = new Byte[tot];
+		
+		for (int i = 0; i < tot; i++)
+		{
+			output[i] = (Byte)input_[i];
+		}
+		
+		return output;
+	}
+	
 	public static double[] to_small(Double[] input_)
 	{
 		int tot = get_size(input_);
@@ -852,6 +910,21 @@ public abstract class arrays
 		
 		return output;
 	}
+	
+	public static byte[] to_small(Byte[] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+		
+		byte[] output = new byte[tot];
+		
+		for (int i = 0; i < tot; i++)
+		{
+			output[i] = (byte)input_[i];
+		}
+		
+		return output;
+	}
 
 	static <x> boolean is_ok(ArrayList<ArrayList<x>> input_, boolean minimal_)
 	{
@@ -883,6 +956,11 @@ public abstract class arrays
 		return (minimal_ ? (input_ != null) : (get_size(input_) > 0));
 	}
 	
+	static boolean is_ok(byte[] input_, boolean minimal_)
+	{
+		return (minimal_ ? (input_ != null) : (get_size(input_) > 0));
+	}
+	
 	static boolean is_ok(Object input_, boolean minimal_)
 	{
 		if (minimal_) return (input_ != null);
@@ -896,6 +974,7 @@ public abstract class arrays
 		else if (type.equals(long[].class)) is_ok = is_ok((long[])input_);
 		else if (type.equals(int[].class)) is_ok = is_ok((int[])input_);
 		else if (type.equals(boolean[].class)) is_ok = is_ok((boolean[])input_);
+		else if (type.equals(byte[].class)) is_ok = is_ok((byte[])input_);
 		else is_ok = (get_size(input_) > 0);
 		
 		return is_ok;
@@ -916,16 +995,16 @@ public abstract class arrays
 	
 	static Class<?>[] populate_all_classes_small()
 	{
-		return new Class<?>[] { double[].class, long[].class, int[].class, boolean[].class };
+		return new Class<?>[] { double[].class, long[].class, int[].class, boolean[].class, byte[].class };
 	}
 	
 	static Class<?>[] populate_all_classes_array()
 	{
 		return new Class<?>[]
 		{
-			Array.class, String[].class, Boolean[].class, Integer[].class, Long[].class, Double[].class, 
-			Class[].class, Method[].class, Exception[].class, LocalTime[].class, LocalDateTime[].class, 
-			size[].class, data[].class, db_field[].class, db_where[].class, db_order[].class		
+			Array.class, String[].class, Boolean[].class, Integer[].class, Long[].class, Double[].class, Byte[].class, 
+			Class[].class, Method[].class, Exception[].class, LocalTime[].class, LocalDateTime[].class, size[].class, 
+			data[].class, db_field[].class, db_where[].class, db_order[].class		
 		};
 	}
 	
@@ -1003,6 +1082,12 @@ public abstract class arrays
 	private static Class<?> get_class_items(boolean[] input_)
 	{
 		return boolean.class;
+	}
+	
+	@SuppressWarnings("unused")
+	private static Class<?> get_class_items(byte[] input_)
+	{
+		return byte.class;
 	}
 	
 	private static <x> Class<?> get_class_items(x[] input_)
@@ -1169,6 +1254,7 @@ public abstract class arrays
 		else if (generic.are_equal(type, Long.class)) output = (x[])((ArrayList<x>)input_).toArray(new Long[size]);
 		else if (generic.are_equal(type, Double.class)) output = (x[])((ArrayList<x>)input_).toArray(new Double[size]);
 		else if (generic.are_equal(type, Boolean.class)) output = (x[])((ArrayList<x>)input_).toArray(new Boolean[size]);
+		else if (generic.are_equal(type, Byte.class)) output = (x[])((ArrayList<x>)input_).toArray(new Byte[size]);
 		else if (generic.are_equal(type, Class.class)) output = (x[])((ArrayList<x>)input_).toArray(new Class<?>[size]);
 		else if (generic.are_equal(type, Method.class)) output = (x[])((ArrayList<x>)input_).toArray(new Method[size]);
 		else if (generic.are_equal(type, Exception.class)) output = (x[])((ArrayList<x>)input_).toArray(new Exception[size]);
@@ -1262,6 +1348,7 @@ public abstract class arrays
 		else if (type.equals(long[].class)) output = remove_value((long[])array_, (long)key_val_, normalise_);
 		else if (type.equals(int[].class)) output = remove_value((int[])array_, (int)key_val_, normalise_);
 		else if (type.equals(boolean[].class)) output = remove_value((boolean[])array_, (boolean)key_val_, normalise_);
+		else if (type.equals(byte[].class)) output = remove_value((byte[])array_, (byte)key_val_, normalise_);
 		
 		Object val01 = key_val_;
 		

@@ -4,9 +4,11 @@ import java.util.HashMap;
 
 public abstract class credentials 
 {   
-	public static final String DIR = types.CONFIG_CREDENTIALS_FILE_DIR;
+	public static final String DIR = types.CONFIG_BASIC_DIR_CREDENTIALS;
 	public static final String WHERE = types.CONFIG_CREDENTIALS_WHERE;
 	public static final String ENCRYPTED = types.CONFIG_CREDENTIALS_ENCRYPTED;	
+
+	public static final String DEFAULT_WHERE = _defaults.CREDENTIALS_WHERE;
 	
 	static { ini.load(); }
 
@@ -33,7 +35,7 @@ public abstract class credentials
 	{
 		String output = strings.DEFAULT;
 
-		String where = (strings.is_ok(where_) ? where_ : _defaults.CREDENTIALS_WHERE);
+		String where = (strings.is_ok(where_) ? where_ : DEFAULT_WHERE);
 
 		if (strings.are_equivalent(where, types.CONFIG_CREDENTIALS_WHERE_FILE)) 
 		{
@@ -69,14 +71,14 @@ public abstract class credentials
 			config.get_credentials(types.CONFIG_CREDENTIALS_FILE_PASSWORD)
 		);
 
-		if (encrypted_) file += separator + config.get_credentials(types.CONFIG_CREDENTIALS_FILE_ENCRYPTED);  	
+		if (encrypted_) file += separator + config.get_credentials(ENCRYPTED);  	
 		if (strings.is_ok(extension)) file += extension;
 
-		return paths.build(new String[] { config.get_credentials(types.CONFIG_CREDENTIALS_FILE_DIR), file }, true);
+		return paths.build(new String[] { config.get_credentials(DIR), file }, true);
 	}
 	
 	private static String check_where(String where_)
 	{
-		return types.check_subtype(where_, types.get_subtypes(types.CONFIG_CREDENTIALS_WHERE, null), null, null);
+		return types.check_subtype(where_, types.get_subtypes(WHERE, null), null, null);
 	}
 }

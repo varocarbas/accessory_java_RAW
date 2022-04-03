@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public abstract class logs 
 {	
-	public static final String DIR = types.CONFIG_LOGS_DIR;
+	public static final String DIR = types.CONFIG_BASIC_DIR_LOGS;
 	public static final String SOURCE = types.CONFIG_LOGS_DB_SOURCE;
 	public static final String FIELD_ID = types.CONFIG_LOGS_DB_FIELD_ID;
 	public static final String FIELD_MESSAGE = types.CONFIG_LOGS_DB_FIELD_MESSAGE;
@@ -101,7 +101,7 @@ public abstract class logs
 
 		ArrayList<String> pieces = new ArrayList<String>();
 
-		String dir = config.get_basic(types.CONFIG_LOGS_DIR);
+		String dir = config.get_basic(DIR);
 		if (strings.is_ok(dir)) pieces.add(dir);
 		pieces.add(file);
 

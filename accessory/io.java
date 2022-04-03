@@ -1,5 +1,8 @@
 package accessory;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -10,30 +13,31 @@ public abstract class io
 {		
 	static { ini.load(); }
 
-	public static void array_to_file(String path_, ArrayList<String> vals_, boolean append_, boolean errors_to_file_)
+	public static void array_to_file(String path_, byte[] vals_)
 	{
-		array_to_file(path_, (!arrays.is_ok(vals_) ? null : arrays.to_array(vals_)), append_, errors_to_file_);
+		if (!strings.is_ok(path_) || !arrays.is_ok(vals_)) return;
+		
+		try (FileOutputStream stream = new FileOutputStream(new File(path_)))
+		{
+			BufferedOutputStream buffer = new BufferedOutputStream(stream);
+			buffer.write(vals_);
+			buffer.close();
+		} 
+		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, true, false); }
 	}
-
+	
 	public static void array_to_file(String path_, String[] vals_, boolean append_, boolean errors_to_file_)
 	{
 		if (!strings.is_ok(path_) || !arrays.is_ok(vals_)) return;
 
-		try 
+		try (FileWriter writer = new FileWriter(path_, append_)) 
 		{
-			FileWriter writer = new FileWriter(path_, append_);
-
 			for (String val: vals_)
 			{
 				line_to_file(path_, val, append_, writer, errors_to_file_);
 			}
-
-			writer.close();
 		} 
-		catch (Exception e) 
-		{
-			errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false);
-		}
+		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false); }
 	}
 
 	public static void line_to_file(String path_, String line_, boolean append_, FileWriter writer_, boolean errors_to_file_)
@@ -57,10 +61,7 @@ public abstract class io
 
 			if (is_new) writer.close();
 		} 
-		catch (Exception e) 
-		{
-			errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false);
-		}
+		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false); }
 	}
 
 	public static HashMap<String, String> ini_to_array(String path_)

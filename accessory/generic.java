@@ -44,7 +44,12 @@ public abstract class generic
 	{
 		return is_ok(input_, false);
 	}
-
+	
+	public static boolean is_ok(byte[] input_)
+	{
+		return is_ok(input_, false);
+	}
+	
 	public static boolean is_ok(Class<?> input_)
 	{
 		return is_ok(input_, false);
@@ -180,6 +185,11 @@ public abstract class generic
 		return true;
 	}
 	
+	public static boolean is_array(byte[] input_)
+	{
+		return true;
+	}
+	
 	public static boolean is_array(Object input_)
 	{
 		return is_common(input_, arrays.get_all_classes(), false);
@@ -215,6 +225,11 @@ public abstract class generic
 		return arrays.get_new(input_);
 	}
 	
+	public static byte[] get_new(byte[] input_)
+	{
+		return arrays.get_new(input_);
+	}
+	
 	public static Object get_new(Object input_)
 	{
 		Object output = null;
@@ -227,6 +242,7 @@ public abstract class generic
 		else if (type.equals(long[].class)) output = get_new((long[])input_);
 		else if (type.equals(int[].class)) output = get_new((int[])input_);
 		else if (type.equals(boolean[].class)) output = get_new((boolean[])input_);
+		else if (type.equals(byte[].class)) output = get_new((byte[])input_);
 		else if (is_array(type)) output = arrays.get_new(input_);
 		else if (are_equal(type, size.class)) output = new size((size)input_);
 		else if (are_equal(type, data.class)) output = new data((data)input_);
@@ -308,6 +324,11 @@ public abstract class generic
 		return boolean.class;
 	}
 	
+	public static Class<?> get_class(byte input_)
+	{
+		return byte.class;
+	}
+	
 	public static Class<?> get_class(Object input_)
 	{
 		Class<?> type = null;
@@ -318,6 +339,7 @@ public abstract class generic
 		else if (input_ instanceof Integer) type = Integer.class;
 		else if (input_ instanceof Long) type = Long.class;
 		else if (input_ instanceof Double) type = Double.class;
+		else if (input_ instanceof Byte) type = Byte.class;
 		else if (input_ instanceof Class<?>) type = Class.class;
 		else if (input_ instanceof Method) type = Method.class;
 		else if (input_ instanceof Exception) type = Exception.class;
@@ -334,11 +356,13 @@ public abstract class generic
 		else if (input_ instanceof long[]) type = long[].class;
 		else if (input_ instanceof int[]) type = int[].class;
 		else if (input_ instanceof boolean[]) type = boolean[].class;
+		else if (input_ instanceof byte[]) type = byte[].class;
 		else if (input_ instanceof String[]) type = String[].class;
-		else if (input_ instanceof Boolean[]) type = Boolean[].class;
-		else if (input_ instanceof Integer[]) type = Integer[].class;
-		else if (input_ instanceof Long[]) type = Long[].class;
 		else if (input_ instanceof Double[]) type = Double[].class;
+		else if (input_ instanceof Long[]) type = Long[].class;
+		else if (input_ instanceof Integer[]) type = Integer[].class;
+		else if (input_ instanceof Boolean[]) type = Boolean[].class;
+		else if (input_ instanceof Byte[]) type = Byte[].class;
 		else if (input_ instanceof Class[]) type = Class[].class;
 		else if (input_ instanceof Method[]) type = Method[].class;
 		else if (input_ instanceof Exception[]) type = Exception[].class;
@@ -464,7 +488,12 @@ public abstract class generic
 	{
 		return arrays.is_ok(input_, minimal_);
 	}
-
+	
+	static boolean is_ok(byte[] input_, boolean minimal_)
+	{
+		return arrays.is_ok(input_, minimal_);
+	}
+	
 	static boolean is_ok(Class<?> input_, boolean minimal_)
 	{
 		return (input_ != null);
@@ -515,6 +544,8 @@ public abstract class generic
 		classes.add(String.class);
 		classes.add(Boolean.class);
 		classes.add(boolean.class);
+		classes.add(Byte.class);
+		classes.add(byte.class);
 		classes.add(Object.class);
 		
 		for (Class<?> type: numbers.get_all_classes())
@@ -546,7 +577,7 @@ public abstract class generic
 		output.put(Double[].class, new Class<?>[] { double[].class });
 		output.put(Long[].class, new Class<?>[] { long[].class });
 		output.put(Integer[].class, new Class<?>[] { int[].class });
-		output.put(Boolean[].class, new Class<?>[] { boolean[].class });
+		output.put(Byte[].class, new Class<?>[] { byte[].class });
 		
 		Class<?>[] vals = arrays.get_all_classes_array();
 		for (Class<?> key: new Class<?>[] { Object[].class, Array.class })
