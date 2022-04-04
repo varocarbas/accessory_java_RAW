@@ -38,6 +38,7 @@ public abstract class ini
 	//Loading all the first classes, the ones whose names start with "_".
 	private static void load_first()
 	{
+		_basic.load();
 		_alls.load();
 		_defaults.load();
 	}

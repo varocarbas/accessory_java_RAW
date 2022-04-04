@@ -1,14 +1,17 @@
 package accessory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public abstract class paths 
 {	
-	public static final String DIR_SEPARATOR = get_dir_separator();
-	public static final String DIR_HOME = get_home_dir();
+	public static final String HOME = paths.get_dir_home();
 	
+	public static final String DIR_APP = types.CONFIG_BASIC_DIR_APP;
+	public static final String DIR_INI = types.CONFIG_BASIC_DIR_INI;
+	public static final String DIR_LOGS = types.CONFIG_BASIC_DIR_LOGS;
+	public static final String DIR_CREDENTIALS = types.CONFIG_BASIC_DIR_CREDENTIALS;
+	public static final String DIR_CRYPTO = types.CONFIG_BASIC_DIR_CRYPTO;
+
 	public static final String EXTENSION_TEXT = ".txt";
 	public static final String EXTENSION_JAR = ".jar";
 	public static final String EXTENSION_INI = ".ini";
@@ -25,23 +28,18 @@ public abstract class paths
 	{
 		return (strings.is_ok(path_) && (new File(path_)).exists());
 	}
-
-	public static String build(ArrayList<String> pieces, boolean last_file_)
+	
+	public static String build(String[] pieces_, boolean last_file_)
 	{
-		return (!arrays.is_ok(pieces) ? strings.DEFAULT : build(arrays.to_array(pieces), last_file_));
-	}
-
-	public static String build(String[] pieces, boolean last_file_)
-	{
-		if (!arrays.is_ok(pieces)) return strings.DEFAULT;
+		if (!arrays.is_ok(pieces_)) return strings.DEFAULT;
 
 		String path = "";
-		int last_i = pieces.length - 1;
+		int last_i = pieces_.length - 1;
 		int tot = 0;
 
 		for (int i = 0; i <= last_i; i++)
 		{
-			String piece = pieces[i];
+			String piece = pieces_[i];
 			if (!strings.is_ok(piece)) continue;
 
 			tot++;
@@ -50,7 +48,7 @@ public abstract class paths
 		}
 		if (tot < 1) return strings.DEFAULT;
 
-		if (last_file_ && tot == 1) path = DIR_HOME + normalise_file(path);
+		if (last_file_ && tot == 1) path = get_dir_home() + normalise_file(path);
 		if (!last_file_) path = normalise_dir(path);
 
 		return path;
@@ -62,7 +60,7 @@ public abstract class paths
 		if (!strings.is_ok(dir)) dir = "";
 
 		dir = dir.trim();
-		if (dir.substring(dir.length() - 1) != DIR_SEPARATOR) dir += DIR_SEPARATOR;
+		if (dir.substring(dir.length() - 1) != _basic.DIR_SEPARATOR) dir += _basic.DIR_SEPARATOR;
 
 		return dir;
 	}
@@ -73,7 +71,7 @@ public abstract class paths
 		if (!strings.is_ok(file)) return strings.DEFAULT;
 
 		file = file.trim();
-		if (strings.get_start(file, 1).equals(DIR_SEPARATOR))
+		if (strings.get_start(file, 1).equals(_basic.DIR_SEPARATOR))
 		{ 
 			file = strings.get_end(file, 1);
 			if (!strings.is_ok(file)) return strings.DEFAULT;
@@ -84,68 +82,56 @@ public abstract class paths
 		return file;
 	}
 
-	public static String get_main_dir(String what_)
+	public static String get_dir(String type_)
 	{
-		String output = strings.DEFAULT;
-		
-		String what = types.check_what(what_);
-		if (!strings.is_ok(what)) return output;
-		
-		HashMap<String, String> params = get_update_main_dir_params(what);
-		if (arrays.is_ok(params)) output = config.get(params.get(generic.TYPE), params.get(generic.KEY));
-		
-		return output;
+		return get_update_dir(type_, null, true);
+	}
+
+	public static void update_dir(String type_, String val_)
+	{
+		get_update_dir(type_, val_, false);
 	}
 	
-	public static <x> boolean update_main_dir(String what_, x val_)
+	public static String get_file_full(String name_, String extension_)
 	{
-		boolean output = false;
+		String output = name_;
+		if (!strings.is_ok(output)) return strings.DEFAULT;
 		
-		String what = types.check_what(what_);
-		if (!strings.is_ok(what)) return output;
-		
-		HashMap<String, String> params = get_update_main_dir_params(what);
-		if (arrays.is_ok(params)) output = config.update(params.get(generic.TYPE), params.get(generic.KEY), val_);
+		if (strings.is_ok(extension_)) output += extension_;
 		
 		return output;
 	}
 
-	static String get_default_dir_ini(String type_, String name_)
+	public static String get_dir_home()
+	{
+		return normalise_dir(System.getProperty("user.home"));
+	}
+	
+	static String get_default_dir_ini(String type_)
 	{
 		String type = types.check_subtype(type_, types.get_subtypes(types.CONFIG_BASIC_DIR, null), null, null);
 		
 		if (!strings.is_ok(type)) return strings.DEFAULT;
-		if (strings.are_equal(type, types.CONFIG_BASIC_DIR_APP) || strings.are_equal(type, types.CONFIG_BASIC_DIR_LOGS)) return get_dir_app_default();
+		else if (strings.are_equal(type, types.CONFIG_BASIC_DIR_APP) || strings.are_equal(type, types.CONFIG_BASIC_DIR_LOGS)) return get_dir_app_default();
 
-		return (strings.is_ok(name_) ? build(new String[] { DIR_HOME, name_ }, false) : DIR_HOME);
+		return build(new String[] { get_dir_home(), types.remove_type(type_, types.CONFIG_BASIC_DIR) }, false);
 	}
-
-	private static String get_dir_separator()
+	
+	private static String get_update_dir(String type_, String val_, boolean is_get_)
 	{
-		return (strings.contains("win", System.getProperty("os.name"), true) ? "\\" : "/");
+		String output = strings.DEFAULT;
+		
+		String type = types.check_subtype(type_, types.get_subtypes(types.CONFIG_BASIC_DIR, null), null, null);
+		if (!strings.is_ok(type)) return output;
+	
+		if (is_get_) output = config.get_basic(type);
+		else config.update_basic(type, val_);
+	
+		return output;
 	}
-
+	
 	private static String get_dir_app_default()
 	{
 		return normalise_dir(System.getProperty("user.dir"));
-	}
-
-	private static String get_home_dir()
-	{
-		return normalise_dir(System.getProperty("user.home"));
-	}
-
-	private static HashMap<String, String> get_update_main_dir_params(String key_)
-	{
-		if (!strings.is_ok(key_)) return null;
-
-		String type = types.CONFIG_BASIC;
-		if (key_.equals(credentials.DIR)) type = types.CONFIG_CREDENTIALS;
-
-		HashMap<String, String> output = new HashMap<String, String>();
-		output.put(generic.KEY, key_);
-		output.put(generic.TYPE, type);
-
-		return output;
 	}
 }

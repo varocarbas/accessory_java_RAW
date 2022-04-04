@@ -18,6 +18,7 @@ public abstract class config_ini
 	{
 		load_config_basic();
 		load_config_credentials();
+		load_config_crypto();
 		load_config_logs();
 		load_config_subtypes();
 		
@@ -33,6 +34,7 @@ public abstract class config_ini
 		config.update_ini(type, types.CONFIG_BASIC_DIR_INI, _defaults.DIR_INI);
 		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS, _defaults.DIR_LOGS);
 		config.update_ini(type, types.CONFIG_BASIC_DIR_CREDENTIALS, _defaults.DIR_CREDENTIALS);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_CRYPTO, _defaults.DIR_CRYPTO);
 	}
 
 	private static void load_config_credentials()
@@ -41,7 +43,6 @@ public abstract class config_ini
 
 		config.update_ini(type, credentials.ENCRYPTED, _defaults.CREDENTIALS_ENCRYPTED);
 		config.update_ini(type, credentials.WHERE, _defaults.CREDENTIALS_WHERE);
-		config.update_ini(type, credentials.DIR, _defaults.DIR_CREDENTIALS);
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_EXTENSION, _defaults.CREDENTIALS_FILE_EXTENSION);
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_SEPARATOR, _defaults.CREDENTIALS_FILE_SEPARATOR);
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_USERNAME, _defaults.CREDENTIALS_FILE_USERNAME);
@@ -49,11 +50,19 @@ public abstract class config_ini
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_ENCRYPTED, _defaults.CREDENTIALS_FILE_ENCRYPTED);
 	}
 
+	private static void load_config_crypto()
+	{
+		String type = types.CONFIG_CRYPTO;
+
+		config.update_ini(type, types.CONFIG_CRYPTO_FILE_CIPHER, _defaults.CRYPTO_FILE_CIPHER);
+		config.update_ini(type, types.CONFIG_CRYPTO_FILE_KEY, _defaults.CRYPTO_FILE_KEY);
+		config.update_ini(type, types.CONFIG_CRYPTO_FILE_EXTENSION, _defaults.CRYPTO_FILE_EXTENSION);
+	}
+
 	private static void load_config_logs()
 	{
 		String type = types.CONFIG_LOGS;
 
-		config.update_ini(type, logs.DIR, _defaults.DIR_LOGS);
 		config.update_ini(type, logs.SCREEN, strings.from_boolean(_defaults.LOGS_SCREEN));
 		config.update_ini(type, logs.FILE, strings.from_boolean(_defaults.LOGS_FILE));
 		config.update_ini(type, logs.DB, strings.from_boolean(_defaults.LOGS_DB));

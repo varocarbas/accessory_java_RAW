@@ -29,21 +29,31 @@ public abstract class _defaults
 
 	public static final String DATES_FORMAT = dates.DATE;
 	
-	public static final String APP_NAME = "app";
-	public static final String DIR_APP = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_APP, strings.DEFAULT);
-	public static final String DIR_INI = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_INI, "ini");
-	public static final String DIR_LOGS = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_LOGS, strings.DEFAULT);
-	public static final String DIR_CREDENTIALS = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_CREDENTIALS, "credentials");
+	public static final String USER = "user1";
 	
+	public static final String APP_NAME = "app";
+	public static final String DIR_APP = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_APP);
+	public static final String DIR_INI = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_INI);
+	public static final String DIR_LOGS = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_LOGS);
+	public static final String DIR_CREDENTIALS = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_CREDENTIALS);
+	public static final String DIR_CRYPTO = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_CRYPTO);
+
 	static final boolean CREDENTIALS_ENCRYPTED = false;
 	static final String CREDENTIALS_WHERE = types.CONFIG_CREDENTIALS_WHERE_FILE;
 	static final String CREDENTIALS_FILE_DIR = DIR_CREDENTIALS;
-	static final String CREDENTIALS_FILE_EXTENSION = STRING;
+	static final String CREDENTIALS_FILE_EXTENSION = strings.DEFAULT;
 	static final String CREDENTIALS_FILE_SEPARATOR = misc.SEPARATOR_NAME;
 	static final String CREDENTIALS_FILE_USERNAME = "username";
 	static final String CREDENTIALS_FILE_PASSWORD = "password";
 	static final String CREDENTIALS_FILE_ENCRYPTED = "enc";
-
+	static final String CREDENTIALS_ID = "credentials";
+	static final String CREDENTIALS_USER = USER;
+	
+	static final String CRYPTO_ID = "crypto";
+	static final String CRYPTO_FILE_CIPHER = "cipher";
+	static final String CRYPTO_FILE_KEY = "key";
+	static final String CRYPTO_FILE_EXTENSION = strings.DEFAULT;
+	
 	static final String DB_TYPE = db.MYSQL;
 	static final String DB_SETUP = types.CONFIG_DB_SETUP_MAIN;
 	static final String DB_MAX_POOL = "500";
@@ -77,6 +87,9 @@ public abstract class _defaults
 	static final boolean LOGS_FILE = true;
 	static final boolean LOGS_DB = false;
 
+	static final String CRYPTO_ALGORITHM_CIPHER = "AES/CTR/NoPadding";
+	static final String CRYPTO_ALGORITHM_KEY = "AES";
+	
 	//Method meant to force this class to be loaded when required (e.g., when ini.load() is called).
 	public static void load() { } 
 }

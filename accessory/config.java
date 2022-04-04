@@ -59,6 +59,21 @@ public abstract class config
 		return matches(types.CONFIG_CREDENTIALS, key_, val_);
 	}
 
+	public static String get_crypto(String key_)
+	{
+		return get(types.CONFIG_CRYPTO, key_);
+	}
+
+	public static <x> boolean update_crypto(String key_, x val_)
+	{
+		return update(types.CONFIG_CRYPTO, key_, val_);
+	}
+
+	public static <x> boolean matches_crypto(String key_, x val_)
+	{
+		return matches(types.CONFIG_CRYPTO, key_, val_);
+	}
+
 	public static String get_logs(String key_)
 	{
 		return get(types.CONFIG_LOGS, key_);

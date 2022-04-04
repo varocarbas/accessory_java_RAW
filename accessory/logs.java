@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 public abstract class logs 
 {	
-	public static final String DIR = types.CONFIG_BASIC_DIR_LOGS;
 	public static final String SOURCE = types.CONFIG_LOGS_DB_SOURCE;
 	public static final String FIELD_ID = types.CONFIG_LOGS_DB_FIELD_ID;
 	public static final String FIELD_MESSAGE = types.CONFIG_LOGS_DB_FIELD_MESSAGE;
@@ -76,7 +75,7 @@ public abstract class logs
 		String message = message_;
 		if (!strings.is_ok(message)) return;
 
-		io.line_to_file(get_path(id_), dates.add_timestamp(message, null, false), true, null, false);
+		io.line_to_file(get_path(id_), dates.add_timestamp(message, null, false), true, false);
 	}
 
 	public static void update_db(String message_, String id_)
@@ -101,11 +100,11 @@ public abstract class logs
 
 		ArrayList<String> pieces = new ArrayList<String>();
 
-		String dir = config.get_basic(DIR);
+		String dir = paths.get_dir(paths.DIR_LOGS);
 		if (strings.is_ok(dir)) pieces.add(dir);
 		pieces.add(file);
 
-		return paths.build(pieces, true);
+		return paths.build(arrays.to_array(pieces), true);
 	}
 
 	private static boolean out_is_ok(String type_)

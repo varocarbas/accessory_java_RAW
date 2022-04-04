@@ -18,7 +18,8 @@ public abstract class parent
 	protected String _temp_string1 = DEFAULT_STRING;	
 	protected String _temp_string2 = DEFAULT_STRING;
 	protected String _temp_string3 = DEFAULT_STRING;
-
+	protected String _temp_string4 = DEFAULT_STRING;
+	
 	protected int _temp_int1 = DEFAULT_INT;	
 	protected int _temp_int2 = DEFAULT_INT;	
 
@@ -87,6 +88,7 @@ public abstract class parent
 		_temp_string1 = DEFAULT_STRING; 
 		_temp_string2 = DEFAULT_STRING; 
 		_temp_string3 = DEFAULT_STRING;
+		_temp_string4 = DEFAULT_STRING;
 		
 		_temp_int1 = DEFAULT_INT; 
 		_temp_int2 = DEFAULT_INT;

@@ -27,6 +27,7 @@ public abstract class types
 	public static final String CONFIG_BASIC_DIR_INI = "config_basic_dir_ini";
 	public static final String CONFIG_BASIC_DIR_CREDENTIALS = "config_basic_dir_credentials";
 	public static final String CONFIG_BASIC_DIR_LOGS = "config_basic_dir_logs";
+	public static final String CONFIG_BASIC_DIR_CRYPTO = "config_basic_dir_crypto";
 	
 	public static final String CONFIG_CREDENTIALS = "config_credentials";
 	public static final String CONFIG_CREDENTIALS_ENCRYPTED = "config_credentials_encrypted";
@@ -39,6 +40,12 @@ public abstract class types
 	public static final String CONFIG_CREDENTIALS_FILE_USERNAME = "config_credentials_file_username";
 	public static final String CONFIG_CREDENTIALS_FILE_PASSWORD = "config_credentials_file_password";
 	public static final String CONFIG_CREDENTIALS_FILE_ENCRYPTED = "config_credentials_file_encrypted";
+
+	public static final String CONFIG_CRYPTO = "config_crypto";
+	public static final String CONFIG_CRYPTO_FILE = "config_crypto_file";
+	public static final String CONFIG_CRYPTO_FILE_CIPHER = "config_crypto_file_cipher";
+	public static final String CONFIG_CRYPTO_FILE_KEY = "config_crypto_file_key";
+	public static final String CONFIG_CRYPTO_FILE_EXTENSION = "config_crypto_file_extension";
 	
 	public static final String CONFIG_LOGS = "config_logs";
 	public static final String CONFIG_LOGS_DB = "config_logs_db";
@@ -184,7 +191,12 @@ public abstract class types
 	public static final String ERROR_GENERIC_METHOD_CALL = "error_generic_method_call";
 	public static final String ERROR_TEST = "error_test";
 	public static final String ERROR_TEST_RUN = "error_test_run";
-
+	public static final String ERROR_CRYPTO = "error_crypto";
+	public static final String ERROR_CRYPTO_KEY = "error_crypto_key";
+	public static final String ERROR_CRYPTO_CIPHER = "error_crypto_cipher";
+	public static final String ERROR_CRYPTO_ENCRYPT = "error_crypto_encrypt";
+	public static final String ERROR_CRYPTO_DECRYPT = "error_crypto_decrypt";
+	
 	//--- Only added via default fields.
 	static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_further_key_primary";
 	static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";
@@ -324,13 +336,16 @@ public abstract class types
 			CONFIG_BASIC_NAME, 
 			CONFIG_BASIC_DIR,
 			CONFIG_BASIC_DIR_APP, CONFIG_BASIC_DIR_INI,CONFIG_BASIC_DIR_CREDENTIALS, 
-			CONFIG_BASIC_DIR_LOGS,
+			CONFIG_BASIC_DIR_LOGS, CONFIG_BASIC_DIR_CRYPTO,
 			CONFIG_CREDENTIALS, 
 			CONFIG_CREDENTIALS_ENCRYPTED, CONFIG_CREDENTIALS_WHERE, 
 			CONFIG_CREDENTIALS_WHERE_FILE, CONFIG_CREDENTIALS_WHERE_DB,
 			CONFIG_CREDENTIALS_FILE, CONFIG_CREDENTIALS_FILE_EXTENSION, 
 			CONFIG_CREDENTIALS_FILE_SEPARATOR, CONFIG_CREDENTIALS_FILE_USERNAME, 
 			CONFIG_CREDENTIALS_FILE_PASSWORD, CONFIG_CREDENTIALS_FILE_ENCRYPTED,
+			CONFIG_CRYPTO,
+			CONFIG_CRYPTO_FILE, 
+			CONFIG_CRYPTO_FILE_CIPHER, CONFIG_CRYPTO_FILE_KEY, CONFIG_CRYPTO_FILE_EXTENSION,
 			CONFIG_LOGS,
 			CONFIG_LOGS_OUT,
 			CONFIG_LOGS_OUT_SCREEN, CONFIG_LOGS_OUT_FILE, CONFIG_LOGS_OUT_DB,
@@ -405,7 +420,10 @@ public abstract class types
 			ERROR_GENERIC_METHOD,
 			ERROR_GENERIC_METHOD_GET, ERROR_GENERIC_METHOD_CALL,
 			ERROR_TEST,
-			ERROR_TEST_RUN
+			ERROR_TEST_RUN,
+			
+			ERROR_CRYPTO,
+			ERROR_CRYPTO_KEY, ERROR_CRYPTO_CIPHER, ERROR_CRYPTO_ENCRYPT, ERROR_CRYPTO_DECRYPT
 		};		
 	}
 }
