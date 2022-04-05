@@ -15,7 +15,6 @@ public abstract class misc
 	public static final String SEPARATOR_NAME = "_";	
 	public static final String SEPARATOR_KEYVAL = ": ";
 	public static final String SEPARATOR_ITEM = ", ";
-	public static final String SEPARATOR_DIR = _basic.DIR_SEPARATOR;
 	
 	static { ini.load(); }
 

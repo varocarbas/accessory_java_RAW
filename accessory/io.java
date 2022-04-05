@@ -14,11 +14,15 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public abstract class io 
-{		
+{	
+	public static boolean _is_ok = false;
+	
 	static { ini.load(); }
 	
 	public static void array_to_file(String path_, String[] vals_, boolean append_, boolean errors_to_file_)
 	{
+		_is_ok = false;
+		
 		if (!strings.is_ok(path_) || !arrays.is_ok(vals_)) return;
 
 		try (FileWriter writer = new FileWriter(path_, append_)) 
@@ -29,10 +33,14 @@ public abstract class io
 			}
 		} 
 		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false); }
+		
+		_is_ok = true;
 	}
 
 	public static String[] file_to_array(String path_, boolean errors_to_file_)
 	{
+		_is_ok = false;
+		
 		if (!paths.exists(path_)) return null;
 
 		ArrayList<String> lines = new ArrayList<>();
@@ -50,12 +58,26 @@ public abstract class io
 			errors.manage_io(types.ERROR_FILE_READ, path_, e, errors_to_file_, false);
 		}
 
+		_is_ok = true;
+		
 		return (arrays.is_ok(lines) ? arrays.to_array(lines) : null);
+	}
+	
+	public static String file_to_string(String path_, boolean only_first_)
+	{
+		String[] lines = file_to_array(path_, true);
+		if (!_is_ok || arrays.get_size(lines) < 1) return strings.DEFAULT;
+
+		return (only_first_ ? lines[0] : arrays.lines_to_string(lines));
 	}
 	
 	public static void line_to_file(String path_, String line_, boolean append_, boolean errors_to_file_)
 	{
+		_is_ok = false;
+		
 		line_to_file(path_, line_, append_, null, errors_to_file_);
+		
+		_is_ok = true;
 	}
 
 	public static HashMap<String, String> ini_to_array(String path_)
@@ -85,6 +107,8 @@ public abstract class io
 
 	public static void bytes_to_file(String path_, byte[] vals_)
 	{
+		_is_ok = false;
+		
 		if (!strings.is_ok(path_) || !arrays.is_ok(vals_)) return;
 		
 		try (FileOutputStream stream = new FileOutputStream(new File(path_)))
@@ -92,10 +116,14 @@ public abstract class io
 			stream.write(vals_);
 		} 
 		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, true, false); }
+		
+		_is_ok = true;
 	}
 
 	public static byte[] file_to_bytes(String path_)
 	{
+		_is_ok = false;
+		
 		byte[] output = null;
 		if (!paths.exists(path_)) return output;
 		
@@ -105,22 +133,30 @@ public abstract class io
 		} 
 		catch (Exception e) { errors.manage_io(types.ERROR_FILE_READ, path_, e, true, false); }
 		
+		_is_ok = true;
+		
 		return output;
 	}
 
 	public static void object_to_file(String path_, Object vals_)
 	{
-		if (!strings.is_ok(path_) || !arrays.is_ok(vals_)) return;
+		_is_ok = false;
+
+		if (!strings.is_ok(path_) || vals_ == null) return;
 		
 		try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(path_)))
 		{
 			stream.writeObject(vals_);
 		} 
 		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, true, false); }
+		
+		_is_ok = true;
 	}
 
 	public static Object file_to_object(String path_)
 	{
+		_is_ok = false;
+		
 		Object output = null;
 		if (!paths.exists(path_)) return output;
 		
@@ -129,6 +165,8 @@ public abstract class io
 			output = stream.readObject();
 		} 
 		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, true, false); }
+		
+		_is_ok = true;
 		
 		return output;
 	}

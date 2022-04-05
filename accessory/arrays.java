@@ -776,6 +776,23 @@ public abstract class arrays
 		return output;
 	}
 	
+	public static String lines_to_string(String[] lines_)
+	{
+		if (!is_ok(lines_)) return strings.DEFAULT;
+		
+		String output = "";
+		
+		for (String line: lines_)
+		{
+			if (!strings.is_ok(line)) continue;
+			if (!output.equals("")) output += misc.NEW_LINE;
+			
+			output += line;
+		}
+		
+		return output;
+	}
+
 	public static Double[] to_big(double[] input_)
 	{
 		int tot = get_size(input_);

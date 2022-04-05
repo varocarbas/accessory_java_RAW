@@ -67,7 +67,6 @@ public abstract class db_ini
 		vals.put(db.HOST, _defaults.DB_HOST);
 		vals.put(db.USER, _defaults.DB_USER);
 		vals.put(types.CONFIG_DB_ERROR_EXIT, strings.from_boolean(_defaults.DB_ERROR_EXIT));
-		vals.put(types.CONFIG_DB_CREDENTIALS_WHERE, _defaults.DB_CREDENTIALS_WHERE);
 		vals.put(types.CONFIG_DB_CREDENTIALS_ENCRYPTED, strings.from_boolean(_defaults.DB_CREDENTIALS_ENCRYPTED));
 		vals.put(db.USERNAME, _defaults.DB_CREDENTIALS_USERNAME);
 		vals.put(db.PASSWORD, _defaults.DB_CREDENTIALS_PASSWORD);

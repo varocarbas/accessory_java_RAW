@@ -4,13 +4,14 @@ public class _basic
 {
 	public static String DIR_SEPARATOR = null;
 	
-	public static void load() 
-	{ 
-		DIR_SEPARATOR = get_dir_separator();
-	} 
+	private static boolean _populated = false;
 	
-	private static String get_dir_separator()
-	{
-		return (strings.contains("win", System.getProperty("os.name"), true) ? "\\" : "/");
-	}
+	public static void populate() 
+	{ 
+		if (_populated) return;
+		
+		DIR_SEPARATOR = (strings.contains("win", System.getProperty("os.name"), true) ? "\\" : "/");
+		
+		_populated = true;
+	} 
 }

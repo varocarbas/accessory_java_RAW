@@ -22,8 +22,13 @@ public abstract class db
 	public static final String USER = types.CONFIG_DB_USER; //Only indirectly related to credentials (e.g., file name containing credentials).
 	public static final String USERNAME = types.CONFIG_CREDENTIALS_FILE_USERNAME;
 	public static final String PASSWORD = types.CONFIG_CREDENTIALS_FILE_PASSWORD;
+	public static final String CREDENTIALS_USERNAME = USERNAME;
+	public static final String CREDENTIALS_PASSWORD = PASSWORD;
+	public static final String CREDENTIALS_ENCRYPTED = types.CONFIG_DB_CREDENTIALS_ENCRYPTED;
+	public static final String TYPE = types.CONFIG_DB_TYPE;
 	public static final String MYSQL = types.CONFIG_DB_TYPE_MYSQL;
 	public static final String TYPE_MYSQL = MYSQL;
+	public static final String SETUP = types.CONFIG_DB_SETUP;
 	
 	public static final String SELECT = types.DB_QUERY_SELECT;
 	public static final String INSERT = types.DB_QUERY_INSERT;
@@ -63,15 +68,16 @@ public abstract class db
 	//---
 	
 	static { ini.load(); }
-
-	public static boolean update_conn_info(String user_, String database_, String host_)
+	
+	public static boolean update_conn_info(String user_, String database_, String host_, boolean encrypted_)
 	{
 		HashMap<String, String> params = new HashMap<String, String>();
 		
-		if (strings.is_ok(user_)) params.put(db.USER, user_);
-		if (strings.is_ok(database_)) params.put(db.NAME, database_);
-		if (strings.is_ok(host_)) params.put(db.HOST, host_); 
-
+		if (strings.is_ok(user_)) params.put(USER, user_);
+		if (strings.is_ok(database_)) params.put(NAME, database_);
+		if (strings.is_ok(host_)) params.put(HOST, host_); 
+		//params.put(CREDENTIALS_ENCRYPTED, strings.from_boolean(encrypted_));
+		
 		update_conn_info(params);
 
 		return true;
@@ -432,23 +438,15 @@ public abstract class db
 		
 		String setup = db.get_current_setup();
 		
-		String user = config.get(setup, db.USER);
-		String username = config.get(setup, db.USERNAME);
-		String password = config.get(setup, db.PASSWORD);
+		String user = config.get(setup, USER);
+		String username = config.get(setup, USERNAME);
+		String password = config.get(setup, PASSWORD);
+		boolean encrypted = strings.to_boolean(config.get(setup, CREDENTIALS_ENCRYPTED));
 
-		if (strings.is_ok(username) && strings.is_ok(password))
-		{
-			output.put(generic.USERNAME, username);
-			output.put(generic.PASSWORD, password);
-		}
+		if (strings.is_ok(username) && password != null) output = credentials.get(username, password);
 		else if (strings.is_ok(user))
 		{
-			output = credentials.get
-			(
-				types.remove_type(get_current_type(), types.CONFIG_DB_TYPE), user, 
-				strings.to_boolean(config.get(setup, credentials.ENCRYPTED)),
-				config.get(setup, credentials.WHERE)
-			);
+			output = credentials.get(types.remove_type(get_current_type(), TYPE), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
 		}
 
 		return output;
@@ -456,17 +454,17 @@ public abstract class db
 
 	static String get_host()
 	{
-		return config.get(get_current_setup(), db.HOST);
+		return config.get(get_current_setup(), HOST);
 	}
 
 	static String get_name()
 	{
-		return config.get(get_current_setup(), db.NAME);
+		return config.get(get_current_setup(), NAME);
 	}
 
 	static String get_max_pool()
 	{
-		return config.get(get_current_setup(), db.MAX_POOL);
+		return config.get(get_current_setup(), MAX_POOL);
 	}
 	
 	static void manage_error(String type_, String query_, Exception e_, String message_)
@@ -495,10 +493,10 @@ public abstract class db
 	{
 		parent_db output = null;
 		
-		String type = types.check_subtype(type_, types.get_subtypes(types.CONFIG_DB_TYPE, null), null, null);
+		String type = types.check_subtype(type_, types.get_subtypes(TYPE, null), null, null);
 		if (!strings.is_ok(type)) type = DEFAULT_TYPE;
 		
-		if (type.equals(types.CONFIG_DB_TYPE_MYSQL)) output = new db_mysql();
+		if (type.equals(MYSQL)) output = new db_mysql();
 		
 		return output;
 	}
@@ -529,7 +527,7 @@ public abstract class db
 		
 		for (String setup: setups)
 		{
-			String type = config.get(setup, types.CONFIG_DB_TYPE);
+			String type = config.get(setup, TYPE);
 			
 			all_db.put(setup, instantiate_db(type));
 		}
@@ -552,8 +550,11 @@ public abstract class db
 		{
 			for (Entry<String, Boolean> item: output.entrySet())
 			{
-				if (!error.equals("")) error += ",";
-				if (!item.getValue()) error += item.getKey();
+				if (!item.getValue()) 
+				{
+					if (!error.equals("")) error += ",";
+					error += item.getKey();
+				}
 			}	
 			
 			if (error.equals("")) return true;
@@ -578,7 +579,7 @@ public abstract class db
 	
 	private static String get_current_setup()
 	{
-		String type = types.CONFIG_DB_SETUP;
+		String type = SETUP;
 		
 		String output = config.get_db(type);
 		if (!strings.is_ok(types.check_subtype(output, types.get_subtypes(type, null), null, null))) output = DEFAULT_TYPE;
@@ -588,7 +589,7 @@ public abstract class db
 	
 	private static String get_current_type()
 	{
-		String type = config.get(get_current_setup(), types.CONFIG_DB_TYPE);
+		String type = config.get(get_current_setup(), TYPE);
 		if (!strings.is_ok(type)) type = DEFAULT_TYPE;
 		
 		return type;

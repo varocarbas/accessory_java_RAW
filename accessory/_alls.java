@@ -26,8 +26,12 @@ abstract class _alls
 
 	public static HashMap<String, parent_db> _db_dbs = null;
 	
-	public static void load() 
+	private static boolean _populated = false;
+	
+	public static void populate() 
 	{ 
+		if (_populated) return;
+		
 		_arrays_classes_small = arrays.populate_all_classes_small();
 		_arrays_classes_array = arrays.populate_all_classes_array();
 		_arrays_classes_numeric = arrays.populate_all_classes_numeric();
@@ -43,5 +47,7 @@ abstract class _alls
 		_data_compatible = data.populate_all_compatible();
 		
 		_db_dbs = db.populate_all_dbs();
+		
+		_populated = true;
 	} 
 }

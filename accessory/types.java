@@ -68,8 +68,7 @@ public abstract class types
 	public static final String CONFIG_DB_SETUP_LOGS = CONFIG_LOGS;
 	public static final String CONFIG_DB_TYPE = "config_db_type";
 	public static final String CONFIG_DB_TYPE_MYSQL = "config_db_type_mysql";
-	public static final String CONFIG_DB_CREDENTIALS = "config_db_credentials";
-	public static final String CONFIG_DB_CREDENTIALS_WHERE = "config_db_credentials_where";
+	public static final String CONFIG_DB_CREDENTIALS = "config_db_credentials"; 
 	public static final String CONFIG_DB_CREDENTIALS_ENCRYPTED = "config_db_credentials_encrypted";
 	public static final String CONFIG_DB_CREDENTIALS_USERNAME = "config_db_credentials_username";
 	public static final String CONFIG_DB_CREDENTIALS_PASSWORD = "config_db_credentials_password";
@@ -361,7 +360,6 @@ public abstract class types
 			CONFIG_DB_CREDENTIALS,
 			CONFIG_DB_CREDENTIALS_ENCRYPTED, 
 			CONFIG_DB_CREDENTIALS_USERNAME, CONFIG_DB_CREDENTIALS_PASSWORD,
-			CONFIG_DB_CREDENTIALS_WHERE,
 			CONFIG_DB_DEFAULT_FIELD, 
 			CONFIG_DB_DEFAULT_FIELD_ID, CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, 
 			CONFIG_TESTS, 

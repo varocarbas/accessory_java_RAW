@@ -38,58 +38,56 @@ public abstract class _defaults
 	public static final String DIR_CREDENTIALS = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_CREDENTIALS);
 	public static final String DIR_CRYPTO = paths.get_default_dir_ini(types.CONFIG_BASIC_DIR_CRYPTO);
 
-	static final boolean CREDENTIALS_ENCRYPTED = false;
-	static final String CREDENTIALS_WHERE = types.CONFIG_CREDENTIALS_WHERE_FILE;
-	static final String CREDENTIALS_FILE_DIR = DIR_CREDENTIALS;
-	static final String CREDENTIALS_FILE_EXTENSION = strings.DEFAULT;
-	static final String CREDENTIALS_FILE_SEPARATOR = misc.SEPARATOR_NAME;
-	static final String CREDENTIALS_FILE_USERNAME = "username";
-	static final String CREDENTIALS_FILE_PASSWORD = "password";
-	static final String CREDENTIALS_FILE_ENCRYPTED = "enc";
-	static final String CREDENTIALS_ID = "credentials";
-	static final String CREDENTIALS_USER = USER;
+	public static final boolean CREDENTIALS_ENCRYPTED = false;
+	public static final String CREDENTIALS_WHERE = types.CONFIG_CREDENTIALS_WHERE_FILE;
+	public static final String CREDENTIALS_FILE_DIR = DIR_CREDENTIALS;
+	public static final String CREDENTIALS_FILE_EXTENSION = strings.DEFAULT;
+	public static final String CREDENTIALS_FILE_SEPARATOR = misc.SEPARATOR_NAME;
+	public static final String CREDENTIALS_FILE_USERNAME = "username";
+	public static final String CREDENTIALS_FILE_PASSWORD = "password";
+	public static final String CREDENTIALS_FILE_ENCRYPTED = "enc";
+	public static final String CREDENTIALS_ID = "credentials";
+	public static final String CREDENTIALS_USER = USER;
 	
-	static final String CRYPTO_ID = "crypto";
-	static final String CRYPTO_FILE_CIPHER = "cipher";
-	static final String CRYPTO_FILE_KEY = "key";
-	static final String CRYPTO_FILE_EXTENSION = strings.DEFAULT;
+	public static final String CRYPTO_ID = "crypto";
+	public static final String CRYPTO_FILE_CIPHER = "cipher";
+	public static final String CRYPTO_FILE_KEY = "key";
+	public static final String CRYPTO_FILE_EXTENSION = strings.DEFAULT;
 	
-	static final String DB_TYPE = db.MYSQL;
-	static final String DB_SETUP = types.CONFIG_DB_SETUP_MAIN;
-	static final String DB_MAX_POOL = "500";
-	static final String DB_NAME = STRING;
-	static final String DB_HOST = "localhost";
-	static final String DB_USER = STRING;
-	static final String DB_DEFAULT_COL_ID = "_id";
-	static final String DB_DEFAULT_COL_TIMESTAMP = "_timestamp";
-	static final String DB_CREDENTIALS_TYPE = types.remove_type(DB_TYPE, types.CONFIG_DB_TYPE);
-	static final String DB_CREDENTIALS_WHERE = CREDENTIALS_WHERE;
-	static final String DB_CREDENTIALS_USERNAME = STRING;
-	static final String DB_CREDENTIALS_PASSWORD = STRING;
-	static final boolean DB_CREDENTIALS_ENCRYPTED = CREDENTIALS_ENCRYPTED;
-	static final boolean DB_ERROR_EXIT = true;
-	static final String DB_ORDER = db_order.ASC;
-	static final boolean DB_ORDER_FIELD = true;
-	static final String DB_WHERE_LINK = db_where.AND;
-	static final String DB_WHERE_OPERAND = db_where.EQUAL;
-	static final boolean DB_WHERE_LITERAL = true;
+	public static final String DB_TYPE = db.MYSQL;
+	public static final String DB_SETUP = types.CONFIG_DB_SETUP_MAIN;
+	public static final String DB_MAX_POOL = "500";
+	public static final String DB_NAME = STRING;
+	public static final String DB_HOST = "localhost";
+	public static final String DB_USER = STRING;
+	public static final String DB_DEFAULT_COL_ID = "_id";
+	public static final String DB_DEFAULT_COL_TIMESTAMP = "_timestamp";
+	public static final String DB_CREDENTIALS_TYPE = types.remove_type(DB_TYPE, types.CONFIG_DB_TYPE);
+	public static final String DB_CREDENTIALS_USERNAME = STRING;
+	public static final String DB_CREDENTIALS_PASSWORD = STRING;
+	public static final boolean DB_CREDENTIALS_ENCRYPTED = CREDENTIALS_ENCRYPTED;
+	public static final boolean DB_ERROR_EXIT = true;
+	public static final String DB_ORDER = db_order.ASC;
+	public static final boolean DB_ORDER_FIELD = true;
+	public static final String DB_WHERE_LINK = db_where.AND;
+	public static final String DB_WHERE_OPERAND = db_where.EQUAL;
+	public static final boolean DB_WHERE_LITERAL = true;
 	
-	static final String LOGS_DB_TABLE = "logs";
-	static final String LOGS_DB_COL_ID = "id";
-	static final String LOGS_DB_COL_MESSAGE = "message";
+	public static final String LOGS_DB_TABLE = "logs";
+	public static final String LOGS_DB_COL_ID = "id";
+	public static final String LOGS_DB_COL_MESSAGE = "message";
 	
-	static final String TESTS_DB_TABLE = "tests";
-	static final String TESTS_DB_COL_INT = "int";
-	static final String TESTS_DB_COL_STRING = "string";
-	static final String TESTS_DB_COL_DECIMAL = "decimal";
+	public static final String TESTS_DB_TABLE = "tests";
+	public static final String TESTS_DB_COL_INT = "int";
+	public static final String TESTS_DB_COL_STRING = "string";
+	public static final String TESTS_DB_COL_DECIMAL = "decimal";
 
-	static final boolean LOGS_SCREEN = true;
-	static final boolean LOGS_FILE = true;
-	static final boolean LOGS_DB = false;
+	public static final boolean LOGS_SCREEN = true;
+	public static final boolean LOGS_FILE = true;
+	public static final boolean LOGS_DB = false;
 
-	static final String CRYPTO_ALGORITHM_CIPHER = "AES/CTR/NoPadding";
-	static final String CRYPTO_ALGORITHM_KEY = "AES";
+	public static final String CRYPTO_ALGORITHM_CIPHER = "AES/CTR/NoPadding";
+	public static final String CRYPTO_ALGORITHM_KEY = "AES";
 	
-	//Method meant to force this class to be loaded when required (e.g., when ini.load() is called).
 	public static void load() { } 
 }
