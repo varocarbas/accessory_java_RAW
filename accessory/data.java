@@ -51,6 +51,10 @@ public class data extends parent
 	public Class<?> _class = null;
 	public size _size = null;
 	
+	private String _temp_type = strings.DEFAULT;
+	private Class<?> _temp_class = null;
+	private size _temp_size = null;
+	
 	public static boolean are_equal(data data1_, data data2_)
 	{
 		return generic.are_equal(data1_, data2_);
@@ -274,12 +278,12 @@ public class data extends parent
 
 	private static HashMap<String, Class<?>> get_all_classes()
 	{
-		return _alls._data_classes;
+		return _alls.DATA_CLASSES;
 	}
 
 	private static HashMap<Class<?>, Class<?>> get_all_compatible()
 	{
-		return _alls._data_compatible;
+		return _alls.DATA_COMPATIBLE;
 	}
 
 	private void instantiate(data input_)
@@ -287,7 +291,7 @@ public class data extends parent
 		instantiate_common();
 		if (input_ == null || !input_.is_ok()) return;
 
-		populate(input_._temp_string1, input_._temp_class1, input_._temp_size1);
+		populate(input_._temp_type, input_._temp_class, input_._temp_size);
 	}
 	
 	private void instantiate(String type_, Class<?> class_, size size_)
@@ -295,16 +299,16 @@ public class data extends parent
 		instantiate_common();
 		if (!is_ok(type_, class_, size_)) return;
 
-		populate(_temp_string1, _temp_class1, _temp_size1);
+		populate(_temp_type, _temp_class, _temp_size);
 	}
 	
 	private boolean is_ok(String type_, Class<?> class_, size size_)
 	{
-		_temp_string1 = check_type(type_);
-		_temp_class1 = (class_is_ok(class_) ? class_ : get_class(_temp_string1));
-		_temp_size1 = check_size(_temp_string1, size_);
+		_temp_type = check_type(type_);
+		_temp_class = (class_is_ok(class_) ? class_ : get_class(_temp_type));
+		_temp_size = check_size(_temp_type, size_);
 		
-		return (strings.is_ok(_temp_string1) && class_is_ok(_temp_class1) && size_is_ok(_temp_string1, _temp_size1));
+		return (strings.is_ok(_temp_type) && class_is_ok(_temp_class) && size_is_ok(_temp_type, _temp_size));
 	}
 
 	private void populate(String type_, Class<?> class_, size size_)

@@ -399,7 +399,7 @@ public abstract class generic
 
 	public static Class<?>[] get_all_classes()
 	{
-		return _alls._generic_classes;
+		return _alls.GENERIC_CLASSES;
 	}
 	
 	public static Method[] get_all_methods(Class<?> class_, String[] skip_)
@@ -631,11 +631,11 @@ public abstract class generic
 	
 	private static String[] get_all_default_methods()
 	{
-		return _alls._generic_default_method_names;
+		return _alls.GENERIC_DEFAULT_METHOD_NAMES;
 	}
 	
 	private static HashMap<Class<?>, Class<?>[]> get_all_class_equivalents()
 	{
-		return _alls._generic_class_equivalents;
+		return _alls.GENERIC_CLASSES_EQUIVALENTS;
 	}
 }

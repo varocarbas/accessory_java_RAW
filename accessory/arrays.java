@@ -17,7 +17,7 @@ public abstract class arrays
 
 	public static Class<?>[] get_all_classes()
 	{
-		return _alls._arrays_classes;
+		return _alls.ARRAYS_CLASSES;
 	}
 
 	//All these classes require a special treatment. In some cases, they are assumed to be equivalent to their big counterparts.
@@ -28,18 +28,18 @@ public abstract class arrays
 	//!!!
 	public static Class<?>[] get_all_classes_small()
 	{
-		return _alls._arrays_classes_small;
+		return _alls.ARRAYS_CLASSES_SMALL;
 	}
 	
 	//All these classes are equivalent to Array.class and their instances can be used as Object/x[].
 	public static Class<?>[] get_all_classes_array()
 	{
-		return _alls._arrays_classes_array;
+		return _alls.ARRAYS_CLASSES_ARRAY;
 	}
 	
 	public static Class<?>[] get_all_classes_numeric()
 	{
-		return _alls._arrays_classes_numeric;
+		return _alls.ARRAYS_CLASSES_NUMERIC;
 	}
 	
 	public static <x> boolean is_ok(ArrayList<ArrayList<x>> input_)

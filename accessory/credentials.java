@@ -25,8 +25,10 @@ public abstract class credentials
 
 		if (encrypted_)
 		{
-			//username = crypto.decrypt(username, id_);
-			//password = crypto.decrypt(password, id_);
+			String id2 = get_encryption_id(id, user);
+			
+			username = crypto.decrypt(username, id2);
+			password = crypto.decrypt(password, id2);
 		}
 
 		return get(username, password);
@@ -51,17 +53,9 @@ public abstract class credentials
 		String[] vals = encrypt_files_get_vals(id, user);
 		if (!arrays.is_ok(vals)) return false;
 		
-		String[] outputs = new String[2];
-		
-		for (int i = 0; i < vals.length; i++)
-		{
-			outputs[i] = crypto.encrypt(vals[i], id);
-			if (!strings.is_ok(outputs[i])) return false;
-		}
+		String[] outputs = crypto.encrypt(vals, get_encryption_id(id, user));
 				
-		//return encrypt_files_store_vals(id, user, outputs);
-		
-		return false;
+		return (!arrays.is_ok(outputs) ? false : encrypt_files_store_vals(id, user, outputs));
 	}
 	
 	public static String get_extension()
@@ -72,6 +66,11 @@ public abstract class credentials
 	public static String get_file_full(String id_)
 	{
 		return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension());
+	}
+	
+	public static String get_encryption_id(String id_, String user_)
+	{
+		return (strings.are_ok(new String[] { id_, user_ }) ? (id_ + misc.SEPARATOR_NAME + user_) : strings.DEFAULT);
 	}
 	
 	private static boolean encrypt_files_store_vals(String id_, String user_, String[] outputs_)

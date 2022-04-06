@@ -19,11 +19,12 @@ public abstract class db
 	public static final String MAX_POOL = types.CONFIG_DB_MAX_POOL;
 	public static final String NAME = types.CONFIG_DB_NAME;
 	public static final String HOST = types.CONFIG_DB_HOST;
-	public static final String USER = types.CONFIG_DB_USER; //Only indirectly related to credentials (e.g., file name containing credentials).
 	public static final String USERNAME = types.CONFIG_CREDENTIALS_FILE_USERNAME;
 	public static final String PASSWORD = types.CONFIG_CREDENTIALS_FILE_PASSWORD;
+	public static final String USER = types.CONFIG_DB_CREDENTIALS_USER; //For identifying and encrypting purposes.
 	public static final String CREDENTIALS_USERNAME = USERNAME;
 	public static final String CREDENTIALS_PASSWORD = PASSWORD;
+	public static final String CREDENTIALS_USER = USER;
 	public static final String CREDENTIALS_ENCRYPTED = types.CONFIG_DB_CREDENTIALS_ENCRYPTED;
 	public static final String TYPE = types.CONFIG_DB_TYPE;
 	public static final String MYSQL = types.CONFIG_DB_TYPE_MYSQL;
@@ -76,7 +77,7 @@ public abstract class db
 		if (strings.is_ok(user_)) params.put(USER, user_);
 		if (strings.is_ok(database_)) params.put(NAME, database_);
 		if (strings.is_ok(host_)) params.put(HOST, host_); 
-		//params.put(CREDENTIALS_ENCRYPTED, strings.from_boolean(encrypted_));
+		params.put(CREDENTIALS_ENCRYPTED, strings.from_boolean(encrypted_));
 		
 		update_conn_info(params);
 
@@ -427,6 +428,16 @@ public abstract class db
 		return (output != null ? output : instantiate_db(DEFAULT_TYPE));
 	}
 	
+	public static String get_id_encrypted(String user_)
+	{
+		return credentials.get_encryption_id(get_id_encrypted_type(), user_);
+	}
+	
+	public static String get_id_encrypted_type()
+	{
+		return types.remove_type(get_current_type(), TYPE);
+	}
+	
 	static void update_is_ok(boolean _is_ok)
 	{
 		get_current_db().update_is_ok(_is_ok);
@@ -446,7 +457,7 @@ public abstract class db
 		if (strings.is_ok(username) && password != null) output = credentials.get(username, password);
 		else if (strings.is_ok(user))
 		{
-			output = credentials.get(types.remove_type(get_current_type(), TYPE), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
+			output = credentials.get(get_id_encrypted_type(), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
 		}
 
 		return output;
@@ -519,13 +530,16 @@ public abstract class db
 		return vals;
 	}
 	
+	static String[] populate_all_setups()
+	{
+		return new String[] { types.CONFIG_DB_SETUP_DEFAULT };
+	}
+	
 	static HashMap<String, parent_db> populate_all_dbs()
 	{
 		HashMap<String, parent_db> all_db = new HashMap<String, parent_db>();
-		
-		String[] setups = new String[] { types.CONFIG_DB_SETUP_MAIN, types.CONFIG_DB_SETUP_LOGS };
-		
-		for (String setup: setups)
+				
+		for (String setup: get_all_setups())
 		{
 			String type = config.get(setup, TYPE);
 			
@@ -537,15 +551,34 @@ public abstract class db
 	
 	static HashMap<String, parent_db> get_all_dbs()
 	{
-		return _alls._db_dbs;
+		return _alls.DB_DBS;
 	}
 
+	static String[] get_all_setups(boolean ignore_default_)
+	{
+		ArrayList<String> output = new ArrayList<String>();
+		
+		for (String setup: _alls.DB_SETUPS)
+		{
+			if (ignore_default_ && setup.equals(types.CONFIG_DB_SETUP_DEFAULT)) continue;
+			
+			output.add(setup);
+		}
+		
+		return arrays.to_array(output);
+	}
+	
+	private static String[] get_all_setups()
+	{
+		return _alls.DB_SETUPS;
+	}
+	
 	private static boolean update_conn_info(HashMap<String, String> params_)
 	{		
 		String error = "";
-	
-		HashMap<String, Boolean> output = (arrays.is_ok(params_) ? config.update_db_conn_info(params_, get_current_setup()) : null);
 
+		HashMap<String, Boolean> output = (arrays.is_ok(params_) ? config.update_db_conn_info(get_current_setup(), params_) : null);
+		
 		if (arrays.is_ok(output))
 		{
 			for (Entry<String, Boolean> item: output.entrySet())

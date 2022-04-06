@@ -2,29 +2,30 @@ package accessory;
 
 import java.util.HashMap;
 
-//This class is the counterpart of _defaults dealing with arrays. The main reason for this difference is the 
-//unclear, irregular treatment given by Java to the initialisation of global static final variables involving arrays.
-//The rules in this class are, consequently, different than the ones in _defaults:
-//- All the populations will happen in the load method (called at the very beginning) which calls the corresponding local methods.
-//- All the variables will be accessed directly in this class (i.e., no local copies like in _defaults) via local methods.
-//!!!
+//This class includes all the array constants to be loaded at the very beginning, except for the ones
+//included in _basic. 
+//Rules for all the constants in this class:
+//- All the values will be assigned in the main method below via calling the corresponding methods in other classes.
+//- All the constants will be accessed directly in this class though local methods (i.e., no local copies).
+
 abstract class _alls 
 {
-	public static Class<?>[] _arrays_classes_small = null;
-	public static Class<?>[] _arrays_classes_array = null;
-	public static Class<?>[] _arrays_classes_numeric = null;
-	public static Class<?>[] _arrays_classes = null;
+	public static Class<?>[] ARRAYS_CLASSES_SMALL = null;
+	public static Class<?>[] ARRAYS_CLASSES_ARRAY = null;
+	public static Class<?>[] ARRAYS_CLASSES_NUMERIC = null;
+	public static Class<?>[] ARRAYS_CLASSES = null;
 
-	public static Class<?>[] _numbers_classes = null;
+	public static Class<?>[] NUMBERS_CLASSES = null;
 	
-	public static Class<?>[] _generic_classes = null;
-	public static HashMap<Class<?>, Class<?>[]> _generic_class_equivalents = null;
-	public static String[] _generic_default_method_names = null;
+	public static Class<?>[] GENERIC_CLASSES = null;
+	public static HashMap<Class<?>, Class<?>[]> GENERIC_CLASSES_EQUIVALENTS = null;
+	public static String[] GENERIC_DEFAULT_METHOD_NAMES = null;
 	
-	public static HashMap<String, Class<?>> _data_classes = null;
-	public static HashMap<Class<?>, Class<?>> _data_compatible = null;
+	public static HashMap<String, Class<?>> DATA_CLASSES = null;
+	public static HashMap<Class<?>, Class<?>> DATA_COMPATIBLE = null;
 
-	public static HashMap<String, parent_db> _db_dbs = null;
+	public static String[] DB_SETUPS = null;
+	public static HashMap<String, parent_db> DB_DBS = null;
 	
 	private static boolean _populated = false;
 	
@@ -32,21 +33,22 @@ abstract class _alls
 	{ 
 		if (_populated) return;
 		
-		_arrays_classes_small = arrays.populate_all_classes_small();
-		_arrays_classes_array = arrays.populate_all_classes_array();
-		_arrays_classes_numeric = arrays.populate_all_classes_numeric();
-		_arrays_classes = arrays.populate_all_classes();
+		ARRAYS_CLASSES_SMALL = arrays.populate_all_classes_small();
+		ARRAYS_CLASSES_ARRAY = arrays.populate_all_classes_array();
+		ARRAYS_CLASSES_NUMERIC = arrays.populate_all_classes_numeric();
+		ARRAYS_CLASSES = arrays.populate_all_classes();
 
-		_numbers_classes = numbers.populate_all_classes();
+		NUMBERS_CLASSES = numbers.populate_all_classes();
 		
-		_generic_classes = generic.populate_all_classes();
-		_generic_class_equivalents = generic.populate_all_class_equivalents();
-		_generic_default_method_names = generic.populate_all_default_methods();
+		GENERIC_CLASSES = generic.populate_all_classes();
+		GENERIC_CLASSES_EQUIVALENTS = generic.populate_all_class_equivalents();
+		GENERIC_DEFAULT_METHOD_NAMES = generic.populate_all_default_methods();
 		
-		_data_classes = data.populate_all_classes();
-		_data_compatible = data.populate_all_compatible();
+		DATA_CLASSES = data.populate_all_classes();
+		DATA_COMPATIBLE = data.populate_all_compatible();
 		
-		_db_dbs = db.populate_all_dbs();
+		DB_SETUPS = db.populate_all_setups();
+		DB_DBS = db.populate_all_dbs();
 		
 		_populated = true;
 	} 

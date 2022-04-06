@@ -65,16 +65,12 @@ public abstract class config_ini
 
 		config.update_ini(type, logs.SCREEN, strings.from_boolean(_defaults.LOGS_SCREEN));
 		config.update_ini(type, logs.FILE, strings.from_boolean(_defaults.LOGS_FILE));
-		config.update_ini(type, logs.DB, strings.from_boolean(_defaults.LOGS_DB));
 	}	
 	
 	private static void load_config_subtypes()
 	{	
 		String type = types.CONFIG_DB;
 		String[] subtypes = { types.CONFIG_DB_CREDENTIALS };
-		config.update_subtypes(type, subtypes);
-
-		type = types.CONFIG_LOGS_DB;
 		config.update_subtypes(type, subtypes);
 
 		type = types.CONFIG_CREDENTIALS;

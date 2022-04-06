@@ -36,6 +36,10 @@ public class db_where extends parent
 	private static HashMap<String, String[]> _all_operands = new HashMap<String, String[]>();
 	private static HashMap<String, String[]> _all_links = new HashMap<String, String[]>();	
 	
+	private String _temp_source = strings.DEFAULT;
+	private String _temp_operand = strings.DEFAULT;
+	private String _temp_link = strings.DEFAULT;
+	
 	static { ini(); }
 
 	public static boolean are_equal(db_where where1_, db_where where2_)
@@ -126,8 +130,8 @@ public class db_where extends parent
 	{
 		if (!is_ok(_source, _key, _operand, _value, _link)) return strings.DEFAULT;
 		
-		String operand = operand_to_string(_temp_string2);
-		String key = db.get_variable(db.get_col(_temp_string1, _key));
+		String operand = operand_to_string(_temp_operand);
+		String key = db.get_variable(db.get_col(_temp_source, _key));
 		String value = strings.to_string(_value);
 		value = (_is_literal ? db.get_value(value) : value);
 		
@@ -142,11 +146,11 @@ public class db_where extends parent
 		
 		return 
 		(
-			db.sources_are_equal(_temp_string1, where2_._source) &&
+			db.sources_are_equal(_temp_source, where2_._source) &&
 			generic.are_equal(_key, where2_._key) &&
-			generic.are_equal(_temp_string2, where2_._operand) &&
+			generic.are_equal(_temp_operand, where2_._operand) &&
 			generic.are_equal(_value, where2_._value) &&
-			generic.are_equal(_temp_string3, where2_._link) &&
+			generic.are_equal(_temp_link, where2_._link) &&
 			(_is_literal == where2_._is_literal)
 		);		
 	}
@@ -183,7 +187,7 @@ public class db_where extends parent
 		instantiate_common();
 		if (input_ == null || !input_.is_ok()) return;
 
-		populate(input_._temp_string1, input_._key, input_._temp_string2, input_._value, input_._temp_string3, input_._is_literal);
+		populate(input_._temp_source, input_._key, input_._temp_operand, input_._value, input_._temp_link, input_._is_literal);
 	}
 	
 	private void instantiate(String source_, String key_, String operand_, Object value_, boolean is_literal_, String link_)
@@ -191,20 +195,20 @@ public class db_where extends parent
 		instantiate_common();
 		if (!is_ok(source_, key_, operand_, value_, link_)) return;
 
-		populate(_temp_string1, key_, _temp_string2, value_, _temp_string3, is_literal_);
+		populate(_temp_source, key_, _temp_operand, value_, _temp_link, is_literal_);
 	}
 	
 	private boolean is_ok(String source_, String key_, String operand_, Object value_, String link_)
 	{
-		_temp_string1 = db.check_source(source_);
-		_temp_string2 = check_operand(operand_);
-		_temp_string3 = check_link(link_);
+		_temp_source = db.check_source(source_);
+		_temp_operand = check_operand(operand_);
+		_temp_link = check_link(link_);
 		
 		return 
 		( 
-			strings.is_ok(_temp_string1) &&
-			db.field_is_ok(_temp_string1, key_) &&
-			strings.is_ok(_temp_string2) &&
+			strings.is_ok(_temp_source) &&
+			db.field_is_ok(_temp_source, key_) &&
+			strings.is_ok(_temp_operand) &&
 			generic.is_ok(value_)
 		);
 	}

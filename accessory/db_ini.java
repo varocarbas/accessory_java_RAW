@@ -21,7 +21,6 @@ public abstract class db_ini
 	private static void load_sources()
 	{
 		HashMap<String, String> source_mains = new HashMap<String, String>();
-		source_mains.put(types.CONFIG_LOGS_DB_SOURCE, types.CONFIG_LOGS);
 		source_mains.put(types.CONFIG_TESTS_DB_SOURCE, types.CONFIG_TESTS);
 		
 		load_sources_all(source_mains);
@@ -49,7 +48,7 @@ public abstract class db_ini
 	private static void load_config_linked_db()
 	{
 		String main = types.CONFIG_DB;
-		String[] secs = { types.CONFIG_LOGS_DB };
+		String[] secs = db.get_all_setups(true);
 
 		HashMap<String, String> vals = load_config_linked_db_vals();
 
@@ -82,16 +81,8 @@ public abstract class db_ini
 		{
 			load_config_sources_default_fields(main);	
 			
-			if (main.equals(types.CONFIG_LOGS)) load_config_sources_logs(main);
-			else if (main.equals(types.CONFIG_TESTS)) load_config_sources_tests(main);
+			if (main.equals(types.CONFIG_TESTS)) load_config_sources_tests(main);
 		}
-	}
-
-	private static void load_config_sources_logs(String main_)
-	{
-		config.update_ini(main_, logs.SOURCE, _defaults.LOGS_DB_TABLE);
-		config.update_ini(main_, logs.FIELD_ID, _defaults.LOGS_DB_COL_ID);
-		config.update_ini(main_, logs.FIELD_MESSAGE, _defaults.LOGS_DB_COL_MESSAGE);
 	}
 
 	private static void load_config_sources_tests(String main_)
@@ -117,20 +108,8 @@ public abstract class db_ini
 	
 	private static void load_sources_source(String source_)
 	{
-		if (source_.equals(types.CONFIG_LOGS_DB_SOURCE)) load_sources_source_logs(source_);
-		else if (source_.equals(types.CONFIG_TESTS_DB_SOURCE)) load_sources_source_tests(source_);
-	}
-	
-	private static void load_sources_source_logs(String source_)
-	{
-		if (db.source_is_ok(source_)) return;
-		
-		HashMap<String, db_field> fields = db.get_default_fields();
-		fields.put(logs.FIELD_ID, new db_field(data.INT));
-		fields.put(logs.FIELD_MESSAGE, new db_field(data.STRING));
-		
-		db.add_source(source_, fields);
-	}
+		if (source_.equals(types.CONFIG_TESTS_DB_SOURCE)) load_sources_source_tests(source_);
+	}	
 
 	private static void load_sources_source_tests(String source_)
 	{

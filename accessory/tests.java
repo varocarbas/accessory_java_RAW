@@ -20,7 +20,8 @@ public abstract class tests
 	public static boolean _running = false;
 	
 	private static int _overload = 0;
-
+	private static Object _temp_output = null;
+	
 	static { ini.load(); }
 	
 	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all(boolean db_too_)
@@ -71,7 +72,7 @@ public abstract class tests
 		
 		Class<?>[] classes = new Class<?>[] 
 		{ 
-			strings.class, arrays.class, dates.class, generic.class,
+			crypto.class, strings.class, arrays.class, dates.class, generic.class,
 			io.class, numbers.class, paths.class, types.class
 		}; 
 		
@@ -160,6 +161,7 @@ public abstract class tests
 		args2.add(FIELD_INT);
 		args2.add(wheres);
 		args2.add(null);
+
 		args.add(args2);
 		
 		int target = val;
@@ -191,6 +193,7 @@ public abstract class tests
 		
 		args2 = new ArrayList<Object>();
 		args2.add(query);
+		
 		args.add(args2);
 		
 		ArrayList<HashMap<String, String>> target2 = new ArrayList<HashMap<String, String>>();
@@ -199,6 +202,55 @@ public abstract class tests
 		target2.add(target22);
 		
 		is_ok = run_method(type, method, name, args, new Object[] { target2 }, false);
+		outputs.put(name, is_ok);
+		
+		return outputs;	
+	}
+
+	public static HashMap<String, Boolean> run_accessory_crypto()
+	{		
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
+		
+		Object[] targets = null;
+		Class<?> type = crypto.class;
+		
+		String name = "encrypt";
+		Class<?>[] params = new Class<?>[] { String[].class, String.class };
+		Method method = generic.get_method(type, name, params, false);	
+		
+		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
+		
+		String[] inputs = (String[])arrays.get_random(String[].class);
+		String id = null;
+		
+		ArrayList<Object> args2 = new ArrayList<Object>();
+		args2.add(inputs);
+		args2.add(id);
+
+		args.add(args2);
+		
+		boolean is_ok = run_method(type, method, name, args, targets, false);
+		if (!is_ok) return outputs;
+		
+		outputs.put(name, is_ok);
+		String[] encrypted = (String[])_temp_output;
+		
+		name = "decrypt";
+		params = new Class<?>[] { String[].class, String.class };
+		method = generic.get_method(type, name, params, false);	
+
+		args = new ArrayList<ArrayList<Object>>();
+		
+		args2 = new ArrayList<Object>();
+		args2.add(encrypted);
+		args2.add(id);
+		
+		args.add(args2);
+
+		targets = new Object[] { inputs };
+		
+		is_ok = run_method(type, method, name, args, targets, false);
+
 		outputs.put(name, is_ok);
 		
 		return outputs;	
@@ -231,7 +283,7 @@ public abstract class tests
 		
 		return run(type, args_all, targets, skip);
 	}
-		
+				
 	public static HashMap<String, Boolean> run_accessory_arrays()
 	{
 		return run(arrays.class);
@@ -351,6 +403,8 @@ public abstract class tests
 	public static boolean run_method(Class<?> class_, Method method_, String method_name_, ArrayList<ArrayList<Object>> args_, Object[] targets_, boolean errors_allowed_)
 	{
 		boolean is_ok = false;
+		
+		_temp_output = null;
 		if (!method_is_ok(class_, method_, method_name_)) return is_ok;
 
 		Class<?>[] params = (Class<?>[])arrays.get_new(method_.getParameterTypes());
@@ -363,7 +417,8 @@ public abstract class tests
 		Object[] targets = (Object[])arrays.get_new(targets_);
 		Object[] args = get_args(params, arrays.get_new(args_));			
 		Object output = generic.call_static_method(method_, args, false);
-
+		_temp_output = output;
+		
 		boolean out_is_ok = output_is_ok(output, targets);
 		
 		if (errors._triggered || !out_is_ok)
@@ -458,7 +513,8 @@ public abstract class tests
 	{
 		HashMap<String, Boolean> output = null;
 		
-		if (class_.equals(strings.class)) output = run_accessory_strings();
+		if (class_.equals(crypto.class)) output = run_accessory_crypto();
+		else if (class_.equals(strings.class)) output = run_accessory_strings();
 		else if (class_.equals(arrays.class)) output = run_accessory_arrays();
 		else if (class_.equals(dates.class)) output = run_accessory_dates();
 		else if (class_.equals(generic.class)) output = run_accessory_generic();

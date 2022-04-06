@@ -41,6 +41,10 @@ public class db_field extends parent
 	static final String TIMESTAMP = types.DB_FIELD_FURTHER_TIMESTAMP;
 	//---
 
+	private String _temp_type = strings.DEFAULT;
+	private int _temp_size = 0;
+	private int _temp_decimals = 0;
+	
 	public static boolean are_equal(db_field field1_, db_field field2_)
 	{
 		return are_equal_common(field1_, field2_);
@@ -227,7 +231,7 @@ public class db_field extends parent
 		instantiate_common();
 		if (input_ == null || !input_.is_ok()) return;
 
-		populate(input_._temp_string1, input_._temp_int1, input_._temp_int2, input_._default, input_._further);
+		populate(input_._temp_type, input_._temp_size, input_._temp_decimals, input_._default, input_._further);
 	}
 
 	private void instantiate(String type_, int size_, int decimals_, Object default_, String[] further_)
@@ -235,16 +239,16 @@ public class db_field extends parent
 		instantiate_common();
 		if (!is_ok(type_, size_, decimals_, default_, further_)) return;
 
-		populate(_temp_string1, _temp_int1, _temp_int2, default_, further_);
+		populate(_temp_type, _temp_size, _temp_decimals, default_, further_);
 	}
 
 	private boolean is_ok(String type_, int size_, int decimals_, Object default_, String[] further_)
 	{
-		_temp_string1 = data.check_type(type_);
-		_temp_int1 = check_size(type_, size_);
-		_temp_int2 = adapt_decimals(decimals_);
+		_temp_type = data.check_type(type_);
+		_temp_size = check_size(type_, size_);
+		_temp_decimals = adapt_decimals(decimals_);
 		
-		return (default_is_ok(_temp_string1, _temp_int1, default_) && further_is_ok(further_));
+		return (default_is_ok(_temp_type, _temp_size, default_) && further_is_ok(further_));
 	}
 
 	private void populate(String type_, int size_, int decimals_, Object default_, String[] further_)

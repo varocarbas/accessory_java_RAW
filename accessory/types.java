@@ -41,6 +41,37 @@ public abstract class types
 	public static final String CONFIG_CREDENTIALS_FILE_PASSWORD = "config_credentials_file_password";
 	public static final String CONFIG_CREDENTIALS_FILE_ENCRYPTED = "config_credentials_file_encrypted";
 
+	//--- CONFIG_DB variables deal with the generic, common configuration of DBs. Specific CONFIG constants
+	//have to be added to manage each DB's specific information like, for example, sources and fields.
+	
+	public static final String CONFIG_DB = "config_db";
+	
+	//DB setups allow to support multiple basic configurations (e.g., different credentials or operating
+	//conditions) at the same time. The value associated with the corresponding CONFIG_DB_SETUP is the
+	//main key of the given DB, that is, the corresponding root CONFIG variable, the one used to store
+	//all its specific values in config._info. A given setup can include as many DBs as required.
+	public static final String CONFIG_DB_SETUP = "config_db_setup";
+	public static final String CONFIG_DB_SETUP_DEFAULT = CONFIG_DB;
+	
+	public static final String CONFIG_DB_MAX_POOL = "config_db_max_pool";
+	public static final String CONFIG_DB_NAME = "config_db_name";
+	public static final String CONFIG_DB_HOST = "config_db_host";
+	public static final String CONFIG_DB_ERROR_EXIT = "config_db_error_exit";
+	public static final String CONFIG_DB_TYPE = "config_db_type";
+	public static final String CONFIG_DB_TYPE_MYSQL = "config_db_type_mysql";
+	public static final String CONFIG_DB_CREDENTIALS = "config_db_credentials"; 
+	public static final String CONFIG_DB_CREDENTIALS_USERNAME = "config_db_credentials_username";
+	public static final String CONFIG_DB_CREDENTIALS_PASSWORD = "config_db_credentials_password";
+	
+	//CONFIG_DB_CREDENTIALS_USER is a generic ID which is required for encrypting credentials.
+	public static final String CONFIG_DB_CREDENTIALS_USER = "config_db_credentials_user";
+	public static final String CONFIG_DB_CREDENTIALS_ENCRYPTED = "config_db_credentials_encrypted";
+	
+	public static final String CONFIG_DB_DEFAULT_FIELD = "config_db_default_field";
+	public static final String CONFIG_DB_DEFAULT_FIELD_ID = "config_db_default_field_id";
+	public static final String CONFIG_DB_DEFAULT_FIELD_TIMESTAMP = "config_db_default_field_timestamp";
+	//---
+	
 	public static final String CONFIG_CRYPTO = "config_crypto";
 	public static final String CONFIG_CRYPTO_FILE = "config_crypto_file";
 	public static final String CONFIG_CRYPTO_FILE_CIPHER = "config_crypto_file_cipher";
@@ -48,33 +79,9 @@ public abstract class types
 	public static final String CONFIG_CRYPTO_FILE_EXTENSION = "config_crypto_file_extension";
 	
 	public static final String CONFIG_LOGS = "config_logs";
-	public static final String CONFIG_LOGS_DB = "config_logs_db";
-	public static final String CONFIG_LOGS_DB_SOURCE = "config_logs_db_source";
-	public static final String CONFIG_LOGS_DB_FIELD_ID = "config_logs_db_field_id";
-	public static final String CONFIG_LOGS_DB_FIELD_MESSAGE = "config_logs_db_field_message";
 	public static final String CONFIG_LOGS_OUT = "config_logs_out";
 	public static final String CONFIG_LOGS_OUT_SCREEN = "config_logs_out_screen";
 	public static final String CONFIG_LOGS_OUT_FILE = "config_logs_out_file";
-	public static final String CONFIG_LOGS_OUT_DB = "config_logs_out_db";
-
-	public static final String CONFIG_DB = "config_db";
-	public static final String CONFIG_DB_MAX_POOL = "config_db_max_pool";
-	public static final String CONFIG_DB_NAME = "config_db_name";
-	public static final String CONFIG_DB_HOST = "config_db_host";
-	public static final String CONFIG_DB_USER = "config_db_user";
-	public static final String CONFIG_DB_ERROR_EXIT = "config_db_error_exit";
-	public static final String CONFIG_DB_SETUP = "config_db_setup";
-	public static final String CONFIG_DB_SETUP_MAIN = CONFIG_DB;
-	public static final String CONFIG_DB_SETUP_LOGS = CONFIG_LOGS;
-	public static final String CONFIG_DB_TYPE = "config_db_type";
-	public static final String CONFIG_DB_TYPE_MYSQL = "config_db_type_mysql";
-	public static final String CONFIG_DB_CREDENTIALS = "config_db_credentials"; 
-	public static final String CONFIG_DB_CREDENTIALS_ENCRYPTED = "config_db_credentials_encrypted";
-	public static final String CONFIG_DB_CREDENTIALS_USERNAME = "config_db_credentials_username";
-	public static final String CONFIG_DB_CREDENTIALS_PASSWORD = "config_db_credentials_password";
-	public static final String CONFIG_DB_DEFAULT_FIELD = "config_db_default_field";
-	public static final String CONFIG_DB_DEFAULT_FIELD_ID = "config_db_default_field_id";
-	public static final String CONFIG_DB_DEFAULT_FIELD_TIMESTAMP = "config_db_default_field_timestamp";
 	
 	public static final String CONFIG_TESTS = "config_tests";
 	public static final String CONFIG_TESTS_DB = "config_tests_db";
@@ -347,19 +354,16 @@ public abstract class types
 			CONFIG_CRYPTO_FILE_CIPHER, CONFIG_CRYPTO_FILE_KEY, CONFIG_CRYPTO_FILE_EXTENSION,
 			CONFIG_LOGS,
 			CONFIG_LOGS_OUT,
-			CONFIG_LOGS_OUT_SCREEN, CONFIG_LOGS_OUT_FILE, CONFIG_LOGS_OUT_DB,
-			CONFIG_LOGS_DB,
-			CONFIG_LOGS_DB_SOURCE, CONFIG_LOGS_DB_FIELD_ID, CONFIG_LOGS_DB_FIELD_MESSAGE,
+			CONFIG_LOGS_OUT_SCREEN, CONFIG_LOGS_OUT_FILE,
 			CONFIG_DB,
-			CONFIG_DB_MAX_POOL, CONFIG_DB_NAME, CONFIG_DB_HOST,  
-			CONFIG_DB_USER, CONFIG_DB_ERROR_EXIT, CONFIG_DB_TYPE,
 			CONFIG_DB_SETUP,
-			CONFIG_DB_SETUP_MAIN, CONFIG_DB_SETUP_LOGS,
+			CONFIG_DB_SETUP_DEFAULT,
+			CONFIG_DB_MAX_POOL, CONFIG_DB_NAME, CONFIG_DB_HOST, CONFIG_DB_ERROR_EXIT, CONFIG_DB_TYPE,
 			CONFIG_DB_TYPE,
 			CONFIG_DB_TYPE_MYSQL,
 			CONFIG_DB_CREDENTIALS,
-			CONFIG_DB_CREDENTIALS_ENCRYPTED, 
 			CONFIG_DB_CREDENTIALS_USERNAME, CONFIG_DB_CREDENTIALS_PASSWORD,
+			CONFIG_DB_CREDENTIALS_USER, CONFIG_DB_CREDENTIALS_ENCRYPTED, 
 			CONFIG_DB_DEFAULT_FIELD, 
 			CONFIG_DB_DEFAULT_FIELD_ID, CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, 
 			CONFIG_TESTS, 

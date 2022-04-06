@@ -89,21 +89,6 @@ public abstract class config
 		return matches(types.CONFIG_LOGS, key_, val_);
 	}
 
-	public static String get_logs_db(String key_)
-	{
-		return get(types.CONFIG_LOGS_DB, key_);
-	}
-
-	public static <x> boolean update_logs_db(String key_, x val_)
-	{
-		return update(types.CONFIG_LOGS_DB, key_, val_);
-	}
-
-	public static <x> boolean matches_logs_db(String key_, x val_)
-	{
-		return matches(types.CONFIG_LOGS_DB, key_, val_);
-	}
-
 	@SuppressWarnings("unchecked")
 	public static <x> x get(String type_, String key_)
 	{		
@@ -161,7 +146,10 @@ public abstract class config
 		String output = strings.DEFAULT;
 		
 		String type = check_type(type_);
-		if (!strings.is_ok(type) || !arrays.is_ok(_linked)) return output;
+		if (!strings.is_ok(type)) return output;
+		
+		if (type.equals(types.CONFIG_DB_SETUP_DEFAULT)) return types.CONFIG_DB;
+		if (!arrays.is_ok(_linked)) return output;
 		
 		for (Entry<String, String[]> item: _linked.entrySet())
 		{
@@ -199,11 +187,11 @@ public abstract class config
 		return update_matches(check_type(type_), key_, val_, true, true);
 	}
 
-	static HashMap<String, Boolean> update_db_conn_info(HashMap<String, String> params_, String type_)
+	static HashMap<String, Boolean> update_db_conn_info(String setup_, HashMap<String, String> params_)
 	{
 		HashMap<String, Boolean> output = null;
 		
-		String type = check_type(type_);
+		String type = check_type(setup_);
 		if (!arrays.is_ok(params_) || !strings.is_ok(type) || !strings.are_equal(get_linked_main(type), types.CONFIG_DB)) return output;
 
 		output = new HashMap<String, Boolean>();
@@ -216,7 +204,6 @@ public abstract class config
 			
 			boolean is_ok = false;
 			if (type.equals(types.CONFIG_DB)) is_ok = update_db(key, val);
-			else if (type.equals(types.CONFIG_LOGS_DB)) is_ok = update_logs_db(key, val);
 
 			output.put(key, is_ok);
 		}

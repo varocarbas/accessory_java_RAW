@@ -17,10 +17,13 @@ public abstract class ini
 	
 	public static void load_config_linked_update(String main_, String[] secs_, HashMap<String, String> vals_)
 	{	
-		config.update_linked(main_, secs_);
+		boolean secs_ok = arrays.is_ok(secs_);
+		
+		if (secs_ok) config.update_linked(main_, secs_);
 
 		load_config_linked_update_internal(main_, vals_, true);
-
+		if (!secs_ok) return;
+		
 		for (String sec: secs_)
 		{
 			load_config_linked_update_internal(sec, vals_, false);
@@ -40,6 +43,6 @@ public abstract class ini
 	{
 		_basic.populate();
 		_alls.populate();
-		_defaults.load();
+		_defaults.populate();
 	}
 }

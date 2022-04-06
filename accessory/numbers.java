@@ -26,7 +26,7 @@ public abstract class numbers
 	
 	public static final Class<?>[] get_all_classes()
 	{
-		return _alls._numbers_classes;
+		return _alls.NUMBERS_CLASSES;
 	}
 
 	public static boolean is_ok(double input_, double min_, double max_)
