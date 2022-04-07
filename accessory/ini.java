@@ -15,7 +15,7 @@ public abstract class ini
 		db_ini.load();
 	}
 	
-	public static void load_config_linked_update(String main_, String[] secs_, HashMap<String, String> vals_)
+	public static void load_config_linked_update(String main_, String[] secs_, HashMap<String, Object> vals_)
 	{	
 		boolean secs_ok = arrays.is_ok(secs_);
 		
@@ -30,11 +30,15 @@ public abstract class ini
 		}
 	}
 
-	private static void load_config_linked_update_internal(String type_, HashMap<String, String> vals_, boolean is_main_)
+	private static void load_config_linked_update_internal(String type_, HashMap<String, Object> vals_, boolean is_main_)
 	{	
-		for (Entry<String, String> val: vals_.entrySet())
+		for (Entry<String, Object> item: vals_.entrySet())
 		{
-			config.update_ini(type_, val.getKey(), (is_main_ ? val.getValue() : strings.DEFAULT));
+			String key = item.getKey();
+			Object val = item.getValue();
+			
+			if (generic.is_string(val)) config.update_ini(type_, key, (is_main_ ? (String)val : strings.DEFAULT));
+			else if (generic.is_boolean(val)) config.update_ini(type_, key, (is_main_ ? (boolean)val : false));
 		}
 	}
 	

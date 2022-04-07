@@ -33,6 +33,8 @@ public abstract class config_ini
 		config.update_ini(type, types.CONFIG_BASIC_DIR_APP, _defaults.DIR_APP);
 		config.update_ini(type, types.CONFIG_BASIC_DIR_INI, _defaults.DIR_INI);
 		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS, _defaults.DIR_LOGS);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS_ERRORS, _defaults.DIR_LOGS_ERRORS);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS_ACTIVITY, _defaults.DIR_LOGS_ACTIVITY);
 		config.update_ini(type, types.CONFIG_BASIC_DIR_CREDENTIALS, _defaults.DIR_CREDENTIALS);
 		config.update_ini(type, types.CONFIG_BASIC_DIR_CRYPTO, _defaults.DIR_CRYPTO);
 	}
@@ -63,8 +65,8 @@ public abstract class config_ini
 	{
 		String type = types.CONFIG_LOGS;
 
-		config.update_ini(type, logs.SCREEN, strings.from_boolean(_defaults.LOGS_SCREEN));
-		config.update_ini(type, logs.FILE, strings.from_boolean(_defaults.LOGS_FILE));
+		config.update_ini(type, logs.SCREEN, _defaults.LOGS_SCREEN);
+		config.update_ini(type, logs.FILE, _defaults.LOGS_FILE);
 	}	
 	
 	private static void load_config_subtypes()

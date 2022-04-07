@@ -13,7 +13,7 @@ public abstract class credentials
 	
 	static { ini.load(); }
 
-	public static HashMap<String, String> get(String id_, String user_, boolean encrypted_, String where_)
+	public static HashMap<String, String> get_username_password(String id_, String user_, boolean encrypted_, String where_)
 	{
 		String id = (strings.is_ok(id_) ? id_ : DEFAULT_ID);
 		String user = (strings.is_ok(user_) ? user_ : DEFAULT_USER);
@@ -31,10 +31,10 @@ public abstract class credentials
 			password = crypto.decrypt(password, id2);
 		}
 
-		return get(username, password);
+		return get_username_password(username, password);
 	}
 
-	public static HashMap<String, String> get(String username_, String password_)
+	public static HashMap<String, String> get_username_password(String username_, String password_)
 	{
 		HashMap<String, String> credentials = new HashMap<String, String>();
 		if (!strings.is_ok(username_) || password_ == null) return credentials;
@@ -45,17 +45,17 @@ public abstract class credentials
 		return credentials;
 	}
 	
-	public static boolean encrypt_files(String id_, String user_)
+	public static boolean encrypt_username_password_file(String id_, String user_)
 	{
 		String id = (strings.is_ok(id_) ? id_ : DEFAULT_ID);
 		String user = (strings.is_ok(user_) ? user_ : DEFAULT_USER);
 
-		String[] vals = encrypt_files_get_vals(id, user);
+		String[] vals = encrypt_username_password_file_get(id, user);
 		if (!arrays.is_ok(vals)) return false;
 		
 		String[] outputs = crypto.encrypt(vals, get_encryption_id(id, user));
 				
-		return (!arrays.is_ok(outputs) ? false : encrypt_files_store_vals(id, user, outputs));
+		return (!arrays.is_ok(outputs) ? false : encrypt_username_password_file_store(id, user, outputs));
 	}
 	
 	public static String get_extension()
@@ -73,7 +73,7 @@ public abstract class credentials
 		return (strings.are_ok(new String[] { id_, user_ }) ? (id_ + misc.SEPARATOR_NAME + user_) : strings.DEFAULT);
 	}
 	
-	private static boolean encrypt_files_store_vals(String id_, String user_, String[] outputs_)
+	private static boolean encrypt_username_password_file_store(String id_, String user_, String[] outputs_)
 	{
 		String[] paths = new String[] 
 		{ 
@@ -83,14 +83,14 @@ public abstract class credentials
 		
 		for (int i = 0; i < paths.length; i++)
 		{
-			io.line_to_file(paths[i], outputs_[i], false, true);
+			io.line_to_file(paths[i], outputs_[i], false);
 			if (!io._is_ok) return false;
 		}
 		
 		return true;
 	}
 	
-	private static String[] encrypt_files_get_vals(String id_, String user_)
+	private static String[] encrypt_username_password_file_get(String id_, String user_)
 	{
 		String[] vals = new String[2];
 		
@@ -113,9 +113,7 @@ public abstract class credentials
 	{
 		String output = strings.DEFAULT;
 
-		String where = (strings.is_ok(where_) ? where_ : DEFAULT_WHERE);
-
-		if (strings.are_equivalent(where, types.CONFIG_CREDENTIALS_WHERE_FILE)) 
+		if (where_.equals(types.CONFIG_CREDENTIALS_WHERE_FILE)) 
 		{
 			output = get_username_password_file(id_, user_, encrypted_, is_username_);
 		}
@@ -150,6 +148,8 @@ public abstract class credentials
 	
 	private static String check_where(String where_)
 	{
-		return types.check_subtype(where_, types.get_subtypes(WHERE, null), null, null);
+		String where = types.check_subtype(where_, types.get_subtypes(WHERE, null), null, null);
+
+		return (strings.is_ok(where) ? where : DEFAULT_WHERE);
 	}
 }

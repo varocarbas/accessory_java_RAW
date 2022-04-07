@@ -26,7 +26,7 @@ abstract class _alls
 
 	public static String[] DB_SETUPS = null;
 	public static HashMap<String, parent_db> DB_DBS = null;
-	
+
 	private static boolean _populated = false;
 	
 	public static void populate() 
@@ -49,7 +49,7 @@ abstract class _alls
 		
 		DB_SETUPS = db.populate_all_setups();
 		DB_DBS = db.populate_all_dbs();
-		
+
 		_populated = true;
 	} 
 }

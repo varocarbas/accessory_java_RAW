@@ -10,6 +10,19 @@ public abstract class types
 
 	//--------- To be synced with get_all_subtypes().
 
+	//IMPORTANT: these constants follow pretty rigid and predictable naming conventions, whose main
+	//point is to facilitate their automated treatment (e.g., easy subtype extraction). In any case,
+	//the most important aspect of these constants is them representing a major cornerstone of a common 
+	//structure ensuring the most intuitive and coherent management of (programming) resources and 
+	//information of any kind. Consequently, eventual breaches of the aforementioned naming conventions 
+	//might happen in their most relevant parts: their associated values. For example, the values of the
+	//CONFIG_DB_SETUP subtypes are, by default, copies of the corresponding DB root constants, which will 
+	//surely not follow the CONFIG_DB_SETUP naming convention. In any case, these scenarios are quite 
+	//exceptional and, in general, trusting the overall applicability of the naming conventions and the 
+	//associated perks (e.g., get_subtypes() methods below) is pretty sensible, although this shouldn't 
+	//be done in a blind, careless, disrespectful (respect the code, maaaaan!) manner, which is a quite 
+	//bad idea when dealing with pretty much anything or anyone anyway.
+	
 	//------ To be synced with the corresponding config methods/variables, mainly via config_ini.
 
 	//Note for DB types: the sources/fields are the types/ids, constant, used in most of the code. 
@@ -18,7 +31,7 @@ public abstract class types
 	//That is, the given type, the key which remains constant, (e.g., CONFIG_DB_FIELD_WHATEVER) is the 
 	//source/field and the associated value, which can be modified at runtime, (e.g., "whatever") is the 
 	//table/col.
-
+	
 	public static final String CONFIG = "config";
 	public static final String CONFIG_BASIC = "config_basic";
 	public static final String CONFIG_BASIC_NAME = "config_basic_name";
@@ -27,6 +40,8 @@ public abstract class types
 	public static final String CONFIG_BASIC_DIR_INI = "config_basic_dir_ini";
 	public static final String CONFIG_BASIC_DIR_CREDENTIALS = "config_basic_dir_credentials";
 	public static final String CONFIG_BASIC_DIR_LOGS = "config_basic_dir_logs";
+	public static final String CONFIG_BASIC_DIR_LOGS_ERRORS = "config_basic_dir_logs_errors";
+	public static final String CONFIG_BASIC_DIR_LOGS_ACTIVITY = "config_basic_dir_logs_activity";
 	public static final String CONFIG_BASIC_DIR_CRYPTO = "config_basic_dir_crypto";
 	
 	public static final String CONFIG_CREDENTIALS = "config_credentials";
@@ -49,14 +64,13 @@ public abstract class types
 	//DB setups allow to support multiple basic configurations (e.g., different credentials or operating
 	//conditions) at the same time. The value associated with the corresponding CONFIG_DB_SETUP is the
 	//main key of the given DB, that is, the corresponding root CONFIG variable, the one used to store
-	//all its specific values in config._info. A given setup can include as many DBs as required.
+	//all its specific values in config._info. The default setup can include as many DBs as required.
 	public static final String CONFIG_DB_SETUP = "config_db_setup";
 	public static final String CONFIG_DB_SETUP_DEFAULT = CONFIG_DB;
 	
 	public static final String CONFIG_DB_MAX_POOL = "config_db_max_pool";
 	public static final String CONFIG_DB_NAME = "config_db_name";
 	public static final String CONFIG_DB_HOST = "config_db_host";
-	public static final String CONFIG_DB_ERROR_EXIT = "config_db_error_exit";
 	public static final String CONFIG_DB_TYPE = "config_db_type";
 	public static final String CONFIG_DB_TYPE_MYSQL = "config_db_type_mysql";
 	public static final String CONFIG_DB_CREDENTIALS = "config_db_credentials"; 
@@ -213,22 +227,22 @@ public abstract class types
 	
 	public static String check_what(String what_)
 	{
-		return check_subtype(what_, types.get_subtypes(WHAT, null), null, null);
+		return check_subtype(what_, types.get_subtypes(WHAT));
 	}
 	
 	public static String what_to_key(String what_)
 	{
-		return check_subtype(what_, types.get_subtypes(WHAT, null), ACTIONS_REMOVE, WHAT);
+		return check_subtype(what_, types.get_subtypes(WHAT), ACTIONS_REMOVE, WHAT);
 	}
 	
 	public static String check_action(String action_)
 	{
-		return check_subtype(action_, types.get_subtypes(ACTIONS, null), null, null);
+		return check_subtype(action_, types.get_subtypes(ACTIONS));
 	}
 	
 	public static String action_to_key(String action_)
 	{
-		return check_subtype(action_, types.get_subtypes(ACTIONS, null), ACTIONS_REMOVE, ACTIONS);
+		return check_subtype(action_, types.get_subtypes(ACTIONS), ACTIONS_REMOVE, ACTIONS);
 	}
 	
 	public static String check_multiple(String subtype_, HashMap<String, String[]> targets_)
@@ -247,6 +261,11 @@ public abstract class types
 		}
 		
 		return output;
+	}
+	
+	public static String check_subtype(String subtype_, String[] subtypes_)
+	{	
+		return check_subtype(subtype_, subtypes_, null, null);
 	}
 	
 	public static String check_subtype(String subtype_, String[] subtypes_, String action_add_remove_, String type_add_remove_)
@@ -304,6 +323,16 @@ public abstract class types
 		return (type_ + SEPARATOR + subtype_);
 	}
 
+	public static boolean is_subtype_of(String subtype_, String type_)
+	{
+		return arrays.value_exists(get_subtypes(type_), subtype_);
+	}
+
+	public static String[] get_subtypes(String[] types_)
+	{
+		return get_subtypes(types_, null);
+	}
+	
 	public static String[] get_subtypes(String[] types_, String[] all_)
 	{
 		if (!arrays.is_ok(types_)) return get_subtypes(strings.DEFAULT, all_);
@@ -317,7 +346,12 @@ public abstract class types
 
 		return arrays.to_array(subtypes);
 	}
-
+	
+	public static String[] get_subtypes(String type_)
+	{
+		return get_subtypes(type_, null);
+	}
+	
 	public static String[] get_subtypes(String type_, String[] all_)
 	{
 		ArrayList<String> subtypes = new ArrayList<String>();
@@ -342,7 +376,9 @@ public abstract class types
 			CONFIG_BASIC_NAME, 
 			CONFIG_BASIC_DIR,
 			CONFIG_BASIC_DIR_APP, CONFIG_BASIC_DIR_INI,CONFIG_BASIC_DIR_CREDENTIALS, 
-			CONFIG_BASIC_DIR_LOGS, CONFIG_BASIC_DIR_CRYPTO,
+			CONFIG_BASIC_DIR_CRYPTO,
+			CONFIG_BASIC_DIR_LOGS,
+			CONFIG_BASIC_DIR_LOGS_ERRORS, CONFIG_BASIC_DIR_LOGS_ACTIVITY,
 			CONFIG_CREDENTIALS, 
 			CONFIG_CREDENTIALS_ENCRYPTED, CONFIG_CREDENTIALS_WHERE, 
 			CONFIG_CREDENTIALS_WHERE_FILE, CONFIG_CREDENTIALS_WHERE_DB,
@@ -358,7 +394,7 @@ public abstract class types
 			CONFIG_DB,
 			CONFIG_DB_SETUP,
 			CONFIG_DB_SETUP_DEFAULT,
-			CONFIG_DB_MAX_POOL, CONFIG_DB_NAME, CONFIG_DB_HOST, CONFIG_DB_ERROR_EXIT, CONFIG_DB_TYPE,
+			CONFIG_DB_MAX_POOL, CONFIG_DB_NAME, CONFIG_DB_HOST, CONFIG_DB_TYPE,
 			CONFIG_DB_TYPE,
 			CONFIG_DB_TYPE_MYSQL,
 			CONFIG_DB_CREDENTIALS,

@@ -5,21 +5,22 @@ import java.util.HashMap;
 public abstract class errors 
 {	
 	public static boolean _triggered = false; 
+	public static boolean _exit = false;
 	
 	static { ini.load(); }
 
-	public static void manage(HashMap<String, String> info_, boolean exit_)
+	public static void manage(HashMap<String, String> info_)
 	{			
 		String message = get_all(info_);
 
-		logs.update(message, arrays.get_value(info_, generic.ID));
+		logs.update(message, arrays.get_value(info_, generic.ID), true);
 
 		_triggered = true;
 		
-		if (!tests._running && exit_) System.exit(1);
+		if (!tests._running && _exit) System.exit(1);
 	}
 
-	public static void manage(String type_, Exception e_, String[] further_, boolean exit_)
+	public static void manage(String type_, Exception e_, String[] further_)
 	{		
 		String all = (strings.is_ok(type_) ? type_ : "error");
 		all += misc.SEPARATOR_CONTENT + get_message(e_, type_);
@@ -32,38 +33,21 @@ public abstract class errors
 			}
 		}
 
-		logs.update(all, null);
+		logs.update(all, null, true);
 
 		_triggered = true;
 		
-		if (!tests._running && exit_) System.exit(1);
+		if (!tests._running && _exit) System.exit(1);
 	}
 
-	public static void manage_io(String type_, String path_, Exception e_, boolean errors_to_file_, boolean exit_)
+	public static void manage_io(String type_, String path_, Exception e_)
 	{
-		boolean changed = false;
-		boolean out = strings.to_boolean(config.get_logs(logs.FILE));
-
-		if (!errors_to_file_ && out) 
-		{
-			changed = true;
-			config.update_logs(logs.FILE, strings.from_boolean(false));
-		}
-
-		manage(get_info_io(type_, path_, e_), exit_);
-
-		if (changed) config.update_logs(logs.FILE, strings.from_boolean(true));	
+		manage(get_info_io(type_, path_, e_));
 	}
 
 	public static void manage_db(String type_, String query_, Exception e_, String message_)
 	{
-		manage
-		(
-			get_info_db(type_, query_, e_, message_), strings.to_boolean
-			(
-				config.get_db(types.CONFIG_DB_ERROR_EXIT)
-			)
-		);
+		manage(get_info_db(type_, query_, e_, message_));
 	}
 
 	private static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_)

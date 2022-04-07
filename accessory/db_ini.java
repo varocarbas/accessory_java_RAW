@@ -50,14 +50,14 @@ public abstract class db_ini
 		String main = types.CONFIG_DB;
 		String[] secs = db.get_all_setups(true);
 
-		HashMap<String, String> vals = load_config_linked_db_vals();
+		HashMap<String, Object> vals = load_config_linked_db_vals();
 
 		ini.load_config_linked_update(main, secs, vals);
 	}
 	
-	private static HashMap<String, String> load_config_linked_db_vals()
+	private static HashMap<String, Object> load_config_linked_db_vals()
 	{
-		HashMap<String, String> vals = new HashMap<String, String>();
+		HashMap<String, Object> vals = new HashMap<String, Object>();
 
 		vals.put(types.CONFIG_DB_TYPE, _defaults.DB_TYPE);
 		vals.put(types.CONFIG_DB_SETUP, _defaults.DB_SETUP);
@@ -65,8 +65,7 @@ public abstract class db_ini
 		vals.put(db.NAME, _defaults.DB_NAME);
 		vals.put(db.HOST, _defaults.DB_HOST);
 		vals.put(db.USER, _defaults.DB_USER);
-		vals.put(types.CONFIG_DB_ERROR_EXIT, strings.from_boolean(_defaults.DB_ERROR_EXIT));
-		vals.put(types.CONFIG_DB_CREDENTIALS_ENCRYPTED, strings.from_boolean(_defaults.DB_CREDENTIALS_ENCRYPTED));
+		vals.put(types.CONFIG_DB_CREDENTIALS_ENCRYPTED, _defaults.DB_CREDENTIALS_ENCRYPTED);
 		vals.put(db.USERNAME, _defaults.DB_CREDENTIALS_USERNAME);
 		vals.put(db.PASSWORD, _defaults.DB_CREDENTIALS_PASSWORD);
 

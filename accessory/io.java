@@ -17,9 +17,11 @@ public abstract class io
 {	
 	public static boolean _is_ok = false;
 	
+	static boolean _log_exceptions = true; //To avoid infinite loops when trying to log writing exceptions.
+	
 	static { ini.load(); }
 	
-	public static void array_to_file(String path_, String[] vals_, boolean append_, boolean errors_to_file_)
+	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{
 		_is_ok = false;
 		
@@ -29,15 +31,18 @@ public abstract class io
 		{
 			for (String val: vals_)
 			{
-				line_to_file(path_, val, append_, writer, errors_to_file_);
+				line_to_file(path_, val, append_, writer);
 			}
 		} 
-		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false); }
+		catch (Exception e) 
+		{ 
+			if (_log_exceptions) errors.manage_io(types.ERROR_FILE_WRITE, path_, e); 
+		}
 		
 		_is_ok = true;
 	}
 
-	public static String[] file_to_array(String path_, boolean errors_to_file_)
+	public static String[] file_to_array(String path_)
 	{
 		_is_ok = false;
 		
@@ -54,8 +59,9 @@ public abstract class io
 		} 
 		catch (Exception e) 
 		{ 
-			lines = null; 
-			errors.manage_io(types.ERROR_FILE_READ, path_, e, errors_to_file_, false);
+			lines = null;
+			
+			errors.manage_io(types.ERROR_FILE_READ, path_, e);
 		}
 
 		_is_ok = true;
@@ -65,17 +71,17 @@ public abstract class io
 	
 	public static String file_to_string(String path_, boolean only_first_)
 	{
-		String[] lines = file_to_array(path_, true);
+		String[] lines = file_to_array(path_);
 		if (!_is_ok || arrays.get_size(lines) < 1) return strings.DEFAULT;
 
 		return (only_first_ ? lines[0] : arrays.lines_to_string(lines));
 	}
 	
-	public static void line_to_file(String path_, String line_, boolean append_, boolean errors_to_file_)
+	public static void line_to_file(String path_, String line_, boolean append_)
 	{
 		_is_ok = false;
 		
-		line_to_file(path_, line_, append_, null, errors_to_file_);
+		line_to_file(path_, line_, append_, null);
 		
 		_is_ok = true;
 	}
@@ -85,7 +91,7 @@ public abstract class io
 		HashMap<String, String> ini = null;
 		if (!strings.contains_end(paths.EXTENSION_INI, path_, true)) return ini;
 
-		String[] lines = file_to_array(path_, true);
+		String[] lines = file_to_array(path_);
 		if (!arrays.is_ok(lines)) return ini;
 
 		ini = new HashMap<String, String>();
@@ -115,7 +121,7 @@ public abstract class io
 		{
 			stream.write(vals_);
 		} 
-		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, true, false); }
+		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e); }
 		
 		_is_ok = true;
 	}
@@ -131,7 +137,7 @@ public abstract class io
 		{
 			output = Files.readAllBytes(Paths.get(path_));
 		} 
-		catch (Exception e) { errors.manage_io(types.ERROR_FILE_READ, path_, e, true, false); }
+		catch (Exception e) { errors.manage_io(types.ERROR_FILE_READ, path_, e); }
 		
 		_is_ok = true;
 		
@@ -148,7 +154,7 @@ public abstract class io
 		{
 			stream.writeObject(vals_);
 		} 
-		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, true, false); }
+		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e); }
 		
 		_is_ok = true;
 	}
@@ -164,14 +170,14 @@ public abstract class io
 		{
 			output = stream.readObject();
 		} 
-		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, true, false); }
+		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e); }
 		
 		_is_ok = true;
 		
 		return output;
 	}
 	
-	private static void line_to_file(String path_, String line_, boolean append_, FileWriter writer_, boolean errors_to_file_)
+	private static void line_to_file(String path_, String line_, boolean append_, FileWriter writer_)
 	{
 		if (!strings.is_ok(path_) || !strings.is_ok(line_)) return;
 
@@ -192,6 +198,9 @@ public abstract class io
 
 			if (is_new) writer.close();
 		} 
-		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e, errors_to_file_, false); }
+		catch (Exception e) 
+		{ 
+			if (_log_exceptions) errors.manage_io(types.ERROR_FILE_WRITE, path_, e); 
+		}
 	}
 }

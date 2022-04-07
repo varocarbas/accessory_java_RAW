@@ -93,7 +93,7 @@ public abstract class tests
 		
 		String name = "create_table";
 		Class<?>[] params = new Class<?>[] { String.class, boolean.class };
-		Method method = generic.get_method(type, name, params, false);		
+		Method method = generic.get_method(type, name, params);		
 
 		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
 		ArrayList<Object> args2 = new ArrayList<Object>();
@@ -111,7 +111,7 @@ public abstract class tests
 
 		name = "insert";
 		params = new Class<?>[] { String.class, HashMap.class };
-		method = generic.get_method(type, name, params, false);		
+		method = generic.get_method(type, name, params);		
 
 		args = new ArrayList<ArrayList<Object>>();
 		
@@ -134,7 +134,7 @@ public abstract class tests
 
 		name = "update";
 		params = new Class<?>[] { String.class, HashMap.class, db_where[].class };
-		method = generic.get_method(type, name, params, false);	
+		method = generic.get_method(type, name, params);	
 				
 		int val = numbers.get_random_int(-1 * max, max);
 
@@ -152,7 +152,7 @@ public abstract class tests
 
 		name = "select_one_int";
 		params = new Class<?>[] { String.class, String.class, db_where[].class, db_order[].class };
-		method = generic.get_method(type, name, params, false);	
+		method = generic.get_method(type, name, params);	
 		
 		args = new ArrayList<ArrayList<Object>>();
 		
@@ -171,7 +171,7 @@ public abstract class tests
 
 		name = "execute_query";
 		params = new Class<?>[] { String.class };
-		method = generic.get_method(type, name, params, false);	
+		method = generic.get_method(type, name, params);	
 
 		String field = FIELD_INT;
 		String col = db.get_col(source, field);
@@ -216,7 +216,7 @@ public abstract class tests
 		
 		String name = "encrypt";
 		Class<?>[] params = new Class<?>[] { String[].class, String.class };
-		Method method = generic.get_method(type, name, params, false);	
+		Method method = generic.get_method(type, name, params);	
 		
 		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
 		
@@ -237,7 +237,7 @@ public abstract class tests
 		
 		name = "decrypt";
 		params = new Class<?>[] { String[].class, String.class };
-		method = generic.get_method(type, name, params, false);	
+		method = generic.get_method(type, name, params);	
 
 		args = new ArrayList<ArrayList<Object>>();
 		
@@ -351,7 +351,7 @@ public abstract class tests
 		
 		if (!arrays.is_ok(methods))
 		{
-			errors.manage(types.ERROR_TEST_RUN, null, (generic.is_ok(class_) ? new String[] { class_.getName() } : null), false);
+			errors.manage(types.ERROR_TEST_RUN, null, (generic.is_ok(class_) ? new String[] { class_.getName() } : null));
 			
 			return run_outs;
 		}
@@ -416,7 +416,7 @@ public abstract class tests
 
 		Object[] targets = (Object[])arrays.get_new(targets_);
 		Object[] args = get_args(params, arrays.get_new(args_));			
-		Object output = generic.call_static_method(method_, args, false);
+		Object output = generic.call_static_method(method_, args);
 		_temp_output = output;
 		
 		boolean out_is_ok = output_is_ok(output, targets);
@@ -538,7 +538,7 @@ public abstract class tests
 			info.put("method", strings.to_string(method_name_));
 			info.put("class", (generic.is_ok(class_) ? class_.getName() : strings.DEFAULT));
 
-			errors.manage(info, false);
+			errors.manage(info);
 		}	
 		
 		_running = is_ok;

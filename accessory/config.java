@@ -18,13 +18,23 @@ public abstract class config
 	{
 		return get(types.CONFIG_BASIC, key_);
 	}
+	
+	public static boolean update_basic(String key_, boolean val_)
+	{
+		return update_basic(key_, strings.to_string(val_));
+	}
 
-	public static <x> boolean update_basic(String key_, x val_)
+	public static boolean update_basic(String key_, String val_)
 	{
 		return update(types.CONFIG_BASIC, key_, val_);
 	}
+	
+	public static boolean matches_basic(String key_, boolean val_)
+	{
+		return matches_basic(key_, strings.to_string(val_));
+	}
 
-	public static <x> boolean matches_basic(String key_, x val_)
+	public static boolean matches_basic(String key_, String val_)
 	{
 		return matches(types.CONFIG_BASIC, key_, val_);
 	}
@@ -33,13 +43,23 @@ public abstract class config
 	{
 		return get(types.CONFIG_DB, key_);
 	}
-
-	public static <x> boolean update_db(String key_, x val_)
+	
+	public static boolean update_db(String key_, boolean val_)
+	{
+		return update_db(key_, strings.to_string(val_));
+	}
+	
+	public static boolean update_db(String key_, String val_)
 	{
 		return update(types.CONFIG_DB, key_, val_);
 	}
-
-	public static <x> boolean matches_db(String key_, x val_)
+	
+	public static boolean matches_db(String key_, boolean val_)
+	{
+		return matches_db(key_, strings.to_string(val_));
+	}
+	
+	public static boolean matches_db(String key_, String val_)
 	{
 		return matches(types.CONFIG_DB, key_, val_);
 	}
@@ -49,12 +69,22 @@ public abstract class config
 		return get(types.CONFIG_CREDENTIALS, key_);
 	}
 
-	public static <x> boolean update_credentials(String key_, x val_)
+	public static boolean update_credentials(String key_, boolean val_)
+	{
+		return update_credentials(key_, strings.to_string(val_));
+	}
+	
+	public static boolean update_credentials(String key_, String val_)
 	{
 		return update(types.CONFIG_CREDENTIALS, key_, val_);
 	}
 
-	public static <x> boolean matches_credentials(String key_, x val_)
+	public static boolean matches_credentials(String key_, boolean val_)
+	{
+		return matches_credentials(key_, strings.to_string(val_));
+	}
+	
+	public static boolean matches_credentials(String key_, String val_)
 	{
 		return matches(types.CONFIG_CREDENTIALS, key_, val_);
 	}
@@ -64,12 +94,22 @@ public abstract class config
 		return get(types.CONFIG_CRYPTO, key_);
 	}
 
-	public static <x> boolean update_crypto(String key_, x val_)
+	public static boolean update_crypto(String key_, boolean val_)
+	{
+		return update_crypto(key_, strings.to_string(val_));
+	}
+	
+	public static boolean update_crypto(String key_, String val_)
 	{
 		return update(types.CONFIG_CRYPTO, key_, val_);
 	}
 
-	public static <x> boolean matches_crypto(String key_, x val_)
+	public static boolean matches_crypto(String key_, boolean val_)
+	{
+		return matches_crypto(key_, strings.to_string(val_));
+	}
+	
+	public static boolean matches_crypto(String key_, String val_)
 	{
 		return matches(types.CONFIG_CRYPTO, key_, val_);
 	}
@@ -79,33 +119,44 @@ public abstract class config
 		return get(types.CONFIG_LOGS, key_);
 	}
 
-	public static <x> boolean update_logs(String key_, x val_)
+	public static boolean update_logs(String key_, boolean val_)
+	{
+		return update_logs(key_, strings.to_string(val_));
+	}
+	
+	public static boolean update_logs(String key_, String val_)
 	{
 		return update(types.CONFIG_LOGS, key_, val_);
 	}
 
-	public static <x> boolean matches_logs(String key_, x val_)
+	public static boolean matches_logs(String key_, boolean val_)
+	{
+		return matches_logs(key_, strings.to_string(val_));
+	}
+	
+	public static boolean matches_logs(String key_, String val_)
 	{
 		return matches(types.CONFIG_LOGS, key_, val_);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <x> x get(String type_, String key_)
+	public static String get(String type_, String key_)
 	{		
-		x output = null;
+		String output = null;
 		
 		String type = check_type(type_);
 		if (!strings.is_ok(type) || !strings.is_ok(key_)) return output;
 		
-		if (_info.containsKey(type) && _info.get(type).containsKey(key_)) 
-		{
-			output = (x)_info.get(type).get(key_);
-		}
+		if (_info.containsKey(type) && _info.get(type).containsKey(key_)) output = _info.get(type).get(key_);
 
 		return output;
 	}
 
-	public static <x> boolean update(String type_, String key_, x val_)
+	public static boolean update(String type_, String key_, boolean val_)
+	{
+		return update(type_, key_, strings.to_string(val_));
+	}
+	
+	public static boolean update(String type_, String key_, String val_)
 	{	
 		boolean is_ok = false;
 		
@@ -120,7 +171,7 @@ public abstract class config
 
 		for (String sec: secs)
 		{
-			x val = get(sec, key_);
+			String val = get(sec, key_);
 			if (generic.is_ok(val)) continue;
 
 			update(sec, key_, val_);
@@ -129,7 +180,12 @@ public abstract class config
 		return is_ok;
 	}
 
-	public static <x> boolean matches(String type_, String key_, x val_)
+	public static boolean matches(String type_, String key_, boolean val_)
+	{
+		return matches(type_, key_, strings.to_string(val_));
+	}
+	
+	public static boolean matches(String type_, String key_, String val_)
 	{
 		return update_matches(type_, key_, val_, false, false);
 	}	
@@ -162,7 +218,7 @@ public abstract class config
 		return output;
 	}
 
-	public static <x> boolean update_linked(String main_, String[] secs_)
+	public static boolean update_linked(String main_, String[] secs_)
 	{
 		String main = check_type(main_);
 		if (!strings.is_ok(main) || !arrays.is_ok(secs_)) return false;
@@ -172,7 +228,7 @@ public abstract class config
 		return true;
 	}
 
-	public static <x> boolean update_subtypes(String main_, String[] subtypes_)
+	public static boolean update_subtypes(String main_, String[] subtypes_)
 	{
 		String main = check_type(main_);
 		if (!strings.is_ok(main) || !arrays.is_ok(subtypes_)) return false;
@@ -182,7 +238,12 @@ public abstract class config
 		return true;
 	}
 
-	public static <x> boolean update_ini(String type_, String key_, x val_)
+	public static boolean update_ini(String type_, String key_, boolean val_)
+	{
+		return update_ini(type_, key_, strings.to_string(val_));
+	}
+	
+	public static boolean update_ini(String type_, String key_, String val_)
 	{
 		return update_matches(check_type(type_), key_, val_, true, true);
 	}
@@ -201,11 +262,8 @@ public abstract class config
 			String key = param.getKey();
 			String val = param.getValue();
 			if (val == null) continue;
-			
-			boolean is_ok = false;
-			if (type.equals(types.CONFIG_DB)) is_ok = update_db(key, val);
 
-			output.put(key, is_ok);
+			output.put(key, config.update(type, key, val));
 		}
 
 		return output;
@@ -213,10 +271,10 @@ public abstract class config
 
 	private static String check_type(String type_)
 	{
-		return types.check_subtype(type_, types.get_subtypes(types.CONFIG, null), null, null);
+		return types.check_subtype(type_, types.get_subtypes(types.CONFIG), null, null);
 	}
 	
-	private static <x> boolean update_matches(String type_, String key_, x val_, boolean update_, boolean ini_)
+	private static boolean update_matches(String type_, String key_, String val_, boolean update_, boolean ini_)
 	{
 		boolean is_ok = false;
 
@@ -235,11 +293,8 @@ public abstract class config
 		is_ok = true;
 		String val = strings.to_string(val_);
 
-		info = update_matches_internal
-		(
-			info, update_matches_get_keys_all(key, ini_, type), val, update_, ini_
-		);
-
+		info = update_matches_internal(info, update_matches_get_keys_all(key, ini_, type), val, update_, ini_);
+		
 		if (!arrays.is_ok(info)) is_ok = false;
 		else if (update_) _info.put(type, new HashMap<String, String>(info));
 

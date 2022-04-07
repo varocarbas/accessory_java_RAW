@@ -18,6 +18,8 @@ public class crypto extends parent
 	public static final String DEFAULT_ALGORITHM_CIPHER = _defaults.CRYPTO_ALGORITHM_CIPHER;
 	public static final String DEFAULT_ALGORITHM_KEY = _defaults.CRYPTO_ALGORITHM_KEY;
 
+	public Cipher _cipher_enc = null; 
+	public Cipher _cipher_dec = null;
 	public String _algo_cipher = DEFAULT_ALGORITHM_CIPHER;
 	public String _path_iv = strings.DEFAULT;
 	public String _algo_key = DEFAULT_ALGORITHM_KEY;
@@ -30,8 +32,6 @@ public class crypto extends parent
 	
 	private String _temp_algo_key = strings.DEFAULT; 
 	private String _temp_algo_cipher = strings.DEFAULT;
-	private Cipher _temp_cipher_enc = null; 
-	private Cipher _temp_cipher_dec = null;
 	
 	public String toString() { return strings.DEFAULT; }
 	public boolean is_ok() { return _is_ok; }
@@ -83,7 +83,7 @@ public class crypto extends parent
 
 	public void encrypt()
 	{
-		if (!is_ok_encrypt()) return;
+		if (!is_ok_enc()) return;
 
 		try 
 		{
@@ -91,11 +91,11 @@ public class crypto extends parent
 
 			if (!arrays.is_ok(_iv)) 
 			{
-				_iv = _temp_cipher_enc.getIV();
+				_iv = _cipher_enc.getIV();
 				if (!iv_to_file(_iv)) return;
 			}
 
-			_out = Base64.getEncoder().encodeToString(_temp_cipher_enc.doFinal(_in.getBytes()));
+			_out = Base64.getEncoder().encodeToString(_cipher_enc.doFinal(_in.getBytes()));
 		} 
 		catch (Exception e) 
 		{ 
@@ -109,13 +109,13 @@ public class crypto extends parent
 
 	public void decrypt()
 	{
-		if (!is_ok_decrypt()) return;
+		if (!is_ok_dec()) return;
 
 		try 
 		{
 			update_cipher_dec();
 
-			_out = new String(_temp_cipher_dec.doFinal(Base64.getDecoder().decode(_in)));
+			_out = new String(_cipher_dec.doFinal(Base64.getDecoder().decode(_in)));
 		} 
 		catch (Exception e) 
 		{ 
@@ -129,7 +129,7 @@ public class crypto extends parent
 	
 	private static String[] encrypt_decrypt_file(String path_, String id_, boolean is_encrypt_)
 	{
-		return encrypt_decrypt(io.file_to_array(path_,true), id_, is_encrypt_);
+		return encrypt_decrypt(io.file_to_array(path_), id_, is_encrypt_);
 	}
 	
 	private static String[] encrypt_decrypt(String[] inputs_, String id_, boolean is_encrypt_)
@@ -205,10 +205,7 @@ public class crypto extends parent
 		
 		if (temp != null && io._is_ok) 
 		{
-			try
-			{
-				output = (SecretKey)temp;	
-			}
+			try { output = (SecretKey)temp;	}
 			catch (Exception e) 
 			{ 
 				manage_error(types.ERROR_CRYPTO_KEY, e);
@@ -270,11 +267,11 @@ public class crypto extends parent
 	
 	private void update_cipher_enc()
 	{	
-		if (_temp_cipher_enc != null) return;
+		if (_cipher_enc != null) return;
 		
 		try
 		{	
-			_temp_cipher_enc = Cipher.getInstance(_algo_cipher);
+			_cipher_enc = Cipher.getInstance(_algo_cipher);
 			
 			if (_key == null) 
 			{
@@ -283,24 +280,25 @@ public class crypto extends parent
 				if (!key_to_file(_key)) 
 				{
 					manage_error();
+					
 					return;
 				}
 			}
 			
-			_temp_cipher_enc.init(Cipher.ENCRYPT_MODE, _key, new SecureRandom());	
+			_cipher_enc.init(Cipher.ENCRYPT_MODE, _key, new SecureRandom());	
 		}
 		catch (Exception e) { manage_error(types.ERROR_CRYPTO_ENCRYPT, e); }
 	}
 
 	private void update_cipher_dec()
 	{	
-		if (_temp_cipher_dec != null) return;
+		if (_cipher_dec != null) return;
 		
 		try 
 		{
-			_temp_cipher_dec = Cipher.getInstance(_algo_cipher);
+			_cipher_dec = Cipher.getInstance(_algo_cipher);
 			
-			_temp_cipher_dec.init(Cipher.DECRYPT_MODE, _key, new IvParameterSpec(_iv));
+			_cipher_dec.init(Cipher.DECRYPT_MODE, _key, new IvParameterSpec(_iv));
 		} 
 		catch (Exception e) { manage_error(types.ERROR_CRYPTO_DECRYPT, e); }
 	}
@@ -317,13 +315,15 @@ public class crypto extends parent
 		items.put("algo_key", _algo_key);
 		items.put("algo_cipher", _algo_cipher);
 
-		errors.manage(items, false);
+		errors.manage(items);
 	}
 
 	private void manage_error()
 	{
 		_is_ok = false;
 
+		_cipher_enc = null;
+		_cipher_dec = null;
 		_in = strings.DEFAULT;
 		_out = strings.DEFAULT;
 		_path_key = strings.DEFAULT;
@@ -359,14 +359,14 @@ public class crypto extends parent
 		return is_ok;
 	}
 
-	private boolean is_ok_encrypt()
+	private boolean is_ok_enc()
 	{
 		_is_ok = false; //To be set to true after a successful encryption.
 
 		return is_ok_common(_in, _path_key, _path_iv, _algo_key, _algo_cipher, false);
 	}
 
-	private boolean is_ok_decrypt()
+	private boolean is_ok_dec()
 	{
 		_is_ok = false; //To be set to true after a successful decryption.
 

@@ -1,6 +1,7 @@
 package accessory;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public abstract class paths 
 {	
@@ -9,6 +10,8 @@ public abstract class paths
 	public static final String DIR_APP = types.CONFIG_BASIC_DIR_APP;
 	public static final String DIR_INI = types.CONFIG_BASIC_DIR_INI;
 	public static final String DIR_LOGS = types.CONFIG_BASIC_DIR_LOGS;
+	public static final String DIR_LOGS_ERRORS = types.CONFIG_BASIC_DIR_LOGS_ERRORS;
+	public static final String DIR_LOGS_ACTIVITY = types.CONFIG_BASIC_DIR_LOGS_ACTIVITY;
 	public static final String DIR_CREDENTIALS = types.CONFIG_BASIC_DIR_CREDENTIALS;
 	public static final String DIR_CRYPTO = types.CONFIG_BASIC_DIR_CRYPTO;
 
@@ -20,7 +23,10 @@ public abstract class paths
 	public static final String DEFAULT_DIR_APP = _defaults.DIR_APP;
 	public static final String DEFAULT_DIR_INI = _defaults.DIR_INI;
 	public static final String DEFAULT_DIR_LOGS = _defaults.DIR_LOGS;
+	public static final String DEFAULT_DIR_LOGS_ERRORS = _defaults.DIR_LOGS_ERRORS;
+	public static final String DEFAULT_DIR_LOGS_ACTIVITY = _defaults.DIR_LOGS_ACTIVITY;
 	public static final String DEFAULT_DIR_CREDENTIALS = _defaults.DIR_CREDENTIALS;
+	public static final String DEFAULT_DIR_CRYPTO = _defaults.DIR_CRYPTO;
 	
 	static { ini.load(); }
 
@@ -105,16 +111,26 @@ public abstract class paths
 	public static String get_dir_home()
 	{
 		return normalise_dir(System.getProperty("user.home"));
-	}
-	
-	static String get_default_dir_ini(String type_)
+	}	
+
+	static String get_default_dir(String type_)
 	{
 		String type = types.check_subtype(type_, types.get_subtypes(types.CONFIG_BASIC_DIR, null), null, null);
 		
 		if (!strings.is_ok(type)) return strings.DEFAULT;
-		else if (strings.are_equal(type, types.CONFIG_BASIC_DIR_APP) || strings.are_equal(type, types.CONFIG_BASIC_DIR_LOGS)) return get_dir_app_default();
+		else if (strings.are_equal(type, types.CONFIG_BASIC_DIR_APP)) return get_dir_app_default();
 
-		return build(new String[] { get_dir_home(), types.remove_type(type_, types.CONFIG_BASIC_DIR) }, false);
+		ArrayList<String> parts = new ArrayList<String>();
+		parts.add(get_dir_home());
+		
+		if (types.is_subtype_of(type, types.CONFIG_BASIC_DIR_LOGS))
+		{
+			parts.add(types.remove_type(types.CONFIG_BASIC_DIR_LOGS, types.CONFIG_BASIC_DIR));
+			parts.add(types.remove_type(type, types.CONFIG_BASIC_DIR_LOGS));
+		}
+		else parts.add(types.remove_type(type, types.CONFIG_BASIC_DIR)); 
+		
+		return build(arrays.to_array(parts), false);
 	}
 	
 	private static String get_update_dir(String type_, String val_, boolean is_get_)

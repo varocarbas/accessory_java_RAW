@@ -421,50 +421,24 @@ public abstract class generic
 		return arrays.to_array(methods);
 	}
 
-	public static Method get_method(Class<?> class_, String name_, Class<?>[] params_, boolean error_exit_)
+	public static Method get_method(Class<?> class_, String name_, Class<?>[] params_)
 	{
 		Method output = null;
 		if (!is_ok(class_) || !strings.is_ok(name_)) return output;
 
-		try 
-		{
-			output = class_.getMethod(name_, params_);
-		} 
-		catch (Exception e) 
-		{ 
-			errors.manage
-			(
-				types.ERROR_GENERIC_METHOD_GET, e, new String[] 
-				{ 
-					name_, strings.to_string(params_) 
-				},
-				error_exit_
-			);
-		}
+		try { output = class_.getMethod(name_, params_); } 
+		catch (Exception e) { errors.manage(types.ERROR_GENERIC_METHOD_GET, e, new String[] { name_, strings.to_string(params_) }); }
 
 		return output;
 	}
 
-	public static Object call_static_method(Method method_, Object[] args_, boolean error_exit_)
+	public static Object call_static_method(Method method_, Object[] args_)
 	{
 		Object output = null;
 		if (!is_ok(method_)) return output;
 
-		try 
-		{
-			output = method_.invoke(null, args_);
-		} 
-		catch (Exception e) 
-		{ 
-			errors.manage
-			(
-				types.ERROR_GENERIC_METHOD_CALL, e, new String[] 
-				{ 
-					method_.getName(), strings.to_string(args_)
-				},
-				error_exit_
-			); 
-		}
+		try { output = method_.invoke(null, args_); } 
+		catch (Exception e) { errors.manage(types.ERROR_GENERIC_METHOD_CALL, e, new String[] { method_.getName(), strings.to_string(args_) }); }
 
 		return output;
 	}

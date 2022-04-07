@@ -18,7 +18,7 @@ public abstract class logs
 	
 	static { ini.load(); }
 
-	public static void update(String message_, String id_)
+	public static void update(String message_, String id_, boolean is_error_)
 	{
 		if (!strings.is_ok(message_)) return;
 
@@ -34,7 +34,7 @@ public abstract class logs
 			return;
 		}
 		
-		if (out_is_ok(FILE)) update_file(message_, id);
+		if (out_is_ok(FILE)) update_file(message_, id, is_error_);
 	}
 
 	public static void update_screen(String message_)
@@ -45,22 +45,24 @@ public abstract class logs
 		System.out.println(message);
 	}
 
-	public static void update_file(String message_, String id_)
+	public static void update_file(String message_, String id_, boolean is_error_)
 	{
 		String message = message_;
 		if (!strings.is_ok(message)) return;
 
-		io.line_to_file(get_path(id_), dates.add_timestamp(message, null, false), true, false);
+		io._log_exceptions = false;
+		io.line_to_file(get_path(id_, is_error_), dates.add_timestamp(message, null, false), true);
+		io._log_exceptions = true;
 	}
 
-	private static String get_path(String id_)
+	private static String get_path(String id_, boolean is_error_)
 	{
 		String file = id_;
 		file += paths.EXTENSION_LOG;
 
 		ArrayList<String> pieces = new ArrayList<String>();
 
-		String dir = paths.get_dir(paths.DIR_LOGS);
+		String dir = paths.get_dir(is_error_ ? paths.DIR_LOGS_ERRORS : paths.DIR_LOGS_ACTIVITY);
 		if (strings.is_ok(dir)) pieces.add(dir);
 		pieces.add(file);
 

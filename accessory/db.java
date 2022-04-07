@@ -454,10 +454,10 @@ public abstract class db
 		String password = config.get(setup, PASSWORD);
 		boolean encrypted = strings.to_boolean(config.get(setup, CREDENTIALS_ENCRYPTED));
 
-		if (strings.is_ok(username) && password != null) output = credentials.get(username, password);
+		if (strings.is_ok(username) && password != null) output = credentials.get_username_password(username, password);
 		else if (strings.is_ok(user))
 		{
-			output = credentials.get(get_id_encrypted_type(), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
+			output = credentials.get_username_password(get_id_encrypted_type(), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
 		}
 
 		return output;
