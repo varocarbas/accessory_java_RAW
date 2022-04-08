@@ -5,120 +5,152 @@ import java.util.Map.Entry;
 
 public abstract class db_ini 
 {
-	public static void load() 
-	{
-		load_types();
-		load_sources();
-	}
+	public static final String ERROR_SETUPS = types.ERROR_INI_DB_SETUPS;
+	public static final String ERROR_SOURCES = types.ERROR_INI_DB_SOURCES;
 	
-	//Method expected to be called together with each load_config_sources_[source]().
-	public static void load_config_sources_default_fields(String main_)
+	private static boolean _populated = false;
+	
+	public static void populate() 
 	{
-		config.update_ini(main_, db.FIELD_ID, _defaults.DB_DEFAULT_COL_ID);
-		config.update_ini(main_, db.FIELD_TIMESTAMP, _defaults.DB_DEFAULT_COL_TIMESTAMP);	
-	}
-
-	private static void load_sources()
-	{
-		HashMap<String, String> source_mains = new HashMap<String, String>();
-		source_mains.put(types.CONFIG_TESTS_DB_SOURCE, types.CONFIG_TESTS);
+		if (_populated) return;
 		
-		load_sources_all(source_mains);
-	}
-	
-	//Method including the types more closely related to the DB setup.
-	private static void load_types()
-	{
-		load_types_config();
-	}
-	
-	private static void load_types_config()
-	{
-		load_config_db();
-		load_config_sources();
+		String error = strings.DEFAULT;
+		if (!populate_all_setups()) error = ERROR_SETUPS;
+		if (error.equals(strings.DEFAULT) && !populate_all_sources()) error = ERROR_SOURCES;
 
-		load_config_linked_db();
+		_populated = true;
+		if (error.equals(strings.DEFAULT)) return;
+
+		errors._exit = true;
+		errors.manage(error);
 	}
 
-	private static void load_config_db()
+	public static boolean populate_setup(String setup_, String db_, HashMap<String, Object> vals_)
 	{
-		//Loaded via load_config_linked_db().
+		HashMap<String, Object> vals = new HashMap<String, Object>(arrays.is_ok(vals_) ? vals_ : get_setup_default());
+		
+		String setup = (strings.is_ok(setup_) ? setup_ : _defaults.DB_SETUP);
+		
+		vals.put(db.SETUP, setup);
+		vals.put(db.NAME, (strings.is_ok(db_) ? db_ : _defaults.DB_NAME));		
+		
+		return config.update_ini(setup, vals);
+	}
+
+	public static boolean populate_source(String main_, String source_, String table_, HashMap<String, Object[]> fields_)
+	{
+		String main = config.check_type(main_);
+		String source = config.check_type(source_);
+		if (!strings.is_ok(main) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
+
+		HashMap<String, Object[]> defaults = get_fields_default();
+		if (!arrays.is_ok(defaults)) return false;
+		
+		HashMap<String, db_field> fields = new HashMap<String, db_field>();		
+
+		int count = 0;
+		while (count < 2)
+		{
+			count++;
+			
+			for (Entry<String, Object[]> item: (count == 1 ? defaults : fields_).entrySet())
+			{
+				String id = item.getKey();
+				Object[] val = item.getValue();
+				
+				String col = (String)val[0];
+				config.update_ini(main, id, col);
+				
+				db_field field = (db_field)val[1];
+				fields.put(id, field);
+			}
+		}
+	
+		return (!db.add_source(source, fields) ? false : (config.update_ini(main, source, table_) && db.add_source_main(source, main)));
 	}
 	
-	private static void load_config_linked_db()
-	{
-		String main = types.CONFIG_DB;
-		String[] secs = db.get_all_setups(true);
-
-		HashMap<String, Object> vals = load_config_linked_db_vals();
-
-		ini.load_config_linked_update(main, secs, vals);
+	public static HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String type_field_)
+	{		
+		HashMap<String, Object[]> fields = new HashMap<String, Object[]>();
+		if (!arrays.is_ok(info_)) return fields;
+	
+		for (Entry<String, db_field> item: info_.entrySet())
+		{
+			String id = item.getKey();
+			fields = add_field(id, get_col_default(id, type_field_), item.getValue(), fields);	
+		}
+		
+		return fields;
 	}
 	
-	private static HashMap<String, Object> load_config_linked_db_vals()
+	public static HashMap<String, Object[]> add_field(String id_, String col_, db_field field_, HashMap<String, Object[]> all_fields_)
+	{
+		all_fields_.put(id_, new Object[] { col_, field_ });
+		
+		return all_fields_;
+	}
+
+	public static String get_col_default(String field_, String type_)
+	{
+		return types.remove_type(field_, type_);
+	}
+	
+	private static boolean populate_all_setups()
+	{
+		boolean is_ok = true;
+		
+		is_ok = populate_setup(null, null, null); //Default setup & default DB.
+	
+		return is_ok;
+	}
+	
+	private static boolean populate_all_sources()
+	{	
+		boolean is_ok = true;
+	
+		String main = types.CONFIG_TESTS; 
+		String source = types.CONFIG_TESTS_DB_SOURCE;
+		String table = "tests";
+		HashMap<String, Object[]> fields = get_fields(get_fields_tests(), types.CONFIG_TESTS_DB_FIELD);
+		
+		is_ok = populate_source(main, source, table, fields);
+
+		return is_ok;
+	}
+	
+	private static HashMap<String, db_field> get_fields_tests()
+	{
+		HashMap<String, db_field> info = new HashMap<String, db_field>();
+		
+		info.put(types.CONFIG_TESTS_DB_FIELD_INT, new db_field(data.INT));
+		info.put(types.CONFIG_TESTS_DB_FIELD_STRING, new db_field(data.STRING, strings.DEFAULT_SIZE, 0));
+		info.put(types.CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(data.DECIMAL, 15, 3));
+
+		return info;
+	}
+
+	private static HashMap<String, Object[]> get_fields_default()
+	{
+		HashMap<String, Object[]> fields = new HashMap<String, Object[]>();
+
+		fields = add_field(types.CONFIG_DB_DEFAULT_FIELD_ID, "_id", new db_field(data.INT, new String[] { db_field.KEY_PRIMARY, db_field.AUTO_INCREMENT }), fields);
+		fields = add_field(types.CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, "_timestamp", new db_field(data.TIMESTAMP, new String[] { db_field.TIMESTAMP }), fields);
+
+		return fields;
+	}
+	
+	private static HashMap<String, Object> get_setup_default()
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 
 		vals.put(types.CONFIG_DB_TYPE, _defaults.DB_TYPE);
-		vals.put(types.CONFIG_DB_SETUP, _defaults.DB_SETUP);
-		vals.put(db.MAX_POOL, _defaults.DB_MAX_POOL);
-		vals.put(db.NAME, _defaults.DB_NAME);
-		vals.put(db.HOST, _defaults.DB_HOST);
-		vals.put(db.USER, _defaults.DB_USER);
+		vals.put(types.CONFIG_DB_MAX_POOL, _defaults.DB_MAX_POOL);
+		vals.put(types.CONFIG_DB_HOST, _defaults.DB_HOST);
+		vals.put(types.CONFIG_DB_CREDENTIALS_USER, _defaults.DB_USER);
 		vals.put(types.CONFIG_DB_CREDENTIALS_ENCRYPTED, _defaults.DB_CREDENTIALS_ENCRYPTED);
-		vals.put(db.USERNAME, _defaults.DB_CREDENTIALS_USERNAME);
-		vals.put(db.PASSWORD, _defaults.DB_CREDENTIALS_PASSWORD);
+		vals.put(types.CONFIG_DB_CREDENTIALS_USERNAME, _defaults.DB_CREDENTIALS_USERNAME);
+		vals.put(types.CONFIG_DB_CREDENTIALS_PASSWORD, _defaults.DB_CREDENTIALS_PASSWORD);
 
 		return vals;
-	}
-	
-	private static void load_config_sources()
-	{
-		String[] mains = new String[] { types.CONFIG_LOGS, types.CONFIG_TESTS  };
-		
-		for (String main: mains)
-		{
-			load_config_sources_default_fields(main);	
-			
-			if (main.equals(types.CONFIG_TESTS)) load_config_sources_tests(main);
-		}
-	}
-
-	private static void load_config_sources_tests(String main_)
-	{
-		config.update_ini(main_, types.CONFIG_TESTS_DB, _defaults.DB_NAME);
-		config.update_ini(main_, tests.SOURCE, _defaults.TESTS_DB_TABLE);
-		config.update_ini(main_, tests.FIELD_INT, _defaults.TESTS_DB_COL_INT);
-		config.update_ini(main_, tests.FIELD_STRING, _defaults.TESTS_DB_COL_STRING);
-		config.update_ini(main_, tests.FIELD_DECIMAL, _defaults.TESTS_DB_COL_DECIMAL);
-	}
-	
-	private static void load_sources_all(HashMap<String, String> source_mains_)
-	{		
-		for (Entry<String, String> item: source_mains_.entrySet())
-		{
-			String source = item.getKey();
-			String main = item.getValue();
-		
-			load_sources_source(source);			
-			db.add_source_main(source, main);
-		}
-	}
-	
-	private static void load_sources_source(String source_)
-	{
-		if (source_.equals(types.CONFIG_TESTS_DB_SOURCE)) load_sources_source_tests(source_);
-	}	
-
-	private static void load_sources_source_tests(String source_)
-	{
-		if (db.source_is_ok(source_)) return;
-		
-		HashMap<String, db_field> fields = db.get_default_fields();
-		fields.put(tests.FIELD_INT, new db_field(data.INT));
-		fields.put(tests.FIELD_STRING, new db_field(data.STRING, strings.DEFAULT_SIZE, 0));
-		fields.put(tests.FIELD_DECIMAL, new db_field(data.DECIMAL, 15, 3));
-
-		db.add_source(source_, fields);
 	}
 }

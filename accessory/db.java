@@ -48,9 +48,6 @@ public abstract class db
 	public static final String QUERY_TABLE_DROP = TABLE_DROP;
 	public static final String QUERY_TABLE_TRUNCATE = TABLE_TRUNCATE;
 	
-	public static final String DEFAULT_COL_ID = _defaults.DB_DEFAULT_COL_ID;
-	public static final String DEFAULT_COL_TIMESTAMP = _defaults.DB_DEFAULT_COL_TIMESTAMP;
-	
 	public static final String DEFAULT_TYPE = _defaults.DB_TYPE;
 	public static final String DEFAULT_MAX_POOL = _defaults.DB_MAX_POOL;
 	public static final String DEFAULT_NAME = _defaults.DB_NAME;
@@ -263,10 +260,10 @@ public abstract class db
 		return strings.is_ok(get_col(source_, field_));
 	}
 	
-	public static void add_source(String source_, HashMap<String, db_field> fields_)
+	public static boolean add_source(String source_, HashMap<String, db_field> fields_)
 	{
 		if (!arrays.is_ok(_sources)) _sources = new HashMap<String, HashMap<String, db_field>>();
-		if (!strings.is_ok(source_) || _sources.containsKey(source_)) return;
+		if (!strings.is_ok(source_) || _sources.containsKey(source_)) return false;
 		
 		HashMap<String, db_field> fields = new HashMap<String, db_field>();
 		
@@ -277,23 +274,27 @@ public abstract class db
 			{
 				manage_error(types.ERROR_DB_FIELD, null, null, field.toString());
 				
-				return;
+				return false;
 			}
 			
 			fields.put(item.getKey(), field);
 		}
 		
 		_sources.put(source_, fields);
+		
+		return true;
 	}
 	
-	public static void add_source_main(String source_, String main_)
+	public static boolean add_source_main(String source_, String main_)
 	{
 		String source = check_source(source_);
-		if (!strings.are_ok(new String[] { source, main_ })) return;
+		if (!strings.are_ok(new String[] { source, main_ })) return false;
 		
 		if (!arrays.is_ok(_source_mains)) _source_mains = new HashMap<String, String>();
 		
 		_source_mains.put(source, main_);
+
+		return true;
 	}
 	
 	public static String get_source_main(String source_)
@@ -308,16 +309,6 @@ public abstract class db
 		String source = check_source(source_);
 
 		return (strings.is_ok(source) ? _sources.get(source) : null);
-	}
-	
-	public static HashMap<String, db_field> get_default_fields()
-	{
-		HashMap<String, db_field> fields = new HashMap<String, db_field>();
-
-		fields.put(FIELD_TIMESTAMP, new db_field(data.TIMESTAMP, new String[] { db_field.TIMESTAMP }));
-		fields.put(FIELD_ID, new db_field(data.INT, new String[] { db_field.KEY_PRIMARY, db_field.AUTO_INCREMENT }));
-
-		return fields;
 	}
 	
 	public static String get_col(String source_, String field_)
@@ -339,6 +330,13 @@ public abstract class db
 		String source = check_source(source_); 
 
 		return config.get(get_source_main(source), source);
+	}
+	
+	public static boolean update_table(String source_, String table_)
+	{	
+		String source = check_source(source_); 
+
+		return ((!strings.is_ok(source) || !strings.is_ok(table_)) ? false : config.update(get_source_main(source), source, table_));
 	}
 	
 	public static HashMap<String, String> adapt_inputs(String source_, HashMap<String, String> old_, String field_, double val_)
@@ -414,9 +412,9 @@ public abstract class db
 
 	public static String check_type(String input_)
 	{
-		return types.check_subtype
+		return types.check_type
 		(
-			input_, types.get_subtypes(types.DB_QUERY, null), 
+			input_, types.get_subtypes(types.DB_QUERY), 
 			types.ACTIONS_ADD, types.DB_QUERY
 		);
 	}
@@ -487,7 +485,7 @@ public abstract class db
 	
 	static boolean query_returns_data(String type_)
 	{
-		String type = types.check_subtype(type_, types.get_subtypes(types.DB_QUERY, null), null, null);
+		String type = types.check_type(type_, types.get_subtypes(types.DB_QUERY));
 		if (!strings.is_ok(type)) return false;
 		
 		String[] targets = new String[] { SELECT, TABLE_EXISTS };
@@ -504,7 +502,7 @@ public abstract class db
 	{
 		parent_db output = null;
 		
-		String type = types.check_subtype(type_, types.get_subtypes(TYPE, null), null, null);
+		String type = types.check_type(type_, types.get_subtypes(TYPE));
 		if (!strings.is_ok(type)) type = DEFAULT_TYPE;
 		
 		if (type.equals(MYSQL)) output = new db_mysql();
@@ -615,7 +613,7 @@ public abstract class db
 		String type = SETUP;
 		
 		String output = config.get_db(type);
-		if (!strings.is_ok(types.check_subtype(output, types.get_subtypes(type, null), null, null))) output = DEFAULT_TYPE;
+		if (!strings.is_ok(types.check_type(output, types.get_subtypes(type)))) output = DEFAULT_TYPE;
 
 		return output;
 	}

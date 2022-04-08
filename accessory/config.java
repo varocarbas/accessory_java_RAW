@@ -238,6 +238,27 @@ public abstract class config
 		return true;
 	}
 
+	public static boolean update_ini(String type_, HashMap<String, Object> vals_)
+	{	
+		String type = check_type(type_);
+		if (!strings.is_ok(type) || !arrays.is_ok(vals_)) return false;
+		
+		for (Entry<String, Object> item: vals_.entrySet())
+		{
+			String key = item.getKey();
+			Object val = item.getValue();
+			
+			String val2 = null;
+			if (generic.is_string(val)) val2 = (String)val;
+			else if (generic.is_boolean(val)) val2 = strings.to_string((boolean)val);
+			else return false;
+			
+			if (!update_matches(type, key, val2, true, true)) return false;
+		}
+		
+		return true;
+	}
+	
 	public static boolean update_ini(String type_, String key_, boolean val_)
 	{
 		return update_ini(type_, key_, strings.to_string(val_));
@@ -248,6 +269,11 @@ public abstract class config
 		return update_matches(check_type(type_), key_, val_, true, true);
 	}
 
+	public static String check_type(String type_)
+	{
+		return types.check_type(type_, types.get_subtypes(types.CONFIG));
+	}
+	
 	static HashMap<String, Boolean> update_db_conn_info(String setup_, HashMap<String, String> params_)
 	{
 		HashMap<String, Boolean> output = null;
@@ -267,11 +293,6 @@ public abstract class config
 		}
 
 		return output;
-	}
-
-	private static String check_type(String type_)
-	{
-		return types.check_subtype(type_, types.get_subtypes(types.CONFIG), null, null);
 	}
 	
 	private static boolean update_matches(String type_, String key_, String val_, boolean update_, boolean ini_)
@@ -352,7 +373,7 @@ public abstract class config
 
 		for (String subtype: subtypes_)
 		{
-			for (String type2: types.get_subtypes(subtype, null))
+			for (String type2: types.get_subtypes(subtype))
 			{
 				if (strings.are_equivalent(key_, types.remove_type(type2, subtype)))
 				{

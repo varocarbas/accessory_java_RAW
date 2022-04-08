@@ -30,13 +30,13 @@ public abstract class config_ini
 		String type = types.CONFIG_BASIC;
 
 		config.update_ini(type, types.CONFIG_BASIC_NAME, _defaults.APP_NAME);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_APP, _defaults.DIR_APP);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_INI, _defaults.DIR_INI);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS, _defaults.DIR_LOGS);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS_ERRORS, _defaults.DIR_LOGS_ERRORS);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS_ACTIVITY, _defaults.DIR_LOGS_ACTIVITY);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_CREDENTIALS, _defaults.DIR_CREDENTIALS);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_CRYPTO, _defaults.DIR_CRYPTO);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_APP, _defaults.PATHS_DIR_APP);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_INI, _defaults.PATHS_DIR_INI);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS, _defaults.PATHS_DIR_LOGS);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS_ERRORS, _defaults.PATHS_DIR_LOGS_ERRORS);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS_ACTIVITY, _defaults.PATHS_DIR_LOGS_ACTIVITY);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_CREDENTIALS, _defaults.PATHS_DIR_CREDENTIALS);
+		config.update_ini(type, types.CONFIG_BASIC_DIR_CRYPTO, _defaults.PATHS_DIR_CRYPTO);
 	}
 
 	private static void load_config_credentials()

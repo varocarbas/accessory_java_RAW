@@ -71,7 +71,7 @@ public abstract class dates
 	{
 		String pattern = strings.DEFAULT;
 
-		String format = types.check_subtype(format_, types.get_subtypes(types.DATES_FORMAT, null), null, null);
+		String format = types.check_type(format_, types.get_subtypes(types.DATES_FORMAT));
 		if (!strings.is_ok(format)) format = DEFAULT_FORMAT;
 		
 		if (format.equals(TIME_FULL) || format.equals(TIME)) pattern = "HH:mm:ss";

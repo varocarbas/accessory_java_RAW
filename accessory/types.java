@@ -20,7 +20,7 @@ public abstract class types
 	//surely not follow the CONFIG_DB_SETUP naming convention. In any case, these scenarios are quite 
 	//exceptional and, in general, trusting the overall applicability of the naming conventions and the 
 	//associated perks (e.g., get_subtypes() methods below) is pretty sensible, although this shouldn't 
-	//be done in a blind, careless, disrespectful (respect the code, maaaaan!) manner, which is a quite 
+	//be done in a blind, careless, disrespectful (respect the code, maaaaan!) manner, what is a quite 
 	//bad idea when dealing with pretty much anything or anyone anyway.
 	
 	//------ To be synced with the corresponding config methods/variables, mainly via config_ini.
@@ -100,6 +100,7 @@ public abstract class types
 	public static final String CONFIG_TESTS = "config_tests";
 	public static final String CONFIG_TESTS_DB = "config_tests_db";
 	public static final String CONFIG_TESTS_DB_SOURCE = "config_tests_db_source";
+	public static final String CONFIG_TESTS_DB_FIELD = "config_tests_db_field";
 	public static final String CONFIG_TESTS_DB_FIELD_INT = "config_tests_db_field_int";
 	public static final String CONFIG_TESTS_DB_FIELD_STRING = "config_tests_db_field_string";
 	public static final String CONFIG_TESTS_DB_FIELD_DECIMAL = "config_tests_db_field_decimal";
@@ -192,6 +193,10 @@ public abstract class types
 	public static final String WHAT_ID = "what_id";
 
 	public static final String ERROR = "error";
+	public static final String ERROR_INI = "error_ini";
+	public static final String ERROR_INI_DB = "error_ini_db";
+	public static final String ERROR_INI_DB_SETUPS = "error_ini_db_setups";
+	public static final String ERROR_INI_DB_SOURCES = "error_ini_db_sources";
 	public static final String ERROR_DB = "error_db";
 	public static final String ERROR_DB_INFO = "error_db_info";
 	public static final String ERROR_DB_CREDENTIALS = "error_db_credentials";
@@ -227,22 +232,22 @@ public abstract class types
 	
 	public static String check_what(String what_)
 	{
-		return check_subtype(what_, types.get_subtypes(WHAT));
+		return check_type(what_, types.get_subtypes(WHAT));
 	}
 	
 	public static String what_to_key(String what_)
 	{
-		return check_subtype(what_, types.get_subtypes(WHAT), ACTIONS_REMOVE, WHAT);
+		return check_type(what_, types.get_subtypes(WHAT), ACTIONS_REMOVE, WHAT);
 	}
 	
 	public static String check_action(String action_)
 	{
-		return check_subtype(action_, types.get_subtypes(ACTIONS));
+		return check_type(action_, types.get_subtypes(ACTIONS));
 	}
 	
 	public static String action_to_key(String action_)
 	{
-		return check_subtype(action_, types.get_subtypes(ACTIONS), ACTIONS_REMOVE, ACTIONS);
+		return check_type(action_, types.get_subtypes(ACTIONS), ACTIONS_REMOVE, ACTIONS);
 	}
 	
 	public static String check_multiple(String subtype_, HashMap<String, String[]> targets_)
@@ -263,40 +268,26 @@ public abstract class types
 		return output;
 	}
 	
-	public static String check_subtype(String subtype_, String[] subtypes_)
+	public static String check_type(String type_, String[] types_)
 	{	
-		return check_subtype(subtype_, subtypes_, null, null);
+		return check_type(type_, types_, null, null);
 	}
 	
-	public static String check_subtype(String subtype_, String[] subtypes_, String action_add_remove_, String type_add_remove_)
+	public static String check_type(String type_, String[] types_, String action_add_remove_, String type_add_remove_)
 	{	
 		String output = strings.DEFAULT;
 		
-		String subtype2 = strings.normalise(subtype_);
-		if (!strings.is_ok(subtype2)) return output;
+		String type2 = strings.normalise(type_);
+		if (!strings.is_ok(type2)) return output;
 		
 		String type_add_remove = strings.normalise(type_add_remove_);
 		String action = strings.normalise(action_add_remove_);
 		
-		for (String subtype: get_subtypes(strings.DEFAULT, subtypes_))
+		for (String type: get_subtypes(strings.DEFAULT, types_))
 		{
-			if
-			(
-				strings.are_equal(subtype2, subtype) || 
-				(
-					strings.is_ok(type_add_remove) && strings.are_equal
-					(
-						add_type(subtype2, type_add_remove), subtype
-					)
-				)
-			)
+			if (strings.are_equal(type2, type) || (strings.is_ok(type_add_remove) && strings.are_equal(add_type(type2, type_add_remove), type)))
 			{
-				output =
-				(
-					strings.are_equal(action, ACTIONS_REMOVE) ?
-					remove_type(subtype, type_add_remove) : subtype
-				);
-				
+				output = (strings.are_equal(action, ACTIONS_REMOVE) ? remove_type(type, type_add_remove) : type);
 				break;
 			}
 		}
@@ -404,8 +395,9 @@ public abstract class types
 			CONFIG_DB_DEFAULT_FIELD_ID, CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, 
 			CONFIG_TESTS, 
 			CONFIG_TESTS_DB,
-			CONFIG_TESTS_DB_SOURCE, CONFIG_TESTS_DB_FIELD_INT,
-			CONFIG_TESTS_DB_FIELD_STRING, CONFIG_TESTS_DB_FIELD_DECIMAL,
+			CONFIG_TESTS_DB_SOURCE, 
+			CONFIG_TESTS_DB_FIELD,
+			CONFIG_TESTS_DB_FIELD_INT, CONFIG_TESTS_DB_FIELD_STRING, CONFIG_TESTS_DB_FIELD_DECIMAL,
 			
 			DB,
 			DB_WHERE,
@@ -448,6 +440,8 @@ public abstract class types
 			WHAT_TYPE, WHAT_APP, WHAT_SERVER, WHAT_ID,
 			
 			ERROR,
+			ERROR_INI,
+			ERROR_INI_DB, ERROR_INI_DB_SETUPS, ERROR_INI_DB_SOURCES,
 			ERROR_DB,
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,
 			ERROR_DB_SOURCE, ERROR_DB_FIELD, ERROR_DB_VALS,

@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 
 public abstract class arrays 
 {
-	public static final int DEFAULT_SIZE = _defaults.SIZE_ARRAY;
+	public static final int DEFAULT_SIZE = _defaults.ARRAYS_SIZE;
 	
 	static { ini.load(); }
 

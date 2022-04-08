@@ -13,9 +13,8 @@ public abstract class strings
 	public static final int SIZE_SMALL = 10;
 	public static final int SIZE_BIG = 500;
 
-	public static final String DEFAULT = _defaults.STRING;
-	public static final String DEFAULT_STRING = DEFAULT;
-	public static final int DEFAULT_SIZE = _defaults.SIZE_STRING;
+	public static final String DEFAULT = _defaults.STRINGS;
+	public static final int DEFAULT_SIZE = _defaults.STRINGS_SIZE;
 	
 	static { ini.load(); }
 
@@ -286,9 +285,9 @@ public abstract class strings
 
 	public static boolean is_boolean(String string_)
 	{
-		String[] targets = types.get_subtypes(data.BOOLEAN, null);
+		String[] targets = types.get_subtypes(data.BOOLEAN);
 
-		String string = types.check_subtype(string_, targets, types.ACTIONS_ADD, data.BOOLEAN);
+		String string = types.check_type(string_, targets, types.ACTIONS_ADD, data.BOOLEAN);
 		
 		for (String target: targets)
 		{
@@ -337,7 +336,7 @@ public abstract class strings
 	{
 		boolean output = false;
 
-		String string = types.check_subtype(string_, types.get_subtypes(data.BOOLEAN, null), types.ACTIONS_ADD, types.DATA_BOOLEAN);
+		String string = types.check_type(string_, types.get_subtypes(data.BOOLEAN), types.ACTIONS_ADD, types.DATA_BOOLEAN);
 		
 		if (are_equal(string, data.TRUE)) output = true;
 		else if (are_equivalent(string_, data.FALSE)) output = false;

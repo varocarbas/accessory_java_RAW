@@ -44,7 +44,7 @@ public abstract class parent
 
 	protected static String check_val_common(String val_, String type_, String default_)
 	{
-		return check_internal(types.check_subtype(val_, types.get_subtypes(type_, null), null, null), default_);
+		return check_internal(types.check_type(val_, types.get_subtypes(type_)), default_);
 	}
 
 	protected static String check_val_common(String val_, HashMap<String, String[]> types_, String default_)

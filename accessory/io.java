@@ -17,7 +17,7 @@ public abstract class io
 {	
 	public static boolean _is_ok = false;
 	
-	static boolean _log_exceptions = true; //To avoid infinite loops when trying to log writing exceptions.
+	static boolean _log_exceptions = true; //To avoid infinite recursion provoked by writing exceptions triggered by writing.
 	
 	static { ini.load(); }
 	

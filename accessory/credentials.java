@@ -148,7 +148,7 @@ public abstract class credentials
 	
 	private static String check_where(String where_)
 	{
-		String where = types.check_subtype(where_, types.get_subtypes(WHERE, null), null, null);
+		String where = types.check_type(where_, types.get_subtypes(WHERE));
 
 		return (strings.is_ok(where) ? where : DEFAULT_WHERE);
 	}

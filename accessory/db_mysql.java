@@ -20,10 +20,10 @@ class db_mysql extends parent_db
 	private static final String QUOTE_VARIABLE = "`";
 	private static final String QUOTE_VALUE = "'";
 
-	private static final int DEFAULT_SIZE_NUMBER = _defaults.SIZE_MYSQL_NUMBER;
-	private static final int DEFAULT_SIZE_DECIMALS = _defaults.SIZE_MYSQL_DECIMALS;
-	private static final int DEFAULT_SIZE_VARCHAR = _defaults.SIZE_MYSQL_VARCHAR;
-	private static final int DEFAULT_SIZE_TEXT = _defaults.SIZE_MYSQL_TEXT;
+	private static final int DEFAULT_SIZE_NUMBER = _defaults.DB_SIZE_MYSQL_NUMBER;
+	private static final int DEFAULT_SIZE_DECIMALS = _defaults.DB_SIZE_MYSQL_DECIMALS;
+	private static final int DEFAULT_SIZE_VARCHAR = _defaults.DB_SIZE_MYSQL_VARCHAR;
+	private static final int DEFAULT_SIZE_TEXT = _defaults.DB_SIZE_MYSQL_TEXT;
 	
 	public boolean is_ok()
 	{
@@ -92,7 +92,7 @@ class db_mysql extends parent_db
 	{
 		HashMap<String, Object> output = new HashMap<String, Object>();
 		
-		String data_type = types.check_subtype(data_type_, types.get_subtypes(types.DATA, null), null, null);
+		String data_type = types.check_type(data_type_, types.get_subtypes(types.DATA));
 		if (!strings.is_ok(data_type)) return output;
 		
 		String type = null;

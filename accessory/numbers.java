@@ -17,10 +17,10 @@ public abstract class numbers
 	public static final int MAX_DIGITS_INT = 10;	
 	public static final int MAX_DIGITS_DECIMALS = 10;
 	
-	public static final double DEFAULT_DECIMAL = _defaults.DECIMAL;
-	public static final long DEFAULT_LONG = _defaults.LONG;
-	public static final int DEFAULT_INT = _defaults.INT;
-	public static final int DEFAULT_DECIMALS = _defaults.SIZE_DECIMALS;
+	public static final double DEFAULT_DECIMAL = _defaults.NUMBERS_DECIMAL;
+	public static final long DEFAULT_LONG = _defaults.NUMBERS_LONG;
+	public static final int DEFAULT_INT = _defaults.NUMBERS_INT;
+	public static final int DEFAULT_DECIMALS = _defaults.NUMBERS_SIZE_DECIMALS;
 	
 	static { ini.load(); }
 	

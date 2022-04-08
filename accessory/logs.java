@@ -9,10 +9,6 @@ public abstract class logs
 	public static final String OUT_SCREEN = SCREEN;
 	public static final String OUT_FILE = FILE;
 	
-	public static final String DEFAULT_TABLE = _defaults.LOGS_DB_TABLE;
-	public static final String DEFAULT_COL_ID = _defaults.LOGS_DB_COL_ID;
-	public static final String DEFAULT_COL_MESSAGE = _defaults.LOGS_DB_COL_MESSAGE;
-	
 	public static final boolean DEFAULT_SCREEN = _defaults.LOGS_SCREEN;
 	public static final boolean DEFAULT_FILE = _defaults.LOGS_FILE;
 	

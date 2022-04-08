@@ -20,13 +20,13 @@ public abstract class paths
 	public static final String EXTENSION_INI = ".ini";
 	public static final String EXTENSION_LOG = ".log";
 
-	public static final String DEFAULT_DIR_APP = _defaults.DIR_APP;
-	public static final String DEFAULT_DIR_INI = _defaults.DIR_INI;
-	public static final String DEFAULT_DIR_LOGS = _defaults.DIR_LOGS;
-	public static final String DEFAULT_DIR_LOGS_ERRORS = _defaults.DIR_LOGS_ERRORS;
-	public static final String DEFAULT_DIR_LOGS_ACTIVITY = _defaults.DIR_LOGS_ACTIVITY;
-	public static final String DEFAULT_DIR_CREDENTIALS = _defaults.DIR_CREDENTIALS;
-	public static final String DEFAULT_DIR_CRYPTO = _defaults.DIR_CRYPTO;
+	public static final String DEFAULT_DIR_APP = _defaults.PATHS_DIR_APP;
+	public static final String DEFAULT_DIR_INI = _defaults.PATHS_DIR_INI;
+	public static final String DEFAULT_DIR_LOGS = _defaults.PATHS_DIR_LOGS;
+	public static final String DEFAULT_DIR_LOGS_ERRORS = _defaults.PATHS_DIR_LOGS_ERRORS;
+	public static final String DEFAULT_DIR_LOGS_ACTIVITY = _defaults.PATHS_DIR_LOGS_ACTIVITY;
+	public static final String DEFAULT_DIR_CREDENTIALS = _defaults.PATHS_DIR_CREDENTIALS;
+	public static final String DEFAULT_DIR_CRYPTO = _defaults.PATHS_DIR_CRYPTO;
 	
 	static { ini.load(); }
 
@@ -115,7 +115,7 @@ public abstract class paths
 
 	static String get_default_dir(String type_)
 	{
-		String type = types.check_subtype(type_, types.get_subtypes(types.CONFIG_BASIC_DIR, null), null, null);
+		String type = types.check_type(type_, types.get_subtypes(types.CONFIG_BASIC_DIR));
 		
 		if (!strings.is_ok(type)) return strings.DEFAULT;
 		else if (strings.are_equal(type, types.CONFIG_BASIC_DIR_APP)) return get_dir_app_default();
@@ -137,7 +137,7 @@ public abstract class paths
 	{
 		String output = strings.DEFAULT;
 		
-		String type = types.check_subtype(type_, types.get_subtypes(types.CONFIG_BASIC_DIR, null), null, null);
+		String type = types.check_type(type_, types.get_subtypes(types.CONFIG_BASIC_DIR));
 		if (!strings.is_ok(type)) return output;
 	
 		if (is_get_) output = config.get_basic(type);

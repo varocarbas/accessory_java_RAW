@@ -21,14 +21,14 @@ public class db_field extends parent
 
 	public static final String DEFAULT_TYPE = data.TYPE_STRING;
 	public static final int DEFAULT_DECIMALS = size.DEFAULT_DECIMALS;
-	public static final int DEFAULT_SIZE = _defaults.SIZE_DB_STRING;
-	public static final double DEFAULT_SIZE_DECIMAL = _defaults.SIZE_DB_DECIMAL;
-	public static final double DEFAULT_SIZE_LONG = _defaults.SIZE_DB_LONG;
-	public static final double DEFAULT_SIZE_INT = _defaults.SIZE_DB_INT;
-	public static final int DEFAULT_SIZE_STRING = _defaults.SIZE_DB_STRING;
-	public static final int DEFAULT_SIZE_STRING_BIG = _defaults.SIZE_DB_STRING_BIG;
-	public static final int DEFAULT_SIZE_BOOLEAN = _defaults.SIZE_DB_BOOLEAN;
-	public static final int DEFAULT_SIZE_TIMESTAMP = _defaults.SIZE_DB_TIMESTAMP;
+	public static final int DEFAULT_SIZE = _defaults.DB_SIZE_STRING;
+	public static final double DEFAULT_SIZE_DECIMAL = _defaults.DB_SIZE_DECIMAL;
+	public static final double DEFAULT_SIZE_LONG = _defaults.DB_SIZE_LONG;
+	public static final double DEFAULT_SIZE_INT = _defaults.DB_SIZE_INT;
+	public static final int DEFAULT_SIZE_STRING = _defaults.DB_SIZE_STRING;
+	public static final int DEFAULT_SIZE_STRING_BIG = _defaults.DB_SIZE_STRING_BIG;
+	public static final int DEFAULT_SIZE_BOOLEAN = _defaults.DB_SIZE_BOOLEAN;
+	public static final int DEFAULT_SIZE_TIMESTAMP = _defaults.DB_SIZE_TIMESTAMP;
 
 	public String _type = WRONG_TYPE;
 	public int _size = WRONG_SIZE;

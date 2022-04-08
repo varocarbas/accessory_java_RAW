@@ -7,8 +7,20 @@ public abstract class errors
 	public static boolean _triggered = false; 
 	public static boolean _exit = false;
 	
+	public static final String DEFAULT_TYPE = _defaults.ERRORS_TYPE;
+	public static final String DEFAULT_MESSAGE = _defaults.ERRORS_MESSAGE;
+	public static final String DEFAULT_SEPARATOR = _defaults.ERRORS_SEPARATOR;
+	
 	static { ini.load(); }
 
+	public static void manage(String type_)
+	{
+		HashMap<String, String> info = new HashMap<String, String>();
+		info.put(generic.TYPE, (strings.is_ok(type_) ? type_ : DEFAULT_TYPE));
+		
+		manage(info);
+	}
+	
 	public static void manage(HashMap<String, String> info_)
 	{			
 		String message = get_all(info_);
@@ -22,14 +34,14 @@ public abstract class errors
 
 	public static void manage(String type_, Exception e_, String[] further_)
 	{		
-		String all = (strings.is_ok(type_) ? type_ : "error");
-		all += misc.SEPARATOR_CONTENT + get_message(e_, type_);
+		String all = (strings.is_ok(type_) ? type_ : DEFAULT_TYPE);
+		all += DEFAULT_SEPARATOR + get_message(e_, type_);
 
 		if (arrays.is_ok(further_))
 		{
 			for (String val: further_)
 			{
-				all += misc.SEPARATOR_CONTENT + val;
+				all += DEFAULT_SEPARATOR + val;
 			}
 		}
 
@@ -52,10 +64,10 @@ public abstract class errors
 
 	private static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_)
 	{
-		String type = types.check_subtype(type_, types.get_subtypes(types.ERROR_DB, null), null, null);
+		String type = types.check_type(type_, types.get_subtypes(types.ERROR_DB));
 
 		HashMap<String, String> info = new HashMap<String, String>();
-		info.put(generic.TYPE, type);
+		info.put(generic.TYPE, (strings.is_ok(type) ? type : DEFAULT_TYPE));
 		
 		String message = message_;
 		String message2 = get_message(e_, type);
@@ -78,11 +90,9 @@ public abstract class errors
 
 	private static HashMap<String, String> get_info_io(String type_, String path_, Exception e_)
 	{
-		if (!strings.is_ok(type_)) return null;
-
 		HashMap<String, String> info = new HashMap<String, String>();
 
-		info.put(generic.TYPE, type_);
+		info.put(generic.TYPE, (strings.is_ok(type_) ? type_ : DEFAULT_TYPE));
 		if (strings.is_ok(path_)) info.put("path", path_);
 		info.put("message", get_message(e_, type_));
 		
@@ -91,15 +101,11 @@ public abstract class errors
 
 	private static String get_all(HashMap<String, String> info_)
 	{
-		String separator = misc.SEPARATOR_CONTENT;
+		if (!arrays.is_ok(info_)) return DEFAULT_MESSAGE;
 
-		String all = (info_.containsKey(generic.TYPE) ? info_.get(generic.TYPE) : "error").toUpperCase();
-		all += separator;
-
-		if (!arrays.is_ok(info_)) return all;
-
-		all += arrays.to_string(info_, separator, misc.SEPARATOR_KEYVAL, null);
-
+		String all = arrays.to_string(info_, DEFAULT_SEPARATOR, misc.SEPARATOR_KEYVAL, null);
+		if (!info_.containsKey(generic.TYPE) || !strings.is_ok(info_.get(generic.TYPE))) all = DEFAULT_TYPE + DEFAULT_SEPARATOR + all;
+				
 		return all;
 	}
 	
@@ -110,9 +116,10 @@ public abstract class errors
 		if (generic.is_ok(e_)) message = e_.getMessage();
 		else if (strings.is_ok(type_)) 
 		{
-			String type = types.remove_type(type_, types.ERROR_DB);
-			if (strings.is_ok(type)) message = "Wrong " + type;
+			String type = types.remove_type(type_, types.ERROR);
+			message = (strings.is_ok(type) ? "Wrong " + type : DEFAULT_TYPE);
 		}
+		else message = DEFAULT_TYPE;
 		
 		return message;
 	}

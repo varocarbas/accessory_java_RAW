@@ -12,7 +12,7 @@ public abstract class ini
 		load_first();
 		
 		config_ini.load();
-		db_ini.load();
+		db_ini.populate();
 	}
 	
 	public static void load_config_linked_update(String main_, String[] secs_, HashMap<String, Object> vals_)

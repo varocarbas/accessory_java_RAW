@@ -14,7 +14,7 @@ public class size extends parent
 	
 	public static final double DEFAULT_MIN = numbers.MIN_DECIMAL;
 	public static final double DEFAULT_MAX = numbers.MAX_DECIMAL;
-	public static final int DEFAULT_DECIMALS = _defaults.SIZE_DECIMALS;
+	public static final int DEFAULT_DECIMALS = _defaults.NUMBERS_SIZE_DECIMALS;
 
 	public double _min = WRONG_MIN;
 	public double _max = WRONG_MAX;
