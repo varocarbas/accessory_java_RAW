@@ -5,8 +5,7 @@ import java.util.Map.Entry;
 
 public abstract class db_ini 
 {
-	public static final String ERROR_SETUPS = types.ERROR_INI_DB_SETUPS;
-	public static final String ERROR_SOURCES = types.ERROR_INI_DB_SOURCES;
+	public static final String ERROR_DBS = types.ERROR_INI_DB_DBS;
 	
 	private static boolean _populated = false;
 	
@@ -15,8 +14,7 @@ public abstract class db_ini
 		if (_populated) return;
 		
 		String error = strings.DEFAULT;
-		if (!populate_all_setups()) error = ERROR_SETUPS;
-		if (error.equals(strings.DEFAULT) && !populate_all_sources()) error = ERROR_SOURCES;
+		if (!populate_all_dbs()) error = ERROR_DBS;
 
 		_populated = true;
 		if (error.equals(strings.DEFAULT)) return;
@@ -24,24 +22,62 @@ public abstract class db_ini
 		errors._exit = true;
 		errors.manage(error);
 	}
-
-	public static boolean populate_setup(String setup_, String db_, HashMap<String, Object> vals_)
+	
+	@SuppressWarnings("unchecked")
+	public static boolean populate_db(String db_, String name_, HashMap<String, Object[]> sources_, HashMap<String, Object> setup_)
 	{
-		HashMap<String, Object> vals = new HashMap<String, Object>(arrays.is_ok(vals_) ? vals_ : get_setup_default());
+		boolean is_ok = true;
+
+		String db = config.check_type(db_);
+		if (!strings.is_ok(db) || !arrays.is_ok(sources_)) return false;
+
+		config.update_ini(db_, types.CONFIG_DB_NAME, name_);
+		populate_setup(db_, setup_);
+
+		for (Entry<String, Object[]> item: sources_.entrySet())
+		{
+			String id = item.getKey();
+			Object[] temp = item.getValue();
+			
+			populate_source(db_, id, (String)temp[0], (HashMap<String, Object[]>)temp[1]);
+		}
 		
-		String setup = (strings.is_ok(setup_) ? setup_ : _defaults.DB_SETUP);
+		return is_ok;
+	}	
+
+	public static HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String type_field_)
+	{		
+		HashMap<String, Object[]> fields = new HashMap<String, Object[]>();
+		if (!arrays.is_ok(info_)) return fields;
+	
+		for (Entry<String, db_field> item: info_.entrySet())
+		{
+			String id = item.getKey();
+			fields = add_field(id, get_col_default(id, type_field_), item.getValue(), fields);	
+		}
 		
-		vals.put(db.SETUP, setup);
-		vals.put(db.NAME, (strings.is_ok(db_) ? db_ : _defaults.DB_NAME));		
-		
-		return config.update_ini(setup, vals);
+		return fields;
 	}
 
-	public static boolean populate_source(String main_, String source_, String table_, HashMap<String, Object[]> fields_)
+	public static HashMap<String, Object[]> add_source(String id_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object[]> all_sources_)
 	{
-		String main = config.check_type(main_);
+		all_sources_.put(id_, new Object[] { table_, fields_ });
+		
+		return all_sources_;
+	}
+	
+	public static HashMap<String, Object[]> add_field(String id_, String col_, db_field field_, HashMap<String, Object[]> all_fields_)
+	{
+		all_fields_.put(id_, new Object[] { col_, field_ });
+		
+		return all_fields_;
+	}
+
+	private static boolean populate_source(String db_, String source_, String table_, HashMap<String, Object[]> fields_)
+	{
+		String db = config.check_type(db_);
 		String source = config.check_type(source_);
-		if (!strings.is_ok(main) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
+		if (!strings.is_ok(db) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
 
 		HashMap<String, Object[]> defaults = get_fields_default();
 		if (!arrays.is_ok(defaults)) return false;
@@ -59,65 +95,43 @@ public abstract class db_ini
 				Object[] val = item.getValue();
 				
 				String col = (String)val[0];
-				config.update_ini(main, id, col);
+				config.update_ini(db, id, col);
 				
 				db_field field = (db_field)val[1];
 				fields.put(id, field);
 			}
 		}
 	
-		return (!db.add_source(source, fields) ? false : (config.update_ini(main, source, table_) && db.add_source_main(source, main)));
-	}
-	
-	public static HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String type_field_)
-	{		
-		HashMap<String, Object[]> fields = new HashMap<String, Object[]>();
-		if (!arrays.is_ok(info_)) return fields;
-	
-		for (Entry<String, db_field> item: info_.entrySet())
-		{
-			String id = item.getKey();
-			fields = add_field(id, get_col_default(id, type_field_), item.getValue(), fields);	
-		}
-		
-		return fields;
-	}
-	
-	public static HashMap<String, Object[]> add_field(String id_, String col_, db_field field_, HashMap<String, Object[]> all_fields_)
-	{
-		all_fields_.put(id_, new Object[] { col_, field_ });
-		
-		return all_fields_;
+		return (!accessory.db.add_source(source, fields) ? false : (config.update_ini(db, source, table_) && accessory.db.add_source_main(source, db)));
 	}
 
-	public static String get_col_default(String field_, String type_)
+	private static boolean populate_setup(String db_, HashMap<String, Object> vals_)
 	{
-		return types.remove_type(field_, type_);
-	}
-	
-	private static boolean populate_all_setups()
-	{
-		boolean is_ok = true;
+		HashMap<String, Object> vals = new HashMap<String, Object>(arrays.is_ok(vals_) ? vals_ : get_setup_default());
+		if (!vals.containsKey(types.CONFIG_DB_SETUP)) vals.put(types.CONFIG_DB_SETUP, db_);
 		
-		is_ok = populate_setup(null, null, null); //Default setup & default DB.
-	
-		return is_ok;
+		return config.update_ini((String)vals.get(types.CONFIG_DB_SETUP), vals);
 	}
-	
-	private static boolean populate_all_sources()
+
+	private static boolean populate_all_dbs()
 	{	
 		boolean is_ok = true;
-	
-		String main = types.CONFIG_TESTS; 
+		
+		HashMap<String, Object[]> sources = new HashMap<String, Object[]>();
+		
+		String db = _defaults.DB;
+		String name = _defaults.STRINGS;
+		
 		String source = types.CONFIG_TESTS_DB_SOURCE;
 		String table = "tests";
 		HashMap<String, Object[]> fields = get_fields(get_fields_tests(), types.CONFIG_TESTS_DB_FIELD);
+		sources = add_source(source, table, fields, sources);
 		
-		is_ok = populate_source(main, source, table, fields);
-
+		is_ok = populate_db(db, name, sources, null);
+		
 		return is_ok;
 	}
-	
+
 	private static HashMap<String, db_field> get_fields_tests()
 	{
 		HashMap<String, db_field> info = new HashMap<String, db_field>();
@@ -152,5 +166,10 @@ public abstract class db_ini
 		vals.put(types.CONFIG_DB_CREDENTIALS_PASSWORD, _defaults.DB_CREDENTIALS_PASSWORD);
 
 		return vals;
+	}
+	
+	private static String get_col_default(String field_, String type_)
+	{
+		return types.remove_type(field_, type_);
 	}
 }

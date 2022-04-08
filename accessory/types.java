@@ -195,8 +195,7 @@ public abstract class types
 	public static final String ERROR = "error";
 	public static final String ERROR_INI = "error_ini";
 	public static final String ERROR_INI_DB = "error_ini_db";
-	public static final String ERROR_INI_DB_SETUPS = "error_ini_db_setups";
-	public static final String ERROR_INI_DB_SOURCES = "error_ini_db_sources";
+	public static final String ERROR_INI_DB_DBS = "error_ini_db_dbs";
 	public static final String ERROR_DB = "error_db";
 	public static final String ERROR_DB_INFO = "error_db_info";
 	public static final String ERROR_DB_CREDENTIALS = "error_db_credentials";
@@ -441,7 +440,8 @@ public abstract class types
 			
 			ERROR,
 			ERROR_INI,
-			ERROR_INI_DB, ERROR_INI_DB_SETUPS, ERROR_INI_DB_SOURCES,
+			ERROR_INI_DB, 
+			ERROR_INI_DB_DBS,
 			ERROR_DB,
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,
 			ERROR_DB_SOURCE, ERROR_DB_FIELD, ERROR_DB_VALS,
