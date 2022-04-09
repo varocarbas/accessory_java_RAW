@@ -5,11 +5,12 @@ import java.util.HashMap;
 public abstract class credentials 
 {   
 	public static final String WHERE = types.CONFIG_CREDENTIALS_WHERE;
-	public static final String ENCRYPTED = types.CONFIG_CREDENTIALS_ENCRYPTED;	
 
 	public static final String DEFAULT_ID = _defaults.CREDENTIALS_ID;
-	public static final String DEFAULT_USER = _defaults.CREDENTIALS_USER;
+	public static final String DEFAULT_USER = _defaults.USER;
 	public static final String DEFAULT_WHERE = _defaults.CREDENTIALS_WHERE;
+
+	private static final String SEPARATOR = misc.SEPARATOR_NAME;
 	
 	static { ini.load(); }
 
@@ -70,7 +71,7 @@ public abstract class credentials
 	
 	public static String get_encryption_id(String id_, String user_)
 	{
-		return (strings.are_ok(new String[] { id_, user_ }) ? (id_ + misc.SEPARATOR_NAME + user_) : strings.DEFAULT);
+		return (strings.are_ok(new String[] { id_, user_ }) ? (id_ + SEPARATOR + user_) : strings.DEFAULT);
 	}
 	
 	private static boolean encrypt_username_password_file_store(String id_, String user_, String[] outputs_)
@@ -132,16 +133,14 @@ public abstract class credentials
 
 	private static String get_path_username_password(String id_, String user_, boolean encrypted_, boolean is_username_)
 	{   
-		String separator = config.get_credentials(types.CONFIG_CREDENTIALS_FILE_SEPARATOR);
+		String file = id_ + SEPARATOR + user_;
 
-		String file = id_ + separator + user_;
-
-		file += separator + 
+		file += SEPARATOR + 
 		(
 			is_username_ ? config.get_credentials(types.CONFIG_CREDENTIALS_FILE_USERNAME) : 
 			config.get_credentials(types.CONFIG_CREDENTIALS_FILE_PASSWORD)
 		);
-		if (encrypted_) file += separator + config.get_credentials(types.CONFIG_CREDENTIALS_FILE_ENCRYPTED); 
+		if (encrypted_) file += SEPARATOR + config.get_credentials(types.CONFIG_CREDENTIALS_FILE_ENCRYPTED); 
 
 		return paths.build(new String[] { paths.get_dir(paths.DIR_CREDENTIALS), get_file_full(file) }, true);
 	}

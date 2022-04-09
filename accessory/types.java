@@ -45,13 +45,11 @@ public abstract class types
 	public static final String CONFIG_BASIC_DIR_CRYPTO = "config_basic_dir_crypto";
 	
 	public static final String CONFIG_CREDENTIALS = "config_credentials";
-	public static final String CONFIG_CREDENTIALS_ENCRYPTED = "config_credentials_encrypted";
 	public static final String CONFIG_CREDENTIALS_WHERE = "config_credentials_where";
 	public static final String CONFIG_CREDENTIALS_WHERE_DB = "config_credentials_where_db";
 	public static final String CONFIG_CREDENTIALS_WHERE_FILE = "config_credentials_where_file"; 
 	public static final String CONFIG_CREDENTIALS_FILE = "config_credentials_file";
 	public static final String CONFIG_CREDENTIALS_FILE_EXTENSION = "config_credentials_file_extension";
-	public static final String CONFIG_CREDENTIALS_FILE_SEPARATOR = "config_credentials_file_separator";
 	public static final String CONFIG_CREDENTIALS_FILE_USERNAME = "config_credentials_file_username";
 	public static final String CONFIG_CREDENTIALS_FILE_PASSWORD = "config_credentials_file_password";
 	public static final String CONFIG_CREDENTIALS_FILE_ENCRYPTED = "config_credentials_file_encrypted";
@@ -370,10 +368,10 @@ public abstract class types
 			CONFIG_BASIC_DIR_LOGS,
 			CONFIG_BASIC_DIR_LOGS_ERRORS, CONFIG_BASIC_DIR_LOGS_ACTIVITY,
 			CONFIG_CREDENTIALS, 
-			CONFIG_CREDENTIALS_ENCRYPTED, CONFIG_CREDENTIALS_WHERE, 
+			CONFIG_CREDENTIALS_WHERE, 
 			CONFIG_CREDENTIALS_WHERE_FILE, CONFIG_CREDENTIALS_WHERE_DB,
-			CONFIG_CREDENTIALS_FILE, CONFIG_CREDENTIALS_FILE_EXTENSION, 
-			CONFIG_CREDENTIALS_FILE_SEPARATOR, CONFIG_CREDENTIALS_FILE_USERNAME, 
+			CONFIG_CREDENTIALS_FILE, 
+			CONFIG_CREDENTIALS_FILE_EXTENSION, CONFIG_CREDENTIALS_FILE_USERNAME, 
 			CONFIG_CREDENTIALS_FILE_PASSWORD, CONFIG_CREDENTIALS_FILE_ENCRYPTED,
 			CONFIG_CRYPTO,
 			CONFIG_CRYPTO_FILE, 

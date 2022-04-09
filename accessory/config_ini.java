@@ -3,56 +3,43 @@ package accessory;
 public abstract class config_ini 
 {
 	//Method expected to be called from ini.load().
-	public static void load() 
+	public static void populate() 
 	{
-		load_types();
+		populate_generic();
 	}
 
-	//Method including all the generic config types, not easily included in any other ini class.
-	private static void load_types()
+	private static void populate_generic()
 	{
-		load_types_config();
-	}
-
-	private static void load_types_config()
-	{
-		load_config_basic();
-		load_config_credentials();
-		load_config_crypto();
-		load_config_logs();
-		load_config_subtypes();
-		
-		//load_config_linked();
+		populate_generic_basic();
+		populate_generic_credentials();
+		populate_generic_crypto();
+		populate_generic_logs();
 	}
 	
-	private static void load_config_basic()
+	private static void populate_generic_basic()
 	{
-		String type = types.CONFIG_BASIC;
-
-		config.update_ini(type, types.CONFIG_BASIC_NAME, _defaults.APP_NAME);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_APP, _defaults.PATHS_DIR_APP);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_INI, _defaults.PATHS_DIR_INI);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS, _defaults.PATHS_DIR_LOGS);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS_ERRORS, _defaults.PATHS_DIR_LOGS_ERRORS);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_LOGS_ACTIVITY, _defaults.PATHS_DIR_LOGS_ACTIVITY);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_CREDENTIALS, _defaults.PATHS_DIR_CREDENTIALS);
-		config.update_ini(type, types.CONFIG_BASIC_DIR_CRYPTO, _defaults.PATHS_DIR_CRYPTO);
+		String main = types.CONFIG_BASIC;
+		
+		config.update_ini(main, types.CONFIG_BASIC_NAME, _defaults.APP_NAME);
+		
+		for (String subtype: types.get_subtypes(types.CONFIG_BASIC_DIR))
+		{
+			config.update_ini(main, subtype, paths.get_default_dir(subtype));
+		}
 	}
 
-	private static void load_config_credentials()
+	private static void populate_generic_credentials()
 	{
 		String type = types.CONFIG_CREDENTIALS;
 
-		config.update_ini(type, credentials.ENCRYPTED, _defaults.CREDENTIALS_ENCRYPTED);
 		config.update_ini(type, credentials.WHERE, _defaults.CREDENTIALS_WHERE);
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_EXTENSION, _defaults.CREDENTIALS_FILE_EXTENSION);
-		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_SEPARATOR, _defaults.CREDENTIALS_FILE_SEPARATOR);
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_USERNAME, _defaults.CREDENTIALS_FILE_USERNAME);
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_PASSWORD, _defaults.CREDENTIALS_FILE_PASSWORD);
 		config.update_ini(type, types.CONFIG_CREDENTIALS_FILE_ENCRYPTED, _defaults.CREDENTIALS_FILE_ENCRYPTED);
 	}
 
-	private static void load_config_crypto()
+	private static void populate_generic_crypto()
 	{
 		String type = types.CONFIG_CRYPTO;
 
@@ -61,26 +48,11 @@ public abstract class config_ini
 		config.update_ini(type, types.CONFIG_CRYPTO_FILE_EXTENSION, _defaults.CRYPTO_FILE_EXTENSION);
 	}
 
-	private static void load_config_logs()
+	private static void populate_generic_logs()
 	{
 		String type = types.CONFIG_LOGS;
 
 		config.update_ini(type, logs.SCREEN, _defaults.LOGS_SCREEN);
 		config.update_ini(type, logs.FILE, _defaults.LOGS_FILE);
 	}	
-	
-	private static void load_config_subtypes()
-	{	
-		String type = types.CONFIG_DB;
-		String[] subtypes = { types.CONFIG_DB_CREDENTIALS };
-		config.update_subtypes(type, subtypes);
-
-		type = types.CONFIG_CREDENTIALS;
-		subtypes = new String[] { types.CONFIG_CREDENTIALS_FILE };
-		config.update_subtypes(type, subtypes);
-
-		type = types.CONFIG_LOGS;
-		subtypes = new String[] { types.CONFIG_LOGS_OUT };
-		config.update_subtypes(type, subtypes);
-	}
 }

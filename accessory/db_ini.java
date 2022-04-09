@@ -102,7 +102,7 @@ public abstract class db_ini
 			}
 		}
 	
-		return (!accessory.db.add_source(source, fields) ? false : (config.update_ini(db, source, table_) && accessory.db.add_source_main(source, db)));
+		return (!accessory.db.add_source(source, fields) ? false : (config.update_ini(db, source, table_) && accessory.db.add_source_db(source, db)));
 	}
 
 	private static boolean populate_setup(String db_, HashMap<String, Object> vals_)

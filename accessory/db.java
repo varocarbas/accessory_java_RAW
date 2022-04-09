@@ -62,7 +62,7 @@ public abstract class db
 	//--- Populated via the corresponding db_ini method (e.g., load_sources()).
 	static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
 	
-	private static HashMap<String, String> _source_mains = new HashMap<String, String>();
+	private static HashMap<String, String> _source_dbs = new HashMap<String, String>();
 	//---
 	
 	static { ini.load(); }
@@ -285,23 +285,23 @@ public abstract class db
 		return true;
 	}
 	
-	public static boolean add_source_main(String source_, String main_)
+	public static boolean add_source_db(String source_, String db_)
 	{
 		String source = check_source(source_);
-		if (!strings.are_ok(new String[] { source, main_ })) return false;
+		if (!strings.are_ok(new String[] { source, db_ })) return false;
 		
-		if (!arrays.is_ok(_source_mains)) _source_mains = new HashMap<String, String>();
+		if (!arrays.is_ok(_source_dbs)) _source_dbs = new HashMap<String, String>();
 		
-		_source_mains.put(source, main_);
+		_source_dbs.put(source, db_);
 
 		return true;
 	}
 	
-	public static String get_source_main(String source_)
+	public static String get_source_db(String source_)
 	{
 		String source = check_source(source_);
 		
-		return ((strings.is_ok(source) && _source_mains.containsKey(source)) ? _source_mains.get(source) : strings.DEFAULT);
+		return ((strings.is_ok(source) && _source_dbs.containsKey(source)) ? _source_dbs.get(source) : strings.DEFAULT);
 	}
 	
 	public static HashMap<String, db_field> get_source_fields(String source_)
@@ -315,28 +315,28 @@ public abstract class db
 	{
 		String source = check_source(source_); 
 	
-		return config.get(get_source_main(source), field_);
+		return config.get(get_source_db(source), field_);
 	}
 
 	public static String get_field(String source_, String field_)
 	{
 		String source = check_source(source_); 
 		
-		return config.get(get_source_main(source), field_);
+		return config.get(get_source_db(source), field_);
 	}
 	
 	public static String get_table(String source_)
 	{
 		String source = check_source(source_); 
 
-		return config.get(get_source_main(source), source);
+		return config.get(get_source_db(source), source);
 	}
 	
 	public static boolean update_table(String source_, String table_)
 	{	
 		String source = check_source(source_); 
 
-		return ((!strings.is_ok(source) || !strings.is_ok(table_)) ? false : config.update(get_source_main(source), source, table_));
+		return ((!strings.is_ok(source) || !strings.is_ok(table_)) ? false : config.update(get_source_db(source), source, table_));
 	}
 	
 	public static HashMap<String, String> adapt_inputs(String source_, HashMap<String, String> old_, String field_, double val_)
@@ -412,11 +412,7 @@ public abstract class db
 
 	public static String check_type(String input_)
 	{
-		return types.check_type
-		(
-			input_, types.get_subtypes(types.DB_QUERY), 
-			types.ACTIONS_ADD, types.DB_QUERY
-		);
+		return types.check_type(input_, types.get_subtypes(types.DB_QUERY), types.ACTIONS_ADD, types.DB_QUERY);
 	}
 
 	public static parent_db get_current_db()

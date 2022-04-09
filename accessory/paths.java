@@ -19,14 +19,6 @@ public abstract class paths
 	public static final String EXTENSION_JAR = ".jar";
 	public static final String EXTENSION_INI = ".ini";
 	public static final String EXTENSION_LOG = ".log";
-
-	public static final String DEFAULT_DIR_APP = _defaults.PATHS_DIR_APP;
-	public static final String DEFAULT_DIR_INI = _defaults.PATHS_DIR_INI;
-	public static final String DEFAULT_DIR_LOGS = _defaults.PATHS_DIR_LOGS;
-	public static final String DEFAULT_DIR_LOGS_ERRORS = _defaults.PATHS_DIR_LOGS_ERRORS;
-	public static final String DEFAULT_DIR_LOGS_ACTIVITY = _defaults.PATHS_DIR_LOGS_ACTIVITY;
-	public static final String DEFAULT_DIR_CREDENTIALS = _defaults.PATHS_DIR_CREDENTIALS;
-	public static final String DEFAULT_DIR_CRYPTO = _defaults.PATHS_DIR_CRYPTO;
 	
 	static { ini.load(); }
 

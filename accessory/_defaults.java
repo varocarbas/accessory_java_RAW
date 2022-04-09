@@ -8,15 +8,7 @@ public abstract class _defaults
 {
 	public static final String APP_NAME = "app";
 	public static final String USER = "user1";
-	
-	public static final String PATHS_DIR_APP = paths.get_default_dir(types.CONFIG_BASIC_DIR_APP);
-	public static final String PATHS_DIR_INI = paths.get_default_dir(types.CONFIG_BASIC_DIR_INI);
-	public static final String PATHS_DIR_LOGS = paths.get_default_dir(types.CONFIG_BASIC_DIR_LOGS);
-	public static final String PATHS_DIR_LOGS_ERRORS = paths.get_default_dir(types.CONFIG_BASIC_DIR_LOGS_ERRORS);
-	public static final String PATHS_DIR_LOGS_ACTIVITY = paths.get_default_dir(types.CONFIG_BASIC_DIR_LOGS_ACTIVITY);
-	public static final String PATHS_DIR_CREDENTIALS = paths.get_default_dir(types.CONFIG_BASIC_DIR_CREDENTIALS);
-	public static final String PATHS_DIR_CRYPTO = paths.get_default_dir(types.CONFIG_BASIC_DIR_CRYPTO);
-	
+		
 	public static final String STRINGS = "";
 	public static final int STRINGS_SIZE = 100;
 	
@@ -29,16 +21,12 @@ public abstract class _defaults
 
 	public static final String DATES_FORMAT = dates.DATE;
 
-	public static final boolean CREDENTIALS_ENCRYPTED = false;
 	public static final String CREDENTIALS_WHERE = types.CONFIG_CREDENTIALS_WHERE_FILE;
-	public static final String CREDENTIALS_FILE_DIR = PATHS_DIR_CREDENTIALS;
 	public static final String CREDENTIALS_FILE_EXTENSION = STRINGS;
-	public static final String CREDENTIALS_FILE_SEPARATOR = misc.SEPARATOR_NAME;
 	public static final String CREDENTIALS_FILE_USERNAME = "username";
 	public static final String CREDENTIALS_FILE_PASSWORD = "password";
 	public static final String CREDENTIALS_FILE_ENCRYPTED = "enc";
 	public static final String CREDENTIALS_ID = "credentials";
-	public static final String CREDENTIALS_USER = USER;
 	
 	public static final String CRYPTO_ID = "crypto";
 	public static final String CRYPTO_FILE_CIPHER = "cipher";
@@ -65,7 +53,7 @@ public abstract class _defaults
 	public static final String DB_CREDENTIALS_TYPE = types.remove_type(DB_TYPE, types.CONFIG_DB_TYPE);
 	public static final String DB_CREDENTIALS_USERNAME = STRINGS;
 	public static final String DB_CREDENTIALS_PASSWORD = STRINGS;
-	public static final boolean DB_CREDENTIALS_ENCRYPTED = CREDENTIALS_ENCRYPTED;
+	public static final boolean DB_CREDENTIALS_ENCRYPTED = false;
 	public static final String DB_ORDER = types.DB_ORDER_ASC;
 	public static final boolean DB_ORDER_FIELD = true;
 	public static final String DB_WHERE_LINK = types.DB_WHERE_LINK_AND;
