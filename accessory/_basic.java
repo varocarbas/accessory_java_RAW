@@ -1,11 +1,10 @@
 package accessory;
 
-//This class includes constants of essential importance whose single values might not be delivered in
-//a too quick or reliable way, at least, as per the default Java's performance with global static final
-//variables, or because of any other reason advising against including them in the _defaults class.
+//This class includes constants of essential importance, to be loaded at the very beginning and whose values are 
+//determined by exclusively relying on calls to native or external code.
 //Rules for all the constants in this class:
-//- All the values will be assigned in the main method below, by calling external methods only accessorily. 
-//- All these constants will be constants will be these variables are accessed directly here.
+//- All the values will be assigned in the main method below. 
+//- All these constants will be accessed directly here, via the corresponding local methods (i.e., no local copies).
 
 class _basic 
 {

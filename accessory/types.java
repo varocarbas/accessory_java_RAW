@@ -57,17 +57,20 @@ public abstract class types
 	//--- CONFIG_DB variables deal with the generic, common configuration of DBs. Specific CONFIG constants
 	//have to be added to manage each DB's specific information like, for example, sources and fields.
 	
+	//CONFIG_DB is only used for internal purposes. Its associated value, the corresponding root CONFIG constant,
+	//is the config._info key under which all the DB information is stored. CONFIG_DB_NAME is associated with the
+	//actual name of the DB. Hence, CONFIG_DB/CONFIG_DB_NAME is equivalent to source/table and field/col.
 	public static final String CONFIG_DB = "config_db";
+	public static final String CONFIG_DB_NAME = "config_db_name";
 	
 	//DB setups allow to support multiple basic configurations (e.g., different credentials or operating
 	//conditions) at the same time. The value associated with the corresponding CONFIG_DB_SETUP is the
-	//main key of the given DB, that is, the corresponding root CONFIG variable, the one used to store
+	//main key of the given DB, that is, the corresponding root CONFIG key, the one used to store
 	//all its specific values in config._info. The default setup can include as many DBs as required.
 	public static final String CONFIG_DB_SETUP = "config_db_setup";
 	public static final String CONFIG_DB_SETUP_DEFAULT = CONFIG_DB;
 	
 	public static final String CONFIG_DB_MAX_POOL = "config_db_max_pool";
-	public static final String CONFIG_DB_NAME = "config_db_name";
 	public static final String CONFIG_DB_HOST = "config_db_host";
 	public static final String CONFIG_DB_TYPE = "config_db_type";
 	public static final String CONFIG_DB_TYPE_MYSQL = "config_db_type_mysql";

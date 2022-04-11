@@ -2,11 +2,10 @@ package accessory;
 
 import java.util.HashMap;
 
-//This class includes all the array constants to be loaded at the very beginning, except for the ones
-//included in _basic. 
+//This class includes all the array constants to be loaded at the very beginning, except for the ones included in _basic. 
 //Rules for all the constants in this class:
-//- All the values will be assigned in the main method below via calling the corresponding methods in other classes.
-//- All the constants will be accessed directly in this class though local methods (i.e., no local copies).
+//- All the values will be assigned in the main method below by calling the corresponding methods in other classes.
+//- All these constants will be accessed directly here, via the corresponding local methods (i.e., no local copies).
 
 abstract class _alls 
 {
@@ -20,14 +19,13 @@ abstract class _alls
 	public static Class<?>[] GENERIC_CLASSES = null;
 	public static HashMap<Class<?>, Class<?>[]> GENERIC_CLASSES_EQUIVALENTS = null;
 	public static String[] GENERIC_DEFAULT_METHOD_NAMES = null;
+	public static HashMap<String, String> GENERIC_KEYS = null;
 	
 	public static HashMap<String, Class<?>> DATA_CLASSES = null;
 	public static HashMap<Class<?>, Class<?>> DATA_COMPATIBLE = null;
 
 	public static String[] DB_SETUPS = null;
 	public static HashMap<String, parent_db> DB_DBS = null;
-
-	public static HashMap<String, String> GENERIC_KEYS = null;
 	
 	private static boolean _populated = false;
 	
