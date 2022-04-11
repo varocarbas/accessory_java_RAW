@@ -27,6 +27,8 @@ abstract class _alls
 	public static String[] DB_SETUPS = null;
 	public static HashMap<String, parent_db> DB_DBS = null;
 
+	public static HashMap<String, String> GENERIC_KEYS = null;
+	
 	private static boolean _populated = false;
 	
 	public static void populate() 
@@ -43,13 +45,14 @@ abstract class _alls
 		GENERIC_CLASSES = generic.populate_all_classes();
 		GENERIC_CLASSES_EQUIVALENTS = generic.populate_all_class_equivalents();
 		GENERIC_DEFAULT_METHOD_NAMES = generic.populate_all_default_methods();
+		GENERIC_KEYS = generic.populate_all_keys();
 		
 		DATA_CLASSES = data.populate_all_classes();
 		DATA_COMPATIBLE = data.populate_all_compatible();
 		
 		DB_SETUPS = db.populate_all_setups();
 		DB_DBS = db.populate_all_dbs();
-
+		
 		_populated = true;
 	} 
 }

@@ -189,11 +189,13 @@ public abstract class types
 	public static final String WHAT_APP = "what_app";
 	public static final String WHAT_SERVER = "what_server";
 	public static final String WHAT_ID = "what_id";
-
+	public static final String WHAT_INSTANCE = "what_instance";
+	
 	public static final String ERROR = "error";
 	public static final String ERROR_INI = "error_ini";
 	public static final String ERROR_INI_DB = "error_ini_db";
 	public static final String ERROR_INI_DB_DBS = "error_ini_db_dbs";
+	public static final String ERROR_INI_DB_SOURCE = "error_ini_db_source";
 	public static final String ERROR_DB = "error_db";
 	public static final String ERROR_DB_INFO = "error_db_info";
 	public static final String ERROR_DB_CREDENTIALS = "error_db_credentials";
@@ -434,12 +436,12 @@ public abstract class types
 			WHAT,
 			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 
 			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER,
-			WHAT_TYPE, WHAT_APP, WHAT_SERVER, WHAT_ID,
+			WHAT_TYPE, WHAT_APP, WHAT_SERVER, WHAT_ID, WHAT_INSTANCE,
 			
 			ERROR,
 			ERROR_INI,
 			ERROR_INI_DB, 
-			ERROR_INI_DB_DBS,
+			ERROR_INI_DB_DBS, ERROR_INI_DB_SOURCE,
 			ERROR_DB,
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,
 			ERROR_DB_SOURCE, ERROR_DB_FIELD, ERROR_DB_VALS,

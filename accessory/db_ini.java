@@ -32,14 +32,20 @@ public abstract class db_ini
 		if (!strings.is_ok(db) || !arrays.is_ok(sources_)) return false;
 
 		config.update_ini(db_, types.CONFIG_DB_NAME, name_);
-		populate_setup(db_, setup_);
+		HashMap<String, Object> setup = populate_setup(db, setup_);
+
+		HashMap<String, Object> info = new HashMap<String, Object>();
+		info.put(types.CONFIG_DB, db);
+		info.put(types.CONFIG_DB_NAME, name_);
+		info.put(types.CONFIG_DB_SETUP, setup);
+		info.put(generic.get_key(types.WHAT_INSTANCE), accessory.db.get_instance_ini((String)setup.get(types.CONFIG_DB_TYPE)));
 
 		for (Entry<String, Object[]> item: sources_.entrySet())
 		{
 			String id = item.getKey();
 			Object[] temp = item.getValue();
 			
-			populate_source(db_, id, (String)temp[0], (HashMap<String, Object[]>)temp[1]);
+			populate_source(id, (String)temp[0], (HashMap<String, Object[]>)temp[1], info);
 		}
 		
 		return is_ok;
@@ -73,9 +79,11 @@ public abstract class db_ini
 		return all_fields_;
 	}
 
-	private static boolean populate_source(String db_, String source_, String table_, HashMap<String, Object[]> fields_)
+	private static boolean populate_source(String source_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object> info_)
 	{
-		String db = config.check_type(db_);
+		if (!arrays.keys_exist(info_, new String[] { types.CONFIG_DB, types.CONFIG_DB_NAME, types.CONFIG_DB_SETUP, generic.get_key(types.WHAT_INSTANCE) })) return false;
+		
+		String db = config.check_type((String)info_.get(types.CONFIG_DB));
 		String source = config.check_type(source_);
 		if (!strings.is_ok(db) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
 
@@ -101,16 +109,19 @@ public abstract class db_ini
 				fields.put(id, field);
 			}
 		}
-	
-		return (!accessory.db.add_source(source, fields) ? false : (config.update_ini(db, source, table_) && accessory.db.add_source_db(source, db)));
+		
+		if (!accessory.db.add_source_ini(source, fields, info_)) return false;
+		if (!config.update_ini(db, source, table_)) return false;
+		
+		return true;
 	}
 
-	private static boolean populate_setup(String db_, HashMap<String, Object> vals_)
+	private static HashMap<String, Object> populate_setup(String db_, HashMap<String, Object> vals_)
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>(arrays.is_ok(vals_) ? vals_ : get_setup_default());
 		if (!vals.containsKey(types.CONFIG_DB_SETUP)) vals.put(types.CONFIG_DB_SETUP, db_);
-		
-		return config.update_ini((String)vals.get(types.CONFIG_DB_SETUP), vals);
+
+		return (config.update_ini((String)vals.get(types.CONFIG_DB_SETUP), vals) ? vals : null);
 	}
 
 	private static boolean populate_all_dbs()
@@ -168,8 +179,5 @@ public abstract class db_ini
 		return vals;
 	}
 	
-	private static String get_col_default(String field_, String type_)
-	{
-		return types.remove_type(field_, type_);
-	}
+	private static String get_col_default(String field_, String type_) { return types.remove_type(field_, type_); }
 }

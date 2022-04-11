@@ -6,13 +6,6 @@ import java.util.Map.Entry;
 
 public abstract class db 
 {
-	//Sources/fields are constant, used internally, stored in memory (e.g., in _sources). 
-	//Tables/cols are variable and refer to the actual DB.
-	//The basic table/col structures, like number, type and size of columns, are assumed to be constant and defined via sources/fields.
-	//On the other hand, table/col names are assumed to be variable and managed via tables/cols.
-	//A valid source is one included within the sources currently considered by the library, in memory.
-	//A valid table is one really existing in the given DB.
-	
 	public static final String FIELD_ID = types.CONFIG_DB_DEFAULT_FIELD_ID;
 	public static final String FIELD_TIMESTAMP = types.CONFIG_DB_DEFAULT_FIELD_TIMESTAMP;
 	
@@ -61,8 +54,7 @@ public abstract class db
 
 	//--- Populated via the corresponding db_ini method (e.g., load_sources()).
 	static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
-	
-	private static HashMap<String, String> _source_dbs = new HashMap<String, String>();
+	private static HashMap<String, HashMap<String, Object>> _source_infos = new HashMap<String, HashMap<String, Object>>();
 	//---
 	
 	static { ini.load(); }
@@ -187,7 +179,7 @@ public abstract class db
 
 	public static String get_value(String input_)
 	{
-		return get_current_db().get_value(input_);
+		return get_current_instance().get_value(input_);
 	}
 
 	public static String get_variable_table(String source_)
@@ -208,22 +200,22 @@ public abstract class db
 	
 	public static String get_variable(String input_)
 	{
-		return get_current_db().get_variable(input_);	
+		return get_current_instance().get_variable(input_);	
 	} 
 
 	public static HashMap<String, Object> get_data_type(String data_type_)
 	{
-		return get_current_db().get_data_type(data_type_); 
+		return get_current_instance().get_data_type(data_type_); 
 	}
 
 	public static int get_default_size(String type_)
 	{
-		return get_current_db().get_default_size(type_);
+		return get_current_instance().get_default_size(type_);
 	}
 
 	public static int get_max_size(String type_)
 	{
-		return get_current_db().get_max_size(type_);
+		return get_current_instance().get_max_size(type_);
 	}
 	
 	public static boolean source_is_ok(String source_)
@@ -260,7 +252,7 @@ public abstract class db
 		return strings.is_ok(get_col(source_, field_));
 	}
 	
-	public static boolean add_source(String source_, HashMap<String, db_field> fields_)
+	public static boolean add_source_ini(String source_, HashMap<String, db_field> fields_, HashMap<String, Object> info_)
 	{
 		if (!arrays.is_ok(_sources)) _sources = new HashMap<String, HashMap<String, db_field>>();
 		if (!strings.is_ok(source_) || _sources.containsKey(source_)) return false;
@@ -281,27 +273,28 @@ public abstract class db
 		}
 		
 		_sources.put(source_, fields);
-		
-		return true;
-	}
 	
-	public static boolean add_source_db(String source_, String db_)
-	{
+		if (!arrays.is_ok(info_))
+		{
+			manage_error(types.ERROR_DB_SOURCE, null, null, "Wrong info for source " + source_);
+			
+			return false;
+		}
+	
 		String source = check_source(source_);
-		if (!strings.are_ok(new String[] { source, db_ })) return false;
+		if (!strings.is_ok(source) || !arrays.is_ok(info_)) return false;
 		
-		if (!arrays.is_ok(_source_dbs)) _source_dbs = new HashMap<String, String>();
-		
-		_source_dbs.put(source, db_);
+		if (!arrays.is_ok(_source_infos)) _source_infos = new HashMap<String, HashMap<String, Object>>();
+		_source_infos.put(source, (HashMap<String, Object>)arrays.get_new(info_));
 
 		return true;
 	}
 	
-	public static String get_source_db(String source_)
+	public static String get_db(String source_)
 	{
 		String source = check_source(source_);
 		
-		return ((strings.is_ok(source) && _source_dbs.containsKey(source)) ? _source_dbs.get(source) : strings.DEFAULT);
+		return ((strings.is_ok(source) && _source_infos.containsKey(source)) ? (String)_source_infos.get(source).get(types.CONFIG_DB) : strings.DEFAULT);
 	}
 	
 	public static HashMap<String, db_field> get_source_fields(String source_)
@@ -313,30 +306,26 @@ public abstract class db
 	
 	public static String get_col(String source_, String field_)
 	{
-		String source = check_source(source_); 
-	
-		return config.get(get_source_db(source), field_);
+		return config.get(get_db(source_), field_);
 	}
 
 	public static String get_field(String source_, String field_)
 	{
-		String source = check_source(source_); 
-		
-		return config.get(get_source_db(source), field_);
+		return config.get(get_db(source_), field_);
 	}
 	
 	public static String get_table(String source_)
 	{
 		String source = check_source(source_); 
 
-		return config.get(get_source_db(source), source);
+		return config.get(get_db(source), source);
 	}
 	
 	public static boolean update_table(String source_, String table_)
 	{	
 		String source = check_source(source_); 
 
-		return ((!strings.is_ok(source) || !strings.is_ok(table_)) ? false : config.update(get_source_db(source), source, table_));
+		return ((!strings.is_ok(source) || !strings.is_ok(table_)) ? false : config.update(get_db(source), source, table_));
 	}
 	
 	public static HashMap<String, String> adapt_inputs(String source_, HashMap<String, String> old_, String field_, double val_)
@@ -407,7 +396,7 @@ public abstract class db
 	
 	public static String sanitise_string(String input_)
 	{
-		return get_current_db().sanitise_string(input_);
+		return get_current_instance().sanitise_string(input_);
 	}
 
 	public static String check_type(String input_)
@@ -415,7 +404,7 @@ public abstract class db
 		return types.check_type(input_, types.get_subtypes(types.DB_QUERY), types.ACTIONS_ADD, types.DB_QUERY);
 	}
 
-	public static parent_db get_current_db()
+	public static parent_db get_current_instance()
 	{	
 		parent_db output = arrays.get_value(get_all_dbs(), get_current_setup());
 		
@@ -434,14 +423,14 @@ public abstract class db
 	
 	static void update_is_ok(boolean _is_ok)
 	{
-		get_current_db().update_is_ok(_is_ok);
+		get_current_instance().update_is_ok(_is_ok);
 	}
 	
 	static HashMap<String, String> get_credentials()
 	{
 		HashMap<String, String> output = new HashMap<String, String>();
 		
-		String setup = db.get_current_setup();
+		String setup = get_current_setup();
 		
 		String user = config.get(setup, USER);
 		String username = config.get(setup, USERNAME);
@@ -561,11 +550,20 @@ public abstract class db
 		
 		return arrays.to_array(output);
 	}
-	
-	private static String[] get_all_setups()
-	{
-		return _alls.DB_SETUPS;
+
+	static parent_db get_instance_ini(String type_) 
+	{ 
+		parent_db output = null;
+		
+		String type = types.check_type(type_, types.get_subtypes(TYPE));
+		if (!strings.is_ok(type)) type = DEFAULT_TYPE;
+		
+		if (type.equals(MYSQL)) output = new db_mysql();
+		
+		return output;
 	}
+		
+	private static String[] get_all_setups() { return _alls.DB_SETUPS; }
 	
 	private static boolean update_conn_info(HashMap<String, String> params_)
 	{		
@@ -609,8 +607,8 @@ public abstract class db
 		String type = SETUP;
 		
 		String output = config.get_db(type);
-		if (!strings.is_ok(types.check_type(output, types.get_subtypes(type)))) output = DEFAULT_TYPE;
-
+		if (!strings.is_ok(types.check_type(output, types.get_subtypes(type)))) output = types.CONFIG_DB_SETUP_DEFAULT;
+		
 		return output;
 	}
 	

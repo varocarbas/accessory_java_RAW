@@ -131,7 +131,7 @@ abstract class db_sql
 
 	private static Connection connect_type(Properties properties) 
 	{
-		return db.get_current_db().connect(properties);
+		return db.get_current_instance().connect(properties);
 	}
 
 	private static Properties get_properties() 

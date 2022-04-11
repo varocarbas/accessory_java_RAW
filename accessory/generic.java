@@ -10,225 +10,121 @@ import java.util.Random;
 import java.util.Map.Entry;
 
 public abstract class generic 
-{	
-	public static final String TYPE = types.what_to_key(types.WHAT_TYPE);
-	public static final String KEY = types.what_to_key(types.WHAT_KEY);
-	public static final String VALUE = types.what_to_key(types.WHAT_VALUE);
-	public static final String FURTHER = types.what_to_key(types.WHAT_FURTHER);
-	public static final String INFO = types.what_to_key(types.WHAT_INFO);
-	public static final String MIN = types.what_to_key(types.WHAT_MIN);
-	public static final String MAX = types.what_to_key(types.WHAT_MAX);	
-	public static final String USERNAME = types.what_to_key(types.WHAT_USERNAME);
-	public static final String PASSWORD = types.what_to_key(types.WHAT_PASSWORD);
-	public static final String ID = types.what_to_key(types.WHAT_ID);
-	public static final String QUERY = types.what_to_key(types.WHAT_QUERY);
+{
+	static { ini.load(); }	
+	
+	public static final String TYPE = get_key(types.WHAT_TYPE);
+	public static final String KEY = get_key(types.WHAT_KEY);
+	public static final String VALUE = get_key(types.WHAT_VALUE);
+	public static final String FURTHER = get_key(types.WHAT_FURTHER);
+	public static final String INFO = get_key(types.WHAT_INFO);
+	public static final String MIN = get_key(types.WHAT_MIN);
+	public static final String MAX = get_key(types.WHAT_MAX);	
+	public static final String USERNAME = get_key(types.WHAT_USERNAME);
+	public static final String PASSWORD = get_key(types.WHAT_PASSWORD);
+	public static final String ID = get_key(types.WHAT_ID);
+	public static final String QUERY = get_key(types.WHAT_QUERY);
+	public static final String INSTANCE = get_key(types.WHAT_INSTANCE);
+	
+	public static boolean is_ok(double[] input_) { return is_ok(input_, false); }
+	
+	public static boolean is_ok(long[] input_) { return is_ok(input_, false); }
+	
+	public static boolean is_ok(int[] input_) { return is_ok(input_, false); }
+	
+	public static boolean is_ok(boolean[] input_) { return is_ok(input_, false); }
+	
+	public static boolean is_ok(byte[] input_) { return is_ok(input_, false); }
+	
+	public static boolean is_ok(Class<?> input_) { return is_ok(input_, false); }
 
-	static { ini.load(); }
+	public static <x, y> boolean is_ok(HashMap<x, y> input_) { return is_ok(input_, false); }
 	
-	public static boolean is_ok(double[] input_)
-	{
-		return is_ok(input_, false);
-	}
-	
-	public static boolean is_ok(long[] input_)
-	{
-		return is_ok(input_, false);
-	}
-	
-	public static boolean is_ok(int[] input_)
-	{
-		return is_ok(input_, false);
-	}
-	
-	public static boolean is_ok(boolean[] input_)
-	{
-		return is_ok(input_, false);
-	}
-	
-	public static boolean is_ok(byte[] input_)
-	{
-		return is_ok(input_, false);
-	}
-	
-	public static boolean is_ok(Class<?> input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static boolean is_ok(Object input_) { return is_ok(input_, false); }
 
-	public static <x, y> boolean is_ok(HashMap<x, y> input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static boolean is_class(Class<?> input_) { return is_common(input_, new Class<?>[] { Class.class }, true); }
 	
-	public static boolean is_ok(Object input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static boolean is_class(Object input_) { return is_common(input_, new Class<?>[] { Class.class }, false); }
 
-	public static boolean is_class(Class<?> input_)
-	{
-		return is_common(input_, new Class<?>[] { Class.class }, true);
-	}
+	public static boolean is_size(Class<?> input_) { return is_common(input_, new Class<?>[] { size.class }, true); }
 	
-	public static boolean is_class(Object input_)
-	{
-		return is_common(input_, new Class<?>[] { Class.class }, false);
-	}
+	public static boolean is_size(Object input_) { return is_common(input_, new Class<?>[] { size.class }, false); }
 
-	public static boolean is_size(Class<?> input_)
-	{
-		return is_common(input_, new Class<?>[] { size.class }, true);
-	}
+	public static boolean is_data(Class<?> input_) { return is_common(input_, new Class<?>[] { data.class }, true); }
 	
-	public static boolean is_size(Object input_)
-	{
-		return is_common(input_, new Class<?>[] { size.class }, false);
-	}
+	public static boolean is_data(Object input_) { return is_common(input_, new Class<?>[] { data.class }, false); }
 
-	public static boolean is_data(Class<?> input_)
-	{
-		return is_common(input_, new Class<?>[] { data.class }, true);
-	}
+	public static boolean is_db_field(Class<?> input_) { return is_common(input_, new Class<?>[] { db_field.class }, true); }
 	
-	public static boolean is_data(Object input_)
-	{
-		return is_common(input_, new Class<?>[] { data.class }, false);
-	}
+	public static boolean is_db_field(Object input_) { return is_common(input_, new Class<?>[] { db_field.class }, false); }
 
-	public static boolean is_db_field(Class<?> input_)
-	{
-		return is_common(input_, new Class<?>[] { db_field.class }, true);
-	}
+	public static boolean is_db_where(Class<?> input_) { return is_common(input_, new Class<?>[] { db_where.class }, true); }
 	
-	public static boolean is_db_field(Object input_)
-	{
-		return is_common(input_, new Class<?>[] { db_field.class }, false);
-	}
+	public static boolean is_db_where(Object input_) { return is_common(input_, new Class<?>[] { db_where.class }, false); }
 
-	public static boolean is_db_where(Class<?> input_)
-	{
-		return is_common(input_, new Class<?>[] { db_where.class }, true);
-	}
+	public static boolean is_db_order(Class<?> input_) { return is_common(input_, new Class<?>[] { db_order.class }, true); }
 	
-	public static boolean is_db_where(Object input_)
-	{
-		return is_common(input_, new Class<?>[] { db_where.class }, false);
-	}
+	public static boolean is_db_order(Object input_) { return is_common(input_, new Class<?>[] { db_order.class }, false); }
+	
+	public static boolean is_string(Class<?> input_) { return is_common(input_, new Class<?>[] { String.class }, true); }
+	
+	public static boolean is_string(Object input_) { return is_common(input_, new Class<?>[] { String.class }, false); }
 
-	public static boolean is_db_order(Class<?> input_)
-	{
-		return is_common(input_, new Class<?>[] { db_order.class }, true);
-	}
+	public static boolean is_boolean(Class<?> input_) { return is_common(input_, new Class<?>[] { Boolean.class, boolean.class }, true); }
 	
-	public static boolean is_db_order(Object input_)
-	{
-		return is_common(input_, new Class<?>[] { db_order.class }, false);
-	}
+	public static boolean is_boolean(boolean input_) { return true; }
 	
-	public static boolean is_string(Class<?> input_)
-	{
-		return is_common(input_, new Class<?>[] { String.class }, true);
-	}
-	
-	public static boolean is_string(Object input_)
-	{
-		return is_common(input_, new Class<?>[] { String.class }, false);
-	}
+	public static boolean is_boolean(Object input_) { return is_common(input_, new Class<?>[] { Boolean.class, boolean.class }, false); }
 
-	public static boolean is_boolean(Class<?> input_)
-	{
-		return is_common(input_, new Class<?>[] { Boolean.class, boolean.class }, true);
-	}
+	public static boolean is_number(Class<?> input_) { return is_common(input_, numbers.get_all_classes(), true); }
 	
-	public static boolean is_boolean(boolean input_)
-	{
-		return true;
-	}
-	
-	public static boolean is_boolean(Object input_)
-	{
-		return is_common(input_, new Class<?>[] { Boolean.class, boolean.class }, false);
-	}
+	public static boolean is_number(Object input_) { return is_common(input_, numbers.get_all_classes(), false); }
 
-	public static boolean is_number(Class<?> input_)
-	{
-		return is_common(input_, numbers.get_all_classes(), true);
-	}
+	public static boolean is_array(Class<?> input_) { return is_common(input_, arrays.get_all_classes(), true); }
 	
-	public static boolean is_number(Object input_)
-	{
-		return is_common(input_, numbers.get_all_classes(), false);
-	}
+	public static boolean is_array(double[] input_) { return true; }
+	
+	public static boolean is_array(long[] input_) { return true; }
+	
+	public static boolean is_array(int[] input_) { return true; }
+	
+	public static boolean is_array(boolean[] input_) { return true; }
+	
+	public static boolean is_array(byte[] input_) { return true; }
+	
+	public static boolean is_array(Object input_) { return is_common(input_, arrays.get_all_classes(), false); }
+	
+	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_) { return arrays.get_new(input_); }
+	
+	public static <x> ArrayList<ArrayList<x>> get_new(ArrayList<ArrayList<x>> input_) { return arrays.get_new(input_); }
 
-	public static boolean is_array(Class<?> input_)
-	{
-		return is_common(input_, arrays.get_all_classes(), true);
-	}
+	public static double[] get_new(double[] input_) { return arrays.get_new(input_); }
 	
-	public static boolean is_array(double[] input_)
-	{
-		return true;
-	}
+	public static long[] get_new(long[] input_) { return arrays.get_new(input_); }
 	
-	public static boolean is_array(long[] input_)
-	{
-		return true;
-	}
+	public static int[] get_new(int[] input_) { return arrays.get_new(input_); }
 	
-	public static boolean is_array(int[] input_)
-	{
-		return true;
-	}
+	public static boolean[] get_new(boolean[] input_) { return arrays.get_new(input_); }
 	
-	public static boolean is_array(boolean[] input_)
-	{
-		return true;
-	}
+	public static byte[] get_new(byte[] input_) { return arrays.get_new(input_); }
 	
-	public static boolean is_array(byte[] input_)
-	{
-		return true;
-	}
+	public static boolean get_random_boolean() { return (new Random()).nextBoolean(); }
 	
-	public static boolean is_array(Object input_)
-	{
-		return is_common(input_, arrays.get_all_classes(), false);
-	}
+	public static boolean are_equal(Class<?> input1_, Class<?> input2_) { return classes_are_equal(input1_, input2_); }
 	
-	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_)
-	{
-		return arrays.get_new(input_);
-	}
+	public static Class<?> get_class(double input_) { return double.class; }
 	
-	public static <x> ArrayList<ArrayList<x>> get_new(ArrayList<ArrayList<x>> input_)
-	{
-		return arrays.get_new(input_);
-	}
+	public static Class<?> get_class(long input_) { return long.class; }
+	
+	public static Class<?> get_class(int input_) { return int.class; }
+	
+	public static Class<?> get_class(boolean input_) { return boolean.class; }
+	
+	public static Class<?> get_class(byte input_) { return byte.class; }
+	
+	public static boolean is_instance(Object input_, Class<?> class_) { return (class_ != null && are_equal(class_, get_class(input_))); }
 
-	public static double[] get_new(double[] input_)
-	{
-		return arrays.get_new(input_);
-	}
-	
-	public static long[] get_new(long[] input_)
-	{
-		return arrays.get_new(input_);
-	}
-	
-	public static int[] get_new(int[] input_)
-	{
-		return arrays.get_new(input_);
-	}
-	
-	public static boolean[] get_new(boolean[] input_)
-	{
-		return arrays.get_new(input_);
-	}
-	
-	public static byte[] get_new(byte[] input_)
-	{
-		return arrays.get_new(input_);
-	}
+	public static Class<?>[] get_all_classes() { return _alls.GENERIC_CLASSES; }
 	
 	public static Object get_new(Object input_)
 	{
@@ -275,16 +171,6 @@ public abstract class generic
 		
 		return haystack[numbers.get_random_index(haystack.length)];
 	}
-	
-	public static boolean get_random_boolean()
-	{
-		return (new Random()).nextBoolean();
-	}
-	
-	public static boolean are_equal(Class<?> input1_, Class<?> input2_)
-	{
-		return classes_are_equal(input1_, input2_);
-	}
 
 	public static boolean are_equal(Object input1_, Object input2_)
 	{
@@ -303,31 +189,6 @@ public abstract class generic
 		
 		return output;
 	}	
-	
-	public static Class<?> get_class(double input_)
-	{
-		return double.class;
-	}
-	
-	public static Class<?> get_class(long input_)
-	{
-		return long.class;
-	}
-	
-	public static Class<?> get_class(int input_)
-	{
-		return int.class;
-	}
-	
-	public static Class<?> get_class(boolean input_)
-	{
-		return boolean.class;
-	}
-	
-	public static Class<?> get_class(byte input_)
-	{
-		return byte.class;
-	}
 	
 	public static Class<?> get_class(Object input_)
 	{
@@ -392,16 +253,6 @@ public abstract class generic
 		return false;
 	}
 	
-	public static boolean is_instance(Object input_, Class<?> class_)
-	{
-		return (class_ != null && are_equal(class_, get_class(input_)));
-	}
-
-	public static Class<?>[] get_all_classes()
-	{
-		return _alls.GENERIC_CLASSES;
-	}
-	
 	public static Method[] get_all_methods(Class<?> class_, String[] skip_)
 	{
 		if (!is_ok(class_)) return null;
@@ -443,41 +294,40 @@ public abstract class generic
 		return output;
 	}
 	
-	static boolean is_ok(double[] input_, boolean minimal_)
-	{
-		return arrays.is_ok(input_, minimal_);
-	}
+	static boolean is_ok(double[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 	
-	static boolean is_ok(long[] input_, boolean minimal_)
-	{
-		return arrays.is_ok(input_, minimal_);
-	}
+	static boolean is_ok(long[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 	
-	static boolean is_ok(int[] input_, boolean minimal_)
-	{
-		return arrays.is_ok(input_, minimal_);
-	}
+	static boolean is_ok(int[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 	
-	static boolean is_ok(boolean[] input_, boolean minimal_)
-	{
-		return arrays.is_ok(input_, minimal_);
-	}
+	static boolean is_ok(boolean[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 	
-	static boolean is_ok(byte[] input_, boolean minimal_)
-	{
-		return arrays.is_ok(input_, minimal_);
-	}
+	static boolean is_ok(byte[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 	
-	static boolean is_ok(Class<?> input_, boolean minimal_)
-	{
-		return (input_ != null);
-	}
+	static boolean is_ok(Class<?> input_, boolean minimal_) { return (input_ != null); }
 
-	static <x, y> boolean is_ok(HashMap<x, y> input_, boolean minimal_)
-	{
-		return arrays.is_ok(input_, minimal_);
-	}
+	static <x, y> boolean is_ok(HashMap<x, y> input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 
+	static String get_key(String what_) { return get_all_keys().get(what_); }
+	
+	static String[] populate_all_default_methods() { return new String[] { "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll" }; }	
+	
+	static HashMap<String, String> populate_all_keys()
+	{
+		HashMap<String, String> output = new HashMap<String, String>();
+		
+		String[] whats = new String[] 
+		{
+			types.WHAT_TYPE, types.WHAT_KEY, types.WHAT_VALUE, types.WHAT_FURTHER,
+			types.WHAT_INFO, types.WHAT_MIN, types.WHAT_MAX, types.WHAT_USERNAME,
+			types.WHAT_PASSWORD, types.WHAT_ID, types.WHAT_QUERY, types.WHAT_INSTANCE
+		};
+	
+		for (String what: whats) { output.put(what, types.what_to_key(what)); }
+
+		return output;
+	}
+	
 	static boolean is_ok(Object input_, boolean minimal_)
 	{
 		boolean is_ok = false;
@@ -522,22 +372,10 @@ public abstract class generic
 		classes.add(byte.class);
 		classes.add(Object.class);
 		
-		for (Class<?> type: numbers.get_all_classes())
-		{
-			classes.add(type);
-		}
-
-		for (Class<?> type: arrays.get_all_classes())
-		{
-			classes.add(type);
-		}
+		for (Class<?> type: numbers.get_all_classes()) { classes.add(type); }
+		for (Class<?> type: arrays.get_all_classes()) { classes.add(type); }
 
 		return classes.toArray(new Class<?>[classes.size()]);
-	}
-	
-	static String[] populate_all_default_methods()
-	{
-		return new String[] { "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll" };
 	}
 	
 	static HashMap<Class<?>, Class<?>[]> populate_all_class_equivalents()
@@ -561,6 +399,12 @@ public abstract class generic
 				
 		return output;
 	}
+	
+	private static HashMap<String, String> get_all_keys() { return _alls.GENERIC_KEYS; }
+	
+	private static String[] get_all_default_methods() { return _alls.GENERIC_DEFAULT_METHOD_NAMES; }
+
+	private static HashMap<Class<?>, Class<?>[]> get_all_class_equivalents() { return _alls.GENERIC_CLASSES_EQUIVALENTS; }
 	
 	private static boolean is_common(Object input_, Class<?>[] classes_, boolean is_class_)
 	{
@@ -601,15 +445,5 @@ public abstract class generic
 		}
 		
 		return false;
-	}
-	
-	private static String[] get_all_default_methods()
-	{
-		return _alls.GENERIC_DEFAULT_METHOD_NAMES;
-	}
-	
-	private static HashMap<Class<?>, Class<?>[]> get_all_class_equivalents()
-	{
-		return _alls.GENERIC_CLASSES_EQUIVALENTS;
 	}
 }
