@@ -5,8 +5,6 @@ import java.util.Map.Entry;
 
 public abstract class db_ini 
 {
-	public static final String ERROR_DBS = types.ERROR_INI_DB_DBS;
-	
 	private static boolean _populated = false;
 	
 	public static void populate() 
@@ -14,13 +12,12 @@ public abstract class db_ini
 		if (_populated) return;
 		
 		String error = strings.DEFAULT;
-		if (!populate_all_dbs()) error = ERROR_DBS;
+		if (!populate_all_dbs()) error = types.ERROR_INI_DB_DBS;
 
 		_populated = true;
 		if (error.equals(strings.DEFAULT)) return;
 
-		errors._exit = true;
-		errors.manage(error);
+		manage_error(error);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -32,20 +29,25 @@ public abstract class db_ini
 		if (!strings.is_ok(db) || !arrays.is_ok(sources_)) return false;
 
 		config.update_ini(db_, types.CONFIG_DB_NAME, name_);
-		HashMap<String, Object> setup = populate_setup(db, setup_);
+		HashMap<String, Object> setup = populate_setup(db, name_, setup_);
 
-		HashMap<String, Object> info = new HashMap<String, Object>();
-		info.put(types.CONFIG_DB, db);
-		info.put(types.CONFIG_DB_NAME, name_);
-		info.put(types.CONFIG_DB_SETUP, setup);
-		info.put(generic.get_key(types.WHAT_INSTANCE), accessory.db.get_instance_ini((String)setup.get(types.CONFIG_DB_TYPE)));
+		HashMap<String, Object> source_setup = new HashMap<String, Object>();
+		source_setup.put(types.CONFIG_DB, db);
+		source_setup.put(types.CONFIG_DB_NAME, name_);
+		source_setup.put(types.CONFIG_DB_SETUP, (String)setup.get(types.CONFIG_DB_SETUP));
+		source_setup.put(generic.get_key(types.WHAT_INSTANCE), accessory.db.get_instance_ini((String)setup.get(types.CONFIG_DB_TYPE)));
 
 		for (Entry<String, Object[]> item: sources_.entrySet())
 		{
 			String id = item.getKey();
 			Object[] temp = item.getValue();
 			
-			populate_source(id, (String)temp[0], (HashMap<String, Object[]>)temp[1], info);
+			if (!populate_source(id, (String)temp[0], (HashMap<String, Object[]>)temp[1], source_setup))
+			{
+				manage_error(types.ERROR_INI_DB_SOURCE);
+				
+				return false;
+			}
 		}
 		
 		return is_ok;
@@ -78,6 +80,8 @@ public abstract class db_ini
 		
 		return all_fields_;
 	}
+
+	private static String get_col_default(String field_, String type_) { return types.remove_type(field_, type_); }
 
 	private static boolean populate_source(String source_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object> info_)
 	{
@@ -116,11 +120,12 @@ public abstract class db_ini
 		return true;
 	}
 
-	private static HashMap<String, Object> populate_setup(String db_, HashMap<String, Object> vals_)
+	private static HashMap<String, Object> populate_setup(String db_, String db_name_, HashMap<String, Object> vals_)
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>(arrays.is_ok(vals_) ? vals_ : get_setup_default());
 		if (!vals.containsKey(types.CONFIG_DB_SETUP)) vals.put(types.CONFIG_DB_SETUP, db_);
-
+		vals.put(types.CONFIG_DB_NAME, db_name_);
+		
 		return (config.update_ini((String)vals.get(types.CONFIG_DB_SETUP), vals) ? vals : null);
 	}
 
@@ -179,5 +184,10 @@ public abstract class db_ini
 		return vals;
 	}
 	
-	private static String get_col_default(String field_, String type_) { return types.remove_type(field_, type_); }
+	private static void manage_error(String type_)
+	{
+		errors._exit = true;
+		
+		errors.manage(type_);
+	}
 }

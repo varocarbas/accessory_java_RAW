@@ -11,130 +11,67 @@ public abstract class config
 
 	static { ini.load(); }
 
-	public static String get_basic(String key_)
-	{
-		return get(types.CONFIG_BASIC, key_);
-	}
+	public static String get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
 	
-	public static boolean update_basic(String key_, boolean val_)
-	{
-		return update_basic(key_, strings.to_string(val_));
-	}
+	public static boolean update_basic(String key_, boolean val_) { return update_basic(key_, strings.to_string(val_)); }
 
-	public static boolean update_basic(String key_, String val_)
-	{
-		return update(types.CONFIG_BASIC, key_, val_);
-	}
+	public static boolean update_basic(String key_, String val_) { return update(types.CONFIG_BASIC, key_, val_); }
 	
-	public static boolean matches_basic(String key_, boolean val_)
-	{
-		return matches_basic(key_, strings.to_string(val_));
-	}
+	public static boolean matches_basic(String key_, boolean val_) { return matches_basic(key_, strings.to_string(val_)); }
 
-	public static boolean matches_basic(String key_, String val_)
-	{
-		return matches(types.CONFIG_BASIC, key_, val_);
-	}
+	public static boolean matches_basic(String key_, String val_) { return matches(types.CONFIG_BASIC, key_, val_); }
 
-	public static String get_db(String key_)
-	{
-		return get(types.CONFIG_DB, key_);
-	}
+	public static String get_db(String key_) { return get(types.CONFIG_DB, key_); }
 	
-	public static boolean update_db(String key_, boolean val_)
-	{
-		return update_db(key_, strings.to_string(val_));
-	}
+	public static boolean update_db(String key_, boolean val_) { return update_db(key_, strings.to_string(val_)); }
 	
-	public static boolean update_db(String key_, String val_)
-	{
-		return update(types.CONFIG_DB, key_, val_);
-	}
+	public static boolean update_db(String key_, String val_) { return update(types.CONFIG_DB, key_, val_); }
 	
-	public static boolean matches_db(String key_, boolean val_)
-	{
-		return matches_db(key_, strings.to_string(val_));
-	}
+	public static boolean matches_db(String key_, boolean val_) { return matches_db(key_, strings.to_string(val_)); }
 	
-	public static boolean matches_db(String key_, String val_)
-	{
-		return matches(types.CONFIG_DB, key_, val_);
-	}
+	public static boolean matches_db(String key_, String val_) { return matches(types.CONFIG_DB, key_, val_); }
 
-	public static String get_credentials(String key_)
-	{
-		return get(types.CONFIG_CREDENTIALS, key_);
-	}
+	public static String get_credentials(String key_) { return get(types.CONFIG_CREDENTIALS, key_); }
 
-	public static boolean update_credentials(String key_, boolean val_)
-	{
-		return update_credentials(key_, strings.to_string(val_));
-	}
+	public static boolean update_credentials(String key_, boolean val_) { return update_credentials(key_, strings.to_string(val_)); }
 	
-	public static boolean update_credentials(String key_, String val_)
-	{
-		return update(types.CONFIG_CREDENTIALS, key_, val_);
-	}
+	public static boolean update_credentials(String key_, String val_) { return update(types.CONFIG_CREDENTIALS, key_, val_); }
 
-	public static boolean matches_credentials(String key_, boolean val_)
-	{
-		return matches_credentials(key_, strings.to_string(val_));
-	}
+	public static boolean matches_credentials(String key_, boolean val_) { return matches_credentials(key_, strings.to_string(val_)); }
 	
-	public static boolean matches_credentials(String key_, String val_)
-	{
-		return matches(types.CONFIG_CREDENTIALS, key_, val_);
-	}
+	public static boolean matches_credentials(String key_, String val_) { return matches(types.CONFIG_CREDENTIALS, key_, val_); }
 
-	public static String get_crypto(String key_)
-	{
-		return get(types.CONFIG_CRYPTO, key_);
-	}
+	public static String get_crypto(String key_) { return get(types.CONFIG_CRYPTO, key_); }
 
-	public static boolean update_crypto(String key_, boolean val_)
-	{
-		return update_crypto(key_, strings.to_string(val_));
-	}
+	public static boolean update_crypto(String key_, boolean val_) { return update_crypto(key_, strings.to_string(val_)); }
 	
-	public static boolean update_crypto(String key_, String val_)
-	{
-		return update(types.CONFIG_CRYPTO, key_, val_);
-	}
+	public static boolean update_crypto(String key_, String val_) { return update(types.CONFIG_CRYPTO, key_, val_); }
 
-	public static boolean matches_crypto(String key_, boolean val_)
-	{
-		return matches_crypto(key_, strings.to_string(val_));
-	}
+	public static boolean matches_crypto(String key_, boolean val_) { return matches_crypto(key_, strings.to_string(val_)); }
 	
-	public static boolean matches_crypto(String key_, String val_)
-	{
-		return matches(types.CONFIG_CRYPTO, key_, val_);
-	}
+	public static boolean matches_crypto(String key_, String val_) { return matches(types.CONFIG_CRYPTO, key_, val_); }
 
-	public static String get_logs(String key_)
-	{
-		return get(types.CONFIG_LOGS, key_);
-	}
+	public static String get_logs(String key_) { return get(types.CONFIG_LOGS, key_); }
 
-	public static boolean update_logs(String key_, boolean val_)
-	{
-		return update_logs(key_, strings.to_string(val_));
-	}
+	public static boolean update_logs(String key_, boolean val_) { return update_logs(key_, strings.to_string(val_)); }
 	
-	public static boolean update_logs(String key_, String val_)
-	{
-		return update(types.CONFIG_LOGS, key_, val_);
-	}
+	public static boolean update_logs(String key_, String val_) { return update(types.CONFIG_LOGS, key_, val_); }
 
-	public static boolean matches_logs(String key_, boolean val_)
-	{
-		return matches_logs(key_, strings.to_string(val_));
-	}
+	public static boolean matches_logs(String key_, boolean val_) { return matches_logs(key_, strings.to_string(val_)); }
 	
-	public static boolean matches_logs(String key_, String val_)
-	{
-		return matches(types.CONFIG_LOGS, key_, val_);
-	}
+	public static boolean matches_logs(String key_, String val_) { return matches(types.CONFIG_LOGS, key_, val_); }
+
+	public static boolean update(String type_, String key_, boolean val_) { return update(type_, key_, strings.to_string(val_)); }
+	
+	public static boolean matches(String type_, String key_, boolean val_) { return matches(type_, key_, strings.to_string(val_)); }
+	
+	public static boolean matches(String type_, String key_, String val_) { return update_matches(type_, key_, val_, false, false); }	
+	
+	public static boolean update_ini(String type_, String key_, boolean val_) { return update_ini(type_, key_, strings.to_string(val_)); }
+	
+	public static boolean update_ini(String type_, String key_, String val_) { return update_matches(type_, key_, val_, true, true); }
+
+	public static String check_type(String type_) { return types.check_type(type_, types.get_subtypes(types.CONFIG)); }
 
 	public static String get(String type_, String key_)
 	{		
@@ -147,11 +84,6 @@ public abstract class config
 
 		return output;
 	}
-
-	public static boolean update(String type_, String key_, boolean val_)
-	{
-		return update(type_, key_, strings.to_string(val_));
-	}
 	
 	public static boolean update(String type_, String key_, String val_)
 	{	
@@ -162,16 +94,6 @@ public abstract class config
 
 		return update_matches(type, key_, val_, true, false);
 	}
-
-	public static boolean matches(String type_, String key_, boolean val_)
-	{
-		return matches(type_, key_, strings.to_string(val_));
-	}
-	
-	public static boolean matches(String type_, String key_, String val_)
-	{
-		return update_matches(type_, key_, val_, false, false);
-	}	
 
 	public static boolean update_ini(String type_, HashMap<String, Object> vals_)
 	{	
@@ -193,21 +115,8 @@ public abstract class config
 		
 		return true;
 	}
-	
-	public static boolean update_ini(String type_, String key_, boolean val_)
-	{
-		return update_ini(type_, key_, strings.to_string(val_));
-	}
-	
-	public static boolean update_ini(String type_, String key_, String val_)
-	{
-		return update_matches(type_, key_, val_, true, true);
-	}
 
-	public static String check_type(String type_)
-	{
-		return types.check_type(type_, types.get_subtypes(types.CONFIG));
-	}
+	static String[] populate_all_not_update() { return new String[] { types.CONFIG_DB, types.CONFIG_DB_NAME, types.CONFIG_DB_SETUP, types.CONFIG_DB_TYPE}; }
 	
 	static HashMap<String, Boolean> update_db_conn_info(String setup_, HashMap<String, String> params_)
 	{
@@ -230,6 +139,8 @@ public abstract class config
 		return output;
 	}
 	
+	private static String[] get_all_not_update() { return _alls.CONFIG_NOT_UPDATE; }
+	
 	private static boolean update_matches(String type_, String key_, String val_, boolean update_, boolean ini_)
 	{
 		boolean is_ok = false;
@@ -239,7 +150,8 @@ public abstract class config
 
 		if (!strings.is_ok(type) || !strings.is_ok(key)) return is_ok;
 		if (!generic.is_string(val_)) return is_ok;
-
+		if (!ini_ && arrays.value_exists(get_all_not_update(), type)) return is_ok;
+		
 		HashMap<String, String> info = new HashMap<String, String>();
 		if (_info.containsKey(type)) info = new HashMap<String, String>(_info.get(type));
 		else if (!ini_) return is_ok; 

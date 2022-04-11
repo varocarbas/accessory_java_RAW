@@ -16,7 +16,7 @@ class _basic
 	{ 
 		if (_populated) return;
 		
-		DIR_SEPARATOR = (strings.contains("win", System.getProperty("os.name"), true) ? "\\" : "/");
+		DIR_SEPARATOR = (System.getProperty("os.name").contains("Windows") ? "\\" : "/");
 		
 		_populated = true;
 	} 

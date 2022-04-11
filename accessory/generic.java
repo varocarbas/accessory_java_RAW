@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 
 public abstract class generic 
 {
-	static { ini.load(); }	
+	static { ini.load(); }	//_alls.GENERIC_KEYS needs to be populated first.
 	
 	public static final String TYPE = get_key(types.WHAT_TYPE);
 	public static final String KEY = get_key(types.WHAT_KEY);

@@ -24,8 +24,7 @@ abstract class _alls
 	public static HashMap<String, Class<?>> DATA_CLASSES = null;
 	public static HashMap<Class<?>, Class<?>> DATA_COMPATIBLE = null;
 
-	public static String[] DB_SETUPS = null;
-	public static HashMap<String, parent_db> DB_DBS = null;
+	public static String[] CONFIG_NOT_UPDATE = null;
 	
 	private static boolean _populated = false;
 	
@@ -47,10 +46,7 @@ abstract class _alls
 		
 		DATA_CLASSES = data.populate_all_classes();
 		DATA_COMPATIBLE = data.populate_all_compatible();
-		
-		DB_SETUPS = db.populate_all_setups();
-		DB_DBS = db.populate_all_dbs();
-		
+
 		_populated = true;
 	} 
 }
