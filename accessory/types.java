@@ -66,21 +66,19 @@ public abstract class types
 	//DB setups allow to support multiple basic configurations (e.g., different credentials or operating
 	//conditions) at the same time. The value associated with the corresponding CONFIG_DB_SETUP is the
 	//main key of the given DB, that is, the corresponding root CONFIG key, the one used to store
-	//all its specific values in config._info. The default setup can include as many DBs as required.
+	//all its specific values in config._info. The default setup can be used with as many DBs as required.
 	public static final String CONFIG_DB_SETUP = "config_db_setup";
-	public static final String CONFIG_DB_SETUP_DEFAULT = CONFIG_DB;
+	public static final String CONFIG_DB_SETUP_MAX_POOL = "config_db_setup_max_pool";
+	public static final String CONFIG_DB_SETUP_HOST = "config_db_setup_host";
+	public static final String CONFIG_DB_SETUP_TYPE = "config_db_setup_type";
+	public static final String CONFIG_DB_SETUP_TYPE_MYSQL = "config_db_setup_type_mysql";
+	public static final String CONFIG_DB_SETUP_CREDENTIALS = "config_db_setup_credentials"; 
+	public static final String CONFIG_DB_SETUP_CREDENTIALS_USERNAME = "config_db_setup_credentials_username";
+	public static final String CONFIG_DB_SETUP_CREDENTIALS_PASSWORD = "config_db_setup_credentials_password";
 	
-	public static final String CONFIG_DB_MAX_POOL = "config_db_max_pool";
-	public static final String CONFIG_DB_HOST = "config_db_host";
-	public static final String CONFIG_DB_TYPE = "config_db_type";
-	public static final String CONFIG_DB_TYPE_MYSQL = "config_db_type_mysql";
-	public static final String CONFIG_DB_CREDENTIALS = "config_db_credentials"; 
-	public static final String CONFIG_DB_CREDENTIALS_USERNAME = "config_db_credentials_username";
-	public static final String CONFIG_DB_CREDENTIALS_PASSWORD = "config_db_credentials_password";
-	
-	//CONFIG_DB_CREDENTIALS_USER is a generic ID which is required for encrypting credentials.
-	public static final String CONFIG_DB_CREDENTIALS_USER = "config_db_credentials_user";
-	public static final String CONFIG_DB_CREDENTIALS_ENCRYPTED = "config_db_credentials_encrypted";
+	//CONFIG_DB_SETUP_CREDENTIALS_USER is a generic ID which is required to encrypt credentials.
+	public static final String CONFIG_DB_SETUP_CREDENTIALS_USER = "config_db_setup_credentials_user";
+	public static final String CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED = "config_db_setup_credentials_encrypted";
 	
 	public static final String CONFIG_DB_DEFAULT_FIELD = "config_db_default_field";
 	public static final String CONFIG_DB_DEFAULT_FIELD_ID = "config_db_default_field_id";
@@ -232,25 +230,13 @@ public abstract class types
 
 	static { ini.load(); }
 	
-	public static String check_what(String what_)
-	{
-		return check_type(what_, types.get_subtypes(WHAT));
-	}
+	public static String check_what(String what_) { return check_type(what_, types.get_subtypes(WHAT)); }
 	
-	public static String what_to_key(String what_)
-	{
-		return check_type(what_, types.get_subtypes(WHAT), ACTIONS_REMOVE, WHAT);
-	}
+	public static String what_to_key(String what_) { return check_type(what_, types.get_subtypes(WHAT), ACTIONS_REMOVE, WHAT); }
 	
-	public static String check_action(String action_)
-	{
-		return check_type(action_, types.get_subtypes(ACTIONS));
-	}
+	public static String check_action(String action_) { return check_type(action_, types.get_subtypes(ACTIONS)); }
 	
-	public static String action_to_key(String action_)
-	{
-		return check_type(action_, types.get_subtypes(ACTIONS), ACTIONS_REMOVE, ACTIONS);
-	}
+	public static String action_to_key(String action_) { return check_type(action_, types.get_subtypes(ACTIONS), ACTIONS_REMOVE, ACTIONS); }
 	
 	public static String check_multiple(String subtype_, HashMap<String, String[]> targets_)
 	{
@@ -269,11 +255,10 @@ public abstract class types
 		
 		return output;
 	}
-	
-	public static String check_type(String type_, String[] types_)
-	{	
-		return check_type(type_, types_, null, null);
-	}
+
+	public static String check_type(String type_) { return check_type(type_, null); }
+
+	public static String check_type(String type_, String[] types_) { return check_type(type_, types_, null, null); }
 	
 	public static String check_type(String type_, String[] types_, String action_add_remove_, String type_add_remove_)
 	{	
@@ -316,15 +301,17 @@ public abstract class types
 		return (type_ + SEPARATOR + subtype_);
 	}
 
-	public static boolean is_subtype_of(String subtype_, String type_)
-	{
-		return arrays.value_exists(get_subtypes(type_), subtype_);
+	public static boolean is_config_db(String type_) 
+	{ 
+		String type = check_type(type_);
+		if (!strings.is_ok(type) || strings.contains_start(ERROR, type, false)) return false;
+		
+		return (strings.contains(DB + SEPARATOR, type, false) || strings.contains(SEPARATOR + DB, type, false));
 	}
 
-	public static String[] get_subtypes(String[] types_)
-	{
-		return get_subtypes(types_, null);
-	}
+	public static boolean is_subtype_of(String subtype_, String type_) { return arrays.value_exists(get_subtypes(type_), subtype_); }
+
+	public static String[] get_subtypes(String[] types_) { return get_subtypes(types_, null); }
 	
 	public static String[] get_subtypes(String[] types_, String[] all_)
 	{
@@ -340,10 +327,7 @@ public abstract class types
 		return arrays.to_array(subtypes);
 	}
 	
-	public static String[] get_subtypes(String type_)
-	{
-		return get_subtypes(type_, null);
-	}
+	public static String[] get_subtypes(String type_) { return get_subtypes(type_, null); }
 	
 	public static String[] get_subtypes(String type_, String[] all_)
 	{
@@ -360,6 +344,10 @@ public abstract class types
 		return arrays.to_array(subtypes);
 	}
 
+	static String[] populate_all_config_boolean() { return new String[] { CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, CONFIG_LOGS_OUT_FILE, CONFIG_LOGS_OUT_SCREEN }; }
+	
+	static String[] get_all_config_boolean() { return _alls.TYPES_CONFIG_BOOLEAN; }
+	
 	private static String[] get_all_subtypes()
 	{
 		return new String[]
@@ -385,14 +373,14 @@ public abstract class types
 			CONFIG_LOGS_OUT,
 			CONFIG_LOGS_OUT_SCREEN, CONFIG_LOGS_OUT_FILE,
 			CONFIG_DB,
+			CONFIG_DB_NAME,
 			CONFIG_DB_SETUP,
-			CONFIG_DB_SETUP_DEFAULT,
-			CONFIG_DB_MAX_POOL, CONFIG_DB_NAME, CONFIG_DB_HOST, CONFIG_DB_TYPE,
-			CONFIG_DB_TYPE,
-			CONFIG_DB_TYPE_MYSQL,
-			CONFIG_DB_CREDENTIALS,
-			CONFIG_DB_CREDENTIALS_USERNAME, CONFIG_DB_CREDENTIALS_PASSWORD,
-			CONFIG_DB_CREDENTIALS_USER, CONFIG_DB_CREDENTIALS_ENCRYPTED, 
+			CONFIG_DB_SETUP_MAX_POOL, CONFIG_DB_SETUP_HOST, 
+			CONFIG_DB_SETUP_TYPE,
+			CONFIG_DB_SETUP_TYPE_MYSQL,
+			CONFIG_DB_SETUP_CREDENTIALS,
+			CONFIG_DB_SETUP_CREDENTIALS_USERNAME, CONFIG_DB_SETUP_CREDENTIALS_PASSWORD,
+			CONFIG_DB_SETUP_CREDENTIALS_USER, CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, 
 			CONFIG_DB_DEFAULT_FIELD, 
 			CONFIG_DB_DEFAULT_FIELD_ID, CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, 
 			CONFIG_TESTS, 

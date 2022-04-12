@@ -42,17 +42,13 @@ public abstract class _defaults
 	public static final boolean LOGS_SCREEN = true;
 	public static final boolean LOGS_FILE = true;
 	public static final boolean LOGS_DB = false;
-	
-	public static final String DB = types.CONFIG_DB;
-	public static final String DB_SETUP = types.CONFIG_DB_SETUP_DEFAULT;
-	public static final String DB_TYPE = types.CONFIG_DB_TYPE_MYSQL;
+
+	public static final String DB = types.CONFIG_TESTS_DB;
+	public static final String DB_SETUP = types.CONFIG_DB;
+	public static final String DB_TYPE = types.CONFIG_DB_SETUP_TYPE_MYSQL;
 	public static final String DB_MAX_POOL = "500";
-	public static final String DB_NAME = STRINGS;
 	public static final String DB_HOST = "localhost";
-	public static final String DB_USER = STRINGS;
-	public static final String DB_CREDENTIALS_TYPE = types.remove_type(DB_TYPE, types.CONFIG_DB_TYPE);
-	public static final String DB_CREDENTIALS_USERNAME = STRINGS;
-	public static final String DB_CREDENTIALS_PASSWORD = STRINGS;
+	public static final String DB_CREDENTIALS_TYPE = types.remove_type(DB_TYPE, types.CONFIG_DB_SETUP_TYPE);
 	public static final boolean DB_CREDENTIALS_ENCRYPTED = false;
 	public static final String DB_ORDER = types.DB_ORDER_ASC;
 	public static final boolean DB_ORDER_FIELD = true;
@@ -60,7 +56,6 @@ public abstract class _defaults
 	public static final String DB_WHERE_OPERAND = types.DB_WHERE_OPERAND_EQUAL;
 	public static final boolean DB_WHERE_LITERAL = true;
 
-	
 	public static final double DB_SIZE_DECIMAL = db.get_default_size(types.DATA_DECIMAL);
 	public static final double DB_SIZE_LONG = db.get_default_size(types.DATA_LONG);
 	public static final double DB_SIZE_INT = db.get_default_size(types.DATA_INT);

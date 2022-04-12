@@ -15,10 +15,7 @@ public abstract class arrays
 	
 	static { ini.load(); }
 
-	public static Class<?>[] get_all_classes()
-	{
-		return _alls.ARRAYS_CLASSES;
-	}
+	public static Class<?>[] get_all_classes() { return _alls.ARRAYS_CLASSES; }
 
 	//All these classes require a special treatment. In some cases, they are assumed to be equivalent to their big counterparts.
 	//Their instances can only be used as Object/x[] after having been converted into their corresponding big counterparts.
@@ -26,96 +23,42 @@ public abstract class arrays
 	//to internally (i.e., in the overload including the Object parameter) account for these scenarios too, because some calls 
 	//might not be reaching the specific overloads (e.g., Object val = new int[] { 1, 2, 3 } going to method(Object input_)).
 	//!!!
-	public static Class<?>[] get_all_classes_small()
-	{
-		return _alls.ARRAYS_CLASSES_SMALL;
-	}
+	public static Class<?>[] get_all_classes_small() { return _alls.ARRAYS_CLASSES_SMALL; }
 	
 	//All these classes are equivalent to Array.class and their instances can be used as Object/x[].
-	public static Class<?>[] get_all_classes_array()
-	{
-		return _alls.ARRAYS_CLASSES_ARRAY;
-	}
+	public static Class<?>[] get_all_classes_array() { return _alls.ARRAYS_CLASSES_ARRAY; }
 	
-	public static Class<?>[] get_all_classes_numeric()
-	{
-		return _alls.ARRAYS_CLASSES_NUMERIC;
-	}
+	public static Class<?>[] get_all_classes_numeric() { return _alls.ARRAYS_CLASSES_NUMERIC; }
 	
-	public static <x> boolean is_ok(ArrayList<ArrayList<x>> input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static <x> boolean is_ok(ArrayList<ArrayList<x>> input_) { return is_ok(input_, false); }
 		
-	public static <x, y> boolean is_ok(HashMap<x, y> input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static <x, y> boolean is_ok(HashMap<x, y> input_) { return is_ok(input_, false); }
 	
-	public static boolean is_ok(double[] input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static boolean is_ok(double[] input_) { return is_ok(input_, false); }
 	
-	public static boolean is_ok(long[] input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static boolean is_ok(long[] input_) { return is_ok(input_, false); }
 	
-	public static boolean is_ok(int[] input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static boolean is_ok(int[] input_) { return is_ok(input_, false); }
 	
-	public static boolean is_ok(boolean[] input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static boolean is_ok(boolean[] input_) { return is_ok(input_, false); }
 	
-	public static boolean is_ok(byte[] input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static boolean is_ok(byte[] input_) { return is_ok(input_, false); }
 	
-	public static boolean is_ok(Object input_)
-	{
-		return is_ok(input_, false);
-	}
+	public static boolean is_ok(Object input_) { return is_ok(input_, false); }
 	
-	public static <x> int get_size(ArrayList<ArrayList<x>> input_)
-	{
-		return (input_ == null ? 0 : get_size_arraylist(input_));		
-	}
+	public static <x> int get_size(ArrayList<ArrayList<x>> input_) { return (input_ == null ? 0 : get_size_arraylist(input_)); }
 	
-	public static <x, y> int get_size(HashMap<x, y> input_)
-	{
-		return (input_ == null ? 0 : get_size_hashmap_xy(input_));		
-	}
+	public static <x, y> int get_size(HashMap<x, y> input_) { return (input_ == null ? 0 : get_size_hashmap_xy(input_)); }
 	
-	public static int get_size(double[] input_)
-	{
-		return (input_ == null ? 0 : input_.length);
-	}
+	public static int get_size(double[] input_) { return (input_ == null ? 0 : input_.length); }
 	
-	public static int get_size(long[] input_)
-	{
-		return (input_ == null ? 0 : input_.length);
-	}
+	public static int get_size(long[] input_) { return (input_ == null ? 0 : input_.length); }
 	
-	public static int get_size(int[] input_)
-	{
-		return (input_ == null ? 0 : input_.length);
-	}
+	public static int get_size(int[] input_) { return (input_ == null ? 0 : input_.length); }
 	
-	public static int get_size(boolean[] input_)
-	{
-		return (input_ == null ? 0 : input_.length);
-	}
+	public static int get_size(boolean[] input_) { return (input_ == null ? 0 : input_.length); }
 	
-	public static int get_size(byte[] input_)
-	{
-		return (input_ == null ? 0 : input_.length);
-	}
+	public static int get_size(byte[] input_) { return (input_ == null ? 0 : input_.length); }
 	
 	@SuppressWarnings("unchecked")
 	public static <x> int get_size(Object input_)
@@ -161,30 +104,15 @@ public abstract class arrays
 		return (((size == get_size(input2_)) && generic.are_equal(type_key, get_class_key_xy(input2_)) && generic.are_equal(type_val, get_class_val_xy(input2_))) ? input1_.equals(input2_) : false);
 	}
 	
-	public static boolean are_equal(double[] input1_, double[] input2_)
-	{
-		return are_equal(to_big(input1_), to_big(input2_));
-	}
+	public static boolean are_equal(double[] input1_, double[] input2_) { return are_equal(to_big(input1_), to_big(input2_)); }
 	
-	public static boolean are_equal(long[] input1_, long[] input2_)
-	{
-		return are_equal(to_big(input1_), to_big(input2_));
-	}
+	public static boolean are_equal(long[] input1_, long[] input2_) { return are_equal(to_big(input1_), to_big(input2_)); }
 	
-	public static boolean are_equal(int[] input1_, int[] input2_)
-	{
-		return are_equal(to_big(input1_), to_big(input2_));
-	}
+	public static boolean are_equal(int[] input1_, int[] input2_) { return are_equal(to_big(input1_), to_big(input2_)); }
 	
-	public static boolean are_equal(boolean[] input1_, boolean[] input2_)
-	{
-		return are_equal(to_big(input1_), to_big(input2_));
-	}
+	public static boolean are_equal(boolean[] input1_, boolean[] input2_) { return are_equal(to_big(input1_), to_big(input2_)); }
 	
-	public static boolean are_equal(byte[] input1_, byte[] input2_)
-	{
-		return are_equal(to_big(input1_), to_big(input2_));
-	}
+	public static boolean are_equal(byte[] input1_, byte[] input2_) { return are_equal(to_big(input1_), to_big(input2_)); }
 	
 	@SuppressWarnings("unchecked")
 	public static <x> boolean are_equal(Object input1_, Object input2_)

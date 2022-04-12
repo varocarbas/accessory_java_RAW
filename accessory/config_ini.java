@@ -3,10 +3,7 @@ package accessory;
 public abstract class config_ini 
 {
 	//Method expected to be called from ini.load().
-	public static void populate() 
-	{
-		populate_generic();
-	}
+	public static void populate() { populate_generic(); }
 
 	private static void populate_generic()
 	{

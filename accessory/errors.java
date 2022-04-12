@@ -12,24 +12,15 @@ public abstract class errors
 	public static final String DEFAULT_SEPARATOR = _defaults.ERRORS_SEPARATOR;
 	
 	static { ini.load(); }
-
-	public static void manage(String type_)
-	{
-		HashMap<String, String> info = new HashMap<String, String>();
-		info.put(generic.TYPE, (strings.is_ok(type_) ? type_ : DEFAULT_TYPE));
-		
-		manage(info);
-	}
 	
 	public static void manage(HashMap<String, String> info_)
-	{			
+	{
 		String message = get_all(info_);
-
 		logs.update(message, arrays.get_value(info_, generic.ID), true);
 
 		_triggered = true;
 		
-		if (!tests._running && _exit) System.exit(1);
+		if (!tests._running && _exit) System.exit(1); 
 	}
 
 	public static void manage(String type_, Exception e_, String[] further_)
@@ -105,21 +96,23 @@ public abstract class errors
 
 		String all = arrays.to_string(info_, DEFAULT_SEPARATOR, misc.SEPARATOR_KEYVAL, null);
 		if (!info_.containsKey(generic.TYPE) || !strings.is_ok(info_.get(generic.TYPE))) all = DEFAULT_TYPE + DEFAULT_SEPARATOR + all;
-				
+		
+		if (!strings.is_ok(all)) all = DEFAULT_MESSAGE;
+		else all = "ERROR" + misc.SEPARATOR_CONTENT + all;
+		
 		return all;
 	}
 	
 	private static String get_message(Exception e_, String type_)
 	{
-		String message = "";
+		String message = DEFAULT_TYPE;
 		
 		if (generic.is_ok(e_)) message = e_.getMessage();
 		else if (strings.is_ok(type_)) 
 		{
 			String type = types.remove_type(type_, types.ERROR);
-			message = (strings.is_ok(type) ? "Wrong " + type : DEFAULT_TYPE);
+			if (strings.is_ok(type) && !strings.contains("wrong", type, true) && !strings.are_equivalent(type_, "error")) message = "Wrong " + type;
 		}
-		else message = DEFAULT_TYPE;
 		
 		return message;
 	}

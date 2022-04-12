@@ -25,6 +25,8 @@ abstract class _alls
 	public static HashMap<Class<?>, Class<?>> DATA_COMPATIBLE = null;
 
 	public static String[] CONFIG_NOT_UPDATE = null;
+
+	public static String[] TYPES_CONFIG_BOOLEAN = null;
 	
 	private static boolean _populated = false;
 	
@@ -47,6 +49,8 @@ abstract class _alls
 		DATA_CLASSES = data.populate_all_classes();
 		DATA_COMPATIBLE = data.populate_all_compatible();
 
+		TYPES_CONFIG_BOOLEAN = types.populate_all_config_boolean();
+		
 		_populated = true;
 	} 
 }

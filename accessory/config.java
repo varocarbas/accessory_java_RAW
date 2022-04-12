@@ -63,16 +63,37 @@ public abstract class config
 
 	public static boolean update(String type_, String key_, boolean val_) { return update(type_, key_, strings.to_string(val_)); }
 	
-	public static boolean matches(String type_, String key_, boolean val_) { return matches(type_, key_, strings.to_string(val_)); }
+	public static boolean update(String type_, String key_, String val_) { return update_matches(type_, key_, val_, true, false); }
 	
-	public static boolean matches(String type_, String key_, String val_) { return update_matches(type_, key_, val_, false, false); }	
-	
+	public static HashMap<String, Boolean> update(String type_, HashMap<String, Object> vals_) { return update_matches(type_, vals_, false); }
+			
 	public static boolean update_ini(String type_, String key_, boolean val_) { return update_ini(type_, key_, strings.to_string(val_)); }
 	
 	public static boolean update_ini(String type_, String key_, String val_) { return update_matches(type_, key_, val_, true, true); }
 
+	public static HashMap<String, Boolean> update_ini(String type_, HashMap<String, Object> vals_) { return update_matches(type_, vals_, true); }
+
+	public static boolean matches(String type_, String key_, boolean val_) { return matches(type_, key_, strings.to_string(val_)); }
+	
+	public static boolean matches(String type_, String key_, String val_) { return update_matches(type_, key_, val_, false, false); }	
+
 	public static String check_type(String type_) { return types.check_type(type_, types.get_subtypes(types.CONFIG)); }
 
+	public static boolean vals_are_ok(HashMap<String, Object> vals_, String type_)
+	{
+		String type = check_type(type_);
+		if (!arrays.is_ok(vals_) || !strings.is_ok(type)) return false;
+	
+		String[] subtypes = types.get_subtypes(type);
+		
+		for (Entry<String, Object> item: vals_.entrySet())
+		{
+			if (!strings.is_ok(types.check_type(item.getKey(), subtypes))) return false;
+		}
+		
+		return true;
+	}
+	
 	public static String get(String type_, String key_)
 	{		
 		String output = null;
@@ -85,62 +106,36 @@ public abstract class config
 		return output;
 	}
 	
-	public static boolean update(String type_, String key_, String val_)
+	static String[] populate_all_not_update() { return new String[] { types.CONFIG_DB, types.CONFIG_DB_SETUP, types.CONFIG_DB_SETUP_TYPE}; }
+		
+	private static String[] get_all_not_update() { return _alls.CONFIG_NOT_UPDATE; }
+
+	private static HashMap<String, Boolean> update_matches(String type_, HashMap<String, Object> vals_, boolean is_ini_)
 	{	
-		boolean is_ok = false;
+		HashMap<String, Boolean> output = new HashMap<String, Boolean>();
 		
 		String type = check_type(type_);
-		if (!strings.is_ok(type) || !strings.is_ok(key_)) return is_ok;
-
-		return update_matches(type, key_, val_, true, false);
-	}
-
-	public static boolean update_ini(String type_, HashMap<String, Object> vals_)
-	{	
-		String type = check_type(type_);
-		if (!strings.is_ok(type) || !arrays.is_ok(vals_)) return false;
+		if (!strings.is_ok(type) || !arrays.is_ok(vals_)) return output;
 		
 		for (Entry<String, Object> item: vals_.entrySet())
 		{
 			String key = item.getKey();
 			Object val = item.getValue();
 			
+			boolean is_ok = true;
 			String val2 = null;
+			
 			if (generic.is_string(val)) val2 = (String)val;
 			else if (generic.is_boolean(val)) val2 = strings.to_string((boolean)val);
-			else return false;
+			else is_ok = false;
 			
-			if (!update_matches(type, key, val2, true, true)) return false;
+			if (is_ok) is_ok = update_matches(type, key, val2, true, is_ini_);
+			output.put(key, is_ok);
 		}
 		
-		return true;
-	}
-
-	static String[] populate_all_not_update() { return new String[] { types.CONFIG_DB, types.CONFIG_DB_NAME, types.CONFIG_DB_SETUP, types.CONFIG_DB_TYPE}; }
-	
-	static HashMap<String, Boolean> update_db_conn_info(String setup_, HashMap<String, String> params_)
-	{
-		HashMap<String, Boolean> output = null;
-		
-		String type = check_type(setup_);
-		if (!arrays.is_ok(params_) || !strings.is_ok(type)) return output;
-
-		output = new HashMap<String, Boolean>();
-
-		for (Entry<String, String> param: params_.entrySet())
-		{
-			String key = param.getKey();
-			String val = param.getValue();
-			if (val == null) continue;
-
-			output.put(key, config.update(type, key, val));
-		}
-
 		return output;
 	}
-	
-	private static String[] get_all_not_update() { return _alls.CONFIG_NOT_UPDATE; }
-	
+
 	private static boolean update_matches(String type_, String key_, String val_, boolean update_, boolean ini_)
 	{
 		boolean is_ok = false;
@@ -150,7 +145,7 @@ public abstract class config
 
 		if (!strings.is_ok(type) || !strings.is_ok(key)) return is_ok;
 		if (!generic.is_string(val_)) return is_ok;
-		if (!ini_ && arrays.value_exists(get_all_not_update(), type)) return is_ok;
+		if (!ini_ && arrays.value_exists(get_all_not_update(), key)) return is_ok;
 		
 		HashMap<String, String> info = new HashMap<String, String>();
 		if (_info.containsKey(type)) info = new HashMap<String, String>(_info.get(type));

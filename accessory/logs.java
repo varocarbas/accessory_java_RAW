@@ -20,7 +20,7 @@ public abstract class logs
 
 		String id = id_;
 		if (!strings.is_ok(id)) id = config.get_basic(types.CONFIG_BASIC_NAME);
-
+		
 		if (tests._running || out_is_ok(SCREEN)) update_screen(message_);
 		
 		if (tests._running)
@@ -45,7 +45,7 @@ public abstract class logs
 	{
 		String message = message_;
 		if (!strings.is_ok(message)) return;
-
+		
 		io._log_exceptions = false;
 		io.line_to_file(get_path(id_, is_error_), dates.add_timestamp(message, null, false), true);
 		io._log_exceptions = true;
