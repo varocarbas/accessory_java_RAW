@@ -25,18 +25,15 @@ class db_mysql extends parent_db
 	private static final int DEFAULT_SIZE_VARCHAR = _defaults.DB_SIZE_MYSQL_VARCHAR;
 	private static final int DEFAULT_SIZE_TEXT = _defaults.DB_SIZE_MYSQL_TEXT;
 	
-	public boolean is_ok()
-	{
-		return _is_ok;
-	}
+	public boolean is_ok() { return _is_ok; }
 	
-	public ArrayList<HashMap<String, String>> execute_query(String query_)
+	public ArrayList<HashMap<String, String>> execute_query(String source_, String query_)
 	{
 		String type = db.check_type(strings.substring_before(" ", query_, true));
 
 		if (!strings.is_ok(type))
 		{
-			db.manage_error(types.ERROR_DB_QUERY, query_, null, null);
+			db.manage_error(source_, types.ERROR_DB_QUERY, query_, null, null);
 			
 			return null;
 		}
@@ -73,19 +70,16 @@ class db_mysql extends parent_db
 			}
 		}
 		
-		return db_sql.execute_query(query_, db.query_returns_data(type), cols);
+		return db_sql.execute_query(source_, query_, db.query_returns_data(type), cols);
 	}
 	
-	public String sanitise_string(String input_)
-	{
-		return strings.remove_escape_many(new String[] { "'", "\"" }, input_, false);
-	}
+	public String sanitise_string(String input_) { return strings.remove_escape_many(new String[] { "'", "\"" }, input_, false); }
 	
-	public ArrayList<HashMap<String, String>> execute(String type_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
-		String query = get_query(type_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_);
+		String query = get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 
-		return (strings.is_ok(query) ? db_sql.execute_query(query, db.query_returns_data(type_), cols_) : null);
+		return (strings.is_ok(query) ? db_sql.execute_query(source_, query, db.query_returns_data(type_), cols_) : null);
 	}
 	
 	public HashMap<String, Object> get_data_type(String data_type_)
@@ -145,21 +139,15 @@ class db_mysql extends parent_db
 		return max;
 	}
 	
-	public String get_value(String input_)
-	{
-		return get_variable_value(input_, false);
-	}
+	public String get_value(String input_) { return get_variable_value(input_, false); }
 
-	public String get_variable(String input_)
-	{
-		return get_variable_value(input_, true);   	
-	} 
+	public String get_variable(String input_) { return get_variable_value(input_, true); } 
 
-	protected Connection connect_internal(Properties properties_) 
+	protected Connection connect_internal(String source_, Properties properties_) 
 	{
 		Connection conn = null;
 
-		String url = get_connect_url();
+		String url = get_connect_url(source_);
 		if (!strings.is_ok(url)) return conn;
 
 		try 
@@ -169,17 +157,17 @@ class db_mysql extends parent_db
 		} 
 		catch (Exception e) 
 		{
-			db.manage_error(types.ERROR_DB_CONN, null, e, null); 
+			db.manage_error(source_, types.ERROR_DB_CONN, null, e, null); 
 			conn = null;
 		}
 
 		return conn;
 	} 
 
-	private String get_connect_url()
+	private String get_connect_url(String source_)
 	{   
-		String host = db.get_host();
-		String name = db.get_name();
+		String host = db.get_host(db.get_setup(source_));
+		String name = db.get_db_name(db.get_db(source_));
 
 		String message = ""; 
 		if (!strings.is_ok(name)) message = "WRONG DB";
@@ -187,7 +175,7 @@ class db_mysql extends parent_db
 
 		if (!message.equals(""))
 		{
-			db.manage_error(types.ERROR_DB_INFO, null, null, message);
+			db.manage_error(source_, types.ERROR_DB_INFO, null, null, message);
 
 			return strings.DEFAULT;
 		}
@@ -251,18 +239,19 @@ class db_mysql extends parent_db
 		return output;
 	}
 
-	private String get_query(String type_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	private String get_query(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{	
 		String query = strings.DEFAULT;
-		if (!db_sql.params_are_ok(type_, table_, cols_, vals_, where_, max_rows_, order_, cols_info_)) return query;
+		if (!db_sql.params_are_ok(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_)) return query;
 
 		boolean is_ok = false;
+		String table = db.get_table(source_);
 
 		if (type_.equals(db.SELECT))
 		{
 			query = "SELECT ";
 			query += (arrays.is_ok(cols_) ? get_query_cols(cols_) : "*");     	
-			query += " FROM " + get_variable(table_);
+			query += " FROM " + get_variable(table);
 
 			if (strings.is_ok(where_)) query += " WHERE " + where_;
 			if (strings.is_ok(order_)) query += " ORDER BY " + order_;
@@ -272,7 +261,7 @@ class db_mysql extends parent_db
 		}
 		else if (type_.equals(db.INSERT))
 		{
-			query = "INSERT INTO " + get_variable(table_); 
+			query = "INSERT INTO " + get_variable(table); 
 			String temp = get_query_cols(vals_, generic.KEY);
 
 			if (strings.is_ok(temp)) 
@@ -289,7 +278,7 @@ class db_mysql extends parent_db
 		}
 		else if (type_.equals(db.UPDATE))
 		{
-			query = "UPDATE " + get_variable(table_); 
+			query = "UPDATE " + get_variable(table); 
 			
 			String temp = get_query_cols(vals_, generic.FURTHER);
 			if (strings.is_ok(temp)) 
@@ -302,14 +291,14 @@ class db_mysql extends parent_db
 		}
 		else if (type_.equals(db.DELETE))
 		{
-			query = "DELETE FROM " + get_variable(table_);
+			query = "DELETE FROM " + get_variable(table);
 			query += " WHERE " + where_;
 
 			is_ok = true;
 		}
 		else if (type_.equals(db.TABLE_EXISTS))
 		{
-			query = "SHOW TABLES LIKE " + get_value(table_);			
+			query = "SHOW TABLES LIKE " + get_value(table);			
 			is_ok = true;
 		}
 		else if (type_.equals(db.TABLE_CREATE))
@@ -351,25 +340,25 @@ class db_mysql extends parent_db
 			
 			if (!query.equals("")) 
 			{
-				query = "CREATE TABLE " + get_variable(table_) + " (" + query + ")";	
+				query = "CREATE TABLE " + get_variable(table) + " (" + query + ")";	
 				is_ok = true;
 			}
 			else is_ok = false;
 		}
 		else if (type_.equals(db.TABLE_DROP))
 		{
-			query = "DROP TABLE " + get_variable(table_);			
+			query = "DROP TABLE " + get_variable(table);			
 			is_ok = true;
 		}
 		else if (type_.equals(db.TABLE_TRUNCATE))
 		{
-			query = "TRUNCATE TABLE " + get_variable(table_);			
+			query = "TRUNCATE TABLE " + get_variable(table);			
 			is_ok = true;
 		}
 
 		if (!is_ok)
 		{
-			db.manage_error(types.ERROR_DB_QUERY, null, null, query);
+			db.manage_error(source_, types.ERROR_DB_QUERY, null, null, query);
 			query = strings.DEFAULT;
 		}
 		

@@ -127,11 +127,6 @@ public class db_field extends parent
 		return is_ok;
 	}	
 
-	public static int get_max_size(String type_)
-	{
-		return db.get_max_size(type_);
-	}
-
 	public static db_field adapt(db_field input_)
 	{
 		db_field output = new db_field(input_);

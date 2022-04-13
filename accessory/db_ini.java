@@ -78,8 +78,8 @@ public abstract class db_ini
 	public static boolean setup_vals_are_ok(HashMap<String, Object> setup_vals_)
 	{
 		String instance = ini.get_generic_key(types.WHAT_INSTANCE);
-		if (!arrays.keys_exist(setup_vals_, new String[] { types.CONFIG_DB, types.CONFIG_DB_SETUP, instance })) return false;
-		if (!strings.are_ok(new String[] { (String)setup_vals_.get(types.CONFIG_DB), (String)setup_vals_.get(types.CONFIG_DB_SETUP) })) return false;
+		if (!arrays.keys_exist(setup_vals_, new String[] { types.CONFIG_DB, types.CONFIG_DB_SETUP, types.CONFIG_DB_SETUP_TYPE, instance })) return false;
+		if (!strings.are_ok(new String[] { (String)setup_vals_.get(types.CONFIG_DB), (String)setup_vals_.get(types.CONFIG_DB_SETUP), (String)setup_vals_.get(types.CONFIG_DB_SETUP_TYPE) })) return false;
 		
 		return true;
 	}
@@ -132,8 +132,11 @@ public abstract class db_ini
 		if (!vals.containsKey(types.CONFIG_DB_SETUP_TYPE)) vals.put(types.CONFIG_DB_SETUP_TYPE, _defaults.DB_TYPE);
 		
 		vals = ini.get_config_default_generic(types.CONFIG_DB_SETUP_CREDENTIALS, vals);
+		if (arrays.value_exists(config.update_ini((String)vals.get(types.CONFIG_DB_SETUP), vals), false)) return null;
 
-		return (arrays.value_exists(config.update_ini((String)vals.get(types.CONFIG_DB_SETUP), vals), false) ? null : vals);
+		vals.put(ini.get_generic_key(types.WHAT_INSTANCE), db.get_instance_ini((String)vals.get(types.CONFIG_DB_SETUP_TYPE)));
+		
+		return vals;
 	}
 
 	private static boolean populate_all_dbs()

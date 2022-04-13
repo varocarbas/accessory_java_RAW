@@ -42,10 +42,7 @@ public class db_where extends parent
 	
 	static { ini(); }
 
-	public static boolean are_equal(db_where where1_, db_where where2_)
-	{
-		return are_equal_common(where1_, where2_);
-	}
+	public static boolean are_equal(db_where where1_, db_where where2_) { return are_equal_common(where1_, where2_); }
 	
 	public static String to_string(db_where[] wheres_)
 	{
@@ -71,69 +68,36 @@ public class db_where extends parent
 		return output;	
 	}
 	
-	public static boolean operand_is_ok(String operand_)
-	{
-		return val_is_ok_common(operand_, types.DB_WHERE_OPERAND, DEFAULT_OPERAND);
-	}
+	public static boolean operand_is_ok(String operand_) { return val_is_ok_common(operand_, types.DB_WHERE_OPERAND, DEFAULT_OPERAND); }
 	
-	public static String check_operand(String operand_)
-	{
-		return check_val_common(operand_, types.DB_WHERE_OPERAND, DEFAULT_OPERAND);
-	}
+	public static String check_operand(String operand_) { return check_val_common(operand_, types.DB_WHERE_OPERAND, DEFAULT_OPERAND); }
 	
-	public static String operand_to_string(String operand_)
-	{
-		return val_to_string_common(operand_, _all_operands, DEFAULT_OPERAND);
-	}
+	public static String operand_to_string(String operand_) { return val_to_string_common(operand_, _all_operands, DEFAULT_OPERAND); }
 	
-	public static boolean link_is_ok(String link_)
-	{
-		return val_is_ok_common(link_, types.DB_WHERE_LINK, DEFAULT_LINK);
-	}
+	public static boolean link_is_ok(String link_) { return val_is_ok_common(link_, types.DB_WHERE_LINK, DEFAULT_LINK); }
 	
-	public static String check_link(String link_)
-	{
-		return check_val_common(link_, types.DB_WHERE_LINK, DEFAULT_LINK);
-	}
+	public static String check_link(String link_) { return check_val_common(link_, types.DB_WHERE_LINK, DEFAULT_LINK); }
 	
-	public static String link_to_string(String link_)
-	{
-		return val_to_string_common(link_, types.DB_WHERE_LINK, DEFAULT_LINK);
-	}
+	public static String link_to_string(String link_) { return val_to_string_common(link_, types.DB_WHERE_LINK, DEFAULT_LINK); }
 
-	public db_where(db_where input_)
-	{
-		instantiate(input_);
-	}
+	public db_where(db_where input_) { instantiate(input_); }
 
-	public db_where(String source_, String key_, Object value_)
-	{
-		instantiate(source_, key_, DEFAULT_OPERAND, value_, DEFAULT_LITERAL, DEFAULT_LINK);
-	}	
+	public db_where(String source_, String key_, Object value_) { instantiate(source_, key_, DEFAULT_OPERAND, value_, DEFAULT_LITERAL, DEFAULT_LINK); }	
 
-	public db_where(String source_, String key_, String operand_, Object value_)
-	{
-		instantiate(source_, key_, operand_, value_, _defaults.DB_WHERE_LITERAL, DEFAULT_LINK);
-	}
+	public db_where(String source_, String key_, String operand_, Object value_) { instantiate(source_, key_, operand_, value_, _defaults.DB_WHERE_LITERAL, DEFAULT_LINK); }
 	
-	public db_where(String source_, String key_, String operand_, Object value_, String link_)
-	{
-		instantiate(source_, key_, operand_, value_, DEFAULT_LITERAL, link_);
-	}
+	public db_where(String source_, String key_, String operand_, Object value_, String link_) { instantiate(source_, key_, operand_, value_, DEFAULT_LITERAL, link_); }
 	
-	public db_where(String source_, String key_, String operand_, Object value_, boolean is_literal_, String link_)
-	{
-		instantiate(source_, key_, operand_, value_, is_literal_, link_);
-	}
+	public db_where(String source_, String key_, String operand_, Object value_, boolean is_literal_, String link_) { instantiate(source_, key_, operand_, value_, is_literal_, link_); }
 	
 	public String toString()
 	{
 		if (!is_ok(_source, _key, _operand, _value, _link)) return strings.DEFAULT;
 		
 		String operand = operand_to_string(_temp_operand);
-		String key = db.get_variable(db.get_col(_temp_source, _key));
+		String key = db.get_variable(_temp_source, db.get_col(_temp_source, _key));
 		String value = strings.to_string(_value);
-		value = (_is_literal ? db.get_value(value) : value);
+		value = (_is_literal ? db.get_value(_temp_source, value) : value);
 		
 		String output = "(" + key + operand + value + ")";
 				
@@ -162,10 +126,7 @@ public class db_where extends parent
 		return _is_ok;
 	}
 
-	private static void ini()
-	{
-		populate_globals();
-	}
+	private static void ini() { populate_globals(); }
 
 	private static void populate_globals()
 	{

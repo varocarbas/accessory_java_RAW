@@ -12,12 +12,14 @@ abstract class db_sql
 {
 	static { ini.load(); }
 
-	public static boolean params_are_ok(String what_, String table_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	public static boolean params_are_ok(String source_, String what_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
+		String table = db.get_table(source_);
+		
 		if 
 		(
 			!(
-				!strings.is_ok(table_) || (what_.equals(db.DELETE) && !strings.is_ok(where_)) ||
+				!strings.is_ok(table) || (what_.equals(db.DELETE) && !strings.is_ok(where_)) ||
 				((what_.equals(db.INSERT) || what_.equals(db.UPDATE)) && !arrays.is_ok(vals_)) ||
 				(what_.equals(db.TABLE_CREATE) && !arrays.is_ok(cols_info_))
 			)
@@ -26,7 +28,7 @@ abstract class db_sql
 
 		HashMap<String, String> items = new HashMap<String, String>();
 
-		items.put("table", strings.to_string(table_));
+		items.put("table", table);
 		
 		if (what_.equals(db.SELECT)) 
 		{
@@ -47,18 +49,18 @@ abstract class db_sql
 		String temp = strings.to_string(items);
 		if (strings.is_ok(temp)) message += temp;
 
-		db.manage_error(types.ERROR_DB_QUERY, null, null, message);
+		db.manage_error(source_, types.ERROR_DB_QUERY, null, null, message);
 
 		return false;
 	}
 
-	static ArrayList<HashMap<String, String>> execute_query(String query_, boolean return_data_, String[] cols_)
+	static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_)
 	{
-		db.update_is_ok(false);
-
+		db.update_is_ok(source_, false);
+		
 		ArrayList<HashMap<String, String>> output = null;
 
-		Connection conn = connect();
+		Connection conn = connect(source_);
 		if (conn == null) return output;
 
 		try 
@@ -68,19 +70,17 @@ abstract class db_sql
 			if (!return_data_) 
 			{
 				statement.executeUpdate();
-
-				db.update_is_ok(true);
+				db.update_is_ok(source_, true);
 
 				return output;
 			}
 
 			output = new ArrayList<HashMap<String, String>>();
-
 			try
 			{
 				ResultSet data = statement.executeQuery();
 
-				String[] cols = execute_query_get_cols(data, cols_);
+				String[] cols = execute_query_get_cols(source_, data, cols_);
 				if (!arrays.is_ok(cols)) return output;
 
 				while (data.next()) 
@@ -89,77 +89,61 @@ abstract class db_sql
 					
 					for (String col : cols)
 					{
-						String val = 
-						(
-							(
-								strings.is_ok(col) && 
-								data.findColumn(col) > -1
-							) 
-							? data.getString(col) : strings.DEFAULT
-						);
+						String val = ((strings.is_ok(col) && data.findColumn(col) > -1) ? data.getString(col) : strings.DEFAULT);
 						if (!strings.is_ok(val)) val = strings.DEFAULT;
 						
 						row.put(col, val);
 					}
-
+					
 					output.add(row);
 				}	
 
-				db.update_is_ok(true);
+				db.update_is_ok(source_, true);
 			}
-			catch (Exception e) 
-			{
-				db.manage_error(types.ERROR_DB_QUERY, query_, e, null);
-			}
+			catch (Exception e) { db.manage_error(source_, types.ERROR_DB_QUERY, query_, e, null); }
 		} 
-		catch (Exception e) 
-		{
-			db.manage_error(types.ERROR_DB_QUERY, query_, e, null);
-		} 
-		finally { disconnect(conn); }
+		catch (Exception e) { db.manage_error(source_, types.ERROR_DB_QUERY, query_, e, null); } 
+		finally { disconnect(source_, conn); }
 
 		return output;
 	}
 
-	private static Connection connect() 
+	private static Connection connect(String source_) 
 	{
-		Properties properties = get_properties();
+		Properties properties = get_properties(source_);
 		if (properties == null) return null;
 
-		return connect_type(properties);
+		return connect_type(source_, properties);
 	}
 
-	private static Connection connect_type(Properties properties) 
-	{
-		return db.get_current_instance().connect(properties);
-	}
+	private static Connection connect_type(String source_, Properties properties) { return db.get_valid_instance(source_).connect(source_, properties); }
 
-	private static Properties get_properties() 
+	private static Properties get_properties(String source_) 
 	{	
-		HashMap<String, String> credentials = db.get_credentials();
+		HashMap<String, String> credentials = db.get_credentials(source_);
 
 		String username = arrays.get_value(credentials, generic.USERNAME);
 		String password = arrays.get_value(credentials, generic.PASSWORD);
-		String max_pool = db.get_max_pool();
+		String max_pool = db.get_max_pool(db.get_setup(source_));
 
 		String type = null;
 		String message = ""; 
 
-		if (!strings.is_int(max_pool))
-		{
-			type = types.ERROR_DB_INFO;
-			message = "MaxPooledStatements";
-		}
-		else if (!strings.is_ok(username) || !strings.is_ok(password))
+		if (!strings.is_ok(username) || !strings.is_ok(password))
 		{
 			type = types.ERROR_DB_CREDENTIALS;
 			message = "credentials";
 		}
-
+		else if (!strings.is_int(max_pool))
+		{
+			type = types.ERROR_DB_INFO;
+			message = "MaxPooledStatements";
+		}
+		
 		if (type != null)
 		{
 			message = "Wrong " + message;
-			db.manage_error(type, null, null, message);
+			db.manage_error(source_, type, null, null, message);
 
 			return null;
 		}
@@ -172,7 +156,7 @@ abstract class db_sql
 		return properties;
 	}
 
-	private static void disconnect(Connection conn_) 
+	private static void disconnect(String source_, Connection conn_) 
 	{
 		if (conn_ == null) return; 
 
@@ -181,13 +165,10 @@ abstract class db_sql
 			conn_.close();
 			conn_ = null;
 		} 
-		catch (Exception e) 
-		{
-			db.manage_error(types.ERROR_DB_CONN, null, e, null);
-		}
+		catch (Exception e) { db.manage_error(source_, types.ERROR_DB_CONN, null, e, null); }
 	}
 
-	private static String[] execute_query_get_cols(ResultSet data_, String[] cols_)
+	private static String[] execute_query_get_cols(String source_, ResultSet data_, String[] cols_)
 	{
 		if (arrays.is_ok(cols_)) return cols_;
 
@@ -206,7 +187,7 @@ abstract class db_sql
 		{
 			cols = null;
 
-			db.manage_error(types.ERROR_DB_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns");
+			db.manage_error(source_, types.ERROR_DB_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns");
 		}
 
 		return arrays.to_array(cols);

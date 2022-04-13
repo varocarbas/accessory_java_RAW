@@ -17,10 +17,7 @@ public class db_order extends parent
 
 	private String _temp_source = strings.DEFAULT;
 	
-	public static boolean are_equal(db_order order1_, db_order order2_)
-	{
-		return are_equal_common(order1_, order2_);
-	}
+	public static boolean are_equal(db_order order1_, db_order order2_) { return are_equal_common(order1_, order2_); }
 
 	public static String to_string(db_order[] orders_)
 	{
@@ -38,36 +35,21 @@ public class db_order extends parent
 		return output;
 	}
 
-	public static boolean order_is_ok(String order_)
-	{
-		return val_is_ok_common(order_, types.DB_ORDER, DEFAULT);
-	}
+	public static boolean order_is_ok(String order_) { return val_is_ok_common(order_, types.DB_ORDER, DEFAULT); }
 
-	public static String check_order(String order_)
-	{
-		return check_val_common(order_, types.DB_ORDER, DEFAULT);
-	}
+	public static String check_order(String order_) { return check_val_common(order_, types.DB_ORDER, DEFAULT); }
 
-	public static String order_to_string(String order_)
-	{
-		return val_to_string_common(order_, types.DB_ORDER, DEFAULT);
-	}
+	public static String order_to_string(String order_) { return val_to_string_common(order_, types.DB_ORDER, DEFAULT); }
 
-	public db_order(db_order input_)
-	{
-		instantiate(input_);
-	}
+	public db_order(db_order input_) { instantiate(input_); }
 
-	public db_order(String source_, String value_, String order_, boolean is_field_)
-	{
-		instantiate(source_, value_, order_, is_field_);
-	}
+	public db_order(String source_, String value_, String order_, boolean is_field_) { instantiate(source_, value_, order_, is_field_); }
 
 	public String toString()
 	{	
 		if (!is_ok(_source, _value, _order)) return strings.DEFAULT;
 
-		String key = (_is_field ? db.get_variable(db.get_col(_temp_source, _value)) : _value);
+		String key = (_is_field ? db.get_variable(_temp_source, db.get_col(_temp_source, _value)) : _value);
 
 		String output = key + " " + order_to_string(_order);
 

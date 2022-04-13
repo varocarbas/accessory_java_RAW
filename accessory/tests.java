@@ -180,7 +180,7 @@ public abstract class tests
 			new db_order(null, where.toString(), db_order.ASC, false)
 		};
 		
-		String query = "SELECT " + db.get_variable(col) + " FROM " + table;
+		String query = "SELECT " + db.get_variable(source, col) + " FROM " + table;
 		query += " WHERE " + db_where.to_string(wheres);
 		query += " ORDER BY " + db_order.to_string(orders);
 		
