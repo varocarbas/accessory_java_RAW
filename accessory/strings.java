@@ -16,7 +16,7 @@ public abstract class strings
 	public static final String DEFAULT = _defaults.STRINGS;
 	public static final int DEFAULT_SIZE = _defaults.STRINGS_SIZE;
 	
-	static { ini.load(); }
+	static { _ini.load(); }
 
 	public static boolean is_ok(String string_)
 	{

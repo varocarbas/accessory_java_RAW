@@ -11,7 +11,7 @@ public abstract class errors
 	public static final String DEFAULT_MESSAGE = _defaults.ERRORS_MESSAGE;
 	public static final String DEFAULT_SEPARATOR = _defaults.ERRORS_SEPARATOR;
 	
-	static { ini.load(); }
+	static { _ini.load(); }
 	
 	public static void manage(HashMap<String, String> info_)
 	{
@@ -48,16 +48,16 @@ public abstract class errors
 		manage(get_info_io(type_, path_, e_));
 	}
 
-	public static void manage_db(String type_, String query_, Exception e_, String message_)
+	public static void manage_db(String type_, String query_, Exception e_, String message_, HashMap<String, String> info_)
 	{
-		manage(get_info_db(type_, query_, e_, message_));
+		manage(get_info_db(type_, query_, e_, message_, info_));
 	}
 
-	private static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_)
+	private static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_, HashMap<String, String> info_)
 	{
 		String type = types.check_type(type_, types.get_subtypes(types.ERROR_DB));
 
-		HashMap<String, String> info = new HashMap<String, String>();
+		HashMap<String, String> info = arrays.get_new(info_);
 		info.put(generic.TYPE, (strings.is_ok(type) ? type : DEFAULT_TYPE));
 		
 		String message = message_;
@@ -67,14 +67,6 @@ public abstract class errors
 		info.put("message", message);
 
 		if (strings.is_ok(query_)) info.put(generic.QUERY, query_);
-
-		String[] keys = new String[] { db.HOST, db.NAME, db.USER }; 
-
-		for (String key: keys)
-		{
-			String val = config.get_db(key);
-			if (strings.is_ok(val)) info.put(accessory.types.remove_type(key, types.CONFIG_DB), val);
-		}
 
 		return info;
 	}

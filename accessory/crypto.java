@@ -36,50 +36,23 @@ public class crypto extends parent
 	public String toString() { return strings.DEFAULT; }
 	public boolean is_ok() { return _is_ok; }
 
-	public static String get_extension()
-	{
-		return config.get_crypto(types.CONFIG_CRYPTO_FILE_EXTENSION);
-	}
+	public static String get_extension() { return config.get_crypto(types.CONFIG_CRYPTO_FILE_EXTENSION); }
 
-	public static String get_file_full(String id_)
-	{
-		return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension());
-	}
+	public static String get_file_full(String id_) { return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension()); }
 
-	public static String[] encrypt_file(String path_, String id_)
-	{
-		return encrypt_decrypt_file(path_, id_, true);
-	}
+	public static String[] encrypt_file(String path_, String id_) { return encrypt_decrypt_file(path_, id_, true); }
 
-	public static String[] decrypt_file(String path_, String id_)
-	{
-		return encrypt_decrypt_file(path_, id_, false);
-	}
+	public static String[] decrypt_file(String path_, String id_) { return encrypt_decrypt_file(path_, id_, false); }
 	
-	public static String[] encrypt(String[] inputs_, String id_)
-	{
-		return encrypt_decrypt(inputs_, id_, true);
-	}
+	public static String[] encrypt(String[] inputs_, String id_) { return encrypt_decrypt(inputs_, id_, true); }
 
-	public static String[] decrypt(String[] inputs_, String id_)
-	{
-		return encrypt_decrypt(inputs_, id_, false);
-	}
+	public static String[] decrypt(String[] inputs_, String id_) { return encrypt_decrypt(inputs_, id_, false); }
 	
-	public static String encrypt(String input_, String id_)
-	{
-		return encrypt_decrypt(input_, id_, true);
-	}
+	public static String encrypt(String input_, String id_) { return encrypt_decrypt(input_, id_, true); }
 
-	public static String decrypt(String input_, String id_)
-	{
-		return encrypt_decrypt(input_, id_, false);
-	}
+	public static String decrypt(String input_, String id_) { return encrypt_decrypt(input_, id_, false); }
 	
-	public crypto(String in_, String path_key_, String path_iv_, String algo_key_, String algo_cipher_, SecretKey key_, byte[] iv_)
-	{
-		instantiate(in_, path_key_, path_iv_, algo_key_, algo_cipher_, key_, iv_);
-	}
+	public crypto(String in_, String path_key_, String path_iv_, String algo_key_, String algo_cipher_, SecretKey key_, byte[] iv_) { instantiate(in_, path_key_, path_iv_, algo_key_, algo_cipher_, key_, iv_); }
 
 	public void encrypt()
 	{
@@ -127,10 +100,7 @@ public class crypto extends parent
 		_is_ok = true;
 	}
 	
-	private static String[] encrypt_decrypt_file(String path_, String id_, boolean is_encrypt_)
-	{
-		return encrypt_decrypt(io.file_to_array(path_), id_, is_encrypt_);
-	}
+	private static String[] encrypt_decrypt_file(String path_, String id_, boolean is_encrypt_) { return encrypt_decrypt(io.file_to_array(path_), id_, is_encrypt_); }
 	
 	private static String[] encrypt_decrypt(String[] inputs_, String id_, boolean is_encrypt_)
 	{
@@ -181,11 +151,8 @@ public class crypto extends parent
 		HashMap<String, String> output = new HashMap<String, String>();
 
 		String[] whats = new String[] { KEY, IV };
-
-		for (String what: whats)
-		{
-			output.put(what, get_default_path(id_, what));
-		}
+		
+		for (String what: whats) { output.put(what, get_default_path(id_, what)); }
 
 		return output;
 	}

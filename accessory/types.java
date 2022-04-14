@@ -228,7 +228,7 @@ public abstract class types
 	//---
 	//---------
 
-	static { ini.load(); }
+	static { _ini.load(); }
 	
 	public static String check_what(String what_) { return check_type(what_, types.get_subtypes(WHAT)); }
 	

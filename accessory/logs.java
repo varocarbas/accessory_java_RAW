@@ -12,7 +12,7 @@ public abstract class logs
 	public static final boolean DEFAULT_SCREEN = _defaults.LOGS_SCREEN;
 	public static final boolean DEFAULT_FILE = _defaults.LOGS_FILE;
 	
-	static { ini.load(); }
+	static { _ini.load(); }
 
 	public static void update(String message_, String id_, boolean is_error_)
 	{

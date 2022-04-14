@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 abstract class db_queries 
 {
-	static { ini.load(); }
+	static { _ini.load(); }
 	
 	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_)
 	{

@@ -22,7 +22,7 @@ public abstract class numbers
 	public static final int DEFAULT_INT = _defaults.NUMBERS_INT;
 	public static final int DEFAULT_DECIMALS = _defaults.NUMBERS_SIZE_DECIMALS;
 	
-	static { ini.load(); }
+	static { _ini.load(); }
 	
 	public static final Class<?>[] get_all_classes()
 	{

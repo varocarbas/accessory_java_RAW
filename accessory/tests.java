@@ -17,7 +17,7 @@ public abstract class tests
 	private static int _overload = 0;
 	private static Object _temp_output = null;
 	
-	static { ini.load(); }
+	static { _ini.load(); }
 	
 	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all(boolean db_too_)
 	{	

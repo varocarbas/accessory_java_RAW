@@ -9,7 +9,7 @@ public abstract class config
 	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
 	//---
 
-	static { ini.load(); }
+	static { _ini.load(); }
 
 	public static String get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
 	
@@ -20,16 +20,6 @@ public abstract class config
 	public static boolean matches_basic(String key_, boolean val_) { return matches_basic(key_, strings.to_string(val_)); }
 
 	public static boolean matches_basic(String key_, String val_) { return matches(types.CONFIG_BASIC, key_, val_); }
-
-	public static String get_db(String key_) { return get(types.CONFIG_DB, key_); }
-	
-	public static boolean update_db(String key_, boolean val_) { return update_db(key_, strings.to_string(val_)); }
-	
-	public static boolean update_db(String key_, String val_) { return update(types.CONFIG_DB, key_, val_); }
-	
-	public static boolean matches_db(String key_, boolean val_) { return matches_db(key_, strings.to_string(val_)); }
-	
-	public static boolean matches_db(String key_, String val_) { return matches(types.CONFIG_DB, key_, val_); }
 
 	public static String get_credentials(String key_) { return get(types.CONFIG_CREDENTIALS, key_); }
 

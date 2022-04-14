@@ -58,7 +58,7 @@ public abstract class db
 	private static HashMap<String, String> _db_setups = new HashMap<String, String>();
 	//---
 	
-	static { ini.load(); }
+	static { _ini.load(); }
 	
 	public static boolean update_db(String db_, String db_name_) 
 	{ 
@@ -249,7 +249,7 @@ public abstract class db
 		
 		_sources.put(source_, fields);
 
-		if (!db_ini.setup_vals_are_ok(setup_vals_))
+		if (!_ini_db.setup_vals_are_ok(setup_vals_))
 		{
 			manage_error(source_, types.ERROR_DB_SOURCE, null, null, "Wrong setup vals for source " + source_);
 			
@@ -263,7 +263,7 @@ public abstract class db
 		vals.put(types.CONFIG_DB, db);
 		vals.put(types.CONFIG_DB_SETUP, setup);
 		vals.put(types.CONFIG_DB_SETUP_TYPE, (String)setup_vals_.get(types.CONFIG_DB_SETUP_TYPE));
-		String instance = ini.get_generic_key(types.WHAT_INSTANCE);
+		String instance = _ini.get_generic_key(types.WHAT_INSTANCE);
 		vals.put(instance, setup_vals_.get(instance));
 		
 		if (!arrays.is_ok(_source_setups)) _source_setups = new HashMap<String, HashMap<String, Object>>();
@@ -419,7 +419,14 @@ public abstract class db
 	{
 		get_valid_instance(source_).update_is_ok(false);
 
-		errors.manage_db(type_, query_, e_, message_);
+		String setup = get_setup(source_);
+		
+		HashMap<String, String> info = new HashMap<String, String>();
+		info.put(HOST, get_host(setup));
+		info.put(NAME, get_db_name(get_db(source_)));
+		info.put(USER, config.get(setup, types.CONFIG_DB_SETUP_CREDENTIALS_USER));
+		
+		errors.manage_db(type_, query_, e_, message_, info);
 	}
 	
 	static boolean query_returns_data(String type_)

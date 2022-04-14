@@ -4,7 +4,7 @@ package accessory;
 //method, except for the ones listed in any other "_"[class_name] like _basic or _alls. 
 //All these constants are final and local copies in other classes are encouraged.
 
-public abstract class _defaults 
+abstract class _defaults 
 {
 	public static final String APP_NAME = "app";
 	public static final String USER = "user1";

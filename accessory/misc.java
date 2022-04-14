@@ -16,7 +16,7 @@ public abstract class misc
 	public static final String SEPARATOR_KEYVAL = ": ";
 	public static final String SEPARATOR_ITEM = ", ";
 	
-	static { ini.load(); }
+	static { _ini.load(); }
 
 	public static void pause_min()
 	{
