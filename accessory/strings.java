@@ -655,6 +655,6 @@ public abstract class strings
 			size = 0;		
 		}
 
-		return String.join(needle_, arrays.get_range(temp, start_i, size));
+		return String.join(needle_, (String[])arrays.get_range(temp, start_i, size));
 	}
 }
