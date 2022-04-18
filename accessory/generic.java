@@ -94,7 +94,8 @@ public abstract class generic
 	
 	public static boolean is_array(Object input_) { return is_common(input_, arrays.get_all_classes(), false); }
 	
-	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_) { return arrays.get_new(input_); }
+	@SuppressWarnings("unchecked")
+	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_) { return (HashMap<x, y>)arrays.get_new(input_); }
 	
 	public static <x> ArrayList<ArrayList<x>> get_new(ArrayList<ArrayList<x>> input_) { return arrays.get_new(input_); }
 
@@ -349,9 +350,11 @@ public abstract class generic
 		output.put(Long.class, new Class<?>[] { long.class });
 		output.put(Integer.class, new Class<?>[] { int.class });
 		output.put(Boolean.class, new Class<?>[] { boolean.class });
+		output.put(Byte.class, new Class<?>[] { byte.class });
 		output.put(Double[].class, new Class<?>[] { double[].class });
 		output.put(Long[].class, new Class<?>[] { long[].class });
 		output.put(Integer[].class, new Class<?>[] { int[].class });
+		output.put(Boolean[].class, new Class<?>[] { boolean[].class });
 		output.put(Byte[].class, new Class<?>[] { byte[].class });
 		
 		Class<?>[] vals = arrays.get_all_classes_array();

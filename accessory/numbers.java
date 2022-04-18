@@ -158,14 +158,14 @@ public abstract class numbers
 	{
 		double output = Math.ceil(input_);
 		
-		return (long)((output >= (double)numbers.MIN_LONG && output <= (double)numbers.MAX_LONG) ? output : DEFAULT_LONG);	
+		return (long)((output >= (double)MIN_LONG && output <= (double)MAX_LONG) ? output : DEFAULT_LONG);	
 	}
 	
 	public static int to_int(double input_)
 	{	
 		double output = Math.ceil(input_);
 	
-		return (int)((output >= (double)numbers.MIN_INT && output <= (double)numbers.MAX_INT) ? output : DEFAULT_INT);
+		return (int)((output >= (double)MIN_INT && output <= (double)MAX_INT) ? output : DEFAULT_INT);
 	}
 	
 	public static String to_integer_string(double input_)

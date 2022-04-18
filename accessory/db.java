@@ -92,9 +92,9 @@ public abstract class db
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		
-		if (strings.is_ok(username_)) vals.put(db.USERNAME, username_);
-		if (password_ != null) vals.put(db.PASSWORD, password_);
-		if (strings.is_ok(host_)) vals.put(db.HOST, host_);
+		if (strings.is_ok(username_)) vals.put(USERNAME, username_);
+		if (password_ != null) vals.put(PASSWORD, password_);
+		if (strings.is_ok(host_)) vals.put(HOST, host_);
 		
 		return update_vals(get_setup_from_db(db_), vals);
 	}

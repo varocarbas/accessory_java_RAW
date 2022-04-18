@@ -53,11 +53,12 @@ public abstract class errors
 		manage(get_info_db(type_, query_, e_, message_, info_));
 	}
 
+	@SuppressWarnings("unchecked")
 	private static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_, HashMap<String, String> info_)
 	{
 		String type = types.check_type(type_, types.get_subtypes(types.ERROR_DB));
 
-		HashMap<String, String> info = arrays.get_new(info_);
+		HashMap<String, String> info = (HashMap<String, String>)arrays.get_new(info_);
 		info.put(generic.TYPE, (strings.is_ok(type) ? type : DEFAULT_TYPE));
 		
 		String message = message_;

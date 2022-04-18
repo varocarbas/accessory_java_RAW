@@ -556,7 +556,6 @@ public abstract class tests
 		return is_ok;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private static Object[] get_args(Class<?>[] params_, ArrayList<ArrayList<Object>> args_all_)
 	{
 		_overload = 0;

@@ -8,9 +8,10 @@ public abstract class parent_ini_config
 	
 	protected abstract void populate_all();
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<String, Object> get_config_default_generic(String type_, HashMap<String, Object> vals_)
 	{
-		HashMap<String, Object> output = arrays.get_new(vals_);
+		HashMap<String, Object> output = (HashMap<String, Object>)arrays.get_new(vals_);
 	
 		String[] all_boolean = types.get_all_config_boolean();
 		
