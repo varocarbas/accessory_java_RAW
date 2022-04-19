@@ -23,6 +23,7 @@ public abstract class parent_ini_db
 		if (instance_._populated) return;
 		
 		instance_.populate_internal(); 
+		instance_._populated = true;
 	}
 	
 	protected void populate_internal() 
@@ -32,7 +33,6 @@ public abstract class parent_ini_db
 		String error = strings.DEFAULT;
 		if (!populate_all_dbs()) error = types.ERROR_INI_DB_DBS;
 		
-		_populated = true;
 		if (error.equals(strings.DEFAULT)) return;
 
 		_ini.manage_error(error);

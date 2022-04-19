@@ -37,6 +37,7 @@ public abstract class parent_ini
 		if (instance_._populated) return;
 		
 		instance_.load_internal(); 
+		instance_._populated = true;
 	}
 	
 	protected void load_internal() 
@@ -45,8 +46,6 @@ public abstract class parent_ini
 		
 		populate_config();
 		populate_db();
-		
-		_populated = true;
 	}
 	
 	//Loading all the first classes, the ones whose names start with "_".

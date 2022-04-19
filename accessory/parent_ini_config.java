@@ -30,6 +30,7 @@ public abstract class parent_ini_config
 		if (instance_._populated) return;
 		
 		instance_.populate_all(); 
+		instance_._populated = true;
 	}
 	
 	protected boolean populate(String type_store_, String type_root_, HashMap<String, Object> vals_)
