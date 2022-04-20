@@ -45,10 +45,7 @@ public class db_field extends parent
 	private int _temp_size = 0;
 	private int _temp_decimals = 0;
 	
-	public static boolean are_equal(db_field field1_, db_field field2_)
-	{
-		return are_equal_common(field1_, field2_);
-	}
+	public static boolean are_equal(db_field field1_, db_field field2_) { return are_equal_common(field1_, field2_); }
 	
 	public static boolean further_is_ok(String[] further_)
 	{
@@ -62,15 +59,9 @@ public class db_field extends parent
 		return true;
 	}
 
-	public static boolean further_is_ok(String further_)
-	{
-		return (!strings.is_ok(further_) || val_is_ok_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT));
-	}
+	public static boolean further_is_ok(String further_) { return val_is_ok_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT); }
 
-	public static String check_further(String further_)
-	{
-		return check_val_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT);
-	}
+	public static String check_further(String further_) { return check_val_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT); }
 
 	public static int check_size(String type_, int size_)
 	{
@@ -96,14 +87,8 @@ public class db_field extends parent
 		int max = size;
 		if (max <= 0) return is_ok;
 
-		if (data.is_number(type_) && generic.is_number(default_)) 
-		{
-			is_ok = (numbers.to_number(default_) <= max);
-		}
-		else if (data.is_string(type_) && generic.is_string(default_)) 
-		{
-			is_ok = (strings.get_length((String)default_) <= max);
-		}
+		if (data.is_number(type_) && generic.is_number(default_)) is_ok = (numbers.to_number(default_) <= max);
+		else if (data.is_string(type_) && generic.is_string(default_)) is_ok = (strings.get_length((String)default_) <= max);
 		else if (type_.equals(data.BOOLEAN))
 		{
 			if (generic.is_boolean(default_)) is_ok = true;
@@ -138,10 +123,7 @@ public class db_field extends parent
 		return output;
 	}
 
-	public static int adapt_decimals(int decimals_)
-	{
-		return (numbers.is_ok(decimals_, MIN_DECIMALS, MAX_DECIMALS) ? decimals_ : DEFAULT_DECIMALS);
-	}
+	public static int adapt_decimals(int decimals_) { return (numbers.is_ok(decimals_, MIN_DECIMALS, MAX_DECIMALS) ? decimals_ : DEFAULT_DECIMALS); }
 
 	public static <x> boolean complies(x val_, db_field field_)
 	{
@@ -153,30 +135,15 @@ public class db_field extends parent
 		return data.complies(val_, new data(field_._type, size));
 	}
 	
-	public db_field(db_field input_)
-	{
-		instantiate(input_);
-	}
+	public db_field(db_field input_) { instantiate(input_); }
 
-	public db_field(String type_)
-	{
-		instantiate(type_, WRONG_SIZE, DEFAULT_DECIMALS, null, null);
-	}
+	public db_field(String type_) { instantiate(type_, WRONG_SIZE, DEFAULT_DECIMALS, null, null); }
 
-	public db_field(String type_, String[] further_)
-	{
-		instantiate(type_, WRONG_SIZE, DEFAULT_DECIMALS, null, further_);
-	}
+	public db_field(String type_, String[] further_) { instantiate(type_, WRONG_SIZE, DEFAULT_DECIMALS, null, further_); }
 
-	public db_field(String type_, int size_, int decimals_)
-	{
-		instantiate(type_, size_, decimals_, null, null);
-	}
+	public db_field(String type_, int size_, int decimals_) { instantiate(type_, size_, decimals_, null, null); }
 
-	public db_field(String type_, int size_, int decimals_, Object default_, String[] further_)
-	{
-		instantiate(type_, size_, decimals_, default_, further_);
-	}
+	public db_field(String type_, int size_, int decimals_, Object default_, String[] further_) { instantiate(type_, size_, decimals_, default_, further_); }
 
 	public String toString()
 	{
@@ -207,9 +174,8 @@ public class db_field extends parent
 		return 
 		(
 			strings.are_equal(data.check_type(_type), field2_._type) &&
-			(_size == field2_._size) && 
-			(_decimals == field2_._decimals) &&
-			generic.are_equal(_default, field2_._default) &&
+			(_size == field2_._size) && (_decimals == field2_._decimals) &&
+			generic.are_equal(_default, field2_._default) && 
 			arrays.are_equal(_further, field2_._further)
 		);		
 	}

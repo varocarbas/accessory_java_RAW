@@ -9,6 +9,9 @@ import java.util.HashMap;
 
 abstract class _alls 
 {
+	public static String[] TYPES_ALL = null;
+	public static String[] TYPES_CONFIG_BOOLEAN = null;
+	
 	public static Class<?>[] ARRAYS_CLASSES_SMALL = null;
 	public static Class<?>[] ARRAYS_CLASSES_ARRAY = null;
 	public static Class<?>[] ARRAYS_CLASSES_NUMERIC = null;
@@ -24,21 +27,25 @@ abstract class _alls
 	public static HashMap<String, Class<?>> DATA_CLASSES = null;
 	public static HashMap<Class<?>, Class<?>> DATA_COMPATIBLE = null;
 
+	public static HashMap<String, String[]> DB_WHERE_OPERANDS = null;
+	public static HashMap<String, String[]> DB_WHERE_LINKS = null;
+	
 	public static String[] CONFIG_NOT_UPDATE = null;
-
-	public static String[] TYPES_CONFIG_BOOLEAN = null;
 	
 	private static boolean _populated = false;
 	
 	public static void populate() 
 	{ 
 		if (_populated) return;
+
+		TYPES_ALL = types.populate_all_subtypes();
+		TYPES_CONFIG_BOOLEAN = types.populate_all_config_boolean();
 		
 		ARRAYS_CLASSES_SMALL = arrays.populate_all_classes_small();
 		ARRAYS_CLASSES_ARRAY = arrays.populate_all_classes_array();
 		ARRAYS_CLASSES_NUMERIC = arrays.populate_all_classes_numeric();
 		ARRAYS_CLASSES = arrays.populate_all_classes();
-
+		
 		NUMBERS_CLASSES = numbers.populate_all_classes();
 		
 		GENERIC_CLASSES = generic.populate_all_classes();
@@ -48,8 +55,9 @@ abstract class _alls
 		
 		DATA_CLASSES = data.populate_all_classes();
 		DATA_COMPATIBLE = data.populate_all_compatible();
-
-		TYPES_CONFIG_BOOLEAN = types.populate_all_config_boolean();
+		
+		DB_WHERE_OPERANDS = db_where.populate_all_operands();
+		DB_WHERE_LINKS = db_where.populate_all_links();
 		
 		_populated = true;
 	} 

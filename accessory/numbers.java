@@ -3,7 +3,7 @@ package accessory;
 import java.util.Random;
 
 public abstract class numbers 
-{	
+{		
 	public static final double MIN_DECIMAL = -1 * Double.MAX_VALUE; //!!!
 	public static final long MIN_LONG = Long.MIN_VALUE;
 	public static final int MIN_INT = Integer.MIN_VALUE;
@@ -23,6 +23,7 @@ public abstract class numbers
 	public static final int DEFAULT_DECIMALS = _defaults.NUMBERS_SIZE_DECIMALS;
 	
 	static { _ini.load(); }
+	public static final String _ID = types.get_id(types.ID_NUMBERS);
 	
 	public static final Class<?>[] get_all_classes()
 	{

@@ -33,14 +33,9 @@ public class db_where extends parent
 	public String _link = DEFAULT_LINK;
 	public boolean _is_literal = _defaults.DB_WHERE_LITERAL; //_value as a literal (e.g., 5 -> '5') or something else (e.g., col + 1 -> col + 1).
 	
-	private static HashMap<String, String[]> _all_operands = new HashMap<String, String[]>();
-	private static HashMap<String, String[]> _all_links = new HashMap<String, String[]>();	
-	
 	private String _temp_source = strings.DEFAULT;
 	private String _temp_operand = strings.DEFAULT;
 	private String _temp_link = strings.DEFAULT;
-	
-	static { ini(); }
 
 	public static boolean are_equal(db_where where1_, db_where where2_) { return are_equal_common(where1_, where2_); }
 	
@@ -70,13 +65,13 @@ public class db_where extends parent
 	
 	public static boolean operand_is_ok(String operand_) { return val_is_ok_common(operand_, types.DB_WHERE_OPERAND, DEFAULT_OPERAND); }
 	
-	public static String check_operand(String operand_) { return check_val_common(operand_, types.DB_WHERE_OPERAND, DEFAULT_OPERAND); }
+	public static String check_operand(String operand_) { return check_val_common(operand_, get_all_operands(), DEFAULT_OPERAND); }
 	
-	public static String operand_to_string(String operand_) { return val_to_string_common(operand_, _all_operands, DEFAULT_OPERAND); }
+	public static String operand_to_string(String operand_) { return val_to_string_common(operand_, get_all_operands(), DEFAULT_OPERAND); }
 	
-	public static boolean link_is_ok(String link_) { return val_is_ok_common(link_, types.DB_WHERE_LINK, DEFAULT_LINK); }
+	public static boolean link_is_ok(String link_) { return val_is_ok_common(link_, get_all_links(), DEFAULT_LINK); }
 	
-	public static String check_link(String link_) { return check_val_common(link_, types.DB_WHERE_LINK, DEFAULT_LINK); }
+	public static String check_link(String link_) { return check_val_common(link_, get_all_links(), DEFAULT_LINK); }
 	
 	public static String link_to_string(String link_) { return val_to_string_common(link_, types.DB_WHERE_LINK, DEFAULT_LINK); }
 
@@ -126,22 +121,33 @@ public class db_where extends parent
 		return _is_ok;
 	}
 
-	private static void ini() { populate_globals(); }
-
-	private static void populate_globals()
+	static HashMap<String, String[]> populate_all_operands()
 	{
-		if (_all_operands.size() > 0) return;
+		HashMap<String, String[]> all = new HashMap<String, String[]>();
 		
-		_all_operands.put(EQUAL, new String[] { "=" });
-		_all_operands.put(NOT_EQUAL, new String[] { "!=" });
-		_all_operands.put(GREATER, new String[] { ">" });
-		_all_operands.put(GREATER_EQUAL, new String[] { ">=" });
-		_all_operands.put(LESS, new String[] { "<" });
-		_all_operands.put(LESS_EQUAL, new String[] { "<=" });
+		all.put(EQUAL, new String[] { "=" });
+		all.put(NOT_EQUAL, new String[] { "!=" });
+		all.put(GREATER, new String[] { ">" });
+		all.put(GREATER_EQUAL, new String[] { ">=" });
+		all.put(LESS, new String[] { "<" });
+		all.put(LESS_EQUAL, new String[] { "<=" });
 		
-		_all_links.put(AND, new String[] { "and" });
-		_all_links.put(OR, new String[] { "or" });
+		return all;
 	}
+
+	static HashMap<String, String[]> populate_all_links()
+	{
+		HashMap<String, String[]> all = new HashMap<String, String[]>();
+		
+		all.put(AND, new String[] { "and" });
+		all.put(OR, new String[] { "or" });
+		
+		return all;
+	}
+
+	private static HashMap<String, String[]> get_all_operands() { return _alls.DB_WHERE_OPERANDS; }
+
+	private static HashMap<String, String[]> get_all_links() { return _alls.DB_WHERE_LINKS; }
 	
 	private void instantiate(db_where input_)
 	{

@@ -3,7 +3,7 @@ package accessory;
 import java.util.HashMap;
 
 public abstract class errors 
-{	
+{		
 	public static boolean _triggered = false; 
 	public static boolean _exit = false;
 	
@@ -12,6 +12,7 @@ public abstract class errors
 	public static final String DEFAULT_SEPARATOR = _defaults.ERRORS_SEPARATOR;
 	
 	static { _ini.load(); }
+	public static final String _ID = types.get_id(types.ID_ERRORS);
 	
 	public static void manage(HashMap<String, String> info_)
 	{

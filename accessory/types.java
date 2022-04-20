@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public abstract class types 
-{
+{	
 	public static final String SEPARATOR = misc.SEPARATOR_NAME;
 
-	//--------- To be synced with get_all_subtypes().
+	//--------- To be synced with the populate_all_[] methods below.
 
 	//IMPORTANT: these constants follow pretty rigid and predictable naming conventions, whose main
 	//point is to facilitate their automated treatment (e.g., easy subtype extraction). In any case,
@@ -163,13 +163,13 @@ public abstract class types
 	public static final String DATES_FORMAT_DATE = "dates_format_date";
 	public static final String DATES_FORMAT_DATE_TIME = "dates_format_date_time";
 	
-	public static final String ACTIONS = "actions";
-	public static final String ACTIONS_ADD = "actions_add";
-	public static final String ACTIONS_REMOVE = "actions_remove";
-	public static final String ACTIONS_ENCRYPT = "actions_encrypt";
-	public static final String ACTIONS_DECRYPT = "actions_decrypt";
-	public static final String ACTIONS_START = "actions_start";
-	public static final String ACTIONS_STOP = "actions_stop";
+	public static final String ACTION = "action";
+	public static final String ACTION_ADD = "action_add";
+	public static final String ACTION_REMOVE = "action_remove";
+	public static final String ACTION_ENCRYPT = "action_encrypt";
+	public static final String ACTION_DECRYPT = "action_decrypt";
+	public static final String ACTION_START = "action_start";
+	public static final String ACTION_STOP = "action_stop";
 	
 	public static final String WHAT = "what";
 	public static final String WHAT_USER = "what_user";
@@ -191,6 +191,24 @@ public abstract class types
 	public static final String WHAT_SERVER = "what_server";
 	public static final String WHAT_ID = "what_id";
 	public static final String WHAT_INSTANCE = "what_instance";
+	
+	public static final String ID = "id";
+	public static final String ID_ARRAYS = "id_arrays";
+	public static final String ID_CONFIG = "id_config";
+	public static final String ID_CREDENTIALS = "id_credentials";
+	public static final String ID_CRYPTO = "id_crypto";
+	public static final String ID_DATES = "id_dates";
+	public static final String ID_DB = "id_db";
+	public static final String ID_ERRORS = "id_errors";
+	public static final String ID_GENERIC = "id_generic";
+	public static final String ID_IO = "id_io";
+	public static final String ID_LOGS = "id_logs";
+	public static final String ID_MISC = "id_misc";
+	public static final String ID_NUMBERS = "id_numbers";
+	public static final String ID_PATHS = "id_paths";
+	public static final String ID_STRINGS = "id_strings";
+	public static final String ID_TESTS = "id_tests";
+	public static final String ID_TYPES = "id_types";
 	
 	public static final String ERROR = "error";
 	public static final String ERROR_INI = "error_ini";
@@ -229,14 +247,15 @@ public abstract class types
 	//---------
 
 	static { _ini.load(); }
+	public static final String _ID = types.get_id(types.ID_TYPES);
 	
 	public static String check_what(String what_) { return check_type(what_, types.get_subtypes(WHAT)); }
 	
-	public static String what_to_key(String what_) { return check_type(what_, types.get_subtypes(WHAT), ACTIONS_REMOVE, WHAT); }
+	public static String what_to_key(String what_) { return check_type(what_, types.get_subtypes(WHAT), ACTION_REMOVE, WHAT); }
 	
-	public static String check_action(String action_) { return check_type(action_, types.get_subtypes(ACTIONS)); }
+	public static String check_action(String action_) { return check_type(action_, types.get_subtypes(ACTION)); }
 	
-	public static String action_to_key(String action_) { return check_type(action_, types.get_subtypes(ACTIONS), ACTIONS_REMOVE, ACTIONS); }
+	public static String action_to_key(String action_) { return check_type(action_, types.get_subtypes(ACTION), ACTION_REMOVE, ACTION); }
 	
 	public static String check_multiple(String subtype_, HashMap<String, String[]> targets_)
 	{
@@ -274,7 +293,7 @@ public abstract class types
 		{
 			if (strings.are_equal(type2, type) || (strings.is_ok(type_add_remove) && strings.are_equal(add_type(type2, type_add_remove), type)))
 			{
-				output = (strings.are_equal(action, ACTIONS_REMOVE) ? remove_type(type, type_add_remove) : type);
+				output = (strings.are_equal(action, ACTION_REMOVE) ? remove_type(type, type_add_remove) : type);
 				break;
 			}
 		}
@@ -311,6 +330,8 @@ public abstract class types
 
 	public static boolean is_subtype_of(String subtype_, String type_) { return arrays.value_exists(get_subtypes(type_), subtype_); }
 
+	public static String get_id(String type_) { return check_type(type_, types.get_subtypes(ID), ACTION_REMOVE, ID); }
+	
 	public static String[] get_subtypes(String[] types_) { return get_subtypes(types_, null); }
 	
 	public static String[] get_subtypes(String[] types_, String[] all_)
@@ -344,11 +365,11 @@ public abstract class types
 		return arrays.to_array(subtypes);
 	}
 
-	static String[] populate_all_config_boolean() { return new String[] { CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, CONFIG_LOGS_OUT_FILE, CONFIG_LOGS_OUT_SCREEN }; }
-	
 	static String[] get_all_config_boolean() { return _alls.TYPES_CONFIG_BOOLEAN; }
 	
-	private static String[] get_all_subtypes()
+	static String[] populate_all_config_boolean() { return new String[] { CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, CONFIG_LOGS_OUT_FILE, CONFIG_LOGS_OUT_SCREEN }; }
+	
+	static String[] populate_all_subtypes()
 	{
 		return new String[]
 		{	
@@ -420,14 +441,17 @@ public abstract class types
 			DATES_FORMAT_TIME, DATES_FORMAT_TIME_FULL, DATES_FORMAT_TIME_SHORT,
 			DATES_FORMAT_DATE, DATES_FORMAT_DATE_TIME,
 			
-			ACTIONS,
-			ACTIONS_ADD, ACTIONS_REMOVE, ACTIONS_ENCRYPT, ACTIONS_DECRYPT,
-			ACTIONS_START, ACTIONS_STOP,
+			ACTION,
+			ACTION_ADD, ACTION_REMOVE, ACTION_ENCRYPT, ACTION_DECRYPT, ACTION_START, ACTION_STOP,
 			
 			WHAT,
 			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 
 			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER,
 			WHAT_TYPE, WHAT_APP, WHAT_SERVER, WHAT_ID, WHAT_INSTANCE,
+			
+			ID,
+			ID_ARRAYS, ID_CONFIG, ID_CREDENTIALS, ID_CRYPTO, ID_DATES, ID_DB, ID_ERRORS, ID_GENERIC, ID_IO, 
+			ID_LOGS, ID_MISC, ID_NUMBERS, ID_PATHS, ID_STRINGS, ID_TESTS, ID_TYPES,
 			
 			ERROR,
 			ERROR_INI,
@@ -449,4 +473,6 @@ public abstract class types
 			ERROR_CRYPTO_KEY, ERROR_CRYPTO_CIPHER, ERROR_CRYPTO_ENCRYPT, ERROR_CRYPTO_DECRYPT
 		};		
 	}
+	
+	private static String[] get_all_subtypes() { return _alls.TYPES_ALL; }
 }

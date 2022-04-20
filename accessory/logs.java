@@ -1,6 +1,7 @@
 package accessory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class logs 
 {		
@@ -13,7 +14,13 @@ public abstract class logs
 	public static final boolean DEFAULT_FILE = _defaults.LOGS_FILE;
 	
 	static { _ini.load(); }
-
+	public static final String _ID = types.get_id(types.ID_LOGS);
+	
+	public static void update_activity(HashMap<String, String> inputs_, String id_)
+	{
+		update_file(arrays.to_string(inputs_, misc.SEPARATOR_ITEM, misc.SEPARATOR_KEYVAL, null), id_, false);		
+	}
+	
 	public static void update(String message_, String id_, boolean is_error_)
 	{
 		if (!strings.is_ok(message_)) return;
@@ -47,7 +54,7 @@ public abstract class logs
 		if (!strings.is_ok(message)) return;
 		
 		io._log_exceptions = false;
-		io.line_to_file(get_path(id_, is_error_), dates.add_timestamp(message, null, false), true);
+		io.line_to_file(get_path(id_, is_error_), dates.add_timestamp(message, dates.DATE_TIME, false), true);
 		io._log_exceptions = true;
 	}
 

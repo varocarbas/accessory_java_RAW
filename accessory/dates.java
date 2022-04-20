@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public abstract class dates 
-{	
+{		
 	public static final String TIME = types.DATES_FORMAT_TIME;
 	public static final String TIME_FULL = types.DATES_FORMAT_TIME_FULL;
 	public static final String TIME_SHORT = types.DATES_FORMAT_TIME_SHORT;
@@ -21,7 +21,8 @@ public abstract class dates
 	public static final String DEFAULT_FORMAT = _defaults.DATES_FORMAT;
 	
 	static { _ini.load(); }
-
+	public static final String _ID = types.get_id(types.ID_DATES);
+	
 	public static String get_current_time(String format_, int offset_)
 	{
 		DateTimeFormatter formatter = get_formatter(format_);
@@ -31,7 +32,7 @@ public abstract class dates
 	
 	public static String add_timestamp(String input_, String format_, Boolean is_name_)
 	{
-		if (!strings.are_ok(new String[] { input_, format_ })) return strings.DEFAULT;
+		if (!strings.are_ok(new String[] { input_ })) return strings.DEFAULT;
 
 		String sep = misc.SEPARATOR_CONTENT;
 		String timestamp = get_current_time(format_, 0);

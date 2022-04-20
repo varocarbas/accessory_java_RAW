@@ -10,7 +10,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
 public class crypto extends parent 
-{
+{	
 	public static final String KEY = "key";
 	public static final String IV = "iv";
 
@@ -18,6 +18,8 @@ public class crypto extends parent
 	public static final String DEFAULT_ALGORITHM_CIPHER = _defaults.CRYPTO_ALGORITHM_CIPHER;
 	public static final String DEFAULT_ALGORITHM_KEY = _defaults.CRYPTO_ALGORITHM_KEY;
 
+	public static boolean _log_encryption_info = _defaults.CRYPTO_LOG_ENCRYPTION_INFO;
+	
 	public Cipher _cipher_enc = null; 
 	public Cipher _cipher_dec = null;
 	public String _algo_cipher = DEFAULT_ALGORITHM_CIPHER;
@@ -32,6 +34,9 @@ public class crypto extends parent
 	
 	private String _temp_algo_key = strings.DEFAULT; 
 	private String _temp_algo_cipher = strings.DEFAULT;
+
+	static { _ini.load(); }
+	public static final String _ID = types.get_id(types.ID_CRYPTO);
 	
 	public String toString() { return strings.DEFAULT; }
 	public boolean is_ok() { return _is_ok; }
@@ -66,6 +71,8 @@ public class crypto extends parent
 			{
 				_iv = _cipher_enc.getIV();
 				if (!iv_to_file(_iv)) return;
+
+				if (_log_encryption_info) log_encryption_info();
 			}
 
 			_out = Base64.getEncoder().encodeToString(_cipher_enc.doFinal(_in.getBytes()));
@@ -98,6 +105,18 @@ public class crypto extends parent
 		}
 
 		_is_ok = true;
+	}
+	
+	private void log_encryption_info()
+	{
+		HashMap<String, String> info = new HashMap<String, String>();
+		
+		info.put("algo_cipher", _algo_cipher);
+		info.put("path_iv", _path_iv);
+		info.put("algo_key", _algo_key);
+		info.put("path_key", _path_key);
+		
+		logs.update_activity(info, _ID);
 	}
 	
 	private static String[] encrypt_decrypt_file(String path_, String id_, boolean is_encrypt_) { return encrypt_decrypt(io.file_to_array(path_), id_, is_encrypt_); }

@@ -20,15 +20,9 @@ public class size extends parent
 	public double _max = WRONG_MAX;
 	public int _decimals = WRONG_DECIMALS;
 
-	public static boolean are_equal(size size1_, size size2_)
-	{
-		return are_equal_common(size1_, size2_);
-	}
+	public static boolean are_equal(size size1_, size size2_) { return are_equal_common(size1_, size2_); }
 	
-	public static String to_string(size size_, boolean is_main_)
-	{
-		return (size_ != null ? size_.toString(is_main_) : strings.DEFAULT);	
-	}
+	public static String to_string(size size_, boolean is_main_) { return (size_ != null ? size_.toString(is_main_) : strings.DEFAULT); }
 	
 	public static boolean complies(size input_, size boundaries_)
 	{
@@ -37,25 +31,13 @@ public class size extends parent
 		return ((input_._min >= boundaries_._min) && (input_._max <= boundaries_._max) && (input_._decimals == boundaries_._decimals));
 	}
 
-	public size(size input_)
-	{
-		instantiate(input_);
-	}
+	public size(size input_) { instantiate(input_); }
 
-	public size(double min_, double max_, int decimals_)
-	{
-		instantiate(min_, max_, decimals_);
-	}
+	public size(double min_, double max_, int decimals_) { instantiate(min_, max_, decimals_); }
 
-	public String toString()
-	{
-		return toString(true);
-	}
+	public String toString() { return toString(true); }
 
-	public boolean equals(size size2_)
-	{
-		return (!is_ok(size2_) ? false : (_min == size2_._min && _max == size2_._max && _decimals == size2_._decimals));		
-	}
+	public boolean equals(size size2_) { return (!is_ok(size2_) ? false : (_min == size2_._min && _max == size2_._max && _decimals == size2_._decimals)); }
 
 	public boolean is_ok()
 	{
@@ -91,10 +73,7 @@ public class size extends parent
 		populate(min_, max_, decimals_);
 	}
 
-	private boolean is_ok(double min_, double max_, int decimals_)
-	{
-		return (min_ <= max_ && numbers.is_ok(decimals_, MIN_DECIMALS, MAX_DECIMALS));
-	}	
+	private boolean is_ok(double min_, double max_, int decimals_) { return (min_ <= max_ && numbers.is_ok(decimals_, MIN_DECIMALS, MAX_DECIMALS)); }	
 
 	private void populate(double min_, double max_, int decimals_)
 	{

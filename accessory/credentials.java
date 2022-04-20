@@ -3,7 +3,7 @@ package accessory;
 import java.util.HashMap;
 
 public abstract class credentials 
-{   
+{   	
 	public static final String WHERE = types.CONFIG_CREDENTIALS_WHERE;
 
 	public static final String DEFAULT_ID = _defaults.CREDENTIALS_ID;
@@ -13,7 +13,8 @@ public abstract class credentials
 	private static final String SEPARATOR = misc.SEPARATOR_NAME;
 	
 	static { _ini.load(); }
-
+	public static final String _ID = types.get_id(types.ID_CREDENTIALS);
+	
 	public static HashMap<String, String> get_username_password(String id_, String user_, boolean encrypted_, String where_)
 	{
 		String id = (strings.is_ok(id_) ? id_ : DEFAULT_ID);
@@ -50,37 +51,32 @@ public abstract class credentials
 	{
 		String id = (strings.is_ok(id_) ? id_ : DEFAULT_ID);
 		String user = (strings.is_ok(user_) ? user_ : DEFAULT_USER);
+		String[] temp = encrypt_username_password_file_get(id, user);
 
-		String[] vals = encrypt_username_password_file_get(id, user);
-		if (!arrays.is_ok(vals)) return false;
+		return (arrays.is_ok(temp) ? encrypt_username_password_file(id, user, temp[0], temp[1]) : false);
+	}
+	
+	public static boolean encrypt_username_password_file(String id_, String user_, String username_, String password_)
+	{
+		if (!strings.is_ok(username_) || password_ == null) return false;
 		
-		String[] outputs = crypto.encrypt(vals, get_encryption_id(id, user));
-				
+		String id = (strings.is_ok(id_) ? id_ : DEFAULT_ID);
+		String user = (strings.is_ok(user_) ? user_ : DEFAULT_USER);
+
+		String[] outputs = crypto.encrypt(new String[] { username_, password_ }, get_encryption_id(id, user));
+		
 		return (!arrays.is_ok(outputs) ? false : encrypt_username_password_file_store(id, user, outputs));
 	}
 	
-	public static String get_extension()
-	{
-		return config.get_credentials(types.CONFIG_CREDENTIALS_FILE_EXTENSION);
-	}
+	public static String get_extension() { return config.get_credentials(types.CONFIG_CREDENTIALS_FILE_EXTENSION); }
 	
-	public static String get_file_full(String id_)
-	{
-		return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension());
-	}
+	public static String get_file_full(String id_) { return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension()); }
 	
-	public static String get_encryption_id(String id_, String user_)
-	{
-		return (strings.are_ok(new String[] { id_, user_ }) ? (id_ + SEPARATOR + user_) : strings.DEFAULT);
-	}
+	public static String get_encryption_id(String id_, String user_) { return (strings.are_ok(new String[] { id_, user_ }) ? (id_ + SEPARATOR + user_) : strings.DEFAULT); }
 	
 	private static boolean encrypt_username_password_file_store(String id_, String user_, String[] outputs_)
 	{
-		String[] paths = new String[] 
-		{ 
-			get_path_username_password(id_, user_, true, true),
-			get_path_username_password(id_, user_, true, false)
-		};
+		String[] paths = new String[] { get_path_username_password(id_, user_, true, true), get_path_username_password(id_, user_, true, false) };
 		
 		for (int i = 0; i < paths.length; i++)
 		{
@@ -95,11 +91,7 @@ public abstract class credentials
 	{
 		String[] vals = new String[2];
 		
-		String[] paths = new String[] 
-		{ 
-			get_path_username_password(id_, user_, false, true),
-			get_path_username_password(id_, user_, false, false)
-		};
+		String[] paths = new String[] { get_path_username_password(id_, user_, false, true), get_path_username_password(id_, user_, false, false) };
 		
 		for (int i = 0; i < paths.length; i++)
 		{
@@ -114,10 +106,7 @@ public abstract class credentials
 	{
 		String output = strings.DEFAULT;
 
-		if (where_.equals(types.CONFIG_CREDENTIALS_WHERE_FILE)) 
-		{
-			output = get_username_password_file(id_, user_, encrypted_, is_username_);
-		}
+		if (where_.equals(types.CONFIG_CREDENTIALS_WHERE_FILE)) output = get_username_password_file(id_, user_, encrypted_, is_username_);
 
 		return output;
 	}

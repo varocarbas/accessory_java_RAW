@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public abstract class tests 
-{	
+{		
 	public static final String SOURCE = types.CONFIG_TESTS_DB_SOURCE;
 	public static final String FIELD_DECIMAL = types.CONFIG_TESTS_DB_FIELD_DECIMAL;
 	public static final String FIELD_INT = types.CONFIG_TESTS_DB_FIELD_INT;
@@ -18,6 +18,7 @@ public abstract class tests
 	private static Object _temp_output = null;
 	
 	static { _ini.load(); }
+	public static final String _ID = types.get_id(types.ID_TESTS);
 	
 	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all(boolean db_too_)
 	{	

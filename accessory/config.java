@@ -10,7 +10,8 @@ public abstract class config
 	//---
 
 	static { _ini.load(); }
-
+	public static final String _ID = types.get_id(types.ID_CONFIG);
+	
 	public static String get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
 	
 	public static boolean update_basic(String key_, boolean val_) { return update_basic(key_, strings.to_string(val_)); }

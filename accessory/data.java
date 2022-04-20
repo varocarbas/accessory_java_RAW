@@ -55,20 +55,11 @@ public class data extends parent
 	private Class<?> _temp_class = null;
 	private size _temp_size = null;
 	
-	public static boolean are_equal(data data1_, data data2_)
-	{
-		return generic.are_equal(data1_, data2_);
-	}	
+	public static boolean are_equal(data data1_, data data2_) { return are_equal_common(data1_, data2_); }	
 
-	public data(data input_)
-	{
-		instantiate(input_);
-	}
+	public data(data input_) { instantiate(input_); }
 
-	public data(String type_, size size_)
-	{
-		instantiate(type_, null, size_);
-	}
+	public data(String type_, size size_) { instantiate(type_, null, size_); }
 
 	public String toString()
 	{
@@ -91,17 +82,7 @@ public class data extends parent
 		return (misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE);
 	}
 
-	public boolean equals(data data2_)
-	{
-		if (!is_ok(data2_)) return false;
-
-		return 
-		(
-			strings.are_equal(_type, data2_._type) && 
-			generic.are_equal(_class, data2_._class) && 
-			size.are_equal(_size, data2_._size)
-		);		
-	}
+	public boolean equals(data data2_) { return (is_ok(data2_) ? (strings.are_equal(_type, data2_._type) && generic.are_equal(_class, data2_._class) && size.are_equal(_size, data2_._size)) : false); }
 
 	public static <x> boolean complies(x val_, data data_)
 	{
@@ -128,20 +109,11 @@ public class data extends parent
 		return is_ok;
 	}
 
-	public static boolean type_is_ok(String type_)
-	{
-		return val_is_ok_common(type_, types.DATA, DEFAULT_TYPE);
-	}
+	public static boolean type_is_ok(String type_) { return val_is_ok_common(type_, types.DATA, DEFAULT_TYPE); }
 
-	public static String check_type(String type_)
-	{
-		return check_val_common(type_, types.DATA, DEFAULT_TYPE);
-	}
+	public static String check_type(String type_) { return check_val_common(type_, types.DATA, DEFAULT_TYPE); }
 
-	public static boolean size_is_ok(String type_, size size_)
-	{
-		return size.complies(size_, get_boundaries(type_));
-	}
+	public static boolean size_is_ok(String type_, size size_) { return size.complies(size_, get_boundaries(type_)); }
 
 	public static size check_size(String type_, size size_)
 	{
@@ -150,20 +122,11 @@ public class data extends parent
 		return new size(size.complies(size_, boundaries) ? size_ : boundaries);
 	}
 
-	public static size get_default_size(String type_)
-	{
-		return get_boundaries(type_);
-	}
+	public static size get_default_size(String type_) { return get_boundaries(type_); }
 	
-	public static boolean is_number(String type_)
-	{
-		return is_common(type_, new String[] { DECIMAL, LONG, INT });
-	}
+	public static boolean is_number(String type_) { return is_common(type_, new String[] { DECIMAL, LONG, INT }); }
 
-	public static boolean is_string(String type_)
-	{
-		return is_common(type_, new String[] { STRING, STRING_BIG });		
-	}
+	public static boolean is_string(String type_) { return is_common(type_, new String[] { STRING, STRING_BIG });		 }
 	
 	public boolean is_ok()
 	{
@@ -253,10 +216,7 @@ public class data extends parent
 		return boundaries;
 	}
 
-	private static boolean class_is_ok(Class<?> class_)
-	{
-		return (class_ != null && get_all_classes().containsValue(class_));
-	}
+	private static boolean class_is_ok(Class<?> class_) { return (class_ != null && get_all_classes().containsValue(class_)); }
 
 	private static boolean class_complies(Class<?> input_, Class<?> target_)
 	{
@@ -271,20 +231,11 @@ public class data extends parent
 		return false;
 	}
 
-	private static Class<?> get_class(String type_)
-	{
-		return (get_all_classes().containsKey(type_) ? get_all_classes().get(type_) : null);
-	}
+	private static Class<?> get_class(String type_) { return (get_all_classes().containsKey(type_) ? get_all_classes().get(type_) : null); }
 
-	private static HashMap<String, Class<?>> get_all_classes()
-	{
-		return _alls.DATA_CLASSES;
-	}
+	private static HashMap<String, Class<?>> get_all_classes() { return _alls.DATA_CLASSES; }
 
-	private static HashMap<Class<?>, Class<?>> get_all_compatible()
-	{
-		return _alls.DATA_COMPATIBLE;
-	}
+	private static HashMap<Class<?>, Class<?>> get_all_compatible() { return _alls.DATA_COMPATIBLE; }
 
 	private void instantiate(data input_)
 	{

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class strings 
-{
+{	
 	public static final int MIN_SIZE = 0;
 	public static final int MAX_SIZE = 65535;
 	
@@ -17,11 +17,9 @@ public abstract class strings
 	public static final int DEFAULT_SIZE = _defaults.STRINGS_SIZE;
 	
 	static { _ini.load(); }
-
-	public static boolean is_ok(String string_)
-	{
-		return is_ok(string_, false);
-	}
+	public static final String _ID = types.get_id(types.ID_STRINGS);
+	
+	public static boolean is_ok(String string_) { return is_ok(string_, false); }
 	
 	public static boolean are_ok(String[] strings_)
 	{
@@ -35,10 +33,7 @@ public abstract class strings
 		return true;
 	}
 
-	public static int get_length(String string_)
-	{
-		return get_length(string_, false);
-	}
+	public static int get_length(String string_) { return get_length(string_, false); }
 	
 	public static int get_length(String string_, Boolean trim_)
 	{
@@ -50,20 +45,11 @@ public abstract class strings
 		return string.length();
 	}
 
-	public static String normalise(String string_)
-	{
-		return normalise(string_, false);
-	}
+	public static String normalise(String string_) { return normalise(string_, false); }
 	
-	public static boolean matches_all(String string_, String[] targets_, boolean normalise_)
-	{
-		return matches(string_, targets_, normalise_, true);
-	}
+	public static boolean matches_all(String string_, String[] targets_, boolean normalise_) { return matches(string_, targets_, normalise_, true); }
 
-	public static boolean matches_any(String string_, String[] targets_, boolean normalise_)
-	{
-		return matches(string_, targets_, normalise_, false);
-	}
+	public static boolean matches_any(String string_, String[] targets_, boolean normalise_) { return matches(string_, targets_, normalise_, false); }
 
 	public static boolean are_equal(String string1_, String string2_)
 	{
@@ -73,40 +59,19 @@ public abstract class strings
 		return ((!is_ok1 || !is_ok2) ? (is_ok1 == is_ok2) : string1_.equals(string2_));
 	}
 
-	public static boolean are_equivalent(String string1_, String string2_)
-	{
-		return are_equal(normalise(string1_), normalise(string2_));
-	}
+	public static boolean are_equivalent(String string1_, String string2_) { return are_equal(normalise(string1_), normalise(string2_)); }
 
-	public static boolean contains_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_)
-	{
-		return (index_of_outside(needle_, haystack_, normalise_, start_, end_) > -1);
-	}
+	public static boolean contains_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_) { return (index_of_outside(needle_, haystack_, normalise_, start_, end_) > -1); }
 
-	public static boolean contains(String needle_, String haystack_, boolean normalise_)
-	{
-		return (index_of(needle_, haystack_, normalise_) >= 0);
-	}
+	public static boolean contains(String needle_, String haystack_, boolean normalise_) { return (index_of(needle_, haystack_, normalise_) >= 0); }
 
-	public static boolean contains_end(String needle_, String haystack_, boolean normalise_)
-	{
-		return contains_start_end(needle_, haystack_, normalise_,false);
-	}
+	public static boolean contains_end(String needle_, String haystack_, boolean normalise_) { return contains_start_end(needle_, haystack_, normalise_,false); }
 
-	public static boolean contains_start(String needle_, String haystack_, boolean normalise_)
-	{
-		return contains_start_end(needle_, haystack_, normalise_, true);
-	}
+	public static boolean contains_start(String needle_, String haystack_, boolean normalise_) { return contains_start_end(needle_, haystack_, normalise_, true); }
 
-	public static String get_start(String string_, int length_)
-	{
-		return substring(string_, 0, length_);
-	}
+	public static String get_start(String string_, int length_) { return substring(string_, 0, length_); }
 
-	public static String get_end(String string_, int start_)
-	{
-		return substring(string_, start_, 0);
-	}
+	public static String get_end(String string_, int start_) { return substring(string_, start_, 0); }
 
 	public static String substring(String string_, int start_, int length_)
 	{
@@ -123,10 +88,7 @@ public abstract class strings
 		return (length_ > 0 ? string_.substring(start_, start_ + length_) : string_.substring(start_));
 	}
 
-	public static String[] split(String needle_, String haystack_)
-	{
-		return split(needle_, haystack_, false);
-	}
+	public static String[] split(String needle_, String haystack_) { return split(needle_, haystack_, false); }
 		
 	public static String[] split(String needle_, String haystack_, boolean normalise_)
 	{
@@ -163,10 +125,7 @@ public abstract class strings
 		return substring(string_, start_, length);
 	}
 	
-	public static String substring_before(String string_, int i_)
-	{
-		return substring_before_after(string_, i_, true);
-	}
+	public static String substring_before(String string_, int i_) { return substring_before_after(string_, i_, true); }
 	
 	public static String substring_before(String needle_, String haystack_, boolean normalise_)
 	{
@@ -287,7 +246,7 @@ public abstract class strings
 	{
 		String[] targets = types.get_subtypes(data.BOOLEAN);
 
-		String string = types.check_type(string_, targets, types.ACTIONS_ADD, data.BOOLEAN);
+		String string = types.check_type(string_, targets, types.ACTION_ADD, data.BOOLEAN);
 		
 		for (String target: targets)
 		{
@@ -336,7 +295,7 @@ public abstract class strings
 	{
 		boolean output = false;
 
-		String string = types.check_type(string_, types.get_subtypes(data.BOOLEAN), types.ACTIONS_ADD, types.DATA_BOOLEAN);
+		String string = types.check_type(string_, types.get_subtypes(data.BOOLEAN), types.ACTION_ADD, types.DATA_BOOLEAN);
 		
 		if (are_equal(string, data.TRUE)) output = true;
 		else if (are_equivalent(string_, data.FALSE)) output = false;

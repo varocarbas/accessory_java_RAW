@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public abstract class paths 
-{	
+{		
 	public static final String HOME = paths.get_dir_home();
 	
 	public static final String DIR_APP = types.CONFIG_BASIC_DIR_APP;
@@ -21,11 +21,9 @@ public abstract class paths
 	public static final String EXTENSION_LOG = ".log";
 	
 	static { _ini.load(); }
-
-	public static boolean exists(String path_)
-	{
-		return (strings.is_ok(path_) && (new File(path_)).exists());
-	}
+	public static final String _ID = types.get_id(types.ID_PATHS);
+	
+	public static boolean exists(String path_) { return (strings.is_ok(path_) && (new File(path_)).exists()); }
 	
 	public static String build(String[] pieces_, boolean last_file_)
 	{
@@ -80,15 +78,9 @@ public abstract class paths
 		return file;
 	}
 
-	public static String get_dir(String type_)
-	{
-		return get_update_dir(type_, null, true);
-	}
+	public static String get_dir(String type_) { return get_update_dir(type_, null, true); }
 
-	public static void update_dir(String type_, String val_)
-	{
-		get_update_dir(type_, val_, false);
-	}
+	public static void update_dir(String type_, String val_) { get_update_dir(type_, val_, false); }
 	
 	public static String get_file_full(String name_, String extension_)
 	{
@@ -100,10 +92,7 @@ public abstract class paths
 		return output;
 	}
 
-	public static String get_dir_home()
-	{
-		return normalise_dir(System.getProperty("user.home"));
-	}	
+	public static String get_dir_home() { return normalise_dir(System.getProperty("user.home")); }	
 
 	static String get_default_dir(String type_)
 	{
@@ -138,8 +127,5 @@ public abstract class paths
 		return output;
 	}
 	
-	private static String get_dir_app_default()
-	{
-		return normalise_dir(System.getProperty("user.dir"));
-	}
+	private static String get_dir_app_default() { return normalise_dir(System.getProperty("user.dir")); }
 }

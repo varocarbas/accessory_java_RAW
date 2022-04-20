@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public abstract class db 
-{	
+{		
 	public static final String NAME = types.CONFIG_DB_NAME;
 	public static final String HOST = types.CONFIG_DB_SETUP_HOST;
 	public static final String USERNAME = types.CONFIG_CREDENTIALS_FILE_USERNAME;
@@ -59,6 +59,7 @@ public abstract class db
 	//---
 	
 	static { _ini.load(); }
+	public static final String _ID = types.get_id(types.ID_DB);
 	
 	public static boolean update_db(String db_, String db_name_) 
 	{ 
@@ -389,7 +390,7 @@ public abstract class db
 	
 	public static String sanitise_string(String source_, String input_) { return get_valid_instance(source_).sanitise_string(input_); }
 	
-	public static String check_type(String input_) { return types.check_type(input_, types.get_subtypes(types.DB_QUERY), types.ACTIONS_ADD, types.DB_QUERY); }
+	public static String check_type(String input_) { return types.check_type(input_, types.get_subtypes(types.DB_QUERY), types.ACTION_ADD, types.DB_QUERY); }
 
 	public static String get_current_id_encrypted(String user_) { return get_id_encrypted(get_current_source(), user_); }
 
