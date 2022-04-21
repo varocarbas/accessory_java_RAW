@@ -25,35 +25,15 @@ public abstract class numbers
 	static { _ini.load(); }
 	public static final String _ID = types.get_id(types.ID_NUMBERS);
 	
-	public static final Class<?>[] get_all_classes()
-	{
-		return _alls.NUMBERS_CLASSES;
-	}
+	public static final Class<?>[] get_all_classes() { return _alls.NUMBERS_CLASSES; }
 
-	public static boolean is_ok(double input_, double min_, double max_)
-	{
-		return ((input_ >= min_ || min_ == MIN_DECIMAL) && (input_ <= max_ || max_ == MAX_DECIMAL));
-	}
+	public static boolean is_ok(double input_, double min_, double max_) { return (input_ >= min_ && input_ <= max_); }
 
-	public static boolean is_ok(long input_, long min_, long max_)
-	{
-		return ((input_ >= min_ || min_ == MIN_LONG) && (input_ <= max_ || max_ == MAX_LONG));
-	}
+	public static boolean is_ok(long input_, long min_, long max_) { return (input_ >= min_ && input_ <= max_); }
 	
-	public static boolean is_ok(int input_, int min_, int max_)
-	{
-		return ((input_ >= min_ || min_ == MIN_INT) && (input_ <= max_ || max_ == MAX_INT));
-	}
+	public static boolean is_ok(int input_, int min_, int max_) { return (input_ >= min_ && input_ <= max_); }
 
-	public static boolean is_ok(Object input_)
-	{
-		return generic.is_number(input_);
-	}
-
-	public static Object get_default()
-	{
-		return 0;
-	}
+	public static boolean is_ok(Object input_) { return generic.is_number(input_); }
 	
 	public static double to_number(Object input_)
 	{
@@ -64,6 +44,8 @@ public abstract class numbers
 		if (generic.are_equal(type, Double.class)) output = (double)input_;
 		else if (generic.are_equal(type, Integer.class)) output = (double)((int)input_); //!!!
 		else if (generic.are_equal(type, Long.class)) output = (double)((long)input_); //!!!
+		else if (generic.are_equal(type, Boolean.class)) output = (double)to_int((boolean)input_);
+		else if (generic.are_equal(type, String.class)) output = to_decimal((String)input_);
 		
 		return output;
 	}
@@ -80,10 +62,7 @@ public abstract class numbers
 		return output;
 	}
 	
-	public static int get_random_index(int max_i_)
-	{
-		return get_random_int(0, max_i_);
-	}
+	public static int get_random_index(int max_i_) { return get_random_int(0, max_i_); }
 	
 	public static int get_random_int(int min_, int max_)
 	{
@@ -110,34 +89,19 @@ public abstract class numbers
 	
 	public static double get_random_decimal(double min_, double max_)
 	{
-		return get_random_decimal(new size(min_, max_, size.DEFAULT_DECIMALS));
-	}
-	
-	public static double get_random_decimal(size size_)
-	{
-		double output = 0.0;
-		if (!size.is_ok(size_)) return output;
+		double output = (new Random()).nextDouble();
 		
-		Random random = new Random();
-		output = random.nextDouble();
+		output = (min_ + output * (max_ - min_));
 		
-		output = (size_._min + output * (size_._max - size_._min));
-		
-		if (output < size_._min) output = size_._min;
-		if (output > size_._max) output = size_._max;
+		if (output < min_) output = min_;
+		if (output > max_) output = max_;
 		
 		return output;
 	}
 	
-	public static int get_length(int input_)
-	{
-		return get_length((double)input_);
-	}
+	public static int get_length(int input_) { return get_length((double)input_); }
 	
-	public static int get_length(long input_)
-	{
-		return get_length((double)input_);
-	}
+	public static int get_length(long input_) { return get_length((double)input_); }
 	
 	public static int get_length(double input_)
 	{
@@ -155,21 +119,39 @@ public abstract class numbers
 		return length;
 	}
 	
+	public static double to_decimal(String input_) { return strings.to_number_decimal(input_); }
+	
 	public static long to_long(double input_)
 	{
-		double output = Math.ceil(input_);
+		double output = Math.floor(input_);
 		
 		return (long)((output >= (double)MIN_LONG && output <= (double)MAX_LONG) ? output : DEFAULT_LONG);	
 	}
+
+	public static long to_long(String input_) { return strings.to_number_long(input_); }
 	
 	public static int to_int(double input_)
 	{	
-		double output = Math.ceil(input_);
+		double output = Math.floor(input_);
 	
 		return (int)((output >= (double)MIN_INT && output <= (double)MAX_INT) ? output : DEFAULT_INT);
 	}
+
+	public static int to_int(boolean input_) { return (input_ ? 1 : 0); }
 	
-	public static String to_integer_string(double input_)
+	public static int to_int(String input_) { return strings.to_number_int(input_); }
+
+	public static boolean to_boolean(int input_) { return (input_ == 1); }
+	
+	public static String to_string_decimal(double input_, boolean to_int_) { return (to_int_ ? to_string_decimal_integer(input_) : Double.toString(input_)); }
+
+	public static String to_string_long(long input_) { return Long.toString(input_); }
+
+	public static String to_string_int(int input_) { return Integer.toString(input_); }
+	
+	static final Class<?>[] populate_all_classes() { return new Class<?>[] { Integer.class, int.class, Long.class, long.class, Double.class, double.class }; }	
+	
+	private static String to_string_decimal_integer(double input_)
 	{
 		String output = "";
 
@@ -189,25 +171,5 @@ public abstract class numbers
 		if (is_negative) output = "-" + output;	
 		
 		return output;
-	}
-	
-	public static double decimal_from_string(String input_)
-	{
-		return strings.to_number_decimal(input_);
-	}
-	
-	public static long long_from_string(String input_)
-	{
-		return strings.to_number_long(input_);
-	}
-	
-	public static int int_from_string(String input_)
-	{
-		return strings.to_number_int(input_);
-	}
-	
-	static final Class<?>[] populate_all_classes()
-	{
-		return new Class<?>[] { Integer.class, int.class, Long.class, long.class, Double.class, double.class };
 	}
 }

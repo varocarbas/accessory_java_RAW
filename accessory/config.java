@@ -117,7 +117,7 @@ public abstract class config
 			String val2 = null;
 			
 			if (generic.is_string(val)) val2 = (String)val;
-			else if (generic.is_boolean(val)) val2 = strings.to_string((boolean)val);
+			else if (generic.is_boolean(val)) val2 = strings.from_boolean((boolean)val);
 			else is_ok = false;
 			
 			if (is_ok) is_ok = update_matches(type, key, val2, true, is_ini_);

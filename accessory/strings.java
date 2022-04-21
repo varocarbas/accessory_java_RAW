@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public abstract class strings 
 {	
@@ -65,7 +66,7 @@ public abstract class strings
 
 	public static boolean contains(String needle_, String haystack_, boolean normalise_) { return (index_of(needle_, haystack_, normalise_) >= 0); }
 
-	public static boolean contains_end(String needle_, String haystack_, boolean normalise_) { return contains_start_end(needle_, haystack_, normalise_,false); }
+	public static boolean contains_end(String needle_, String haystack_, boolean normalise_) { return contains_start_end(needle_, haystack_, normalise_, false); }
 
 	public static boolean contains_start(String needle_, String haystack_, boolean normalise_) { return contains_start_end(needle_, haystack_, normalise_, true); }
 
@@ -78,12 +79,7 @@ public abstract class strings
 		String output = DEFAULT;
 
 		int length0 = get_length(string_, false);
-		if 
-		(
-			length_ < 0 || length0 < 1 || start_ < 0 || start_ + length_ > length0 ||
-			(((long)start_ + (long)length_) > (long)numbers.MAX_INT)
-		) 
-		{ return output; }
+		if (length_ < 0 || length0 < 1 || start_ < 0 || start_ + length_ > length0 || (((long)start_ + (long)length_) > (long)numbers.MAX_INT)) return output; 
 
 		return (length_ > 0 ? string_.substring(start_, start_ + length_) : string_.substring(start_));
 	}
@@ -127,35 +123,17 @@ public abstract class strings
 	
 	public static String substring_before(String string_, int i_) { return substring_before_after(string_, i_, true); }
 	
-	public static String substring_before(String needle_, String haystack_, boolean normalise_)
-	{
-		return substring_before_after(needle_, haystack_, normalise_, true);
-	}
+	public static String substring_before(String needle_, String haystack_, boolean normalise_) { return substring_before_after(needle_, haystack_, normalise_, true); }
 
-	public static String substring_before(String needle_, String haystack_, boolean normalise_, int times_)
-	{
-		return substring_before_after(needle_, haystack_, normalise_, times_, true);
-	}
+	public static String substring_before(String needle_, String haystack_, boolean normalise_, int times_) { return substring_before_after(needle_, haystack_, normalise_, times_, true); }
 	
-	public static String substring_after(String string_, int i_)
-	{
-		return substring_before_after(string_, i_, false);
-	}
+	public static String substring_after(String string_, int i_) { return substring_before_after(string_, i_, false); }
 	
-	public static String substring_after(String needle_, String haystack_, boolean normalise_)
-	{
-		return substring_before_after(needle_, haystack_, normalise_, false);
-	}
+	public static String substring_after(String needle_, String haystack_, boolean normalise_) { return substring_before_after(needle_, haystack_, normalise_, false); }
 	
-	public static String substring_after(String needle_, String haystack_, boolean normalise_, int times_)
-	{
-		return substring_before_after(needle_, haystack_, normalise_, times_, false);
-	}	
+	public static String substring_after(String needle_, String haystack_, boolean normalise_, int times_) { return substring_before_after(needle_, haystack_, normalise_, times_, false); }	
 
-	public static String get_random(int length_)
-	{
-		return get_random(length_, true, true, true);
-	}
+	public static String get_random(int length_) { return get_random(length_, true, true, true); }
 
 	public static String get_random(int length_, boolean upper_, boolean numbers_, boolean symbols_)
 	{
@@ -164,7 +142,7 @@ public abstract class strings
 		String haystack = "abcdefghijklmnopqrstuvwxyz";
 		if (upper_) haystack += haystack.toUpperCase();
 		if (numbers_) haystack += "0123456789";
-		if (symbols_) haystack += "~!@#$%^&*()-_=+[]{}|;:,.<>?";
+		if (symbols_) haystack += "~!@#$%^&*()-_=+[]{}|;:,.<>?'\"`/\\";
 
 		String output = "";
 		int max = haystack.length() - 1;
@@ -181,10 +159,9 @@ public abstract class strings
 
 	public static int index_of_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_)
 	{
-		int output = index_of(needle_, haystack_, normalise_);
-		if (output < 0 || !is_ok(start_, true) || !is_ok(end_, true)) return output;
+		if (!is_ok(start_, true) || !is_ok(end_, true)) return index_of(needle_, haystack_, normalise_);
 		
-		output = 0;
+		int output = 0;
 		
 		while (true)
 		{
@@ -195,17 +172,19 @@ public abstract class strings
 			if (start >= 0 && start < output)
 			{
 				int end = index_of(end_, haystack_, output, normalise_);
-				if (end >= 0) continue;
+				if (end >= 0 && end > output) 
+				{
+					output++;
+					
+					continue;
+				}
 			}
 			
 			return output;
 		}
 	}
 	
-	public static int index_of(String needle_, String haystack_, boolean normalise_)
-	{
-		return index_of(needle_, haystack_, 0, normalise_);
-	}
+	public static int index_of(String needle_, String haystack_, boolean normalise_) { return index_of(needle_, haystack_, 0, normalise_); }
 	
 	public static int index_of(String needle_, String haystack_, int start_, boolean normalise_)
 	{
@@ -213,6 +192,7 @@ public abstract class strings
 
 		String haystack = haystack_; 
 		String needle = needle_;
+		
 		if (normalise_)
 		{
 			haystack = normalise(haystack, true);
@@ -222,31 +202,20 @@ public abstract class strings
 		return (start_ > 0 ? haystack.indexOf(needle, start_) : haystack.indexOf(needle));
 	}
 
-	public static boolean is_int(String string_)
-	{
-		return is_number_internal(string_, true, false);
-	}
+	public static boolean is_int(String string_) { return is_number(string_, true, false); }
 
-	public static boolean is_decimal(String string_)
-	{
-		return is_number_internal(string_, false, false);		
-	}
+	public static boolean is_decimal(String string_) { return is_number(string_, false, false); }
 
-	public static boolean is_long(String string_)
-	{
-		return is_number_internal(string_, true, true);		
-	}
+	public static boolean is_long(String string_) { return is_number(string_, true, true); }
 
-	public static boolean is_number(String string_)
-	{
-		return is_number_internal(string_, false, false);	
-	}
+	public static boolean is_number(String string_) { return is_number(string_, false, false); }
 
 	public static boolean is_boolean(String string_)
 	{
-		String[] targets = types.get_subtypes(data.BOOLEAN);
-
-		String string = types.check_type(string_, targets, types.ACTION_ADD, data.BOOLEAN);
+		String type = data.BOOLEAN;
+		
+		String[] targets = types.get_subtypes(type);
+		String string = types.check_type(string_, targets, types.ACTION_ADD, type);
 		
 		for (String target: targets)
 		{
@@ -256,126 +225,59 @@ public abstract class strings
 		return false;
 	}
 
-	public static String from_number_decimal(double input_, boolean to_int_)
-	{
-		return (to_int_ ? numbers.to_integer_string(input_) : Double.toString(input_));
-	}
+	public static String from_number(double input_) { return numbers.to_string_decimal(input_, false); }
 
-	public static double to_number_decimal(String string_)
-	{
-		return (is_decimal(string_) ? Double.parseDouble(string_) : numbers.DEFAULT_DECIMAL);
-	}
+	public static String from_number_decimal(double input_, boolean to_int_) { return numbers.to_string_decimal(input_, to_int_); }
 
-	public static String from_number_long(long input_)
-	{
-		return Long.toString(input_);
-	}
+	public static String from_number_long(long input_) { return numbers.to_string_long(input_); }
 
-	public static long to_number_long(String string_)
-	{
-		return (is_long(string_) ? Long.parseLong(string_) : numbers.DEFAULT_LONG);
-	}
+	public static String from_number_int(int input_) { return numbers.to_string_int(input_); }
 
-	public static String from_number_int(int input_)
-	{
-		return Integer.toString(input_);
-	}
+	public static double to_number(String string_) { return to_number_decimal(string_); }
 
-	public static int to_number_int(String string_)
-	{
-		return (is_int(string_) ? Integer.parseInt(string_) : numbers.DEFAULT_INT);
-	}
+	public static double to_number_decimal(String string_) { return (is_decimal(string_) ? Double.parseDouble(string_) : numbers.DEFAULT_DECIMAL); }
+	
+	public static long to_number_long(String string_) { return (is_long(string_) ? Long.parseLong(string_) : numbers.DEFAULT_LONG); }
 
-	public static String from_boolean(boolean input_)
-	{
-		return ((Boolean)input_).toString();
-	}
+	public static int to_number_int(String string_) { return (is_int(string_) ? Integer.parseInt(string_) : numbers.DEFAULT_INT); }
 
+	public static String from_boolean(boolean input_) { return ((Boolean)input_).toString(); }
+	
 	public static boolean to_boolean(String string_)
 	{
-		boolean output = false;
-
 		String string = types.check_type(string_, types.get_subtypes(data.BOOLEAN), types.ACTION_ADD, types.DATA_BOOLEAN);
 		
-		if (are_equal(string, data.TRUE)) output = true;
-		else if (are_equivalent(string_, data.FALSE)) output = false;
-
-		return output;
-	}
-
-	public static String[] to_strings(double[] inputs_)
-	{
-		return to_strings((Double[])arrays.to_big(inputs_));
-	}
-	
-	public static String[] to_strings(long[] inputs_)
-	{
-		return to_strings((Long[])arrays.to_big(inputs_));
-	}
-	
-	public static String[] to_strings(int[] inputs_)
-	{
-		return to_strings((Integer[])arrays.to_big(inputs_));
-	}
-	
-	public static String[] to_strings(boolean[] inputs_)
-	{
-		return to_strings((Boolean[])arrays.to_big(inputs_));
-	}
-	
-	public static <x> String[] to_strings(x[] inputs_)
-	{
-		if (!arrays.is_ok(inputs_)) return null;
-
-		ArrayList<String> output = new ArrayList<String>();
-
-		for (x input: inputs_)
+		for (Entry<Boolean, String[]> item: get_all_booleans().entrySet())
 		{
-			String temp = to_string(input);
-			if (is_ok(temp)) output.add(temp);
+			for (String target: item.getValue())
+			{
+				if (are_equivalent(string, target)) return item.getKey();
+			}
 		}
 
-		return arrays.to_array(output);
+		return false;
 	}
 
-	public static <x, y> String to_string(HashMap<x, y> input_)
-	{
-		return arrays.to_string(input_, null, null, null);
-	}
+	public static <x, y> String to_string(HashMap<x, y> input_) { return arrays.to_string(input_, null, null, null); }
 	
-	public static String to_string(double[] input_)
-	{
-		return to_string(arrays.to_big(input_));
-	}
+	public static String to_string(double[] input_) { return to_string(arrays.to_big(input_)); }
 	
-	public static String to_string(long[] input_)
-	{
-		return to_string(arrays.to_big(input_));
-	}
+	public static String to_string(long[] input_) { return to_string(arrays.to_big(input_)); }
 	
-	public static String to_string(int[] input_)
-	{
-		return to_string(arrays.to_big(input_));
-	}
+	public static String to_string(int[] input_) { return to_string(arrays.to_big(input_)); }
 	
-	public static String to_string(boolean[] input_)
-	{
-		return to_string(arrays.to_big(input_));
-	}
+	public static String to_string(boolean[] input_) { return to_string(arrays.to_big(input_)); }
+	
+	public static String to_string(byte[] input_) { return to_string(arrays.to_big(input_)); }
+	
+	public static String to_string(String input_) { return (is_ok(input_) ? input_ : DEFAULT); }
 	
 	public static String to_string(Object input_)
 	{
 		String output = DEFAULT;
-		
-		if (generic.is_string(input_)) 
-		{
-			String temp = (String)input_;
-			
-			return (is_ok(temp) ? temp : output);
-		}
 
 		Class<?> type = generic.get_class(input_);
-		if (type == null || !generic.is_ok(input_)) return output;
+		if (type == null) return output;
 
 		if (generic.is_array(type)) 
 		{
@@ -400,7 +302,7 @@ public abstract class strings
 		if (!is_ok(string_)) return output;
 
 		Class<?> type = type_;
-		if (!generic.is_ok(type))
+		if (type == null)
 		{
 			if (is_decimal(string_)) type = Double.class;
 			else if (is_long(string_)) type = Long.class;
@@ -422,11 +324,7 @@ public abstract class strings
 		if (!arrays.is_ok(needles_) || !is_ok(haystack_, true)) return DEFAULT;
 
 		String output = haystack_;
-
-		for (String needle: needles_)
-		{
-			output = remove_escape(needle, output, remove_);
-		}
+		for (String needle: needles_) { output = remove_escape(needle, output, remove_); }
 
 		return output;
 	}
@@ -438,15 +336,22 @@ public abstract class strings
 		String output = haystack_;
 		String replacement = (remove_ ? "" : "\\" + needle_);
 
-		output = output.replace(needle_, replacement);
-
-		return output;
+		return output.replace(needle_, replacement);
 	}
 
-	static boolean is_ok(String string_, boolean minimal_)
+	static boolean is_ok(String string_, boolean minimal_) { return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0)); }
+
+	static HashMap<Boolean, String[]> populate_all_booleans()
 	{
-		return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0));
+		HashMap<Boolean, String[]> booleans = new HashMap<Boolean, String[]>();
+		
+		booleans.put(true, new String[] { data.TRUE, from_boolean(true), from_number_int(numbers.to_int(true)) });
+		booleans.put(false, new String[] { data.FALSE, from_boolean(false), from_number_int(numbers.to_int(false)) });
+		
+		return booleans;
 	}
+	
+	private static HashMap<Boolean, String[]> get_all_booleans() { return _alls.STRINGS_BOOLEANS; }
 	
 	private static String normalise(String string_, boolean minimal_)
 	{
@@ -464,7 +369,7 @@ public abstract class strings
 	
 	private static boolean matches(String string_, String[] targets_, boolean normalise_, boolean all_)
 	{
-		if (!is_ok(string_) || !arrays.is_ok(targets_)) return false;
+		if (!is_ok(string_, true) || !arrays.is_ok(targets_)) return false;
 
 		boolean is_ok = true;
 
@@ -477,7 +382,7 @@ public abstract class strings
 		return is_ok;
 	}
 
-	private static boolean is_number_internal(String string_, boolean is_integer_, boolean is_long_)
+	private static boolean is_number(String string_, boolean is_integer_, boolean is_long_)
 	{
 		if (!is_ok(string_)) return false;
 
@@ -520,6 +425,7 @@ public abstract class strings
 				else
 				{
 					group_count = 0;
+					
 					if (is_decimal) 
 					{
 						group_count = group_no;
@@ -540,7 +446,7 @@ public abstract class strings
 		int digit_limit = numbers.MAX_DIGITS_DECIMAL;
 		if (is_long_) digit_limit = numbers.MAX_DIGITS_LONG;
 		else if (is_integer_) digit_limit = numbers.MAX_DIGITS_INT;
-
+		
 		if (digit_count > digit_limit) return false;
 
 		boolean is_ok = true;
@@ -576,7 +482,10 @@ public abstract class strings
 
 	private static String substring_before_after(String needle_, String haystack_, boolean normalise_, boolean is_before_)
 	{
-		return (contains(needle_, haystack_, normalise_) ? substring_before_after(haystack_, (index_of(needle_, haystack_, normalise_) + needle_.length() - 1), is_before_) : DEFAULT);
+		int i = index_of(needle_, haystack_, normalise_);
+		if (i < 0) return DEFAULT;
+		
+		return substring_before_after(haystack_, (i + needle_.length() - 1), is_before_);
 	}
 	
 	private static String substring_before_after(String string_, int i_, boolean is_before_)

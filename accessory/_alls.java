@@ -16,7 +16,9 @@ abstract class _alls
 	public static Class<?>[] ARRAYS_CLASSES_ARRAY = null;
 	public static Class<?>[] ARRAYS_CLASSES_NUMERIC = null;
 	public static Class<?>[] ARRAYS_CLASSES = null;
-
+	
+	public static HashMap<Boolean, String[]> STRINGS_BOOLEANS = null;
+	
 	public static Class<?>[] NUMBERS_CLASSES = null;
 	
 	public static Class<?>[] GENERIC_CLASSES = null;
@@ -45,6 +47,8 @@ abstract class _alls
 		ARRAYS_CLASSES_ARRAY = arrays.populate_all_classes_array();
 		ARRAYS_CLASSES_NUMERIC = arrays.populate_all_classes_numeric();
 		ARRAYS_CLASSES = arrays.populate_all_classes();
+		
+		STRINGS_BOOLEANS = strings.populate_all_booleans();
 		
 		NUMBERS_CLASSES = numbers.populate_all_classes();
 		

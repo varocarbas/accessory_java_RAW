@@ -103,7 +103,7 @@ public class db_field extends parent
 				if (strings.is_boolean(temp)) is_ok = true;
 				else if (strings.is_number(temp))
 				{
-					double temp2 = numbers.decimal_from_string(temp);
+					double temp2 = numbers.to_decimal(temp);
 					if (temp2 == 0.0 || temp2 == 1.0) is_ok = true;
 				}
 			}

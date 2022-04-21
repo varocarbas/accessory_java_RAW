@@ -109,9 +109,9 @@ abstract class db_queries
 			String temp2 = temp.get(field_);
 			
 			if (data.is_string(what_)) output = temp2;
-			else if (what_.equals(data.DECIMAL)) output = numbers.decimal_from_string(temp2);
-			else if (what_.equals(data.LONG)) output = numbers.long_from_string(temp2);
-			else if (what_.equals(data.INT)) output = numbers.int_from_string(temp2);	
+			else if (what_.equals(data.DECIMAL)) output = numbers.to_decimal(temp2);
+			else if (what_.equals(data.LONG)) output = numbers.to_long(temp2);
+			else if (what_.equals(data.INT)) output = numbers.to_int(temp2);	
 		}
 		
 		return output;

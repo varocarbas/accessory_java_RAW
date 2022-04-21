@@ -41,7 +41,6 @@ public abstract class parent_ini_config
 		String type_root = config.check_type(type_root_);
 		if (!strings.is_ok(type_root)) type_root = type_store;
 		
-		return arrays.value_exists(config.update_ini(type_store_, vals_), false);
-		//return arrays.value_exists(config.update_ini(type_store_, get_config_default_generic(type_root_, vals_)), false);
+		return arrays.value_exists(config.update_ini(type_store_, get_config_default_generic(type_root, vals_)), false);
 	}
 }
