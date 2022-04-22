@@ -37,6 +37,8 @@ public abstract class generic
 	
 	public static boolean is_ok(byte[] input_) { return is_ok(input_, false); }
 	
+	public static boolean is_ok(char[] input_) { return is_ok(input_, false); }
+	
 	public static boolean is_ok(Class<?> input_) { return is_ok(input_, false); }
 
 	public static <x, y> boolean is_ok(HashMap<x, y> input_) { return is_ok(input_, false); }
@@ -93,6 +95,8 @@ public abstract class generic
 	
 	public static boolean is_array(byte[] input_) { return true; }
 	
+	public static boolean is_array(char[] input_) { return true; }
+	
 	public static boolean is_array(Object input_) { return is_common(input_, arrays.get_all_classes(), false); }
 	
 	@SuppressWarnings("unchecked")
@@ -110,6 +114,8 @@ public abstract class generic
 	
 	public static byte[] get_new(byte[] input_) { return arrays.get_new(input_); }
 	
+	public static char[] get_new(char[] input_) { return arrays.get_new(input_); }
+	
 	public static boolean get_random_boolean() { return (new Random()).nextBoolean(); }
 	
 	public static boolean are_equal(Class<?> input1_, Class<?> input2_) { return classes_are_equal(input1_, input2_); }
@@ -123,6 +129,8 @@ public abstract class generic
 	public static Class<?> get_class(boolean input_) { return boolean.class; }
 	
 	public static Class<?> get_class(byte input_) { return byte.class; }
+	
+	public static Class<?> get_class(char input_) { return char.class; }
 	
 	public static boolean is_instance(Object input_, Class<?> class_) { return (class_ != null && are_equal(class_, get_class(input_))); }
 
@@ -141,6 +149,7 @@ public abstract class generic
 		else if (type.equals(int[].class)) output = get_new((int[])input_);
 		else if (type.equals(boolean[].class)) output = get_new((boolean[])input_);
 		else if (type.equals(byte[].class)) output = get_new((byte[])input_);
+		else if (type.equals(char[].class)) output = get_new((char[])input_);
 		else if (is_array(type)) output = arrays.get_new(input_);
 		else if (are_equal(type, size.class)) output = new size((size)input_);
 		else if (are_equal(type, data.class)) output = new data((data)input_);
@@ -187,6 +196,7 @@ public abstract class generic
 		else if (input_ instanceof Long) type = Long.class;
 		else if (input_ instanceof Double) type = Double.class;
 		else if (input_ instanceof Byte) type = Byte.class;
+		else if (input_ instanceof Character) type = Character.class;
 		else if (input_ instanceof Class<?>) type = Class.class;
 		else if (input_ instanceof Method) type = Method.class;
 		else if (input_ instanceof Exception) type = Exception.class;
@@ -204,12 +214,14 @@ public abstract class generic
 		else if (input_ instanceof int[]) type = int[].class;
 		else if (input_ instanceof boolean[]) type = boolean[].class;
 		else if (input_ instanceof byte[]) type = byte[].class;
+		else if (input_ instanceof char[]) type = char[].class;
 		else if (input_ instanceof String[]) type = String[].class;
 		else if (input_ instanceof Double[]) type = Double[].class;
 		else if (input_ instanceof Long[]) type = Long[].class;
 		else if (input_ instanceof Integer[]) type = Integer[].class;
 		else if (input_ instanceof Boolean[]) type = Boolean[].class;
 		else if (input_ instanceof Byte[]) type = Byte[].class;
+		else if (input_ instanceof Character[]) type = Character[].class;
 		else if (input_ instanceof Class[]) type = Class[].class;
 		else if (input_ instanceof Method[]) type = Method[].class;
 		else if (input_ instanceof Exception[]) type = Exception[].class;
@@ -290,6 +302,8 @@ public abstract class generic
 	
 	static boolean is_ok(byte[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 	
+	static boolean is_ok(char[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
+
 	static boolean is_ok(Class<?> input_, boolean minimal_) { return (input_ != null); }
 
 	static <x, y> boolean is_ok(HashMap<x, y> input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
@@ -335,6 +349,8 @@ public abstract class generic
 		classes.add(boolean.class);
 		classes.add(Byte.class);
 		classes.add(byte.class);
+		classes.add(Character.class);
+		classes.add(char.class);
 		classes.add(Object.class);
 		
 		for (Class<?> type: numbers.get_all_classes()) { classes.add(type); }
@@ -352,11 +368,13 @@ public abstract class generic
 		output.put(Integer.class, new Class<?>[] { int.class });
 		output.put(Boolean.class, new Class<?>[] { boolean.class });
 		output.put(Byte.class, new Class<?>[] { byte.class });
+		output.put(Character.class, new Class<?>[] { char.class });
 		output.put(Double[].class, new Class<?>[] { double[].class });
 		output.put(Long[].class, new Class<?>[] { long[].class });
 		output.put(Integer[].class, new Class<?>[] { int[].class });
 		output.put(Boolean[].class, new Class<?>[] { boolean[].class });
 		output.put(Byte[].class, new Class<?>[] { byte[].class });
+		output.put(Character[].class, new Class<?>[] { char[].class });
 		
 		Class<?>[] vals = arrays.get_all_classes_array();
 		for (Class<?> key: new Class<?>[] { Object[].class, Array.class })

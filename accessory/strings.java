@@ -235,12 +235,22 @@ public abstract class strings
 
 	public static double to_number(String string_) { return to_number_decimal(string_); }
 
-	public static double to_number_decimal(String string_) { return (is_decimal(string_) ? Double.parseDouble(string_) : numbers.DEFAULT_DECIMAL); }
+	public static double to_number_decimal(String string_) 
+	{ 
+		if (!is_decimal(string_)) return numbers.DEFAULT_DECIMAL;
+		
+		String string = strings.remove_thousands_sep(normalise(string_), null);
+		for (char exp: get_all_exps()) { string = string.replace(exp, 'e'); }
+
+		return Double.parseDouble(string); 
+	}
 	
 	public static long to_number_long(String string_) { return (is_long(string_) ? Long.parseLong(string_) : numbers.DEFAULT_LONG); }
 
 	public static int to_number_int(String string_) { return (is_int(string_) ? Integer.parseInt(string_) : numbers.DEFAULT_INT); }
 
+	public static String from_boolean(int input_) { return from_boolean(numbers.to_boolean(input_)); }
+	
 	public static String from_boolean(boolean input_) { return ((Boolean)input_).toString(); }
 	
 	public static boolean to_boolean(String string_)
@@ -270,6 +280,8 @@ public abstract class strings
 	
 	public static String to_string(byte[] input_) { return to_string(arrays.to_big(input_)); }
 	
+	public static String to_string(char[] input_) { return to_string(arrays.to_big(input_)); }
+
 	public static String to_string(String input_) { return (is_ok(input_) ? input_ : DEFAULT); }
 	
 	public static String to_string(Object input_)
@@ -319,25 +331,17 @@ public abstract class strings
 		return output;
 	}
 
-	public static String remove_escape_many(String[] needles_, String haystack_, boolean remove_)
-	{
-		if (!arrays.is_ok(needles_) || !is_ok(haystack_, true)) return DEFAULT;
+	public static String remove(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, types.ACTION_REMOVE); }
 
-		String output = haystack_;
-		for (String needle: needles_) { output = remove_escape(needle, output, remove_); }
+	public static String remove(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, types.ACTION_REMOVE); }
 
-		return output;
-	}
+	public static String escape(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, types.ACTION_ESCAPE); }
 
-	public static String remove_escape(String needle_, String haystack_, boolean remove_)
-	{
-		if (!is_ok(needle_, true) || !is_ok(haystack_, true)) return DEFAULT;
+	public static String escape(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, types.ACTION_ESCAPE); }
 
-		String output = haystack_;
-		String replacement = (remove_ ? "" : "\\" + needle_);
+	public static String replace(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, types.ACTION_REPLACE); }
 
-		return output.replace(needle_, replacement);
-	}
+	public static String replace(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, types.ACTION_REPLACE); }
 
 	static boolean is_ok(String string_, boolean minimal_) { return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0)); }
 
@@ -349,6 +353,40 @@ public abstract class strings
 		booleans.put(false, new String[] { data.FALSE, from_boolean(false), from_number_int(numbers.to_int(false)) });
 		
 		return booleans;
+	}
+
+	static char[] populate_all_exps() { return new char[] { 'e', '^' }; }
+
+	private static char[] get_all_exps() { return _alls.STRINGS_EXPS; }
+
+	private static String remove_escape_replace_many(String[] needles_, String haystack_, String action_)
+	{
+		if (!is_ok(haystack_, true)) return DEFAULT;
+		
+		String output = haystack_;
+		if (!arrays.is_ok(needles_)) return output;
+		
+		for (String needle: needles_) 
+		{ 
+			if (!is_ok(needle, true)) continue;
+			
+			output = remove_escape_replace(needle, output, action_);
+		}
+
+		return output;
+	}
+	
+	private static String remove_escape_replace(String needle_, String haystack_, String action_)
+	{
+		if (!is_ok(haystack_, true)) return DEFAULT;
+		if (!is_ok(needle_, true)) return haystack_;
+		
+		String replacement = null;		
+		if (action_.equals(types.ACTION_REMOVE)) replacement = "";
+		else if (action_.equals(types.ACTION_ESCAPE)) replacement = "\\" + needle_;
+		else if (action_.equals(types.ACTION_REPLACE)) replacement = needle_;
+		
+		return haystack_.replace(needle_, replacement);
 	}
 	
 	private static HashMap<Boolean, String[]> get_all_booleans() { return _alls.STRINGS_BOOLEANS; }
@@ -381,88 +419,91 @@ public abstract class strings
 
 		return is_ok;
 	}
-
-	private static boolean is_number(String string_, boolean is_integer_, boolean is_long_)
+	
+	private static boolean is_number(String input_, boolean is_integer_, boolean is_long_)
 	{
-		if (!is_ok(string_)) return false;
-
-		char[] chars = string_.toCharArray();
-		int last_i = chars.length - 1;
+		if (!is_ok(input_)) return false;
 
 		DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
-		char decimal = symbols.getDecimalSeparator();
-		char group = symbols.getGroupingSeparator();
+		char dec_char = symbols.getDecimalSeparator();
+		char[] exp_chars2 = get_all_exps();
+		
+		String input = remove_thousands_sep(normalise(input_), symbols); 
+		if (!is_ok(input)) return false;
+		
+		char[] chars = input.toCharArray();
+		int last_i = chars.length - 1;
 
-		int group_no = -1;
-		int group_max = 3;
-		int group_count = -1;
-		boolean decimal_found = false;
-
-		int digit_count = 0;
-
+		int digit_tot = 0;
+		boolean dec_found = false;
+		char exp = ' ';
+		
 		for (int i = 0; i <= last_i; i++)
 		{
-			if (group_count > -1) group_count++;
-
-			if (chars[i] == group || chars[i] == decimal)
+			if (chars[i] == dec_char)
 			{
-				boolean is_decimal = false;
-				int group_max2 = group_max;
-				if (chars[i] == decimal)
-				{
-					is_decimal = true;
-					group_max2++;
-				}
-
-				if 
-				(
-					(is_decimal && (is_integer_ || i == 0 || i == last_i)) || decimal_found || 
-					(group_count != group_no && group_count != group_max2)
-				)
-				{ 
-					return false; 
-				}
-				else
-				{
-					group_count = 0;
-					
-					if (is_decimal) 
-					{
-						group_count = group_no;
-						decimal_found = true;
-					}
-				}
+				if (dec_found || is_integer_ || i == 0 || i == last_i) return false;
+				
+				dec_found = true;
 			}
 			else if (chars[i] == '-' || chars[i] == '+') 
 			{
 				if (i != 0) return false;
 			}
-			else if (!Character.isDigit(chars[i])) return false;
+			else 
+			{
+				if (!Character.isDigit(chars[i])) 
+				{
+					if (exp == ' ' && arrays.value_exists(exp_chars2, chars[i])) 
+					{
+						exp = chars[i];
+						
+						continue;
+					}
+					else return false;
+				}
+				
+				digit_tot++;
+			}
+		}		
 
-			if (!decimal_found && Character.isDigit(chars[i])) digit_count++;
-		}
-		if (group_count != group_no && group_count != group_max) return false;
-
-		int digit_limit = numbers.MAX_DIGITS_DECIMAL;
-		if (is_long_) digit_limit = numbers.MAX_DIGITS_LONG;
-		else if (is_integer_) digit_limit = numbers.MAX_DIGITS_INT;
+		int digit_max = numbers.MAX_DIGITS_DECIMAL;
+		if (is_long_) digit_max = numbers.MAX_DIGITS_LONG;
+		else if (is_integer_) digit_max = numbers.MAX_DIGITS_INT;
 		
-		if (digit_count > digit_limit) return false;
-
-		boolean is_ok = true;
-
-		if (digit_count == digit_limit) 
+		if (exp != ' ') 
 		{
 			try
 			{
-				if (is_long_) Long.parseLong(string_);
-				else if (is_integer_) Integer.parseInt(string_);
-				else Double.parseDouble(string_);
+				if (exp != 'e') input = input.replace(exp, 'e');
+
+				return (numbers.get_length(Double.parseDouble(input)) <= digit_max);
+			}
+			catch (Exception e) { return false; }
+		}
+		else if (digit_tot > digit_max) return false;
+
+		boolean is_ok = true;
+
+		if (digit_tot == digit_max) 
+		{
+			try
+			{
+				if (is_long_) Long.parseLong(input);
+				else if (is_integer_) Integer.parseInt(input);
+				else Double.parseDouble(input);
 			}
 			catch (Exception e) { is_ok = false; }
 		}
 
-		return is_ok;
+		return is_ok;		
+	}
+
+	private static String remove_thousands_sep(String input_, DecimalFormatSymbols symbols_) 
+	{ 
+		String target = String.valueOf((symbols_ == null ? DecimalFormatSymbols.getInstance() : symbols_).getGroupingSeparator()); 
+	
+		return input_.replaceAll(target, "");
 	}
 
 	private static boolean contains_start_end(String needle_, String haystack_, boolean normalise_, boolean first_)

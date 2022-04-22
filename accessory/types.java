@@ -166,6 +166,8 @@ public abstract class types
 	public static final String ACTION = "action";
 	public static final String ACTION_ADD = "action_add";
 	public static final String ACTION_REMOVE = "action_remove";
+	public static final String ACTION_ESCAPE = "action_escape";
+	public static final String ACTION_REPLACE = "action_replace";
 	public static final String ACTION_ENCRYPT = "action_encrypt";
 	public static final String ACTION_DECRYPT = "action_decrypt";
 	public static final String ACTION_START = "action_start";
@@ -442,7 +444,8 @@ public abstract class types
 			DATES_FORMAT_DATE, DATES_FORMAT_DATE_TIME,
 			
 			ACTION,
-			ACTION_ADD, ACTION_REMOVE, ACTION_ENCRYPT, ACTION_DECRYPT, ACTION_START, ACTION_STOP,
+			ACTION_ADD, ACTION_REMOVE, ACTION_ESCAPE, ACTION_REPLACE, ACTION_ENCRYPT, ACTION_DECRYPT, 
+			ACTION_START, ACTION_STOP,
 			
 			WHAT,
 			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 

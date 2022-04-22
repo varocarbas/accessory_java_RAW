@@ -56,7 +56,7 @@ class db_mysql extends parent_db
 					{
 						if (!strings.is_ok(item)) continue;
 
-						String item2 = strings.remove_escape(QUOTE_VARIABLE, item, true).trim();
+						String item2 = strings.remove(QUOTE_VARIABLE, item).trim();
 						cols2.add(item2); 
 					}
 					
@@ -73,7 +73,7 @@ class db_mysql extends parent_db
 		return db_sql.execute_query(source_, query_, db.query_returns_data(type), cols);
 	}
 	
-	public String sanitise_string(String input_) { return strings.remove_escape_many(new String[] { "'", "\"" }, input_, false); }
+	public String sanitise_string(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 	
 	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
