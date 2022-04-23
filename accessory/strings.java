@@ -17,7 +17,7 @@ public abstract class strings
 	public static final String DEFAULT = _defaults.STRINGS;
 	public static final int DEFAULT_SIZE = _defaults.STRINGS_SIZE;
 	
-	static { _ini.load(); }
+	static { _ini.populate(); }
 	public static final String _ID = types.get_id(types.ID_STRINGS);
 	
 	public static boolean is_ok(String string_) { return is_ok(string_, false); }
@@ -442,7 +442,7 @@ public abstract class strings
 		{
 			if (chars[i] == dec_char)
 			{
-				if (dec_found || is_integer_ || i == 0 || i == last_i) return false;
+				if (dec_found || is_integer_ || exp != ' ' || i == 0 || i == last_i) return false;
 				
 				dec_found = true;
 			}

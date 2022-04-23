@@ -22,7 +22,7 @@ public abstract class numbers
 	public static final int DEFAULT_INT = _defaults.NUMBERS_INT;
 	public static final int DEFAULT_DECIMALS = _defaults.NUMBERS_SIZE_DECIMALS;
 	
-	static { _ini.load(); }
+	static { _ini.populate(); }
 	public static final String _ID = types.get_id(types.ID_NUMBERS);
 	
 	public static final Class<?>[] get_all_classes() { return _alls.NUMBERS_CLASSES; }

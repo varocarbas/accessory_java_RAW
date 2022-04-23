@@ -30,22 +30,15 @@ public abstract class parent_ini
 		return (strings.is_ok(what) ? types.what_to_key(what) : strings.DEFAULT);
 	}
 	
-	//Method expected to be called every time a non-ini, non-first, non-parent abstract class is loaded.
-	//It has to include all the load() methods of all the ini classes.
-	protected static void load_internal(parent_ini instance_) 
+	protected void populate_all() 
 	{
-		if (instance_._populated) return;
+		if (_populated) return;
 		
-		instance_.load_internal(); 
-		instance_._populated = true;
-	}
-	
-	protected void load_internal() 
-	{
 		populate_first();
-		
 		populate_config();
 		populate_db();
+		
+		_populated = true;
 	}
 	
 	//Loading all the first classes, the ones whose names start with "_".

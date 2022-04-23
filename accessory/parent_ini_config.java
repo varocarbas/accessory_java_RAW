@@ -6,7 +6,7 @@ public abstract class parent_ini_config
 {
 	protected boolean _populated = false;
 	
-	protected abstract void populate_all();
+	protected abstract void populate_all_internal();
 	
 	@SuppressWarnings("unchecked")
 	public static HashMap<String, Object> get_config_default_generic(String type_, HashMap<String, Object> vals_)
@@ -25,12 +25,13 @@ public abstract class parent_ini_config
 		return output;
 	}
 	
-	protected static void populate_internal(parent_ini_config instance_) 
+	protected void populate_all()
 	{
-		if (instance_._populated) return;
+		if (_populated) return;
 		
-		instance_.populate_all(); 
-		instance_._populated = true;
+		populate_all_internal();
+		
+		_populated = true;
 	}
 	
 	protected boolean populate(String type_store_, String type_root_, HashMap<String, Object> vals_)

@@ -9,7 +9,7 @@ public abstract class config
 	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
 	//---
 
-	static { _ini.load(); }
+	static { _ini.populate(); }
 	public static final String _ID = types.get_id(types.ID_CONFIG);
 	
 	public static String get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }

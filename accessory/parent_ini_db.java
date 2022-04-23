@@ -18,35 +18,28 @@ public abstract class parent_ini_db
 		return true;
 	}
 	
-	protected static void populate_internal(parent_ini_db instance_) 
-	{
-		if (instance_._populated) return;
-		
-		instance_.populate_internal(); 
-		instance_._populated = true;
-	}
-	
-	protected void populate_internal() 
+	protected void populate_all() 
 	{
 		if (_populated) return;
 		
 		String error = strings.DEFAULT;
 		if (!populate_all_dbs()) error = types.ERROR_INI_DB_DBS;
 		
+		_populated = true;
 		if (error.equals(strings.DEFAULT)) return;
 
 		_ini.manage_error(error);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected boolean populate_db(String db_, String name_, HashMap<String, Object[]> sources_, HashMap<String, Object> setup_vals_)
+	protected boolean populate_db(String db_, HashMap<String, Object[]> sources_, HashMap<String, Object> setup_vals_)
 	{
 		boolean is_ok = true;
 
 		String db = config.check_type(db_);
 		if (!strings.is_ok(db) || !arrays.is_ok(sources_)) return false;
 
-		config.update_ini(db_, types.CONFIG_DB_NAME, name_);		
+		config.update_ini(db_, types.CONFIG_DB_NAME, get_db_name_default(db_));		
 		HashMap<String, Object> setup_vals = get_setup_vals(db, setup_vals_);
 		
 		for (Entry<String, Object[]> item: sources_.entrySet())
@@ -65,23 +58,24 @@ public abstract class parent_ini_db
 		return is_ok;
 	}	
 
-	protected HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String type_field_)
+	protected HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String db_, boolean add_default_)
 	{		
-		HashMap<String, Object[]> fields = new HashMap<String, Object[]>();
-		if (!arrays.is_ok(info_)) return fields;
-	
+		if (!arrays.is_ok(info_)) return null;
+
+		HashMap<String, Object[]> fields = (add_default_ ? get_default_fields() : new HashMap<String, Object[]>());
+		
 		for (Entry<String, db_field> item: info_.entrySet())
 		{
 			String id = item.getKey();
-			fields = add_field(id, get_col_default(id, type_field_), item.getValue(), fields);	
+			fields = add_field(id, get_col_default(id, db_), item.getValue(), fields);
 		}
 		
 		return fields;
 	}
 
-	protected HashMap<String, Object[]> add_source(String id_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object[]> all_sources_)
+	protected HashMap<String, Object[]> add_source(String source_, String db_, HashMap<String, Object[]> fields_, HashMap<String, Object[]> all_sources_)
 	{
-		all_sources_.put(id_, new Object[] { table_, fields_ });
+		all_sources_.put(source_, new Object[] { get_table_default(source_, db_), fields_ });
 		
 		return all_sources_;
 	}
@@ -92,8 +86,26 @@ public abstract class parent_ini_db
 		
 		return all_fields_;
 	}
-	
-	protected String get_col_default(String field_, String type_) { return types.remove_type(field_, type_); }
+
+	protected String get_db_name_default(String db_) { return strings.remove(new String[] { types.SEPARATOR, "config", "db" }, db_); }
+
+	protected String get_table_default(String source_, String db_) 
+	{ 
+		String name = strings.remove(new String[] { db_, types.SEPARATOR + "source" }, source_);
+		
+		if (!strings.is_ok(name)) name = strings.remove(new String[] { types.SEPARATOR, "config", "db", "source", "default" }, source_);
+		
+		return name;
+	}
+
+	protected String get_col_default(String field_, String db_) 
+	{ 
+		String name = strings.remove(new String[] { db_, types.SEPARATOR + "field" + types.SEPARATOR }, field_); 
+		
+		if (!strings.is_ok(name)) name = strings.remove(new String[] { types.SEPARATOR, "config", "db", "field", "default" }, field_);
+
+		return name;
+	}
 
 	protected boolean populate_source(String source_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object> setup_vals_)
 	{
@@ -102,28 +114,19 @@ public abstract class parent_ini_db
 		String db = config.check_type((String)setup_vals_.get(types.CONFIG_DB));
 		String source = config.check_type(source_);
 		if (!strings.is_ok(db) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
-
-		HashMap<String, Object[]> defaults = get_fields_default();
-		if (!arrays.is_ok(defaults)) return false;
 		
 		HashMap<String, db_field> fields = new HashMap<String, db_field>();		
 
-		int count = 0;
-		while (count < 2)
+		for (Entry<String, Object[]> item: fields_.entrySet())
 		{
-			count++;
+			String id = item.getKey();
+			Object[] val = item.getValue();
 			
-			for (Entry<String, Object[]> item: (count == 1 ? defaults : fields_).entrySet())
-			{
-				String id = item.getKey();
-				Object[] val = item.getValue();
-				
-				String col = (String)val[0];
-				config.update_ini(db, id, col);
-				
-				db_field field = (db_field)val[1];
-				fields.put(id, field);
-			}
+			String col = (String)val[0];
+			config.update_ini(db, id, col);
+			
+			db_field field = (db_field)val[1];
+			fields.put(id, field);
 		}
 		
 		if (!accessory.db.add_source_ini(source, fields, setup_vals_)) return false;
@@ -132,16 +135,16 @@ public abstract class parent_ini_db
 		return true;
 	}
 
-	private HashMap<String, Object[]> get_fields_default()
+	private HashMap<String, Object[]> get_default_fields()
 	{
-		HashMap<String, Object[]> fields = new HashMap<String, Object[]>();
-
-		fields = add_field(types.CONFIG_DB_DEFAULT_FIELD_ID, "_id", new db_field(data.INT, new String[] { db_field.KEY_PRIMARY, db_field.AUTO_INCREMENT }), fields);
-		fields = add_field(types.CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, "_timestamp", new db_field(data.TIMESTAMP, new String[] { db_field.TIMESTAMP }), fields);
-
-		return fields;
+		HashMap<String, Object[]> default_fields = new HashMap<String, Object[]>();
+		
+		default_fields = add_field(types.CONFIG_DB_DEFAULT_FIELD_ID, "_id", new db_field(data.INT, new String[] { db_field.KEY_PRIMARY, db_field.AUTO_INCREMENT }), new HashMap<String, Object[]>());
+		default_fields = add_field(types.CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, "_timestamp", new db_field(data.TIMESTAMP, new String[] { db_field.TIMESTAMP }), default_fields);
+		
+		return default_fields;
 	}
-
+	
 	private HashMap<String, Object> get_setup_vals(String db_, HashMap<String, Object> vals_)
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>(arrays.is_ok(vals_) ? vals_ : get_setup_default());

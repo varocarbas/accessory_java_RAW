@@ -20,7 +20,7 @@ public abstract class dates
 
 	public static final String DEFAULT_FORMAT = _defaults.DATES_FORMAT;
 	
-	static { _ini.load(); }
+	static { _ini.populate(); }
 	public static final String _ID = types.get_id(types.ID_DATES);
 	
 	public static String get_current_time(String format_, int offset_)

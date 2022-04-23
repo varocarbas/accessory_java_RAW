@@ -58,7 +58,7 @@ public abstract class db
 	private static HashMap<String, String> _db_setups = new HashMap<String, String>();
 	//---
 	
-	static { _ini.load(); }
+	static { _ini.populate(); }
 	public static final String _ID = types.get_id(types.ID_DB);
 	
 	public static boolean update_db(String db_, String db_name_) 

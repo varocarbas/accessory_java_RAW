@@ -8,9 +8,9 @@ class _ini_config extends parent_ini_config
 	
 	public _ini_config() { }
 	
-	public static void populate() { populate_internal(_instance); }
+	public static void populate() { _instance.populate_all(); }
 
-	protected void populate_all()
+	protected void populate_all_internal()
 	{
 		populate_generic_basic();
 		populate_generic_credentials();

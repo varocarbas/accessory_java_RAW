@@ -20,7 +20,7 @@ public abstract class paths
 	public static final String EXTENSION_INI = ".ini";
 	public static final String EXTENSION_LOG = ".log";
 	
-	static { _ini.load(); }
+	static { _ini.populate(); }
 	public static final String _ID = types.get_id(types.ID_PATHS);
 	
 	public static boolean exists(String path_) { return (strings.is_ok(path_) && (new File(path_)).exists()); }

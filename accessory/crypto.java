@@ -35,7 +35,7 @@ public class crypto extends parent
 	private String _temp_algo_key = strings.DEFAULT; 
 	private String _temp_algo_cipher = strings.DEFAULT;
 
-	static { _ini.load(); }
+	static { _ini.populate(); }
 	public static final String _ID = types.get_id(types.ID_CRYPTO);
 	
 	public String toString() { return strings.DEFAULT; }
