@@ -229,7 +229,9 @@ public abstract class arrays
 		(
 			generic.are_equal(class_, Array.class) || 
 			generic.are_equal(class_, String[].class) || 
-			generic.are_equal(class_, Boolean[].class) || 
+			generic.are_equal(class_, Boolean[].class) ||
+			generic.are_equal(class_, Byte[].class) ||
+			generic.are_equal(class_, Character[].class) ||
 			generic.are_equal(class_, Class[].class) ||
 			value_exists(get_all_classes_numeric(), class_)
 		)
@@ -247,15 +249,7 @@ public abstract class arrays
 		Object output = null;
 		if (class_ == null) return output;
 		
-		if (generic.are_equal(class_, Array.class) || generic.are_equal(class_, String[].class))
-		{
-			String[] temp = new String[DEFAULT_SIZE];
-			
-			for (int i = 0; i < DEFAULT_SIZE; i++) { temp[i] = strings.get_random(strings.SIZE_SMALL); }
-			
-			output = temp;
-		}
-		else if (class_.equals(double[].class))
+		if (class_.equals(double[].class))
 		{
 			double[] temp = new double[DEFAULT_SIZE];
 			
@@ -319,11 +313,23 @@ public abstract class arrays
 			
 			output = temp;
 		}
+		else if (class_.equals(byte[].class)) output = generic.get_random_bytes(DEFAULT_SIZE);
+		else if (class_.equals(Byte[].class)) output = (Byte[])to_big(generic.get_random_bytes(DEFAULT_SIZE));
+		else if (class_.equals(char[].class)) output = generic.get_random_chars(DEFAULT_SIZE, true, true, true);
+		else if (class_.equals(Character[].class)) output = (Character[])to_big(generic.get_random_chars(DEFAULT_SIZE, true, true, true));
 		else if (generic.are_equal(class_, Class[].class))
 		{
 			Class<?>[] temp = new Class<?>[DEFAULT_SIZE];
 			
 			for (int i = 0; i < DEFAULT_SIZE; i++) { temp[i] = generic.get_random_class(); }
+			
+			output = temp;
+		}
+		else if (generic.are_equal(class_, String[].class))
+		{
+			String[] temp = new String[DEFAULT_SIZE];
+			
+			for (int i = 0; i < DEFAULT_SIZE; i++) { temp[i] = strings.get_random(strings.SIZE_SMALL); }
 			
 			output = temp;
 		}
@@ -340,9 +346,9 @@ public abstract class arrays
 		return output;		
 	}
 
-	public static HashMap<Object, Object> get_random_hashmap()
+	public static HashMap<String, String> get_random_hashmap()
 	{
-		HashMap<Object, Object> output = new HashMap<Object, Object>();
+		HashMap<String, String> output = new HashMap<String, String>();
 		
 		for (int i = 0; i < DEFAULT_SIZE; i++) { output.put(Integer.toString(i), strings.get_random(strings.SIZE_SMALL)); }
 		
@@ -542,70 +548,63 @@ public abstract class arrays
 		return output;
 	}
 
-	public static double[] remove_key(double[] array_, int key_, boolean normalise_) { return (double[])remove_key_value(to_big(array_), key_, normalise_, true); }
+	public static double[] remove_key(double[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
 
-	public static long[] remove_key(long[] array_, int key_, boolean normalise_) { return (long[])remove_key_value(to_big(array_), key_, normalise_, true); }
+	public static long[] remove_key(long[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
 
-	public static int[] remove_key(int[] array_, int key_, boolean normalise_) { return (int[])remove_key_value(to_big(array_), key_, normalise_, true); }
+	public static int[] remove_key(int[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
 
-	public static boolean[] remove_key(boolean[] array_, int key_, boolean normalise_) { return (boolean[])remove_key_value(to_big(array_), key_, normalise_, true); }
+	public static boolean[] remove_key(boolean[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
 
-	public static byte[] remove_key(byte[] array_, int key_, boolean normalise_) { return (byte[])remove_key_value(to_big(array_), key_, normalise_, true); }
+	public static byte[] remove_key(byte[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
 
-	public static char[] remove_key(char[] array_, int key_, boolean normalise_) { return (char[])remove_key_value(to_big(array_), key_, normalise_, true); }
+	public static char[] remove_key(char[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
 
 	public static <x> Object remove_key(Object array_, x key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
 
-	public static double[] remove_value(double[] array_, double value_, boolean normalise_) { return to_small((Double[])remove_key_value(to_big(array_), value_, normalise_, false)); }
+	public static double[] remove_value(double[] array_, double value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
 
-	public static long[] remove_value(long[] array_, long value_, boolean normalise_) { return to_small((Long[])remove_key_value(to_big(array_), value_, normalise_, false)); }
+	public static long[] remove_value(long[] array_, long value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
 
-	public static int[] remove_value(int[] array_, int value_, boolean normalise_) { return to_small((Integer[])remove_key_value(to_big(array_), value_, normalise_, false)); }
+	public static int[] remove_value(int[] array_, int value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
 
-	public static boolean[] remove_value(boolean[] array_, boolean value_, boolean normalise_) { return to_small((Boolean[])remove_key_value(to_big(array_), value_, normalise_, false)); }
+	public static boolean[] remove_value(boolean[] array_, boolean value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
 
-	public static byte[] remove_value(byte[] array_, byte value_, boolean normalise_) { return to_small((Byte[])remove_key_value(to_big(array_), value_, normalise_, false)); }
+	public static byte[] remove_value(byte[] array_, byte value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
 
-	public static char[] remove_value(char[] array_, char value_, boolean normalise_) { return to_small((Character[])remove_key_value(to_big(array_), value_, normalise_, false)); }
+	public static char[] remove_value(char[] array_, char value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
 
 	public static <x> Object remove_value(Object array_, x value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
 	
-	@SuppressWarnings("unchecked")
-	public static <x, y> y get_value(HashMap<x, y> array_, x key_) { return (y)key_value_get_exists(array_, key_, true, true); }
+	public static <x, y> Object get_value(HashMap<x, y> array_, x key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static double get_value(double[] array_, int key_) { return (double)get_value(to_big(array_), key_); }
+	public static Object get_value(double[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static long get_value(long[] array_, int key_) { return (long)get_value(to_big(array_), key_); }
+	public static Object get_value(long[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static int get_value(int[] array_, int key_) { return (int)get_value(to_big(array_), key_); }
+	public static Object get_value(int[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static boolean get_value(boolean[] array_, int key_) { return (boolean)get_value(to_big(array_), key_); }
+	public static Object get_value(boolean[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static byte get_value(byte[] array_, int key_) { return (byte)get_value(to_big(array_), key_); }
+	public static Object get_value(byte[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static char get_value(char[] array_, int key_) { return (char)get_value(to_big(array_), key_); }
+	public static Object get_value(char[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
 
 	public static <x> Object get_value(Object array_, x key_) { return key_value_get_exists(array_, key_, true, true); }
 	
-	public static int get_key(double[] array_, double value_) { return (int)get_key(to_big(array_), value_); }
+	public static Object get_key(double[] array_, double value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	public static int get_key(long[] array_, long value_) { return (int)get_key(to_big(array_), value_); }
+	public static Object get_key(long[] array_, long value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	public static int get_key(int[] array_, int value_) { return (int)get_key(to_big(array_), value_); }
+	public static Object get_key(int[] array_, int value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	public static int get_key(boolean[] array_, boolean value_) { return (int)get_key(to_big(array_), value_); }
+	public static Object get_key(boolean[] array_, boolean value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	public static int get_key(byte[] array_, byte value_) { return (int)get_key(to_big(array_), value_); }
+	public static Object get_key(byte[] array_, byte value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	public static int get_key(char[] array_, char value_) { return (int)get_key(to_big(array_), value_); }
+	public static Object get_key(char[] array_, char value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	@SuppressWarnings("unchecked")
-	public static <x> Object get_key(Object array_, x value_) 
-	{
-		Class<?> type = generic.get_class(false);
-
-		return ((generic.are_equal(type, ArrayList.class) || generic.are_equal(type, HashMap.class)) ? key_value_get_exists(array_, value_, false, true) : get_key_array((x[])array_, value_)); 
-	}
+	public static <x> Object get_key(Object array_, x value_) { return key_value_get_exists(array_, value_, false, true); }
 	
 	public static boolean keys_exist(double[] array_, int[] keys_) { return keys_exist(to_big(array_), to_big(keys_)); }
 	
@@ -645,20 +644,34 @@ public abstract class arrays
 
 	public static <x> boolean keys_exist(Object array_, x[] keys_) { return keys_values_exist(array_, keys_, true); }
 
-	public static boolean key_exists(double[] array_, int key_) { return (boolean)key_value_get_exists(to_big(array_), key_, true, false); }
+	public static boolean key_exists(double[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 	
-	public static boolean key_exists(long[] array_, int key_) { return (boolean)key_value_get_exists(to_big(array_), key_, true, false); }
+	public static boolean key_exists(long[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 	
-	public static boolean key_exists(int[] array_, int key_) { return (boolean)key_value_get_exists(to_big(array_), key_, true, false); }
+	public static boolean key_exists(int[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 	
-	public static boolean key_exists(boolean[] array_, int key_) { return (boolean)key_value_get_exists(to_big(array_), key_, true, false); }
+	public static boolean key_exists(boolean[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 	
-	public static boolean key_exists(byte[] array_, int key_) { return (boolean)key_value_get_exists(to_big(array_), key_, true, false); }
+	public static boolean key_exists(byte[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 
-	public static boolean key_exists(char[] array_, int key_) { return (boolean)key_value_get_exists(to_big(array_), key_, true, false); }
+	public static boolean key_exists(char[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 
 	public static <x> boolean key_exists(Object array_, x key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 
+	public static boolean value_exists(double[] array_, double value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+	
+	public static boolean value_exists(long[] array_, long value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+	
+	public static boolean value_exists(int[] array_, int value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+	
+	public static boolean value_exists(boolean[] array_, boolean value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+	
+	public static boolean value_exists(byte[] array_, byte value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+
+	public static boolean value_exists(char[] array_, char value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+
+	public static <x> boolean value_exists(Object array_, x value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+		
 	public static boolean values_exist(double[] array_, double[] values_) { return values_exist(to_big(array_), to_big(values_)); }
 	
 	public static boolean values_exist(long[] array_, long[] values_) { return values_exist(to_big(array_), to_big(values_)); }
@@ -685,20 +698,6 @@ public abstract class arrays
 
 	public static <x> boolean values_exist(Object array_, x[] values_) { return keys_values_exist(array_, values_, false); }
 
-	public static boolean value_exists(double[] array_, double value_) { return (boolean)key_value_get_exists(to_big(array_), value_, false, false); }
-	
-	public static boolean value_exists(long[] array_, long value_) { return (boolean)key_value_get_exists(to_big(array_), value_, false, false); }
-	
-	public static boolean value_exists(int[] array_, int value_) { return (boolean)key_value_get_exists(to_big(array_), value_, false, false); }
-	
-	public static boolean value_exists(boolean[] array_, boolean value_) { return (boolean)key_value_get_exists(to_big(array_), value_, false, false); }
-	
-	public static boolean value_exists(byte[] array_, byte value_) { return (boolean)key_value_get_exists(to_big(array_), value_, false, false); }
-
-	public static boolean value_exists(char[] array_, char value_) { return (boolean)key_value_get_exists(to_big(array_), value_, false, false); }
-
-	public static <x> boolean value_exists(Object array_, x value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
-		
 	public static <x, y> String to_string(HashMap<x, y> input_, String separator1_, String separator2_, String[] keys_ignore_) { return to_string_internal(input_, separator1_, separator2_, keys_ignore_, false); }
 	
 	public static <x> String to_string(Object input_, String separator1_, String separator2_, String[] keys_ignore_) { return (generic.are_equal(generic.get_class(input_), HashMap.class) ? to_string_internal(input_, separator1_, separator2_, keys_ignore_, false) : strings.DEFAULT); }
@@ -711,6 +710,10 @@ public abstract class arrays
 	
 	public static String to_string(boolean[] input_, String separator_) { return to_string(to_big(input_), separator_); }
 	
+	public static String to_string(byte[] input_, String separator_) { return to_string(to_big(input_), separator_); }
+	
+	public static String to_string(char[] input_, String separator_) { return to_string(to_big(input_), separator_); }
+
 	@SuppressWarnings("unchecked")
 	public static <x> String to_string(Object input_, String separator_)
 	{
@@ -723,6 +726,8 @@ public abstract class arrays
 		else if (type.equals(long[].class)) return to_string((long[])input_, separator_);
 		else if (type.equals(int[].class)) return to_string((int[])input_, separator_);
 		else if (type.equals(boolean[].class)) return to_string((boolean[])input_, separator_);
+		else if (type.equals(byte[].class)) return to_string((byte[])input_, separator_);
+		else if (type.equals(char[].class)) return to_string((char[])input_, separator_);
 		
 		boolean is_array = generic.is_array_class(type);
 		boolean is_arraylist = generic.are_equal(type, ArrayList.class);
@@ -1063,13 +1068,6 @@ public abstract class arrays
 	
 	static Class<?>[] populate_all_classes_numeric() { return new Class<?>[] { Double[].class, double[].class, Long[].class, long[].class, Integer[].class, int[].class }; }
 
-	private static <x> int get_key_array(x[] array_, x value_) 
-	{ 
-		Object temp = key_value_get_exists(array_, value_, false, true); 
-	
-		return (temp == null ? -1 : (int)temp);
-	}
-
 	private static boolean is_xy(Object input_)
 	{
 		Class<?>[] types = get_classes_items(input_, false);
@@ -1255,35 +1253,33 @@ public abstract class arrays
 		return output;
 	}
 
-	private static Object key_value_get_exists(double[] array_, double target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), (Double)target_, is_key_, get_); }
+	private static <x> Object key_value_get_exists(double[] array_, x target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), target_, is_key_, get_); }
 
-	private static Object key_value_get_exists(long[] array_, long target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), (Long)target_, is_key_, get_); }
+	private static <x> Object key_value_get_exists(long[] array_, x target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), target_, is_key_, get_); }
 
-	private static Object key_value_get_exists(int[] array_, int target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), (Integer)target_, is_key_, get_); }
+	private static <x> Object key_value_get_exists(int[] array_, x target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), target_, is_key_, get_); }
 
-	private static Object key_value_get_exists(boolean[] array_, boolean target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), (Boolean)target_, is_key_, get_); }
+	private static <x> Object key_value_get_exists(boolean[] array_, x target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), target_, is_key_, get_); }
 
-	private static Object key_value_get_exists(byte[] array_, byte target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), (Byte)target_, is_key_, get_); }
+	private static <x> Object key_value_get_exists(byte[] array_, x target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), target_, is_key_, get_); }
 
-	private static Object key_value_get_exists(char[] array_, char target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), (Character)target_, is_key_, get_); }
-
+	private static <x> Object key_value_get_exists(char[] array_, x target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), target_, is_key_, get_); }
+	
 	@SuppressWarnings("unchecked")
-	private static <x, y> Object key_value_get_exists(Object array_, Object target_, boolean is_key_, boolean get_)
+	private static <x, y> Object key_value_get_exists(Object array_, Object target_, boolean is_key_, boolean is_get_)
 	{
-		Object output = (get_ ? null : false);
-		
 		Class<?> type = generic.get_class(array_);
-		if (!generic.is_ok(type)) return output;
-		
 		Class<?> type2 = generic.get_class(target_);
-		if (type2 == null) return output;
 		
-		if (type.equals(double[].class)) return (generic.are_equal(type2, double.class) ? key_value_get_exists((double[])array_, (double)target_, is_key_, get_) : output);
-		else if (type.equals(long[].class)) return (generic.are_equal(type2, long.class) ? key_value_get_exists((long[])array_, (long)target_, is_key_, get_) : output);
-		else if (type.equals(int[].class)) return (generic.are_equal(type2, int.class) ? key_value_get_exists((int[])array_, (int)target_, is_key_, get_) : output);
-		else if (type.equals(boolean[].class)) return (generic.are_equal(type2, boolean.class) ? key_value_get_exists((boolean[])array_, (boolean)target_, is_key_, get_) : output);
-		else if (type.equals(byte[].class)) return (generic.are_equal(type2, byte.class) ? key_value_get_exists((byte[])array_, (byte)target_, is_key_, get_) : output);
-		else if (type.equals(char[].class)) return (generic.are_equal(type2, char.class) ? key_value_get_exists((char[])array_, (char)target_, is_key_, get_) : output);
+		Object output = key_value_get_exists_return_wrong(array_, target_, is_key_, is_get_, type, type2);
+		if (type == null || type2 == null) return output;
+		
+		if (type.equals(double[].class)) return (generic.are_equal(type2, double.class) ? key_value_get_exists((double[])array_, target_, is_key_, is_get_) : output);
+		else if (type.equals(long[].class)) return (generic.are_equal(type2, long.class) ? key_value_get_exists((long[])array_, target_, is_key_, is_get_) : output);
+		else if (type.equals(int[].class)) return (generic.are_equal(type2, int.class) ? key_value_get_exists((int[])array_, target_, is_key_, is_get_) : output);
+		else if (type.equals(boolean[].class)) return (generic.are_equal(type2, boolean.class) ? key_value_get_exists((boolean[])array_, target_, is_key_, is_get_) : output);
+		else if (type.equals(byte[].class)) return (generic.are_equal(type2, byte.class) ? key_value_get_exists((byte[])array_, target_, is_key_, is_get_) : output);
+		else if (type.equals(char[].class)) return (generic.are_equal(type2, char.class) ? key_value_get_exists((char[])array_, target_, is_key_, is_get_) : output);
 		else if (generic.are_equal(type, HashMap.class))
 		{
 			Class<?>[] types22 = get_classes_items(array_);
@@ -1298,44 +1294,53 @@ public abstract class arrays
 				Object val = temp[1];
 				
 				Object target2 = (is_key_ ? key : val);
-				if (generic.are_equal(target_, target2)) return (get_ ? (is_key_ ? val : key) : true);
+				if (generic.are_equal(target_, target2)) return key_value_get_exists_return(key, val, is_key_, is_get_, true);
 			}
 		}
 		else 
 		{
 			Class<?> type22 = generic.get_class(target_);
 			if (!generic.are_equal(type2, type22)) return output;
+		
+			boolean is_arraylist = (generic.are_equal(type, ArrayList.class));
 			
-			if (generic.are_equal(type, ArrayList.class))
-			{	
-				ArrayList<x> array2 = ((ArrayList<x>)array_);
-				
-				for (int i = 0; i < array2.size(); i++)
-				{
-					Object key = i;
-					Object val = array2.get(i);
-					
-					Object target2 = (is_key_ ? key : val);
-					if (generic.are_equal(target_, target2)) return (get_ ? (is_key_ ? val : key) : true);
-				}		
-			}
-			else
+			for (int i = 0; i < (is_arraylist ? ((ArrayList<x>)array_).size() : ((x[])array_).length); i++)
 			{
-				x[] array2 = (x[])array_;
+				Object key = i;
+				Object val = (is_arraylist ? ((ArrayList<x>)array_).get(i) : ((x[])array_)[i]);
 				
-				for (int i = 0; i < array2.length; i++)
-				{
-					Object key = i;
-					Object val = array2[i];
-					
-					Object target2 = (is_key_ ? key : val);
-					if (generic.are_equal(target_, target2)) return (get_ ? (is_key_ ? val : key) : true);
-				}		
+				Object target2 = (is_key_ ? key : val);
+				if (generic.are_equal(target_, target2)) return key_value_get_exists_return(key, val, is_key_, is_get_, true);
 			}
 		}
 		
 		return output;
 	}
+	
+	private static Object key_value_get_exists_return_wrong(Object array_, Object target_, boolean is_key_, boolean is_get_, Class<?> type_, Class<?> type2_)
+	{
+		if (!is_get_) return false;
+		
+		Object key = null;
+		Object value = null;
+		
+		if (generic.are_equal(type_, HashMap.class)) 
+		{
+			Class<?>[] classes = get_classes_items(array_);
+			
+			key = _defaults.get_default(classes[0]);
+			value = _defaults.get_default(classes[1]);
+		}
+		else
+		{
+			key = -1;
+			value = _defaults.get_default(get_class_items(array_));
+		}
+		
+		return key_value_get_exists_return(key, value, is_key_, is_get_, false);
+	}
+	
+	private static Object key_value_get_exists_return(Object key_, Object val_, boolean is_key_, boolean is_get_, boolean matched_) { return (is_get_ ? (is_key_ ? val_ : key_) : matched_); }
 	
 	@SuppressWarnings("unchecked")
 	private static <x, y> String to_string_internal(Object input_, String separator1_, String separator2_, String[] keys_ignore_, boolean is_xy_)
@@ -1369,21 +1374,34 @@ public abstract class arrays
 		return output;
 	}
 
+	private static double[] remove_key_value(double[] array_, Object key_val_, boolean normalise_, boolean is_key_) { return to_small((Double[])remove_key_value(to_big(array_), key_val_, normalise_, is_key_)); }
+
+	private static long[] remove_key_value(long[] array_, Object key_val_, boolean normalise_, boolean is_key_) { return to_small((Long[])remove_key_value(to_big(array_), key_val_, normalise_, is_key_)); }
+
+	private static int[] remove_key_value(int[] array_, Object key_val_, boolean normalise_, boolean is_key_) { return to_small((Integer[])remove_key_value(to_big(array_), key_val_, normalise_, is_key_)); }
+	
+	private static boolean[] remove_key_value(boolean[] array_, Object key_val_, boolean normalise_, boolean is_key_) { return to_small((Boolean[])remove_key_value(to_big(array_), key_val_, normalise_, is_key_)); }
+	
+	private static byte[] remove_key_value(byte[] array_, Object key_val_, boolean normalise_, boolean is_key_) { return to_small((Byte[])remove_key_value(to_big(array_), key_val_, normalise_, is_key_)); }
+	
+	private static char[] remove_key_value(char[] array_, Object key_val_, boolean normalise_, boolean is_key_) { return to_small((Character[])remove_key_value(to_big(array_), key_val_, normalise_, is_key_)); }
+
 	@SuppressWarnings("unchecked")
 	private static <x, y> Object remove_key_value(Object array_, Object key_val_, boolean normalise_, boolean is_key_)
-	{
+	{	
+		Class<?> type = generic.get_class(array_);
+		Class<?> type2 = generic.get_class(key_val_);
+		if (type == null || type2 == null) return array_;
+
 		Object output = null;
 		
-		Class<?> type = generic.get_class(array_);
-		if (!generic.is_array(type)) return output;
-		
-		if (type.equals(double[].class)) return (generic.are_equal(generic.get_class(key_val_), double.class) ? remove_value((double[])array_, (double)key_val_, normalise_) : output);
-		else if (type.equals(long[].class)) return (generic.are_equal(generic.get_class(key_val_), long.class) ? remove_value((long[])array_, (long)key_val_, normalise_) : output);
-		else if (type.equals(int[].class)) return (generic.are_equal(generic.get_class(key_val_), int.class) ? remove_value((int[])array_, (int)key_val_, normalise_) : output);
-		else if (type.equals(boolean[].class)) return (generic.are_equal(generic.get_class(key_val_), boolean.class) ? remove_value((boolean[])array_, (boolean)key_val_, normalise_) : output);
-		else if (type.equals(byte[].class)) return (generic.are_equal(generic.get_class(key_val_), byte.class) ? remove_value((byte[])array_, (byte)key_val_, normalise_) : output);
-		else if (type.equals(char[].class)) return (generic.are_equal(generic.get_class(key_val_), char.class) ? remove_value((char[])array_, (char)key_val_, normalise_) : output);
-		
+		if (type.equals(double[].class)) return ((is_key_ && generic.are_equal(type2, int.class) || (!is_key_ && generic.are_equal(type2, double.class))) ? remove_key_value((double[])array_, key_val_, normalise_, is_key_) : output);
+		else if (type.equals(long[].class)) return ((is_key_ && generic.are_equal(type2, int.class) || (!is_key_ && generic.are_equal(type2, long.class))) ? remove_key_value((long[])array_, key_val_, normalise_, is_key_) : output);
+		else if (type.equals(int[].class)) return ((is_key_ && generic.are_equal(type2, int.class) || (!is_key_ && generic.are_equal(type2, int.class))) ? remove_key_value((int[])array_, key_val_, normalise_, is_key_) : output);
+		else if (type.equals(boolean[].class)) return ((is_key_ && generic.are_equal(type2, int.class) || (!is_key_ && generic.are_equal(type2, boolean.class))) ? remove_key_value((boolean[])array_, key_val_, normalise_, is_key_) : output);
+		else if (type.equals(byte[].class)) return ((is_key_ && generic.are_equal(type2, int.class) || (!is_key_ && generic.are_equal(type2, byte.class))) ? remove_key_value((byte[])array_, key_val_, normalise_, is_key_) : output);
+		else if (type.equals(char[].class)) return ((is_key_ && generic.are_equal(type2, int.class) || (!is_key_ && generic.are_equal(type2, char.class))) ? remove_key_value((char[])array_, key_val_, normalise_, is_key_) : output);
+
 		Object val01 = key_val_;
 		
 		if (generic.are_equal(type, HashMap.class))
@@ -1406,12 +1424,14 @@ public abstract class arrays
 		else if (generic.are_equal(type, ArrayList.class))
 		{
 			ArrayList<x> output2 = new ArrayList<x>();
+			ArrayList<x> array = (ArrayList<x>)array_;
 			
-			for (x item: (ArrayList<x>)array_)
+			for (int i = 0; i < array.size(); i++)
 			{
-				if (remove_key_value_loop(val01, item, normalise_)) continue;
+				x val = array.get(i);
+				if (remove_key_value_loop(val01, (is_key_ ? i : val), normalise_)) continue;
 
-				output2.add(item);
+				output2.add(val);
 			}
 			
 			output = output2;
@@ -1419,12 +1439,14 @@ public abstract class arrays
 		else
 		{
 			ArrayList<x> output2 = new ArrayList<x>();
+			x[] array = (x[])array_;
 			
-			for (x item: (x[])array_)
+			for (int i = 0; i < array.length; i++)
 			{
-				if (remove_key_value_loop(val01, item, normalise_)) continue;
+				x val = array[i];
+				if (remove_key_value_loop(val01, (is_key_ ? i : val), normalise_)) continue;
 				
-				output2.add(item);
+				output2.add(val);
 			}
 			
 			output = to_array(output2);

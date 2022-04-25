@@ -9,6 +9,8 @@ import java.util.HashMap;
 public class db_field extends parent
 {
 	public static final String KEY_UNIQUE = types.DB_FIELD_FURTHER_KEY_UNIQUE;
+	public static final String KEY_PRIMARY = types.DB_FIELD_FURTHER_KEY_PRIMARY;
+	public static final String TIMESTAMP = types.DB_FIELD_FURTHER_TIMESTAMP;
 	public static final String AUTO_INCREMENT = types.DB_FIELD_FURTHER_AUTO_INCREMENT;
 	
 	public static final int MAX_DECIMALS = size.MAX_DECIMALS;
@@ -35,11 +37,6 @@ public class db_field extends parent
 	public int _decimals = WRONG_DECIMALS;
 	public Object _default = null;
 	public String[] _further = null;
-
-	//--- Only added via default fields.
-	static final String KEY_PRIMARY = types.DB_FIELD_FURTHER_KEY_PRIMARY;
-	static final String TIMESTAMP = types.DB_FIELD_FURTHER_TIMESTAMP;
-	//---
 
 	private String _temp_type = strings.DEFAULT;
 	private int _temp_size = 0;

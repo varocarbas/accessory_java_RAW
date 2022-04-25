@@ -72,10 +72,7 @@ public abstract class tests
 			io.class, numbers.class, paths.class, types.class
 		}; 
 		
-		for (Class<?> type: classes)
-		{
-			outputs.put(type.getName(), run_accessory_internal(type));
-		}
+		for (Class<?> type: classes) { outputs.put(type.getName(), run_accessory_internal(type)); }
 		
 		return outputs;
 	}
@@ -280,15 +277,9 @@ public abstract class tests
 		return run(type, args_all, targets, skip);
 	}
 				
-	public static HashMap<String, Boolean> run_accessory_arrays()
-	{
-		return run(arrays.class);
-	}
+	public static HashMap<String, Boolean> run_accessory_arrays() { return run(arrays.class); }
 	
-	public static HashMap<String, Boolean> run_accessory_dates()
-	{
-		return run(dates.class);
-	}
+	public static HashMap<String, Boolean> run_accessory_dates() { return run(dates.class); }
 	
 	public static HashMap<String, Boolean> run_accessory_generic()
 	{
@@ -299,15 +290,12 @@ public abstract class tests
 	
 	public static HashMap<String, Boolean> run_accessory_io()
 	{
-		String[] skip = new String[] { "array_to_file", "line_to_file" };
+		String[] skip = new String[] { "array_to_file", "line_to_file", "object_to_file", "bytes_to_file" };
 		
 		return run(io.class, null, null, skip);
 	}
 	
-	public static HashMap<String, Boolean> run_accessory_numbers()
-	{
-		return run(numbers.class);
-	}
+	public static HashMap<String, Boolean> run_accessory_numbers() { return run(numbers.class); }
 	
 	public static HashMap<String, Boolean> run_accessory_paths()
 	{
@@ -318,26 +306,17 @@ public abstract class tests
 	
 	public static HashMap<String, Boolean> run_accessory_types()
 	{
-		return run(types.class);
+		String[] skip = new String[] { "check_multiple" };
+		
+		return run(types.class, null, null, skip);
 	}
 	
-	public static HashMap<String, Boolean> run(Class<?> class_)
-	{
-		return run(class_, null, null, null);
-	}
+	public static HashMap<String, Boolean> run(Class<?> class_) { return run(class_, null, null, null); }
 	
-	public static HashMap<String, Boolean> run
-	(
-		Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_
-	)
-	{
-		return run(class_, null, args_, targets_, skip_);
-	}
+	public static HashMap<String, Boolean> run(Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_) { return run(class_, null, args_, targets_, skip_); }
 
-	public static HashMap<String, Boolean> run
-	(
-		Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_
-	)
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, Boolean> run(Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_)
 	{
 		HashMap<String, Boolean> run_outs = new HashMap<String, Boolean>();
 
@@ -388,7 +367,7 @@ public abstract class tests
 			name_prev = name;
 			name = temp;
 			
-			run_outs.put(name, run_method(class_, method, name, arrays.get_value(args_, name), arrays.get_value(targets_, name), true));
+			run_outs.put(name, run_method(class_, method, name, (ArrayList<ArrayList<Object>>)arrays.get_value(args_, name), (Object[])arrays.get_value(targets_, name), true));
 		}
 		
 		print_start_end(name0, false, level);

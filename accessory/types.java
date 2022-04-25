@@ -75,7 +75,6 @@ public abstract class types
 	public static final String CONFIG_DB_SETUP_CREDENTIALS = "config_db_setup_credentials"; 
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_USERNAME = "config_db_setup_credentials_username";
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_PASSWORD = "config_db_setup_credentials_password";
-	
 	//CONFIG_DB_SETUP_CREDENTIALS_USER is a generic ID which is required to encrypt credentials.
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_USER = "config_db_setup_credentials_user";
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED = "config_db_setup_credentials_encrypted";
@@ -123,7 +122,9 @@ public abstract class types
 	public static final String DB_FIELD_FURTHER = "db_field_further";
 	public static final String DB_FIELD_FURTHER_KEY = "db_field_further_key";
 	public static final String DB_FIELD_FURTHER_KEY_UNIQUE = "db_field_further_key_unique";
+	public static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_further_key_primary";
 	public static final String DB_FIELD_FURTHER_AUTO_INCREMENT = "db_field_further_auto_increment";
+	public static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";
 	public static final String DB_QUERY = "db_query";
 	public static final String DB_QUERY_SELECT = "db_query_select";
 	public static final String DB_QUERY_INSERT = "db_query_insert";
@@ -241,11 +242,7 @@ public abstract class types
 	public static final String ERROR_CRYPTO_CIPHER = "error_crypto_cipher";
 	public static final String ERROR_CRYPTO_ENCRYPT = "error_crypto_encrypt";
 	public static final String ERROR_CRYPTO_DECRYPT = "error_crypto_decrypt";
-	
-	//--- Only added via default fields.
-	static final String DB_FIELD_FURTHER_KEY_PRIMARY = "db_field_further_key_primary";
-	static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";
-	//---
+
 	//---------
 
 	static { _ini.populate(); }
@@ -422,9 +419,8 @@ public abstract class types
 			DB_ORDER,
 			DB_ORDER_ASC, DB_ORDER_DESC,
 			DB_FIELD_FURTHER,
-			DB_FIELD_FURTHER_KEY, DB_FIELD_FURTHER_KEY_PRIMARY,
-			DB_FIELD_FURTHER_KEY_UNIQUE, DB_FIELD_FURTHER_AUTO_INCREMENT,
-			DB_FIELD_FURTHER_TIMESTAMP,
+			DB_FIELD_FURTHER_KEY, DB_FIELD_FURTHER_KEY_PRIMARY, DB_FIELD_FURTHER_KEY_UNIQUE, 
+			DB_FIELD_FURTHER_AUTO_INCREMENT, DB_FIELD_FURTHER_TIMESTAMP,
 			DB_QUERY,
 			DB_QUERY_SELECT, DB_QUERY_INSERT, DB_QUERY_UPDATE, DB_QUERY_DELETE, 
 			DB_QUERY_TABLE,

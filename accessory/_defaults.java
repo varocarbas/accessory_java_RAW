@@ -11,6 +11,10 @@ abstract class _defaults
 		
 	public static final String STRINGS = "";
 	public static final int STRINGS_SIZE = 100;
+
+	public static final boolean BOOLEAN = false;
+	public static final byte BYTE = Byte.MIN_VALUE;
+	public static final char CHAR = Character.MIN_VALUE;
 	
 	public static final double NUMBERS_DECIMAL = 0.0;
 	public static final long NUMBERS_LONG = 0l;
@@ -72,4 +76,59 @@ abstract class _defaults
 	public static final int DB_SIZE_MYSQL_TEXT = strings.SIZE_BIG;
 		
 	public static void populate() { } //Method forcing this class to load when required (e.g., from the ini class).
+
+	public static Double get_default(Double input_) { return (Double)NUMBERS_DECIMAL; }
+
+	public static double get_default(double input_) { return NUMBERS_DECIMAL; }
+	
+	public static Long get_default(Long input_) { return (Long)NUMBERS_LONG; }
+	
+	public static long get_default(long input_) { return NUMBERS_LONG; }
+	
+	public static Integer get_default(Integer input_) { return(Integer)NUMBERS_INT; }
+	
+	public static int get_default(int input_) { return NUMBERS_INT; }
+	
+	public static Boolean get_default(Boolean input_) { return (Boolean)BOOLEAN; }
+	
+	public static boolean get_default(boolean input_) { return BOOLEAN; }
+	
+	public static Byte get_default(Byte input_) { return (Byte)BYTE; }
+	
+	public static byte get_default(byte input_) { return BYTE; }
+
+	public static Character get_default(Character input_) { return (Character)CHAR; }
+	
+	public static char get_default(char input_) { return CHAR; }
+
+	public static double[] get_default(double[] input_) { return null; }
+
+	public static long[] get_default(long[] input_) { return null; }
+
+	public static int[] get_default(int[] input_) { return null; }
+
+	public static boolean[] get_default(boolean[] input_) { return null; }
+	
+	public static byte[] get_default(byte[] input_) { return null; }
+
+	public static char[] get_default(char[] input_) { return null; }
+	
+	public static <x> x[] get_default(x[] input_) { return null; }
+	
+	public static <x> Object get_default(Object input_) { return null; }
+	
+	public static Object get_default(Class<?> type_)
+	{
+		Object output = null;
+		
+		if (generic.are_equal(type_, Double.class)) output = NUMBERS_DECIMAL;
+		else if (generic.are_equal(type_, Long.class)) output = NUMBERS_LONG;
+		else if (generic.are_equal(type_, Integer.class)) output = NUMBERS_INT;
+		else if (generic.is_string(type_)) output = STRINGS;
+		else if (generic.is_boolean(type_)) output = BOOLEAN;
+		else if (generic.is_byte(type_)) output = BYTE;
+		else if (generic.is_char(type_)) output = CHAR;
+		
+		return output;
+	}
 }

@@ -369,7 +369,7 @@ public abstract class db
 		String id = field_;
 		if (!fields_.containsKey(id)) return null;
 	
-		db_field field = arrays.get_value(fields_, id);
+		db_field field = (db_field)arrays.get_value(fields_, id);
 		if (!generic.is_ok(field) || !db_field.complies(val_, field)) return null;
 
 		String val2 = strings.DEFAULT;

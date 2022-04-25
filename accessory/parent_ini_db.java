@@ -58,7 +58,40 @@ public abstract class parent_ini_db
 		return is_ok;
 	}	
 
-	protected HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String db_, boolean add_default_)
+	protected HashMap<String, Object[]> add_source(String source_, String db_, HashMap<String, db_field> fields_info_, boolean add_default_fields_, HashMap<String, Object[]> all_sources_)
+	{
+		all_sources_.put(source_, new Object[] { get_table_default(source_, db_), get_fields(fields_info_, db_, add_default_fields_) });
+		
+		return all_sources_;
+	}
+
+	protected static HashMap<String, Object> get_setup_vals(String setup_, String user_, String host_, boolean encrypted_)
+	{
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+		if (strings.is_ok(setup_)) return vals;
+		
+		vals.put(types.CONFIG_DB_SETUP, setup_);
+		vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, encrypted_);
+		if (strings.is_ok(user_)) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USER, user_); 
+		if (strings.is_ok(host_)) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
+
+		return vals;	
+	}
+
+	protected static HashMap<String, Object> get_setup_vals(String setup_, String username_, String password_, String host_)
+	{
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+		if (strings.is_ok(setup_)) return vals;
+		
+		vals.put(types.CONFIG_DB_SETUP, setup_);
+		if (strings.is_ok(username_)) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME, username_); 
+		if (password_ != null) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD, password_); 
+		if (strings.is_ok(host_)) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
+
+		return vals;	
+	}
+	
+	private HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String db_, boolean add_default_)
 	{		
 		if (!arrays.is_ok(info_)) return null;
 
@@ -73,23 +106,16 @@ public abstract class parent_ini_db
 		return fields;
 	}
 
-	protected HashMap<String, Object[]> add_source(String source_, String db_, HashMap<String, Object[]> fields_, HashMap<String, Object[]> all_sources_)
-	{
-		all_sources_.put(source_, new Object[] { get_table_default(source_, db_), fields_ });
-		
-		return all_sources_;
-	}
-	
-	protected HashMap<String, Object[]> add_field(String id_, String col_, db_field field_, HashMap<String, Object[]> all_fields_)
+	private HashMap<String, Object[]> add_field(String id_, String col_, db_field field_, HashMap<String, Object[]> all_fields_)
 	{
 		all_fields_.put(id_, new Object[] { col_, field_ });
 		
 		return all_fields_;
 	}
 
-	protected String get_db_name_default(String db_) { return strings.remove(new String[] { types.SEPARATOR, "config", "db" }, db_); }
+	private String get_db_name_default(String db_) { return strings.remove(new String[] { types.SEPARATOR, "config", "db" }, db_); }
 
-	protected String get_table_default(String source_, String db_) 
+	private String get_table_default(String source_, String db_) 
 	{ 
 		String name = strings.remove(new String[] { db_, types.SEPARATOR + "source" }, source_);
 		
@@ -98,7 +124,7 @@ public abstract class parent_ini_db
 		return name;
 	}
 
-	protected String get_col_default(String field_, String db_) 
+	private String get_col_default(String field_, String db_) 
 	{ 
 		String name = strings.remove(new String[] { db_, types.SEPARATOR + "field" + types.SEPARATOR }, field_); 
 		
@@ -107,7 +133,7 @@ public abstract class parent_ini_db
 		return name;
 	}
 
-	protected boolean populate_source(String source_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object> setup_vals_)
+	private boolean populate_source(String source_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object> setup_vals_)
 	{
 		if (!setup_vals_are_ok(setup_vals_)) return false;
 
@@ -160,7 +186,7 @@ public abstract class parent_ini_db
 		
 		return vals;
 	}
-	
+
 	private HashMap<String, Object> get_setup_default()
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>();

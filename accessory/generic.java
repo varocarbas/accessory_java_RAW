@@ -77,8 +77,26 @@ public abstract class generic
 	
 	public static boolean is_boolean(boolean input_) { return true; }
 	
+	public static boolean is_boolean(Boolean input_) { return true; }
+
 	public static boolean is_boolean(Object input_) { return is_common(input_, new Class<?>[] { Boolean.class, boolean.class }, false); }
 
+	public static boolean is_byte(Class<?> input_) { return is_common(input_, new Class<?>[] { Byte.class, byte.class }, true); }
+		
+	public static boolean is_byte(byte input_) { return true; }
+	
+	public static boolean is_byte(Byte input_) { return true; }
+	
+	public static boolean is_byte(Object input_) { return is_common(input_, new Class<?>[] { Byte.class, byte.class }, false); }
+
+	public static boolean is_char(Class<?> input_) { return is_common(input_, new Class<?>[] { Character.class, char.class }, true); }
+	
+	public static boolean is_char(char input_) { return true; }
+	
+	public static boolean is_char(Character input_) { return true; }
+	
+	public static boolean is_char(Object input_) { return is_common(input_, new Class<?>[] { Character.class, char.class }, false); }
+	
 	public static boolean is_number(Class<?> input_) { return is_common(input_, numbers.get_all_classes(), true); }
 	
 	public static boolean is_number(Object input_) { return is_common(input_, numbers.get_all_classes(), false); }
@@ -117,6 +135,23 @@ public abstract class generic
 	public static char[] get_new(char[] input_) { return arrays.get_new(input_); }
 	
 	public static boolean get_random_boolean() { return (new Random()).nextBoolean(); }
+	
+	public static byte get_random_byte() { return get_random_bytes(1)[0]; }
+	
+	public static byte[] get_random_bytes(int tot) 
+	{ 
+		if (tot < 1) return null;
+		
+		byte[] output = new byte[tot];
+		
+		(new Random()).nextBytes(output);
+		
+		return output;
+	}
+	
+	public static char get_random_char(boolean upper_, boolean numbers_, boolean symbols_) { return get_random_chars(1, upper_, numbers_, symbols_)[0]; }
+	
+	public static char[] get_random_chars(int tot_, boolean upper_, boolean numbers_, boolean symbols_) { return (tot_ < 1 ? null : strings.get_random(tot_, upper_, numbers_, symbols_).toCharArray()); }
 	
 	public static boolean are_equal(Class<?> input1_, Class<?> input2_) { return classes_are_equal(input1_, input2_); }
 	
@@ -166,11 +201,12 @@ public abstract class generic
 		Object output = null;
 		if (class_ == null) return output;
 		
-		if (class_.equals(Object.class) || class_.equals(Object[].class)) output = arrays.get_random(String[].class);
-		else if (is_class(class_)) output = get_random_class();
+		if (is_class(class_)) output = get_random_class();
 		else if (is_string(class_)) output = strings.get_random(strings.SIZE_SMALL);
 		else if (is_boolean(class_)) output = get_random_boolean();
 		else if (is_number(class_)) output = numbers.get_random(class_);
+		else if (is_byte(class_)) output = get_random_byte();
+		else if (is_char(class_)) output = get_random_char(true, true, true);
 		else if (is_array(class_)) output = arrays.get_random(class_); 
 		
 		return output;

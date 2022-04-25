@@ -17,7 +17,7 @@ public abstract class errors
 	public static void manage(HashMap<String, String> info_)
 	{
 		String message = get_all(info_);
-		logs.update(message, arrays.get_value(info_, generic.ID), true);
+		logs.update(message, (String)arrays.get_value(info_, generic.ID), true);
 
 		_triggered = true;
 		

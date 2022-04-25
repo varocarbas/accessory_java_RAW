@@ -122,8 +122,8 @@ abstract class db_sql
 	{	
 		HashMap<String, String> credentials = db.get_credentials(source_);
 
-		String username = arrays.get_value(credentials, generic.USERNAME);
-		String password = arrays.get_value(credentials, generic.PASSWORD);
+		String username = (String)arrays.get_value(credentials, generic.USERNAME);
+		String password = (String)arrays.get_value(credentials, generic.PASSWORD);
 		String max_pool = db.get_max_pool(db.get_setup(source_));
 
 		String type = null;
