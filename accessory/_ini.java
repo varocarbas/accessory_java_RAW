@@ -1,13 +1,18 @@
 package accessory;
 
-class _ini extends parent_ini
+public class _ini extends parent_ini
 {
 	private static _ini _instance = new _ini();
 	
 	public _ini() { }
 	
-	public static void populate() { _instance.populate_all(); }
+	//This or any other start() overload have to be called before using any of the resources of this library.
+	public static void start() { _instance.populate_all(); }
 	
+	public static void start(String dbs_user_, String dbs_host_, boolean dbs_encrypted_) { _instance.populate_all(dbs_user_, null, null, dbs_host_, dbs_encrypted_); }
+	
+	public static void start(String dbs_username_, String dbs_password_, String dbs_host_) { _instance.populate_all(null, dbs_username_, dbs_password_, dbs_host_, false); }
+
 	protected void populate_first_basic() { _basic.populate(); }
 	
 	protected void populate_first_alls() { _alls.populate(); }
@@ -16,5 +21,5 @@ class _ini extends parent_ini
 	
 	protected void populate_config() { _ini_config.populate(); }
 	
-	protected void populate_db() { _ini_db.populate(); }
+	protected void populate_db() { _ini_db.populate(_dbs_user, _dbs_username, _dbs_password, _dbs_host, _dbs_encrypted); }
 }

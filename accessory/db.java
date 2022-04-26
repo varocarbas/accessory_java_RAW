@@ -8,8 +8,8 @@ public abstract class db
 {		
 	public static final String NAME = types.CONFIG_DB_NAME;
 	public static final String HOST = types.CONFIG_DB_SETUP_HOST;
-	public static final String USERNAME = types.CONFIG_CREDENTIALS_FILE_USERNAME;
-	public static final String PASSWORD = types.CONFIG_CREDENTIALS_FILE_PASSWORD;
+	public static final String USERNAME = types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME;
+	public static final String PASSWORD = types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD;
 	public static final String USER = types.CONFIG_DB_SETUP_CREDENTIALS_USER;
 	public static final String CREDENTIALS_USERNAME = USERNAME;
 	public static final String CREDENTIALS_PASSWORD = PASSWORD;
@@ -58,7 +58,7 @@ public abstract class db
 	private static HashMap<String, String> _db_setups = new HashMap<String, String>();
 	//---
 	
-	static { _ini.populate(); }
+	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_DB);
 	
 	public static boolean update_db(String db_, String db_name_) 

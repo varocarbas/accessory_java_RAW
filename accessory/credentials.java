@@ -12,7 +12,7 @@ public abstract class credentials
 
 	private static final String SEPARATOR = misc.SEPARATOR_NAME;
 	
-	static { _ini.populate(); }
+	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_CREDENTIALS);
 	
 	public static HashMap<String, String> get_username_password(String id_, String user_, boolean encrypted_, String where_)

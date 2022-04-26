@@ -6,6 +6,12 @@ public abstract class parent_ini
 {
 	protected boolean _populated = false;
 	
+	protected String _dbs_user = null;
+	protected String _dbs_username = null;
+	protected String _dbs_password = null;
+	protected String _dbs_host = null;
+	protected boolean _dbs_encrypted = false;
+	
 	protected abstract void populate_first_basic();
 	protected abstract void populate_first_alls();
 	protected abstract void populate_first_defaults();
@@ -30,7 +36,21 @@ public abstract class parent_ini
 		return (strings.is_ok(what) ? types.what_to_key(what) : strings.DEFAULT);
 	}
 	
-	protected void populate_all() 
+	protected void populate_all() { populate_all_internal(); }
+	
+	protected void populate_all(String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_) 
+	{		
+		if (dbs_user_ != null) _dbs_user = dbs_user_;
+		if (dbs_username_ != null) _dbs_username = dbs_username_;
+		if (dbs_password_ != null) _dbs_password = dbs_password_;
+		if (dbs_host_ != null) _dbs_host = dbs_host_;
+		
+		_dbs_encrypted = dbs_encrypted_;
+
+		populate_all_internal();
+	}
+	
+	private void populate_all_internal() 
 	{
 		if (_populated) return;
 		

@@ -8,12 +8,13 @@ class _ini_db extends parent_ini_db
 	
 	public _ini_db() { }
 	
-	public static void populate() { _instance.populate_all(); }
+	public static void populate(String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_) { _instance.populate_all(dbs_user_, dbs_username_, dbs_password_, dbs_host_, dbs_encrypted_); }
 	
-	protected boolean populate_all_dbs()
+	@SuppressWarnings("unchecked")
+	protected boolean populate_all_dbs(HashMap<String, Object> dbs_setup_)
 	{	
 		String db = types.CONFIG_TESTS_DB;
-		HashMap<String, Object> setup_vals = null;
+		HashMap<String, Object> setup_vals = (HashMap<String, Object>)arrays.get_new(dbs_setup_);
 
 		HashMap<String, Object[]> sources = new HashMap<String, Object[]>();
 		sources = add_source_tests(db, sources);

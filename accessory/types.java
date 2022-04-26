@@ -245,7 +245,7 @@ public abstract class types
 
 	//---------
 
-	static { _ini.populate(); }
+	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_TYPES);
 	
 	public static String check_what(String what_) { return check_type(what_, types.get_subtypes(WHAT)); }

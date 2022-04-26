@@ -13,7 +13,7 @@ public abstract class arrays
 {	
 	public static final int DEFAULT_SIZE = _defaults.ARRAYS_SIZE;
 	
-	static { _ini.populate(); }
+	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_ARRAYS);
 	
 	public static Class<?>[] get_all_classes() { return _alls.ARRAYS_CLASSES; }

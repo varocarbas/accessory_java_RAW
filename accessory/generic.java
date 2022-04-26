@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 
 public abstract class generic 
 {	
-	static { _ini.populate(); }	//_alls.GENERIC_KEYS needs to be populated first.
+	static { _ini.start(); }	//_alls.GENERIC_KEYS needs to be populated first.
 	public static final String _ID = types.get_id(types.ID_GENERIC);
 	
 	public static final String TYPE = get_key(types.WHAT_TYPE);
@@ -411,13 +411,8 @@ public abstract class generic
 		output.put(Boolean[].class, new Class<?>[] { boolean[].class });
 		output.put(Byte[].class, new Class<?>[] { byte[].class });
 		output.put(Character[].class, new Class<?>[] { char[].class });
-		
-		Class<?>[] vals = arrays.get_all_classes_array();
-		for (Class<?> key: new Class<?>[] { Object[].class, Array.class })
-		{
-			output.put(key, vals);
-		}
-				
+		output.put(Array.class, new Class<?>[] { Object[].class });
+
 		return output;
 	}
 	

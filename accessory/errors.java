@@ -11,7 +11,7 @@ public abstract class errors
 	public static final String DEFAULT_MESSAGE = _defaults.ERRORS_MESSAGE;
 	public static final String DEFAULT_SEPARATOR = _defaults.ERRORS_SEPARATOR;
 	
-	static { _ini.populate(); }
+	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_ERRORS);
 	
 	public static void manage(HashMap<String, String> info_)

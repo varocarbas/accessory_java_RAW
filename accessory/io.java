@@ -19,7 +19,7 @@ public abstract class io
 	
 	static boolean _log_exceptions = true; //To avoid infinite recursion provoked by writing exceptions triggered by writing.
 	
-	static { _ini.populate(); }
+	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_IO);
 	
 	public static void array_to_file(String path_, String[] vals_, boolean append_)

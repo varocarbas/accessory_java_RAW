@@ -13,7 +13,7 @@ public abstract class logs
 	public static final boolean DEFAULT_SCREEN = _defaults.LOGS_SCREEN;
 	public static final boolean DEFAULT_FILE = _defaults.LOGS_FILE;
 	
-	static { _ini.populate(); }
+	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_LOGS);
 	
 	public static void update_activity(HashMap<String, String> inputs_, String id_)

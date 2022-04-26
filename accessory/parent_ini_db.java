@@ -7,8 +7,8 @@ public abstract class parent_ini_db
 {
 	private boolean _populated = false;
 	
-	protected abstract boolean populate_all_dbs();
-
+	protected abstract boolean populate_all_dbs(HashMap<String, Object> dbs_setup_);
+	
 	public static boolean setup_vals_are_ok(HashMap<String, Object> setup_vals_)
 	{
 		String instance = _ini.get_generic_key(types.WHAT_INSTANCE);
@@ -22,25 +22,30 @@ public abstract class parent_ini_db
 	{
 		if (_populated) return;
 		
-		String error = strings.DEFAULT;
-		if (!populate_all_dbs()) error = types.ERROR_INI_DB_DBS;
-		
-		_populated = true;
-		if (error.equals(strings.DEFAULT)) return;
-
-		_ini.manage_error(error);
+		populate_all_internal(null); 
 	}
+	
+	protected void populate_all(String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_) 
+	{
+		if (_populated) return;
+		
+		HashMap<String, Object> dbs_setup = null;
+		
+		if (dbs_user_ != null) dbs_setup = get_setup_vals(null, dbs_user_, dbs_host_, dbs_encrypted_);
+		else if (dbs_username_ != null && dbs_password_ != null) dbs_setup = get_setup_vals(null, dbs_username_, dbs_password_, dbs_host_);
 
+		populate_all_internal(dbs_setup);
+	}
+	
 	@SuppressWarnings("unchecked")
 	protected boolean populate_db(String db_, HashMap<String, Object[]> sources_, HashMap<String, Object> setup_vals_)
 	{
 		boolean is_ok = true;
 
-		String db = config.check_type(db_);
-		if (!strings.is_ok(db) || !arrays.is_ok(sources_)) return false;
+		if (!arrays.is_ok(sources_)) return false;
 
 		config.update_ini(db_, types.CONFIG_DB_NAME, get_db_name_default(db_));		
-		HashMap<String, Object> setup_vals = get_setup_vals(db, setup_vals_);
+		HashMap<String, Object> setup_vals = get_setup_vals(db_, setup_vals_);
 		
 		for (Entry<String, Object[]> item: sources_.entrySet())
 		{
@@ -52,7 +57,7 @@ public abstract class parent_ini_db
 				_ini.manage_error(types.ERROR_INI_DB_SOURCE);
 				
 				return false;
-			}
+			}	
 		}
 		
 		return is_ok;
@@ -60,52 +65,76 @@ public abstract class parent_ini_db
 
 	protected HashMap<String, Object[]> add_source(String source_, String db_, HashMap<String, db_field> fields_info_, boolean add_default_fields_, HashMap<String, Object[]> all_sources_)
 	{
-		all_sources_.put(source_, new Object[] { get_table_default(source_, db_), get_fields(fields_info_, db_, add_default_fields_) });
+		all_sources_.put(source_, new Object[] { get_table_default(source_, db_), get_fields(fields_info_, source_, db_, add_default_fields_) });
 		
 		return all_sources_;
 	}
-
-	protected static HashMap<String, Object> get_setup_vals(String setup_, String user_, String host_, boolean encrypted_)
-	{
-		HashMap<String, Object> vals = new HashMap<String, Object>();
-		if (strings.is_ok(setup_)) return vals;
+	
+	private void populate_all_internal(HashMap<String, Object> dbs_setup_) 
+	{	
+		String error = strings.DEFAULT;
+		if (!populate_all_dbs(dbs_setup_)) error = types.ERROR_INI_DB_DBS;
 		
-		vals.put(types.CONFIG_DB_SETUP, setup_);
-		vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, encrypted_);
-		if (strings.is_ok(user_)) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USER, user_); 
-		if (strings.is_ok(host_)) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
+		_populated = true;
+		if (error.equals(strings.DEFAULT)) return;
 
-		return vals;	
-	}
-
-	protected static HashMap<String, Object> get_setup_vals(String setup_, String username_, String password_, String host_)
-	{
-		HashMap<String, Object> vals = new HashMap<String, Object>();
-		if (strings.is_ok(setup_)) return vals;
-		
-		vals.put(types.CONFIG_DB_SETUP, setup_);
-		if (strings.is_ok(username_)) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME, username_); 
-		if (password_ != null) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD, password_); 
-		if (strings.is_ok(host_)) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
-
-		return vals;	
+		_ini.manage_error(error);
 	}
 	
-	private HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String db_, boolean add_default_)
+	private HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String source_, String db_, boolean add_default_)
 	{		
 		if (!arrays.is_ok(info_)) return null;
 
 		HashMap<String, Object[]> fields = (add_default_ ? get_default_fields() : new HashMap<String, Object[]>());
 		
+		String table = get_table_default(source_, db_);
+		
 		for (Entry<String, db_field> item: info_.entrySet())
 		{
 			String id = item.getKey();
-			fields = add_field(id, get_col_default(id, db_), item.getValue(), fields);
+			fields = add_field(id, get_col_default(id, table, db_), item.getValue(), fields);
 		}
 		
 		return fields;
 	}
 
+	protected HashMap<String, Object> get_setup_vals(String setup_, String user_, String host_, boolean encrypted_)
+	{
+		HashMap<String, Object> vals = get_setup_default();
+		
+		if (setup_ != null) vals.put(types.CONFIG_DB_SETUP, setup_);
+		if (user_ != null) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USER, user_); 
+		if (host_ != null) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
+		
+		vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, encrypted_);
+		
+		return vals;	
+	}
+
+	protected HashMap<String, Object> get_setup_vals(String setup_, String username_, String password_, String host_)
+	{
+		HashMap<String, Object> vals = get_setup_default();
+		
+		if (setup_ != null) vals.put(types.CONFIG_DB_SETUP, setup_);
+		if (username_ != null) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME, username_); 
+		if (password_ != null) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD, password_); 
+		if (host_ != null) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
+
+		return vals;	
+	}
+
+	private HashMap<String, Object> get_setup_default()
+	{
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+
+		vals.put(types.CONFIG_DB_SETUP, _defaults.DB_SETUP);
+		vals.put(types.CONFIG_DB_SETUP_TYPE, _defaults.DB_TYPE);
+		vals.put(types.CONFIG_DB_SETUP_MAX_POOL, _defaults.DB_MAX_POOL);
+		vals.put(types.CONFIG_DB_SETUP_HOST, _defaults.DB_HOST);
+
+		return vals;
+	}
+	
 	private HashMap<String, Object[]> add_field(String id_, String col_, db_field field_, HashMap<String, Object[]> all_fields_)
 	{
 		all_fields_.put(id_, new Object[] { col_, field_ });
@@ -124,11 +153,11 @@ public abstract class parent_ini_db
 		return name;
 	}
 
-	private String get_col_default(String field_, String db_) 
+	private String get_col_default(String field_, String table_, String db_) 
 	{ 
-		String name = strings.remove(new String[] { db_, types.SEPARATOR + "field" + types.SEPARATOR }, field_); 
+		String name = strings.remove(new String[] { db_, table_, types.SEPARATOR + "field" + types.SEPARATOR }, field_); 
 		
-		if (!strings.is_ok(name)) name = strings.remove(new String[] { types.SEPARATOR, "config", "db", "field", "default" }, field_);
+		if (!strings.is_ok(name)) name = strings.remove(new String[] { table_, types.SEPARATOR, "config", "db", "field", "default" }, field_);
 
 		return name;
 	}
@@ -137,8 +166,8 @@ public abstract class parent_ini_db
 	{
 		if (!setup_vals_are_ok(setup_vals_)) return false;
 
-		String db = config.check_type((String)setup_vals_.get(types.CONFIG_DB));
-		String source = config.check_type(source_);
+		String db = (String)setup_vals_.get(types.CONFIG_DB);
+		String source = source_;
 		if (!strings.is_ok(db) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
 		
 		HashMap<String, db_field> fields = new HashMap<String, db_field>();		
@@ -150,7 +179,7 @@ public abstract class parent_ini_db
 			
 			String col = (String)val[0];
 			config.update_ini(db, id, col);
-			
+
 			db_field field = (db_field)val[1];
 			fields.put(id, field);
 		}
@@ -184,18 +213,6 @@ public abstract class parent_ini_db
 
 		vals.put(_ini.get_generic_key(types.WHAT_INSTANCE), db.get_instance_ini((String)vals.get(types.CONFIG_DB_SETUP_TYPE)));
 		
-		return vals;
-	}
-
-	private HashMap<String, Object> get_setup_default()
-	{
-		HashMap<String, Object> vals = new HashMap<String, Object>();
-
-		vals.put(types.CONFIG_DB_SETUP, _defaults.DB_SETUP);
-		vals.put(types.CONFIG_DB_SETUP_TYPE, _defaults.DB_TYPE);
-		vals.put(types.CONFIG_DB_SETUP_MAX_POOL, _defaults.DB_MAX_POOL);
-		vals.put(types.CONFIG_DB_SETUP_HOST, _defaults.DB_HOST);
-
 		return vals;
 	}
 }
