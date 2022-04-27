@@ -6,13 +6,16 @@ package accessory;
 //- All the values will be assigned in the main method below. 
 //- All these constants will be accessed directly here, via the corresponding local methods (i.e., no local copies).
 
-class _basic 
+class _basic extends parent_ini_first 
 {
+	private static _basic _instance = new _basic(); 
+	
+	public _basic() { }
+	public static void populate() { _instance.populate_internal(); }
+	
 	public static String DIR_SEPARATOR = null;
-	
-	private static boolean _populated = false;
-	
-	public static void populate() 
+
+	protected void populate_internal_vals() 
 	{ 
 		if (_populated) return;
 		

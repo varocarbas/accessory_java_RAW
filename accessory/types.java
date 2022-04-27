@@ -248,13 +248,13 @@ public abstract class types
 	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_TYPES);
 	
-	public static String check_what(String what_) { return check_type(what_, types.get_subtypes(WHAT)); }
+	public static String check_what(String what_) { return check_type(what_, get_subtypes(WHAT)); }
 	
-	public static String what_to_key(String what_) { return check_type(what_, types.get_subtypes(WHAT), ACTION_REMOVE, WHAT); }
+	public static String what_to_key(String what_) { return check_type(what_, get_subtypes(WHAT), ACTION_REMOVE, WHAT); }
 	
-	public static String check_action(String action_) { return check_type(action_, types.get_subtypes(ACTION)); }
+	public static String check_action(String action_) { return check_type(action_, get_subtypes(ACTION)); }
 	
-	public static String action_to_key(String action_) { return check_type(action_, types.get_subtypes(ACTION), ACTION_REMOVE, ACTION); }
+	public static String action_to_key(String action_) { return check_type(action_, get_subtypes(ACTION), ACTION_REMOVE, ACTION); }
 	
 	public static String check_multiple(String subtype_, HashMap<String, String[]> targets_)
 	{
@@ -329,7 +329,7 @@ public abstract class types
 
 	public static boolean is_subtype_of(String subtype_, String type_) { return arrays.value_exists(get_subtypes(type_), subtype_); }
 
-	public static String get_id(String type_) { return check_type(type_, types.get_subtypes(ID), ACTION_REMOVE, ID); }
+	public static String get_id(String type_) { return check_type(type_, get_subtypes(ID), ACTION_REMOVE, ID); }
 	
 	public static String[] get_subtypes(String[] types_) { return get_subtypes(types_, null); }
 	
@@ -356,7 +356,7 @@ public abstract class types
 		String heading = (strings.is_ok(type_) ? type_ + SEPARATOR : null);
 		boolean add_all = !strings.is_ok(heading);
 		
-		for (String subtype: (String[])arrays.remove_value((arrays.is_ok(all_) ? all_ : get_all_subtypes()), heading, false))
+		for (String subtype: (String[])arrays.remove_value((arrays.is_ok(all_) ? all_ : get_all_types()), heading, false))
 		{
 			if (add_all || strings.contains_start(heading, subtype, false)) subtypes.add(subtype);
 		}
@@ -366,11 +366,16 @@ public abstract class types
 
 	static String[] get_all_config_boolean() { return _alls.TYPES_CONFIG_BOOLEAN; }
 	
-	static String[] populate_all_config_boolean() { return new String[] { CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, CONFIG_LOGS_OUT_FILE, CONFIG_LOGS_OUT_SCREEN }; }
+	static String[] populate_all_config_boolean(String[] additional_) 
+	{ 
+		String[] main = new String[] { CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, CONFIG_LOGS_OUT_FILE, CONFIG_LOGS_OUT_SCREEN }; 
 	
-	static String[] populate_all_subtypes()
+		return populate_all_internal(main, additional_);
+	}
+	
+	static String[] populate_all_types(String[] additional_)
 	{
-		return new String[]
+		String[] main = new String[]
 		{	
 			CONFIG,
 			CONFIG_BASIC,
@@ -470,8 +475,12 @@ public abstract class types
 			
 			ERROR_CRYPTO,
 			ERROR_CRYPTO_KEY, ERROR_CRYPTO_CIPHER, ERROR_CRYPTO_ENCRYPT, ERROR_CRYPTO_DECRYPT
-		};		
+		};
+		
+		return populate_all_internal(main, additional_);
 	}
 	
-	private static String[] get_all_subtypes() { return _alls.TYPES_ALL; }
+	private static String[] populate_all_internal(String[] main_, String[] additional_) { return (arrays.is_ok(additional_) ? (String[])arrays.add(main_, additional_) : main_); }
+
+	private static String[] get_all_types() { return _alls.TYPES_ALL; }
 }

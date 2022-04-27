@@ -208,6 +208,7 @@ public abstract class generic
 		else if (is_byte(class_)) output = get_random_byte();
 		else if (is_char(class_)) output = get_random_char(true, true, true);
 		else if (is_array(class_)) output = arrays.get_random(class_); 
+		else if (class_.equals(Object.class)) output = arrays.get_random(String[].class);
 		
 		return output;
 	}

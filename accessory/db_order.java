@@ -11,9 +11,9 @@ public class db_order extends parent
 	public static final String DEFAULT_ORDER = DEFAULT;
 
 	public String _source = strings.DEFAULT;
-	public String _value = strings.DEFAULT; //Always stored as a field and only converted to col before outputting a string.
+	public String _key = strings.DEFAULT; //Always stored as a field and only converted to col before outputting a string.
 	public String _order = DEFAULT;
-	public boolean _is_field = _defaults.DB_ORDER_FIELD; //_value being a field/col vs. something else like a condition.
+	public boolean _is_field = _defaults.DB_ORDER_FIELD; //_key being a field/col vs. something else like a condition.
 
 	private String _temp_source = strings.DEFAULT;
 	
@@ -43,13 +43,13 @@ public class db_order extends parent
 
 	public db_order(db_order input_) { instantiate(input_); }
 
-	public db_order(String source_, String value_, String order_, boolean is_field_) { instantiate(source_, value_, order_, is_field_); }
+	public db_order(String source_, String key_, String order_, boolean is_field_) { instantiate(source_, key_, order_, is_field_); }
 
 	public String toString()
 	{	
-		if (!is_ok(_source, _value, _order)) return strings.DEFAULT;
+		if (!is_ok(_source, _key, _order)) return strings.DEFAULT;
 
-		String key = (_is_field ? db.get_variable(_temp_source, db.get_col(_temp_source, _value)) : _value);
+		String key = (_is_field ? db.get_variable(_temp_source, db.get_col(_temp_source, _key)) : _key);
 
 		String output = key + " " + order_to_string(_order);
 
@@ -63,7 +63,7 @@ public class db_order extends parent
 		return 
 		(
 			db.sources_are_equal(_temp_source, order2_._source) &&
-			generic.are_equal(_value, order2_._value) && 
+			generic.are_equal(_key, order2_._key) && 
 			generic.are_equal(_order, order2_._order) &&
 			(_is_field == order2_._is_field)
 		);		
@@ -71,7 +71,7 @@ public class db_order extends parent
 
 	public boolean is_ok()
 	{
-		_is_ok = is_ok(_source, _value, _order);
+		_is_ok = is_ok(_source, _key, _order);
 
 		return _is_ok;
 	}
@@ -81,30 +81,30 @@ public class db_order extends parent
 		instantiate_common();
 		if (input_ == null || !input_.is_ok()) return;
 
-		populate(input_._temp_source, input_._value, input_._order, input_._is_field);
+		populate(input_._temp_source, input_._key, input_._order, input_._is_field);
 	}
 
-	private void instantiate(String source_, String value_, String order_, boolean is_field_)
+	private void instantiate(String source_, String key_, String order_, boolean is_field_)
 	{
 		instantiate_common();
-		if (!is_ok(source_, value_, order_)) return;
+		if (!is_ok(source_, key_, order_)) return;
 
-		populate(_temp_source, value_, order_, is_field_);
+		populate(_temp_source, key_, order_, is_field_);
 	}
 
-	private boolean is_ok(String source_, String value_, String order_)
+	private boolean is_ok(String source_, String key_, String order_)
 	{
 		_temp_source = db.check_source(source_);
 
-		return (strings.is_ok(_temp_source) && strings.is_ok(value_) && order_is_ok(order_));
+		return (strings.is_ok(_temp_source) && strings.is_ok(key_) && order_is_ok(order_));
 	}
 
-	private void populate(String source_, String value_, String order_, boolean is_field_)
+	private void populate(String source_, String key_, String order_, boolean is_field_)
 	{
 		_is_ok = true;
 
 		_source = source_;
-		_value = value_;
+		_key = key_;
 		_order = check_order(order_);
 		_is_field = is_field_;
 	}

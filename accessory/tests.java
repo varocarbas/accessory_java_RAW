@@ -398,17 +398,13 @@ public abstract class tests
 		
 		if (errors._triggered || !out_is_ok)
 		{
+			is_ok = false;
 			result = "ERROR";
-			if (errors._triggered && !arrays.is_ok(targets)) 
-			{
-				if (errors._triggered && !errors_allowed_) is_ok = false;
-				errors._triggered = false;
-			}
-			else 
-			{
-				is_ok = false;
-				result += " (targets not met)";
-			}
+			
+			if (arrays.is_ok(targets)) result += " (targets not met)";
+			else if (!errors_allowed_) is_ok = true;
+			
+			if (errors._triggered) errors._triggered = false;
 		}
 		else result = "OK";
 

@@ -7,8 +7,13 @@ import java.util.HashMap;
 //- All the values will be assigned in the main method below by calling the corresponding methods in other classes.
 //- All these constants will be accessed directly here, via the corresponding local methods (i.e., no local copies).
 
-abstract class _alls 
+public class _alls extends parent_ini_first
 {
+	private static _alls _instance = new _alls(); 
+	
+	public _alls() { }
+	public static void populate() { _instance.populate_internal(); }
+
 	public static String[] TYPES_ALL = null;
 	public static String[] TYPES_CONFIG_BOOLEAN = null;
 	
@@ -35,14 +40,17 @@ abstract class _alls
 	
 	public static String[] CONFIG_NOT_UPDATE = null;
 	
-	private static boolean _populated = false;
-	
-	public static void populate() 
+	//Method expected to be called from the corresponding _alls.populate_internal_vals() to include
+	//all the additional types from the given app/library.
+	public static void populate_types(String[] all_add_, String[] boolean_add_) 
 	{ 
-		if (_populated) return;
-
-		TYPES_ALL = types.populate_all_subtypes();
-		TYPES_CONFIG_BOOLEAN = types.populate_all_config_boolean();
+		TYPES_ALL = types.populate_all_types(all_add_);
+		TYPES_CONFIG_BOOLEAN = types.populate_all_config_boolean(boolean_add_);
+	}
+	
+	protected void populate_internal_vals() 
+	{ 
+		populate_types(null, null);
 		
 		ARRAYS_CLASSES_SMALL = arrays.populate_all_classes_small();
 		ARRAYS_CLASSES_ARRAY = arrays.populate_all_classes_array();
@@ -64,7 +72,5 @@ abstract class _alls
 		
 		DB_WHERE_OPERANDS = db_where.populate_all_operands();
 		DB_WHERE_LINKS = db_where.populate_all_links();
-		
-		_populated = true;
 	} 
 }

@@ -77,47 +77,45 @@ abstract class _defaults
 		
 	public static void populate() { } //Method forcing this class to load when required (e.g., from the ini class).
 
-	public static Double get_default(Double input_) { return (Double)NUMBERS_DECIMAL; }
+	public static Double get(Double input_) { return (Double)NUMBERS_DECIMAL; }
 
-	public static double get_default(double input_) { return NUMBERS_DECIMAL; }
+	public static double get(double input_) { return NUMBERS_DECIMAL; }
 	
-	public static Long get_default(Long input_) { return (Long)NUMBERS_LONG; }
+	public static Long get(Long input_) { return (Long)NUMBERS_LONG; }
 	
-	public static long get_default(long input_) { return NUMBERS_LONG; }
+	public static long get(long input_) { return NUMBERS_LONG; }
 	
-	public static Integer get_default(Integer input_) { return(Integer)NUMBERS_INT; }
+	public static Integer get(Integer input_) { return(Integer)NUMBERS_INT; }
 	
-	public static int get_default(int input_) { return NUMBERS_INT; }
+	public static int get(int input_) { return NUMBERS_INT; }
 	
-	public static Boolean get_default(Boolean input_) { return (Boolean)BOOLEAN; }
+	public static Boolean get(Boolean input_) { return (Boolean)BOOLEAN; }
 	
-	public static boolean get_default(boolean input_) { return BOOLEAN; }
+	public static boolean get(boolean input_) { return BOOLEAN; }
 	
-	public static Byte get_default(Byte input_) { return (Byte)BYTE; }
+	public static Byte get(Byte input_) { return (Byte)BYTE; }
 	
-	public static byte get_default(byte input_) { return BYTE; }
+	public static byte get(byte input_) { return BYTE; }
 
-	public static Character get_default(Character input_) { return (Character)CHAR; }
+	public static Character get(Character input_) { return (Character)CHAR; }
 	
-	public static char get_default(char input_) { return CHAR; }
+	public static char get(char input_) { return CHAR; }
 
-	public static double[] get_default(double[] input_) { return null; }
+	public static double[] get(double[] input_) { return null; }
 
-	public static long[] get_default(long[] input_) { return null; }
+	public static long[] get(long[] input_) { return null; }
 
-	public static int[] get_default(int[] input_) { return null; }
+	public static int[] get(int[] input_) { return null; }
 
-	public static boolean[] get_default(boolean[] input_) { return null; }
+	public static boolean[] get(boolean[] input_) { return null; }
 	
-	public static byte[] get_default(byte[] input_) { return null; }
+	public static byte[] get(byte[] input_) { return null; }
 
-	public static char[] get_default(char[] input_) { return null; }
+	public static char[] get(char[] input_) { return null; }
+
+	public static <x> Object get(Object input_) { return null; }
 	
-	public static <x> x[] get_default(x[] input_) { return null; }
-	
-	public static <x> Object get_default(Object input_) { return null; }
-	
-	public static Object get_default(Class<?> type_)
+	public static Object get(Class<?> type_)
 	{
 		Object output = null;
 		
