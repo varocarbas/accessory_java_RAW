@@ -28,7 +28,7 @@ abstract class db_queries
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_)
 	{
 		HashMap<String, String> vals = db.check_vals_error(source_, vals_raw_);
-		if (!db._is_ok) return;
+		if (!arrays.is_ok(vals)) return;
 		
 		insert_internal(source_, vals);
 	}
@@ -38,7 +38,7 @@ abstract class db_queries
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, String where_cols_)
 	{
 		HashMap<String, String> vals = db.check_vals_error(source_, vals_raw_);
-		if (!db._is_ok) return;
+		if (!arrays.is_ok(vals)) return;
 		
 		update_internal(source_, vals, where_cols_);
 	}
@@ -54,7 +54,7 @@ abstract class db_queries
 	public static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_)
 	{
 		String source = db.check_source_error(source_);
-		if (!db._is_ok) return;
+		if (!strings.is_ok(source)) return;
 
 		boolean exists = table_exists_internal(source);
 		if (drop_it_) 
@@ -97,7 +97,7 @@ abstract class db_queries
 		
 		if (!strings.is_ok(field_)) 
 		{
-			db.update_is_ok(source_, false);
+			db.is_ok(source_, false);
 			
 			return output;
 		}

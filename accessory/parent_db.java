@@ -18,16 +18,10 @@ public abstract class parent_db
 	protected abstract Connection connect_internal(String source_, Properties properties);
 	
 	public boolean _is_ok = false;
-	
-	public void update_is_ok(boolean is_ok_)
-	{
-		this._is_ok = is_ok_;
-		db._is_ok = is_ok_;
-	}
-	
+
 	public Connection connect(String source_, Properties properties_)
 	{
-		update_is_ok(false);
+		_is_ok = false;
 		
 		return connect_internal(source_, properties_);
 	}

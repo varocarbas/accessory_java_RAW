@@ -430,8 +430,28 @@ public abstract class arrays
 		if (!generic.is_array(type)) return get_new(new_);
 		
 		Object output = get_new(main_);
-		if (!generic.are_equal(type, generic.get_class(new_))) return output;
-		if (!generic.is_ok(new_)) return output;
+		Class<?> type2 = generic.get_class(new_);
+		if (!generic.is_array(type2)) return output;
+	
+		if (type.equals(double[].class) && type2.equals(double[].class)) return add(to_big((double[])main_), to_big((double[])new_), only_unique_);
+		else if (type.equals(double[].class)) return add(to_big((double[])main_), new_, only_unique_);
+		else if (type2.equals(double[].class)) return add(main_, to_big((double[])new_), only_unique_);
+		else if (type.equals(long[].class) && type2.equals(long[].class)) return add(to_big((long[])main_), to_big((long[])new_), only_unique_);
+		else if (type.equals(long[].class)) return add(to_big((long[])main_), new_, only_unique_);
+		else if (type2.equals(long[].class)) return add(main_, to_big((long[])new_), only_unique_);
+		else if (type.equals(int[].class) && type2.equals(int[].class)) return add(to_big((int[])main_), to_big((int[])new_), only_unique_);
+		else if (type.equals(int[].class)) return add(to_big((int[])main_), new_, only_unique_);
+		else if (type2.equals(int[].class)) return add(main_, to_big((int[])new_), only_unique_);
+		else if (type.equals(boolean[].class) && type2.equals(boolean[].class)) return add(to_big((boolean[])main_), to_big((boolean[])new_), only_unique_);
+		else if (type.equals(boolean[].class)) return add(to_big((boolean[])main_), new_, only_unique_);
+		else if (type2.equals(boolean[].class)) return add(main_, to_big((boolean[])new_), only_unique_);
+		else if (type.equals(byte[].class) && type2.equals(byte[].class)) return add(to_big((byte[])main_), to_big((byte[])new_), only_unique_);
+		else if (type.equals(byte[].class)) return add(to_big((byte[])main_), new_, only_unique_);
+		else if (type2.equals(byte[].class)) return add(main_, to_big((byte[])new_), only_unique_);
+		else if (type.equals(char[].class) && type2.equals(char[].class)) return add(to_big((char[])main_), to_big((char[])new_), only_unique_);
+		else if (type.equals(char[].class)) return add(to_big((char[])main_), new_, only_unique_);
+		else if (type2.equals(char[].class)) return add(main_, to_big((char[])new_), only_unique_);
+		else if (!generic.are_equal(type, type2)) return output;
 		
 		if (generic.are_equal(type, HashMap.class)) 
 		{
@@ -472,7 +492,7 @@ public abstract class arrays
 		else
 		{
 			if (!generic.are_equal(get_class_items(main_), get_class_items(new_))) return output;
-
+			
 			ArrayList<x> output2 = null;
 			ArrayList<x> new2 = null;
 			boolean is_arraylist = false;
@@ -552,12 +572,12 @@ public abstract class arrays
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_array(type)) return output;
 		
-		if (type.equals(double[].class)) output = get_new((double[])input_);
-		else if (type.equals(long[].class)) output = get_new((long[])input_);
-		else if (type.equals(int[].class)) output = get_new((int[])input_);
-		else if (type.equals(boolean[].class)) output = get_new((boolean[])input_);
-		else if (type.equals(byte[].class)) output = get_new((byte[])input_);
-		else if (type.equals(char[].class)) output = get_new((char[])input_);
+		if (type.equals(double[].class)) output = get_new(to_big((double[])input_));
+		else if (type.equals(long[].class)) output = get_new(to_big((long[])input_));
+		else if (type.equals(int[].class)) output = get_new(to_big((int[])input_));
+		else if (type.equals(boolean[].class)) output = get_new(to_big((boolean[])input_));
+		else if (type.equals(byte[].class)) output = get_new(to_big((byte[])input_));
+		else if (type.equals(char[].class)) output = get_new(to_big((char[])input_));
 		else if (generic.are_equal(type, ArrayList.class)) output = get_new_arraylist((ArrayList<x>)input_);
 		else if (generic.are_equal(type, HashMap.class)) output = get_new_hashmap(input_); 
 		else output = get_new_array((x[])input_);
@@ -604,7 +624,16 @@ public abstract class arrays
 		if (size > size0) return output;
 		
 		if (generic.are_equal(type, ArrayList.class)) output = new ArrayList<x>(((ArrayList<x>)input_).subList(start_i, size));
-		else output = Arrays.copyOfRange((x[])input_, start_i, size);
+		else 
+		{
+			if (type.equals(double[].class)) output = get_range(to_big((double[])input_), start_i, size_);
+			else if (type.equals(long[].class)) output = get_range(to_big((long[])input_), start_i, size_);
+			else if (type.equals(int[].class)) output = get_range(to_big((int[])input_), start_i, size_);
+			else if (type.equals(boolean[].class)) output = get_range(to_big((boolean[])input_), start_i, size_);
+			else if (type.equals(byte[].class)) output = get_range(to_big((byte[])input_), start_i, size_);
+			else if (type.equals(char[].class)) output = get_range(to_big((char[])input_), start_i, size_);
+			else output = Arrays.copyOfRange((x[])input_, start_i, size);
+		}
 		
 		return output;
 	}

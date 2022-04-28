@@ -24,6 +24,7 @@ public abstract class generic
 	public static final String USERNAME = get_key(types.WHAT_USERNAME);
 	public static final String PASSWORD = get_key(types.WHAT_PASSWORD);
 	public static final String ID = get_key(types.WHAT_ID);
+	public static final String USER = get_key(types.WHAT_USER);
 	public static final String QUERY = get_key(types.WHAT_QUERY);
 	public static final String INSTANCE = get_key(types.WHAT_INSTANCE);
 	

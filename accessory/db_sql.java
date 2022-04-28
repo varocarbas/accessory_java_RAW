@@ -56,7 +56,7 @@ abstract class db_sql
 
 	static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_)
 	{
-		db.update_is_ok(source_, false);
+		db.is_ok(source_, false);
 		
 		ArrayList<HashMap<String, String>> output = null;
 
@@ -70,7 +70,7 @@ abstract class db_sql
 			if (!return_data_) 
 			{
 				statement.executeUpdate();
-				db.update_is_ok(source_, true);
+				db.is_ok(source_, true);
 
 				return output;
 			}
@@ -98,7 +98,7 @@ abstract class db_sql
 					output.add(row);
 				}	
 
-				db.update_is_ok(source_, true);
+				db.is_ok(source_, true);
 			}
 			catch (Exception e) { db.manage_error(source_, types.ERROR_DB_QUERY, query_, e, null); }
 		} 
@@ -122,8 +122,8 @@ abstract class db_sql
 	{	
 		HashMap<String, String> credentials = db.get_credentials(source_);
 
-		String username = (String)arrays.get_value(credentials, generic.USERNAME);
-		String password = (String)arrays.get_value(credentials, generic.PASSWORD);
+		String username = (String)arrays.get_value(credentials, accessory.credentials.USERNAME);
+		String password = (String)arrays.get_value(credentials, accessory.credentials.PASSWORD);
 		String max_pool = db.get_max_pool(db.get_setup(source_));
 
 		String type = null;

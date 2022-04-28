@@ -48,7 +48,8 @@ abstract class _defaults
 	public static final boolean LOGS_FILE = true;
 	public static final boolean LOGS_DB = false;
 
-	public static final String DB = types.CONFIG_TESTS_DB;
+	public static final String DB = types.CONFIG_DB_DEFAULT;
+	public static final String DB_NAME = "accessory";
 	public static final String DB_SOURCE = types.CONFIG_TESTS_DB_SOURCE;
 	public static final String DB_SETUP = types.CONFIG_DB;
 	public static final String DB_TYPE = types.CONFIG_DB_SETUP_TYPE_MYSQL;

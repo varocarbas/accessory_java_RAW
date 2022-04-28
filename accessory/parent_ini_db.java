@@ -75,14 +75,14 @@ public abstract class parent_ini_db
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected boolean populate_db(String db_, HashMap<String, Object[]> sources_, HashMap<String, Object> setup_vals_)
+	protected boolean populate_db(String db_, String name_, HashMap<String, Object[]> sources_, HashMap<String, Object> setup_vals_)
 	{
 		if (!arrays.is_ok(sources_)) return false;
 		
 		boolean is_ok = true;
 		String db = config.check_type(db_);
 		
-		config.update_ini(db, types.CONFIG_DB_NAME, get_db_name_default(db));		
+		config.update_ini(db, types.CONFIG_DB_NAME, (strings.is_ok(name_) ? name_ : get_db_name_default(db)));		
 		HashMap<String, Object> setup_vals = get_setup_vals(db, setup_vals_);
 		
 		for (Entry<String, Object[]> item: sources_.entrySet())

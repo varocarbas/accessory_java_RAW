@@ -44,16 +44,6 @@ public abstract class types
 	public static final String CONFIG_BASIC_DIR_LOGS_ACTIVITY = "config_basic_dir_logs_activity";
 	public static final String CONFIG_BASIC_DIR_CRYPTO = "config_basic_dir_crypto";
 	
-	public static final String CONFIG_CREDENTIALS = "config_credentials";
-	public static final String CONFIG_CREDENTIALS_WHERE = "config_credentials_where";
-	public static final String CONFIG_CREDENTIALS_WHERE_DB = "config_credentials_where_db";
-	public static final String CONFIG_CREDENTIALS_WHERE_FILE = "config_credentials_where_file"; 
-	public static final String CONFIG_CREDENTIALS_FILE = "config_credentials_file";
-	public static final String CONFIG_CREDENTIALS_FILE_EXTENSION = "config_credentials_file_extension";
-	public static final String CONFIG_CREDENTIALS_FILE_USERNAME = "config_credentials_file_username";
-	public static final String CONFIG_CREDENTIALS_FILE_PASSWORD = "config_credentials_file_password";
-	public static final String CONFIG_CREDENTIALS_FILE_ENCRYPTED = "config_credentials_file_encrypted";
-
 	//--- CONFIG_DB variables deal with the generic, common configuration of DBs. Specific CONFIG constants
 	//have to be added to manage each DB's specific information like, for example, sources and fields.
 	
@@ -78,11 +68,38 @@ public abstract class types
 	//CONFIG_DB_SETUP_CREDENTIALS_USER is a generic ID which is required to encrypt credentials.
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_USER = "config_db_setup_credentials_user";
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED = "config_db_setup_credentials_encrypted";
-	
+
+	public static final String CONFIG_DB_DEFAULT = "config_db_default";
 	public static final String CONFIG_DB_DEFAULT_FIELD = "config_db_default_field";
 	public static final String CONFIG_DB_DEFAULT_FIELD_ID = "config_db_default_field_id";
 	public static final String CONFIG_DB_DEFAULT_FIELD_TIMESTAMP = "config_db_default_field_timestamp";
 	//---
+
+	
+	public static final String CONFIG_CREDENTIALS = "config_credentials";
+	public static final String CONFIG_CREDENTIALS_WHERE = "config_credentials_where";
+	public static final String CONFIG_CREDENTIALS_WHERE_DB = "config_credentials_where_db";
+	public static final String CONFIG_CREDENTIALS_WHERE_FILE = "config_credentials_where_file"; 
+	public static final String CONFIG_CREDENTIALS_FILE = "config_credentials_file";
+	public static final String CONFIG_CREDENTIALS_FILE_EXTENSION = "config_credentials_file_extension";
+	public static final String CONFIG_CREDENTIALS_FILE_USERNAME = "config_credentials_file_username";
+	public static final String CONFIG_CREDENTIALS_FILE_PASSWORD = "config_credentials_file_password";
+	public static final String CONFIG_CREDENTIALS_FILE_ENCRYPTED = "config_credentials_file_encrypted";
+	public static final String CONFIG_CREDENTIALS_DB = CONFIG_DB_DEFAULT;
+	public static final String CONFIG_CREDENTIALS_DB_SOURCE = "config_credentials_db_source";
+	public static final String CONFIG_CREDENTIALS_DB_FIELD = "config_credentials_db_field";
+	public static final String CONFIG_CREDENTIALS_DB_FIELD_ID = "config_credentials_db_field_id";
+	public static final String CONFIG_CREDENTIALS_DB_FIELD_USER = "config_credentials_db_field_user";
+	public static final String CONFIG_CREDENTIALS_DB_FIELD_USERNAME = "config_credentials_db_field_username";
+	public static final String CONFIG_CREDENTIALS_DB_FIELD_PASSWORD = "config_credentials_db_field_password";
+	
+	public static final String CONFIG_TESTS = "config_tests";
+	public static final String CONFIG_TESTS_DB = CONFIG_DB_DEFAULT;
+	public static final String CONFIG_TESTS_DB_SOURCE = "config_tests_db_source";
+	public static final String CONFIG_TESTS_DB_FIELD = "config_tests_db_field";
+	public static final String CONFIG_TESTS_DB_FIELD_INT = "config_tests_db_field_int";
+	public static final String CONFIG_TESTS_DB_FIELD_STRING = "config_tests_db_field_string";
+	public static final String CONFIG_TESTS_DB_FIELD_DECIMAL = "config_tests_db_field_decimal";
 	
 	public static final String CONFIG_CRYPTO = "config_crypto";
 	public static final String CONFIG_CRYPTO_FILE = "config_crypto_file";
@@ -94,14 +111,6 @@ public abstract class types
 	public static final String CONFIG_LOGS_OUT = "config_logs_out";
 	public static final String CONFIG_LOGS_OUT_SCREEN = "config_logs_out_screen";
 	public static final String CONFIG_LOGS_OUT_FILE = "config_logs_out_file";
-	
-	public static final String CONFIG_TESTS = "config_tests";
-	public static final String CONFIG_TESTS_DB = "config_tests_db";
-	public static final String CONFIG_TESTS_DB_SOURCE = "config_tests_db_source";
-	public static final String CONFIG_TESTS_DB_FIELD = "config_tests_db_field";
-	public static final String CONFIG_TESTS_DB_FIELD_INT = "config_tests_db_field_int";
-	public static final String CONFIG_TESTS_DB_FIELD_STRING = "config_tests_db_field_string";
-	public static final String CONFIG_TESTS_DB_FIELD_DECIMAL = "config_tests_db_field_decimal";
 	//------
 	
 	public static final String DB = "db";
@@ -391,6 +400,9 @@ public abstract class types
 			CONFIG_CREDENTIALS_FILE, 
 			CONFIG_CREDENTIALS_FILE_EXTENSION, CONFIG_CREDENTIALS_FILE_USERNAME, 
 			CONFIG_CREDENTIALS_FILE_PASSWORD, CONFIG_CREDENTIALS_FILE_ENCRYPTED,
+			CONFIG_CREDENTIALS_DB, CONFIG_CREDENTIALS_DB_SOURCE, CONFIG_CREDENTIALS_DB_FIELD,
+			CONFIG_CREDENTIALS_DB_FIELD_ID, CONFIG_CREDENTIALS_DB_FIELD_USER, 
+			CONFIG_CREDENTIALS_DB_FIELD_USERNAME, CONFIG_CREDENTIALS_DB_FIELD_PASSWORD,
 			CONFIG_CRYPTO,
 			CONFIG_CRYPTO_FILE, 
 			CONFIG_CRYPTO_FILE_CIPHER, CONFIG_CRYPTO_FILE_KEY, CONFIG_CRYPTO_FILE_EXTENSION,
@@ -406,6 +418,7 @@ public abstract class types
 			CONFIG_DB_SETUP_CREDENTIALS,
 			CONFIG_DB_SETUP_CREDENTIALS_USERNAME, CONFIG_DB_SETUP_CREDENTIALS_PASSWORD,
 			CONFIG_DB_SETUP_CREDENTIALS_USER, CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, 
+			CONFIG_DB_DEFAULT, 
 			CONFIG_DB_DEFAULT_FIELD, 
 			CONFIG_DB_DEFAULT_FIELD_ID, CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, 
 			CONFIG_TESTS, 

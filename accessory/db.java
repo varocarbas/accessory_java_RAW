@@ -48,7 +48,6 @@ public abstract class db
 	public static final String DEFAULT_MAX_POOL = _defaults.DB_MAX_POOL;
 	public static final String DEFAULT_HOST = _defaults.DB_HOST;
 	
-	public static boolean _is_ok = false;
 	public static String _cur_source = strings.DEFAULT;
 	
 	//--- Populated via the corresponding db_ini method.
@@ -172,17 +171,15 @@ public abstract class db
 	public static String get_variable_table(String source_)
 	{
 		String source = check_source_error(source_);
-		if (!_is_ok) return strings.DEFAULT;
 
-		return get_variable(source_, get_table(source));
+		return (strings.is_ok(source) ? get_variable(source, get_table(source)) : strings.DEFAULT);
 	}
 	
 	public static String get_variable_col(String source_, String col_)
 	{
 		String source = check_source_error(source_);
-		if (!_is_ok) return strings.DEFAULT;
 
-		return get_variable(source_, get_col(source, col_));
+		return (strings.is_ok(source) ? get_variable(source, get_col(source, col_)) : strings.DEFAULT);
 	}
 	
 	public static String get_variable(String input_) { return get_variable(get_current_source(), input_); } 
@@ -405,6 +402,14 @@ public abstract class db
 	public static String get_current_max_pool() { return get_max_pool(get_current_setup()); }
 
 	public static String get_current_db_name() { return get_db_name(get_current_db()); }
+
+	public static boolean is_ok() { return is_ok(get_current_source()); }
+
+	public static boolean is_ok(String source_) { return get_valid_instance(source_)._is_ok; }
+	
+	static void is_ok(boolean is_ok_) { is_ok(get_current_source(), is_ok_); }
+	
+	static void is_ok(String source_, boolean is_ok_) { get_valid_instance(source_)._is_ok = is_ok_; }
 	
 	static String get_host(String setup_) { return config.get(setup_, HOST); }
 
@@ -412,13 +417,9 @@ public abstract class db
 	
 	static String get_db_name(String db_) { return config.get(db_, NAME); }
 
-	static void update_is_ok(boolean is_ok_) { update_is_ok(get_current_source(), is_ok_); }
-	
-	static void update_is_ok(String source_, boolean is_ok_) { get_valid_instance(source_).update_is_ok(is_ok_); }
-
 	static void manage_error(String source_, String type_, String query_, Exception e_, String message_)
 	{
-		get_valid_instance(source_).update_is_ok(false);
+		is_ok(source_, false);
 
 		String setup = get_setup(source_);
 		
@@ -447,12 +448,12 @@ public abstract class db
 	
 	static String check_source_error(String source_)
 	{
-		get_valid_instance(source_).update_is_ok(true);
+		is_ok(source_, true);
 		
 		String source = check_source(source_);
 		
 		if (!strings.is_ok(source)) manage_error(source_, types.ERROR_DB_SOURCE, null, null, null);
-		else get_instance(source).update_is_ok(true);
+		else is_ok(source, true);
 		
 		return source;
 	}
