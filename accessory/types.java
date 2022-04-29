@@ -74,7 +74,6 @@ public abstract class types
 	public static final String CONFIG_DB_DEFAULT_FIELD_ID = "config_db_default_field_id";
 	public static final String CONFIG_DB_DEFAULT_FIELD_TIMESTAMP = "config_db_default_field_timestamp";
 	//---
-
 	
 	public static final String CONFIG_CREDENTIALS = "config_credentials";
 	public static final String CONFIG_CREDENTIALS_WHERE = "config_credentials_where";
@@ -89,10 +88,12 @@ public abstract class types
 	public static final String CONFIG_CREDENTIALS_DB_SOURCE = "config_credentials_db_source";
 	public static final String CONFIG_CREDENTIALS_DB_FIELD = "config_credentials_db_field";
 	public static final String CONFIG_CREDENTIALS_DB_FIELD_ID = "config_credentials_db_field_id";
+	public static final String CONFIG_CREDENTIALS_DB_FIELD_ID_ENC = "config_credentials_db_field_id_enc";
 	public static final String CONFIG_CREDENTIALS_DB_FIELD_USER = "config_credentials_db_field_user";
 	public static final String CONFIG_CREDENTIALS_DB_FIELD_USERNAME = "config_credentials_db_field_username";
 	public static final String CONFIG_CREDENTIALS_DB_FIELD_PASSWORD = "config_credentials_db_field_password";
-	
+	public static final String CONFIG_CREDENTIALS_DB_FIELD_IS_ENC = "config_credentials_db_field_is_enc";
+
 	public static final String CONFIG_TESTS = "config_tests";
 	public static final String CONFIG_TESTS_DB = CONFIG_DB_DEFAULT;
 	public static final String CONFIG_TESTS_DB_SOURCE = "config_tests_db_source";
@@ -373,7 +374,9 @@ public abstract class types
 		return arrays.to_array(subtypes);
 	}
 
-	static String[] get_all_config_boolean() { return _alls.TYPES_CONFIG_BOOLEAN; }
+	public static String[] get_all_types() { return _alls.TYPES_ALL; }
+	
+	public static String[] get_all_config_boolean() { return _alls.TYPES_CONFIG_BOOLEAN; }
 	
 	static String[] populate_all_config_boolean(String[] additional_) 
 	{ 
@@ -400,9 +403,11 @@ public abstract class types
 			CONFIG_CREDENTIALS_FILE, 
 			CONFIG_CREDENTIALS_FILE_EXTENSION, CONFIG_CREDENTIALS_FILE_USERNAME, 
 			CONFIG_CREDENTIALS_FILE_PASSWORD, CONFIG_CREDENTIALS_FILE_ENCRYPTED,
-			CONFIG_CREDENTIALS_DB, CONFIG_CREDENTIALS_DB_SOURCE, CONFIG_CREDENTIALS_DB_FIELD,
-			CONFIG_CREDENTIALS_DB_FIELD_ID, CONFIG_CREDENTIALS_DB_FIELD_USER, 
-			CONFIG_CREDENTIALS_DB_FIELD_USERNAME, CONFIG_CREDENTIALS_DB_FIELD_PASSWORD,
+			CONFIG_CREDENTIALS_DB, 
+			CONFIG_CREDENTIALS_DB_SOURCE, 
+			CONFIG_CREDENTIALS_DB_FIELD,
+			CONFIG_CREDENTIALS_DB_FIELD_ID, CONFIG_CREDENTIALS_DB_FIELD_ID_ENC, CONFIG_CREDENTIALS_DB_FIELD_USER, 
+			CONFIG_CREDENTIALS_DB_FIELD_USERNAME, CONFIG_CREDENTIALS_DB_FIELD_PASSWORD, CONFIG_CREDENTIALS_DB_FIELD_IS_ENC,
 			CONFIG_CRYPTO,
 			CONFIG_CRYPTO_FILE, 
 			CONFIG_CRYPTO_FILE_CIPHER, CONFIG_CRYPTO_FILE_KEY, CONFIG_CRYPTO_FILE_EXTENSION,
@@ -494,6 +499,4 @@ public abstract class types
 	}
 	
 	private static String[] populate_all_internal(String[] main_, String[] additional_) { return (arrays.is_ok(additional_) ? (String[])arrays.add(main_, additional_) : main_); }
-
-	private static String[] get_all_types() { return _alls.TYPES_ALL; }
 }

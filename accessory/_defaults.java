@@ -13,6 +13,8 @@ abstract class _defaults
 	public static final int STRINGS_SIZE = 100;
 
 	public static final boolean BOOLEAN = false;
+	public static final int BOOLEAN_INT = generic.boolean_to_int(BOOLEAN);
+	public static final String BOOLEAN_STRING = generic.boolean_to_string(BOOLEAN);
 	public static final byte BYTE = Byte.MIN_VALUE;
 	public static final char CHAR = Character.MIN_VALUE;
 	

@@ -39,19 +39,23 @@ class _ini_db extends parent_ini_db
 
 		return add_source(source, db_, info, default_fields, sources_);		
 	}
-
+	
 	private HashMap<String, Object[]> add_source_credentials(String db_, HashMap<String, Object[]> sources_)
 	{
 		String source = types.CONFIG_CREDENTIALS_DB_SOURCE;
 		boolean default_fields = true;
 
 		HashMap<String, db_field> info = new HashMap<String, db_field>();
-
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_ID, new db_field(data.STRING, strings.DEFAULT_SIZE, 0));
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_USER, new db_field(data.STRING, strings.DEFAULT_SIZE, 0));
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_USERNAME, new db_field(data.STRING, strings.DEFAULT_SIZE, 0));
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD, new db_field(data.STRING, strings.DEFAULT_SIZE, 0));
-
+		
+		db_field field_string = new db_field(data.STRING, strings.DEFAULT_SIZE, 0);
+		
+		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_ID, new db_field(field_string));
+		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_ID_ENC, new db_field(field_string));
+		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_USER, new db_field(field_string));
+		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_USERNAME, new db_field(field_string));
+		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD, new db_field(field_string));
+		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC, new db_field(data.BOOLEAN));
+		
 		return add_source(source, db_, info, default_fields, sources_);		
 	}
 }

@@ -142,6 +142,8 @@ public abstract class numbers
 	public static int to_int(String input_) { return strings.to_number_int(input_); }
 
 	public static boolean to_boolean(int input_) { return (input_ == 1); }
+
+	public static int from_boolean(boolean input_) { return (input_ ? 1 : 0); }
 	
 	public static String to_string_decimal(double input_, boolean to_int_) { return (to_int_ ? to_string_decimal_integer(input_) : Double.toString(input_)); }
 

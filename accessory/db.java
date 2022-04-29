@@ -107,6 +107,8 @@ public abstract class db
 		return update_vals(get_setup_from_db(db), setup_vals_);
 	}
 
+	public static boolean exists(String source_, db_where[] wheres_) { return arrays.is_ok(select_one(source_, null, wheres_, null)); }
+	
 	public static String select_one_string(String source_, String field_, db_where[] wheres_, db_order[] orders_)
 	{
 		return (String)db_queries.select_one_common(source_, field_, wheres_, orders_, data.STRING);
@@ -127,6 +129,11 @@ public abstract class db
 		return (int)db_queries.select_one_common(source_, field_, wheres_, orders_, data.INT);
 	}
 	
+	public static boolean select_one_boolean(String source_, String field_, db_where[] wheres_, db_order[] orders_)
+	{
+		return generic.int_to_boolean((int)db_queries.select_one_common(source_, field_, wheres_, orders_, data.BOOLEAN));
+	}
+	
 	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_)
 	{
 		ArrayList<HashMap<String, String>> temp = select(source_, fields_, wheres_, 1, orders_);
@@ -143,7 +150,13 @@ public abstract class db
 	{	
 		return db_queries.select(source_, fields_, where_cols_, max_rows_, order_cols_);
 	}
-	
+
+	public static <x> void insert_update(String source_, HashMap<String, x> vals_raw_, db_where[] where_) 
+	{ 
+		if (exists(source_, where_)) update(source_, vals_raw_, where_);
+		else insert(source_, vals_raw_);
+	}
+
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_) { db_queries.insert(source_, vals_raw_); }
 	
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_) { update(source_, vals_raw_, db_where.to_string(wheres_)); }
@@ -180,6 +193,21 @@ public abstract class db
 		String source = check_source_error(source_);
 
 		return (strings.is_ok(source) ? get_variable(source, get_col(source, col_)) : strings.DEFAULT);
+	}
+	
+	public static <x> db_where[] get_where(String source_, String field_, x val_, boolean check_inputs_) 
+	{ 
+		String source = source_;
+		String field = field_;
+		x val = val_;
+		
+		if (check_inputs_)
+		{
+			source = check_source(source_);
+			if (!strings.is_ok(source) || !field_is_ok(source, field) || val == null) return null;
+		}
+		
+		return new db_where[] { new db_where(source, field, val) }; 
 	}
 	
 	public static String get_variable(String input_) { return get_variable(get_current_source(), input_); } 

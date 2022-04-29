@@ -171,13 +171,7 @@ public class db_where extends parent
 		_temp_operand = check_operand(operand_);
 		_temp_link = check_link(link_);
 		
-		return 
-		( 
-			strings.is_ok(_temp_source) &&
-			db.field_is_ok(_temp_source, key_) &&
-			strings.is_ok(_temp_operand) &&
-			generic.is_ok(value_)
-		);
+		return (strings.is_ok(_temp_source) && db.field_is_ok(_temp_source, key_) && strings.is_ok(_temp_operand) && generic.is_ok(value_));
 	}
 		
 	private void populate(String source_, String key_, String operand_, Object value_, String link_, boolean is_literal_)

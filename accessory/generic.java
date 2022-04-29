@@ -222,6 +222,14 @@ public abstract class generic
 	}
 
 	public static boolean are_equal(Object input1_, Object input2_) { return are_equal(input1_, input2_, true); }	
+
+	public static int boolean_to_int(boolean input_) { return numbers.from_boolean(input_); }
+	
+	public static String boolean_to_string(boolean input_) { return strings.from_boolean(input_); }
+	
+	public static boolean int_to_boolean(int input_) { return numbers.to_boolean(input_); }
+	
+	public static boolean string_to_boolean(String input_) { return strings.to_boolean(input_); }
 	
 	public static Class<?> get_class(Object input_)
 	{

@@ -1,15 +1,18 @@
 package accessory;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public abstract class credentials 
 {
 	public static final String SOURCE = types.CONFIG_CREDENTIALS_DB_SOURCE;
 	public static final String FIELD_ID = types.CONFIG_CREDENTIALS_DB_FIELD_ID;
+	public static final String FIELD_ID_ENC = types.CONFIG_CREDENTIALS_DB_FIELD_ID_ENC;
 	public static final String FIELD_USER = types.CONFIG_CREDENTIALS_DB_FIELD_USER;
 	public static final String FIELD_USERNAME = types.CONFIG_CREDENTIALS_DB_FIELD_USERNAME;
 	public static final String FIELD_PASSWORD = types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD;
-	
+	public static final String FIELD_IS_ENC = types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC;
+
 	public static final String WHERE = types.CONFIG_CREDENTIALS_WHERE;
 	public static final String WHERE_FILE = types.CONFIG_CREDENTIALS_WHERE_FILE;
 	public static final String WHERE_DB = types.CONFIG_CREDENTIALS_WHERE_DB;
@@ -66,9 +69,9 @@ public abstract class credentials
 		String id = id_user.get(ID);
 		String user = id_user.get(USER);
 		
-		String[] temp = encrypt_username_password_file_get(id, user);
+		HashMap<String, String> temp = encrypt_username_password_file_get(id, user);
 
-		return (arrays.is_ok(temp) ? encrypt_username_password_file(id, user, temp[0], temp[1]) : false);
+		return (arrays.is_ok(temp) ? encrypt_username_password_file(id, user, temp.get(USERNAME), temp.get(PASSWORD)) : false);
 	}
 
 	public static boolean encrypt_username_password_file(String id_, String user_, String username_, String password_) { return encrypt_username_password_internal(id_, user_, username_, password_, WHERE_FILE); }
@@ -82,12 +85,17 @@ public abstract class credentials
 		String user = id_user.get(USER);
 
 		String encryption_id = get_encryption_id(id, user);
-		String[] vals = crypto.encrypt(new String[] { username_, password_ }, encryption_id);
+		String[] temp = crypto.encrypt(new String[] { username_, password_ }, encryption_id);
 		
 		boolean output = false;
-		if (!arrays.is_ok(vals)) return output;
+		if (!arrays.is_ok(temp)) return output;
+		
+		HashMap<String, String> vals = new HashMap<String, String>();
+		vals.put(USERNAME, temp[0]);
+		vals.put(PASSWORD, temp[1]);
 		
 		if (where_.equals(WHERE_FILE)) output = encrypt_username_password_file_store(id, user, vals);
+		else if (where_.equals(WHERE_DB)) output = encrypt_username_password_db_store(id, user, vals);
 		
 		return output;
 	}
@@ -108,43 +116,71 @@ public abstract class credentials
 		return output;
 	}
 
-	private static boolean encrypt_username_password_file_store(String id_, String user_, String[] outputs_)
+	private static boolean encrypt_username_password_file_store(String id_, String user_, HashMap<String, String> outputs_)
 	{
-		String[] paths = new String[] { get_path_username_password(id_, user_, true, true), get_path_username_password(id_, user_, true, false) };
-		
-		for (int i = 0; i < paths.length; i++)
+		for (Entry<String, String> item: encrypt_username_password_file_paths(id_, user_).entrySet())
 		{
-			io.line_to_file(paths[i], outputs_[i], false);
+			String key = item.getKey();
+			String path = item.getValue();
+			
+			io.line_to_file(path, outputs_.get(key), false);
 			if (!io._is_ok) return false;
 		}
 		
 		return true;
 	}
-	
-	private static String[] encrypt_username_password_file_get(String id_, String user_)
+
+	private static HashMap<String, String> encrypt_username_password_file_paths(String id_, String user_)
 	{
-		String[] vals = new String[2];
+		HashMap<String, String> outputs = new HashMap<String, String>();
 		
-		String[] paths = new String[] { get_path_username_password(id_, user_, false, true), get_path_username_password(id_, user_, false, false) };
+		outputs.put(USERNAME, get_path_username_password(id_, user_, true, true));
+		outputs.put(PASSWORD, get_path_username_password(id_, user_, true, false));
 		
-		for (int i = 0; i < paths.length; i++)
+		return outputs;
+	}
+		
+	private static boolean encrypt_username_password_db_store(String id_, String user_, HashMap<String, String> outputs_)
+	{
+		HashMap<String, String> vals = new HashMap<String, String>();
+		vals.put(FIELD_USERNAME, outputs_.get(USERNAME));
+		vals.put(FIELD_PASSWORD, outputs_.get(PASSWORD));
+		
+		db.insert_update(SOURCE, vals, get_db_where(id_, user_));
+
+		return db.is_ok(SOURCE);
+	}
+	
+	private static HashMap<String, String> encrypt_username_password_file_get(String id_, String user_)
+	{
+		HashMap<String, String> outputs = new HashMap<String, String>();
+
+		for (Entry<String, String> item: encrypt_username_password_file_paths(id_, user_).entrySet())
 		{
-			vals[i] = io.file_to_string(paths[i], true);
+			String key = item.getKey();
+			String path = item.getValue();
+			
+			outputs.put(key, io.file_to_string(path, true));
 			if (!io._is_ok) return null;
 		}
-
-		return vals;
+		
+		return outputs;
 	}
 	
 	private static String get_username_password(String id_, String user_, boolean encrypted_, String where_, boolean is_username_)
 	{
 		String output = strings.DEFAULT;
 
-		if (where_.equals(WHERE_FILE)) output = get_username_password_file(id_, user_, encrypted_, is_username_);
+		if (where_.equals(WHERE_DB)) output = get_username_password_db(id_, user_, is_username_);
+		else if (where_.equals(WHERE_FILE)) output = get_username_password_file(id_, user_, encrypted_, is_username_);
 
 		return output;
 	}
-
+	
+	private static String get_username_password_db(String id_, String user_, boolean is_username_) { return db.select_one_string(SOURCE, (is_username_ ? FIELD_USERNAME : FIELD_PASSWORD), get_db_where(id_, user_), null); }
+	
+	private static db_where[] get_db_where(String id_, String user_) { return new db_where[] { new db_where(SOURCE, FIELD_ID, id_), new db_where(SOURCE, FIELD_USER, user_) }; }
+	
 	private static String get_username_password_file(String id_, String user_, boolean encrypted_, boolean is_username_)
 	{   
 		String path = get_path_username_password(id_, user_, encrypted_, is_username_);
@@ -156,13 +192,9 @@ public abstract class credentials
 
 	private static String get_path_username_password(String id_, String user_, boolean encrypted_, boolean is_username_)
 	{   
-		String file = id_ + SEPARATOR + user_;
+		String file = id_ + SEPARATOR + user_ + SEPARATOR;
 
-		file += SEPARATOR + 
-		(
-			is_username_ ? config.get_credentials(types.CONFIG_CREDENTIALS_FILE_USERNAME) : 
-			config.get_credentials(types.CONFIG_CREDENTIALS_FILE_PASSWORD)
-		);
+		file += (is_username_ ? config.get_credentials(types.CONFIG_CREDENTIALS_FILE_USERNAME) : config.get_credentials(types.CONFIG_CREDENTIALS_FILE_PASSWORD));
 		if (encrypted_) file += SEPARATOR + config.get_credentials(types.CONFIG_CREDENTIALS_FILE_ENCRYPTED); 
 
 		return paths.build(new String[] { paths.get_dir(paths.DIR_CREDENTIALS), get_file_full(file) }, true);
