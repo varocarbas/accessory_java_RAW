@@ -50,6 +50,10 @@ abstract class _defaults
 	public static final boolean LOGS_FILE = true;
 	public static final boolean LOGS_DB = false;
 
+	public static final double SIZE_MIN = numbers.MIN_DECIMAL;
+	public static final double SIZE_MAX = numbers.MAX_DECIMAL;
+	public static final int SIZE_DECIMALS = NUMBERS_SIZE_DECIMALS;
+	
 	public static final String DB = types.CONFIG_DB_DEFAULT;
 	public static final String DB_NAME = "accessory";
 	public static final String DB_SOURCE = types.CONFIG_TESTS_DB_SOURCE;
@@ -64,7 +68,7 @@ abstract class _defaults
 	public static final String DB_WHERE_LINK = types.DB_WHERE_LINK_AND;
 	public static final String DB_WHERE_OPERAND = types.DB_WHERE_OPERAND_EQUAL;
 	public static final boolean DB_WHERE_LITERAL = true;
-
+	
 	public static final double DB_SIZE_DECIMAL = db.get_default_size(types.DATA_DECIMAL);
 	public static final double DB_SIZE_LONG = db.get_default_size(types.DATA_LONG);
 	public static final double DB_SIZE_INT = db.get_default_size(types.DATA_INT);
@@ -77,7 +81,12 @@ abstract class _defaults
 	public static final int DB_SIZE_MYSQL_DECIMALS = NUMBERS_SIZE_DECIMALS;
 	public static final int DB_SIZE_MYSQL_VARCHAR = STRINGS_SIZE;
 	public static final int DB_SIZE_MYSQL_TEXT = strings.SIZE_BIG;
-		
+	
+	public static final String DB_FIELD_TYPE = types.DATA_STRING;
+	public static final int DB_FIELD_DECIMALS = SIZE_DECIMALS;
+	public static final int DB_FIELD_SIZE = DB_SIZE_MYSQL_VARCHAR;
+	public static final int DB_FIELD_MAX_SIZE = 500; //db.get_max_size(types.DATA_DECIMAL)
+	
 	public static void populate() { } //Method forcing this class to load when required (e.g., from the ini class).
 
 	public static Double get(Double input_) { return (Double)NUMBERS_DECIMAL; }

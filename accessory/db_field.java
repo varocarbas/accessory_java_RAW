@@ -2,9 +2,9 @@ package accessory;
 
 import java.util.HashMap;
 
-//All the min/max/size values in this class refer to specific DB types and, as such, are defined 
+//All the sizes and min/max values in this class refer to specific DB types and, as such, are defined 
 //according to the given rules. For example, MySQL's data size being the max number of characters 
-//allowed in the given column.
+//allowed in the given column. 
 
 public class db_field extends parent
 {
@@ -12,25 +12,19 @@ public class db_field extends parent
 	public static final String KEY_PRIMARY = types.DB_FIELD_FURTHER_KEY_PRIMARY;
 	public static final String TIMESTAMP = types.DB_FIELD_FURTHER_TIMESTAMP;
 	public static final String AUTO_INCREMENT = types.DB_FIELD_FURTHER_AUTO_INCREMENT;
-	
+
 	public static final int MAX_DECIMALS = size.MAX_DECIMALS;
 	public static final int MIN_DECIMALS = size.MIN_DECIMALS;
 	public static final int MIN_SIZE = 0;
+	public static final int MAX_SIZE = _defaults.DB_FIELD_MAX_SIZE;
 
 	public static final String WRONG_TYPE = strings.DEFAULT;
 	public static final int WRONG_SIZE = numbers.DEFAULT_INT;
 	public static final int WRONG_DECIMALS = size.WRONG_DECIMALS;
 
-	public static final String DEFAULT_TYPE = data.TYPE_STRING;
-	public static final int DEFAULT_DECIMALS = size.DEFAULT_DECIMALS;
-	public static final int DEFAULT_SIZE = _defaults.DB_SIZE_STRING;
-	public static final double DEFAULT_SIZE_DECIMAL = _defaults.DB_SIZE_DECIMAL;
-	public static final double DEFAULT_SIZE_LONG = _defaults.DB_SIZE_LONG;
-	public static final double DEFAULT_SIZE_INT = _defaults.DB_SIZE_INT;
-	public static final int DEFAULT_SIZE_STRING = _defaults.DB_SIZE_STRING;
-	public static final int DEFAULT_SIZE_STRING_BIG = _defaults.DB_SIZE_STRING_BIG;
-	public static final int DEFAULT_SIZE_BOOLEAN = _defaults.DB_SIZE_BOOLEAN;
-	public static final int DEFAULT_SIZE_TIMESTAMP = _defaults.DB_SIZE_TIMESTAMP;
+	public static final String DEFAULT_TYPE = _defaults.DB_FIELD_TYPE;
+	public static final int DEFAULT_DECIMALS = _defaults.DB_FIELD_DECIMALS;
+	public static final int DEFAULT_SIZE = _defaults.DB_FIELD_SIZE;
 
 	public String _type = WRONG_TYPE;
 	public int _size = WRONG_SIZE;
@@ -41,9 +35,9 @@ public class db_field extends parent
 	private String _temp_type = strings.DEFAULT;
 	private int _temp_size = 0;
 	private int _temp_decimals = 0;
-	
+
 	public static boolean are_equal(db_field field1_, db_field field2_) { return are_equal_common(field1_, field2_); }
-	
+
 	public static boolean further_is_ok(String[] further_)
 	{
 		if (!arrays.is_ok(further_)) return true;
@@ -69,7 +63,7 @@ public class db_field extends parent
 
 		int max = (int)info.get(generic.MAX);
 		if (size <= MIN_SIZE || size > max) size = db.get_default_size(type_);
-		
+
 		return size;
 	}
 
@@ -122,16 +116,23 @@ public class db_field extends parent
 
 	public static int adapt_decimals(int decimals_) { return (numbers.is_ok(decimals_, MIN_DECIMALS, MAX_DECIMALS) ? decimals_ : DEFAULT_DECIMALS); }
 
-	public static <x> boolean complies(x val_, db_field field_)
+	public static <x> boolean complies(x val_, String data_type_) { return complies(val_, new db_field(data_type_)); }
+
+	public static <x> boolean complies(x val_, db_field field_) { return (is_ok(field_) ? complies(val_, field_._type, field_._size, field_._decimals) : false); }
+
+	public static <x> boolean complies(x val_, String data_type_, int size_, int decimals_)
 	{
-		if (!generic.is_ok(val_) || !is_ok(field_)) return false;
+		if (val_ == null || size_ < MIN_SIZE || size_ > MAX_SIZE) return false;
 
-		double val = Math.pow(10, field_._size);
-		size size = new size(-1 * val, val, field_._decimals);
+		String type = data.check_type(data_type_);
+		if (!strings.is_ok(type)) return false;
 
-		return data.complies(val_, new data(field_._type, size));
+		double val = Math.pow(10, size_);
+		size size = new size(-1 * val, val, decimals_);
+
+		return data.complies(val_, new data(type, size));
 	}
-	
+
 	public db_field(db_field input_) { instantiate(input_); }
 
 	public db_field(String type_) { instantiate(type_, WRONG_SIZE, DEFAULT_DECIMALS, null, null); }
@@ -205,7 +206,7 @@ public class db_field extends parent
 		_temp_type = data.check_type(type_);
 		_temp_size = check_size(type_, size_);
 		_temp_decimals = adapt_decimals(decimals_);
-		
+
 		return (default_is_ok(_temp_type, _temp_size, default_) && further_is_ok(further_));
 	}
 

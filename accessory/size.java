@@ -12,9 +12,9 @@ public class size extends parent
 	public static final double WRONG_MAX = numbers.DEFAULT_DECIMAL;
 	public static final int WRONG_DECIMALS = numbers.DEFAULT_INT;
 	
-	public static final double DEFAULT_MIN = numbers.MIN_DECIMAL;
-	public static final double DEFAULT_MAX = numbers.MAX_DECIMAL;
-	public static final int DEFAULT_DECIMALS = _defaults.NUMBERS_SIZE_DECIMALS;
+	public static final double DEFAULT_MIN = _defaults.SIZE_MIN;
+	public static final double DEFAULT_MAX = _defaults.SIZE_MAX;
+	public static final int DEFAULT_DECIMALS = _defaults.SIZE_DECIMALS;
 
 	public double _min = WRONG_MIN;
 	public double _max = WRONG_MAX;

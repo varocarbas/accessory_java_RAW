@@ -9,47 +9,44 @@ import java.util.Map.Entry;
 public class data extends parent
 {
 	public static final String STRING = types.DATA_STRING;
-	public static final String STRING_BIG  = types.DATA_STRING_BIG;
+	public static final String STRING_BIG = types.DATA_STRING_BIG;
 	public static final String INT = types.DATA_INT;	
 	public static final String LONG = types.DATA_LONG;
 	public static final String DECIMAL = types.DATA_DECIMAL;
 	public static final String TIMESTAMP = types.DATA_TIMESTAMP;
 	public static final String BOOLEAN = types.DATA_BOOLEAN;
-	public static final String TYPE_STRING = STRING;
-	public static final String TYPE_STRING_BIG = STRING_BIG;
-	public static final String TYPE_INT = INT;	
-	public static final String TYPE_LONG = LONG;
-	public static final String TYPE_DECIMAL = DECIMAL;
-	public static final String TYPE_TIMESTAMP = TIMESTAMP;
-	public static final String TYPE_BOOLEAN = BOOLEAN;
 
 	public static final String TRUE = types.DATA_BOOLEAN_TRUE;
 	public static final String FALSE = types.DATA_BOOLEAN_FALSE;
-	public static final String BOOLEAN_TRUE = TRUE;
-	public static final String BOOLEAN_FALSE = FALSE;
 	
 	//--- For numeric types, min/max values (e.g., max decimal value). For other types, min/max
 	//lengths or number of elements (e.g., max string length). 
-	public static final double MIN_DECIMAL = size.MIN;
+	//These limits are theoretically independent from the DB/db_field ones, although they are expected
+	//to be highly compatible with those for purely practical reasons.
+	
+	public static final double MIN_DECIMAL = numbers.MIN_DECIMAL;
 	public static final double MIN_LONG = numbers.MIN_LONG;
 	public static final double MIN_INT = numbers.MIN_INT;
-	public static final double MIN_STRING = strings.MIN_SIZE;
+	public static final double MIN_STRING = 0.0;
+	public static final double MIN_STRING_BIG = MIN_STRING;
 	public static final double MIN_BOOLEAN = 2.0;
 	public static final double MIN_TIMESTAMP = 0.0;
 	
-	public static final double MAX_DECIMAL = size.MAX;
+	public static final double MAX_DECIMAL = numbers.MAX_DECIMAL;
 	public static final double MAX_LONG = numbers.MAX_LONG;
 	public static final double MAX_INT = numbers.MAX_INT;
-	public static final double MAX_STRING = strings.MAX_SIZE;
+	public static final double MAX_STRING = db.get_max_size(STRING);
+	public static final double MAX_STRING_BIG = db.get_max_size(STRING_BIG);
 	public static final double MAX_BOOLEAN = 2.0;
 	public static final double MAX_TIMESTAMP = dates.SIZE_TIMESTAMP;
+	
 	//---
-
+	
 	public static final String DEFAULT_TYPE = STRING;
 	
-	public String _type = strings.DEFAULT;
-	public Class<?> _class = null;
-	public size _size = null;
+	private String _type = strings.DEFAULT;
+	private Class<?> _class = null;
+	private size _size = null;	
 	
 	private String _temp_type = strings.DEFAULT;
 	private Class<?> _temp_class = null;
@@ -61,6 +58,12 @@ public class data extends parent
 
 	public data(String type_, size size_) { instantiate(type_, null, size_); }
 
+	public String get_type() { return _type; }
+
+	public Class<?> get_class() { return _class; }
+
+	public size get_size() { return _size; }
+	
 	public String toString()
 	{
 		String output = "";
@@ -87,23 +90,30 @@ public class data extends parent
 	public static <x> boolean complies(x val_, data data_)
 	{
 		boolean is_ok = false;
-		if (!generic.is_ok(val_) || !is_ok(data_) || !class_complies(generic.get_class(val_), data_._class)) return is_ok;
+		
+		Class<?> type = generic.get_class(val_);
+		Class<?> type2 = data_.get_class();
+		if (val_ == null || !is_ok(data_) || !type_complies(type, type2)) return is_ok;
 
-		if (generic.are_equal(data_._class, Boolean.class)) is_ok = true;
+		if (generic.are_equal(type2, Boolean.class)) 
+		{
+			if (generic.are_equal(type, Boolean.class)) is_ok = true;
+			else if (generic.are_equal(type, Integer.class)) 
+			{
+				int val = (int)val_;
+				is_ok = (val == 0 || val == 1);
+			}
+		}
 		else 
 		{
 			double size = 0;
-
-			if (generic.are_equal(data_._class, String.class)) size = ((String)val_).length();
-			else if (generic.is_number(data_._class)) 
-			{
-				if (generic.are_equal(data_._class, Integer.class)) size = (double)((int)val_); //!!!
-				else if (generic.are_equal(data_._class, Long.class)) size = (double)((long)val_); //!!!
-				else size = (double)val_;
-			}
+			
+			if (generic.are_equal(type2, String.class)) size = ((String)val_).length();
+			else if (generic.is_number(type2)) size = numbers.to_number(val_);
 			else return false;
 
-			is_ok = numbers.is_ok(size, data_._size._min, data_._size._max);
+			size size2 = data_.get_size();
+			is_ok = numbers.is_ok(size, size2._min, size2._max);
 		}
 
 		return is_ok;
@@ -126,7 +136,7 @@ public class data extends parent
 	
 	public static boolean is_number(String type_) { return is_common(type_, new String[] { DECIMAL, LONG, INT }); }
 
-	public static boolean is_string(String type_) { return is_common(type_, new String[] { STRING, STRING_BIG });		 }
+	public static boolean is_string(String type_) { return is_common(type_, new String[] { STRING, STRING_BIG }); }
 	
 	public boolean is_ok()
 	{
@@ -157,6 +167,7 @@ public class data extends parent
 		classes.put(Double.class, Integer.class);
 		classes.put(Double.class, Long.class);
 		classes.put(Long.class, Integer.class);
+		classes.put(Boolean.class, Integer.class);
 		
 		return classes;
 	}
@@ -181,33 +192,38 @@ public class data extends parent
 		String type = check_type(type_);
 		if (!strings.is_ok(type)) return boundaries;
 
-		if (is_string(type)) 
+		if (type.equals(STRING)) 
 		{
 			boundaries._min = MIN_STRING;
 			boundaries._max = MAX_STRING;
 		}
-		else if (generic.are_equal(type, INT))
+		else if (type.equals(STRING_BIG)) 
+		{
+			boundaries._min = MIN_STRING_BIG;
+			boundaries._max = MAX_STRING_BIG;
+		}
+		else if (type.equals(INT))
 		{
 			boundaries._min = MIN_INT;
 			boundaries._max = MAX_INT;
 		}
-		else if (generic.are_equal(type, LONG))
+		else if (type.equals(LONG))
 		{
 			boundaries._min = MIN_LONG;
 			boundaries._max = MAX_LONG;
 		}
-		else if (generic.are_equal(type, DECIMAL))
+		else if (type.equals(DECIMAL))
 		{
 			boundaries._min = MIN_DECIMAL;
 			boundaries._max = MAX_DECIMAL;
 			boundaries._decimals = size.DEFAULT_DECIMALS;
 		}
-		else if (generic.are_equal(type, BOOLEAN)) 
+		else if (type.equals(BOOLEAN)) 
 		{
 			boundaries._min = MIN_BOOLEAN;
 			boundaries._max = MAX_BOOLEAN;	
 		}
-		else if (generic.are_equal(type, TIMESTAMP)) 
+		else if (type.equals(TIMESTAMP)) 
 		{
 			boundaries._min = MIN_TIMESTAMP;
 			boundaries._max = MAX_TIMESTAMP;		
@@ -218,14 +234,14 @@ public class data extends parent
 
 	private static boolean class_is_ok(Class<?> class_) { return (class_ != null && get_all_classes().containsValue(class_)); }
 
-	private static boolean class_complies(Class<?> input_, Class<?> target_)
+	private static boolean type_complies(Class<?> input_, Class<?> target_)
 	{
 		if (input_ == null || target_ == null) return false;
-		if (input_.equals(target_)) return true;
+		if (generic.are_equal(input_, target_)) return true;
 
 		for (Entry<Class<?>, Class<?>> item: get_all_compatible().entrySet())
 		{
-			if (target_.equals(item.getKey()) && input_.equals(item.getValue())) return true;
+			if (generic.are_equal(target_, item.getKey()) && generic.are_equal(input_, item.getValue())) return true;
 		}
 
 		return false;

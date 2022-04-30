@@ -397,10 +397,7 @@ public abstract class db
 		db_field field = (db_field)arrays.get_value(fields_, id);
 		if (!generic.is_ok(field) || !db_field.complies(val_, field)) return null;
 
-		String val2 = strings.DEFAULT;
-		if (data.is_number(field._type)) val2 = strings.to_string(val_);
-		else val2 = sanitise_string(source, strings.to_string(val_));
-		
+		String val2 = input_to_string(source_, val_, field._type, false);
 		if (!strings.is_ok(val2)) return null;
 
 		String col = get_col(source, id);
@@ -408,6 +405,23 @@ public abstract class db
 
 		output.put(col, val2);
 		
+		return output;
+	}
+	
+	public static <x> String input_to_string(x val_, String data_type_) { return input_to_string(get_current_source(), val_, data_type_, true); }
+	
+	public static <x> String input_to_string(String source_, x val_, String data_type_, boolean check_)
+	{
+		String output = strings.DEFAULT;
+		if (val_ == null) return output;
+		
+		String type = data.check_type(data_type_);
+		if (!strings.is_ok(type) || (check_ && !db_field.complies(val_, type))) return output;
+
+		Object val = (type.equals(data.BOOLEAN) ? generic.boolean_to_int((boolean)val_) : val_);
+		output = strings.to_string(val);
+		output = sanitise_string(source_, output);
+	
 		return output;
 	}
 	

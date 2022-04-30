@@ -142,9 +142,13 @@ public abstract class credentials
 		
 	private static boolean encrypt_username_password_db_store(String id_, String user_, HashMap<String, String> outputs_)
 	{
-		HashMap<String, String> vals = new HashMap<String, String>();
+		HashMap<String, Object> vals = new HashMap<String, Object>();
 		vals.put(FIELD_USERNAME, outputs_.get(USERNAME));
 		vals.put(FIELD_PASSWORD, outputs_.get(PASSWORD));
+		vals.put(FIELD_ID, id_);
+		vals.put(FIELD_ID_ENC, credentials.get_encryption_id(id_, user_));
+		vals.put(FIELD_USER, user_);
+		vals.put(FIELD_IS_ENC, true);
 		
 		db.insert_update(SOURCE, vals, get_db_where(id_, user_));
 
