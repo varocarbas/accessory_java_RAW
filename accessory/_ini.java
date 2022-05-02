@@ -14,6 +14,8 @@ public class _ini extends parent_ini
 	public static void start(String dbs_username_, String dbs_password_, String dbs_host_) { _instance.populate_all(null, dbs_username_, dbs_password_, dbs_host_, false); }
 
 	protected void populate_first_basic() { _basic.populate(); }
+
+	protected void populate_first_starts() { _starts.populate(); }
 	
 	protected void populate_first_alls() { _alls.populate(); }
 

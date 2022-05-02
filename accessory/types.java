@@ -156,7 +156,7 @@ public abstract class types
 	public static final String DB_MYSQL_DATA_TIMESTAMP = "db_mysql_data_timestamp";
 	
 	public static final String DATA = "data";
-	public static final String DATA_STRING = "data_string";
+	public static final String DATA_STRING_SMALL = "data_string_small";
 	public static final String DATA_STRING_BIG = "data_string_big";
 	public static final String DATA_INT = "data_int";
 	public static final String DATA_LONG = "data_long";
@@ -453,7 +453,7 @@ public abstract class types
 			DB_MYSQL_DATA_BIGINT, DB_MYSQL_DATA_DECIMAL,
 			
 			DATA,
-			DATA_STRING, DATA_STRING_BIG, DATA_INT, DATA_LONG, DATA_DECIMAL, DATA_TIMESTAMP,
+			DATA_STRING_SMALL, DATA_STRING_BIG, DATA_INT, DATA_LONG, DATA_DECIMAL, DATA_TIMESTAMP,
 			DATA_BOOLEAN,
 			DATA_BOOLEAN_TRUE, DATA_BOOLEAN_FALSE,
 			

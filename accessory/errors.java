@@ -17,7 +17,7 @@ public abstract class errors
 	public static void manage(HashMap<String, String> info_)
 	{
 		String message = get_all(info_);
-		logs.update(message, (String)arrays.get_value(info_, generic.ID), true);
+		logs.update(message, (String)arrays.get_value(info_, get_generic(types.WHAT_ID)), true);
 
 		_triggered = true;
 		
@@ -60,7 +60,7 @@ public abstract class errors
 		String type = types.check_type(type_, types.get_subtypes(types.ERROR_DB));
 
 		HashMap<String, String> info = (HashMap<String, String>)arrays.get_new(info_);
-		info.put(generic.TYPE, (strings.is_ok(type) ? type : DEFAULT_TYPE));
+		info.put(get_generic(types.WHAT_TYPE), (strings.is_ok(type) ? type : DEFAULT_TYPE));
 		
 		String message = message_;
 		String message2 = get_message(e_, type);
@@ -68,7 +68,7 @@ public abstract class errors
 		if ((strings.is_ok(message2) && (generic.is_ok(e_)) || !strings.is_ok(message))) message = message2;
 		info.put("message", message);
 
-		if (strings.is_ok(query_)) info.put(generic.QUERY, query_);
+		if (strings.is_ok(query_)) info.put(get_generic(types.WHAT_QUERY), query_);
 
 		return info;
 	}
@@ -77,7 +77,8 @@ public abstract class errors
 	{
 		HashMap<String, String> info = new HashMap<String, String>();
 
-		info.put(generic.TYPE, (strings.is_ok(type_) ? type_ : DEFAULT_TYPE));
+		info.put(get_generic(types.WHAT_TYPE), (strings.is_ok(type_) ? type_ : DEFAULT_TYPE));
+		
 		if (strings.is_ok(path_)) info.put("path", path_);
 		info.put("message", get_message(e_, type_));
 		
@@ -89,19 +90,21 @@ public abstract class errors
 		if (!arrays.is_ok(info_)) return DEFAULT_MESSAGE;
 
 		String all = arrays.to_string(info_, DEFAULT_SEPARATOR, misc.SEPARATOR_KEYVAL, null);
-		if (!info_.containsKey(generic.TYPE) || !strings.is_ok(info_.get(generic.TYPE))) all = DEFAULT_TYPE + DEFAULT_SEPARATOR + all;
 		
-		if (!strings.is_ok(all)) all = DEFAULT_MESSAGE;
-		else all = "ERROR" + misc.SEPARATOR_CONTENT + all;
-		
-		return all;
+		String type = (String)arrays.get_value(info_, get_generic(types.WHAT_TYPE));
+		if (!strings.is_ok(type)) type = DEFAULT_TYPE;
+		all = type + DEFAULT_SEPARATOR + all;
+
+		return (strings.is_ok(all) ? all : DEFAULT_MESSAGE);
 	}
+	
+	private static String get_generic(String what_) { return parent_ini.get_generic_key(what_); }
 	
 	private static String get_message(Exception e_, String type_)
 	{
 		String message = DEFAULT_TYPE;
 		
-		if (generic.is_ok(e_)) message = e_.getMessage();
+		if (e_ != null) message = e_.getMessage();
 		else if (strings.is_ok(type_)) 
 		{
 			String type = types.remove_type(type_, types.ERROR);

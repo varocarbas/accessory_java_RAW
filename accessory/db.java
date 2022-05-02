@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public abstract class db 
-{		
+{	
 	public static final String NAME = types.CONFIG_DB_NAME;
 	public static final String HOST = types.CONFIG_DB_SETUP_HOST;
 	public static final String USERNAME = types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME;
@@ -60,6 +60,8 @@ public abstract class db
 	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_DB);
 	
+	static void start() { } //Method forcing this class to load when required (e.g., from the ini class).
+	
 	public static boolean update_db(String db_, String db_name_) 
 	{ 
 		if (!types.is_config_db(db_) || !strings.is_ok(db_name_)) return manage_error("Wrong DB");
@@ -109,54 +111,44 @@ public abstract class db
 
 	public static boolean exists(String source_, db_where[] wheres_) { return arrays.is_ok(select_one(source_, null, wheres_, null)); }
 	
-	public static String select_one_string(String source_, String field_, db_where[] wheres_, db_order[] orders_)
-	{
-		return (String)db_queries.select_one_common(source_, field_, wheres_, orders_, data.STRING);
-	}
-	
-	public static double select_one_decimal(String source_, String field_, db_where[] wheres_, db_order[] orders_)
-	{
-		return (double)db_queries.select_one_common(source_, field_, wheres_, orders_, data.DECIMAL);
-	}
-	
-	public static long select_one_long(String source_, String field_, db_where[] wheres_, db_order[] orders_)
-	{
-		return (long)db_queries.select_one_common(source_, field_, wheres_, orders_, data.LONG);
-	}
-	
-	public static int select_one_int(String source_, String field_, db_where[] wheres_, db_order[] orders_)
-	{
-		return (int)db_queries.select_one_common(source_, field_, wheres_, orders_, data.INT);
-	}
-	
-	public static boolean select_one_boolean(String source_, String field_, db_where[] wheres_, db_order[] orders_)
-	{
-		return generic.int_to_boolean((int)db_queries.select_one_common(source_, field_, wheres_, orders_, data.BOOLEAN));
-	}
-	
-	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_)
-	{
-		ArrayList<HashMap<String, String>> temp = select(source_, fields_, wheres_, 1, orders_);
-		
-		return (arrays.is_ok(temp) ? temp.get(0) : null);
-	}
-	
-	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order[] orders_)
-	{	
-		return select(source_, fields_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_));
-	}
-	
-	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, String where_cols_, int max_rows_, String order_cols_)
-	{	
-		return db_queries.select(source_, fields_, where_cols_, max_rows_, order_cols_);
-	}
+	public static boolean exists(String source_, String where_cols_) { return arrays.is_ok(select_one(source_, null, where_cols_, null)); }
 
-	public static <x> void insert_update(String source_, HashMap<String, x> vals_raw_, db_where[] where_) 
+	public static String select_one_string(String source_, String field_, db_where[] wheres_, db_order[] orders_) { return (String)db_queries.select_one_common(source_, field_, wheres_, orders_, data.STRING_SMALL); }
+
+	public static String select_one_string(String source_, String field_, String where_cols_, String order_cols_) { return (String)db_queries.select_one_common(source_, field_, where_cols_, order_cols_, data.STRING_SMALL); }
+	
+	public static double select_one_decimal(String source_, String field_, db_where[] wheres_, db_order[] orders_) { return (double)db_queries.select_one_common(source_, field_, wheres_, orders_, data.DECIMAL); }
+	
+	public static double select_one_decimal(String source_, String field_, String wheres_cols_, String orders_cols_) { return (double)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.DECIMAL); }
+	
+	public static long select_one_long(String source_, String field_, db_where[] wheres_, db_order[] orders_) { return (long)db_queries.select_one_common(source_, field_, wheres_, orders_, data.LONG); }
+	
+	public static long select_one_long(String source_, String field_, String wheres_cols_, String orders_cols_) { return (long)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.LONG); }
+	
+	public static int select_one_int(String source_, String field_, db_where[] wheres_, db_order[] orders_) { return (int)db_queries.select_one_common(source_, field_, wheres_, orders_, data.INT); }
+	
+	public static int select_one_int(String source_, String field_, String wheres_cols_, String orders_cols_) { return (int)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.INT); }
+	
+	public static boolean select_one_boolean(String source_, String field_, db_where[] wheres_, db_order[] orders_) { return generic.int_to_boolean((int)db_queries.select_one_common(source_, field_, wheres_, orders_, data.BOOLEAN)); }
+	
+	public static boolean select_one_boolean(String source_, String field_, String wheres_cols_, String orders_cols_) { return generic.int_to_boolean((int)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.BOOLEAN)); }
+	
+	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_) { return db_queries.select_one(source_, fields_, wheres_, orders_); }
+	
+	public static HashMap<String, String> select_one(String source_, String[] fields_, String wheres_cols_, String orders_cols_) { return db_queries.select_one(source_, fields_, wheres_cols_, orders_cols_); }
+	
+	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select(source_, fields_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
+	
+	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, String where_cols_, int max_rows_, String order_cols_) { return db_queries.select(source_, fields_, where_cols_, max_rows_, order_cols_); }
+
+	public static <x> void insert_update(String source_, HashMap<String, x> vals_raw_, db_where[] where_) { insert_update(source_, vals_raw_, db_where.to_string(where_)); }
+	
+	public static <x> void insert_update(String source_, HashMap<String, x> vals_raw_, String where_cols_) 
 	{ 
-		if (exists(source_, where_)) update(source_, vals_raw_, where_);
+		if (exists(source_, where_cols_)) update(source_, vals_raw_, where_cols_);
 		else insert(source_, vals_raw_);
 	}
-
+	
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_) { db_queries.insert(source_, vals_raw_); }
 	
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_) { update(source_, vals_raw_, db_where.to_string(wheres_)); }
@@ -262,7 +254,7 @@ public abstract class db
 		
 		for (Entry<String, db_field> item: fields_.entrySet())
 		{
-			db_field field = db_field.adapt(new db_field(item.getValue()));			
+			db_field field = db_field.adapt(source_, new db_field(item.getValue()));			
 			if (!field._is_ok)
 			{
 				manage_error(source_, types.ERROR_DB_FIELD, null, null, field.toString());
@@ -395,7 +387,7 @@ public abstract class db
 		if (!fields_.containsKey(id)) return null;
 	
 		db_field field = (db_field)arrays.get_value(fields_, id);
-		if (!generic.is_ok(field) || !db_field.complies(val_, field)) return null;
+		if (!generic.is_ok(field) || !db_field.complies(source_, val_, field)) return null;
 
 		String val2 = input_to_string(source_, val_, field._type, false);
 		if (!strings.is_ok(val2)) return null;
@@ -416,7 +408,7 @@ public abstract class db
 		if (val_ == null) return output;
 		
 		String type = data.check_type(data_type_);
-		if (!strings.is_ok(type) || (check_ && !db_field.complies(val_, type))) return output;
+		if (!strings.is_ok(type) || (check_ && !db_field.complies(source_, val_, type))) return output;
 
 		Object val = (type.equals(data.BOOLEAN) ? generic.boolean_to_int((boolean)val_) : val_);
 		output = strings.to_string(val);

@@ -92,7 +92,11 @@ public abstract class parent_ini_db
 			
 			if (!populate_source(id, (String)temp[0], (HashMap<String, Object[]>)temp[1], setup_vals))
 			{
-				_ini.manage_error(types.ERROR_INI_DB_SOURCE);
+				HashMap<String, String> info = new HashMap<String, String>();
+				info.put(parent_ini.get_generic_key(types.WHAT_TYPE), types.ERROR_INI_DB_SOURCE);
+				info.put("source", id);
+
+				_ini.manage_error(info);
 				
 				return false;
 			}	
@@ -147,7 +151,8 @@ public abstract class parent_ini_db
 
 	private String get_table_default(String source_, String db_) 
 	{ 
-		String name = strings.remove(new String[] { db_, types.SEPARATOR + "source" }, source_);
+		String name = strings.DEFAULT;
+		if (source_.contains(db_)) name = strings.remove(new String[] { db_, types.SEPARATOR + "source" }, source_);
 		
 		if (!strings.is_ok(name)) name = strings.remove(new String[] { types.SEPARATOR, "config", "db", "source", "default" }, source_);
 		
@@ -156,7 +161,8 @@ public abstract class parent_ini_db
 
 	private String get_col_default(String field_, String table_, String db_) 
 	{ 
-		String name = strings.remove(new String[] { db_, table_, types.SEPARATOR + "field" + types.SEPARATOR }, field_); 
+		String name = strings.DEFAULT;
+		if (field_.contains(db_)) name = strings.remove(new String[] { db_, table_, types.SEPARATOR + "field" + types.SEPARATOR }, field_); 
 		
 		if (!strings.is_ok(name)) name = strings.remove(new String[] { table_, types.SEPARATOR, "config", "db", "field", "default" }, field_);
 

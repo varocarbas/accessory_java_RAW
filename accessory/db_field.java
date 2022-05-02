@@ -15,8 +15,6 @@ public class db_field extends parent
 
 	public static final int MAX_DECIMALS = size.MAX_DECIMALS;
 	public static final int MIN_DECIMALS = size.MIN_DECIMALS;
-	public static final int MIN_SIZE = 0;
-	public static final int MAX_SIZE = _defaults.DB_FIELD_MAX_SIZE;
 
 	public static final String WRONG_TYPE = strings.DEFAULT;
 	public static final int WRONG_SIZE = numbers.DEFAULT_INT;
@@ -24,7 +22,6 @@ public class db_field extends parent
 
 	public static final String DEFAULT_TYPE = _defaults.DB_FIELD_TYPE;
 	public static final int DEFAULT_DECIMALS = _defaults.DB_FIELD_DECIMALS;
-	public static final int DEFAULT_SIZE = _defaults.DB_FIELD_SIZE;
 
 	public String _type = WRONG_TYPE;
 	public int _size = WRONG_SIZE;
@@ -53,25 +50,25 @@ public class db_field extends parent
 	public static boolean further_is_ok(String further_) { return val_is_ok_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT); }
 
 	public static String check_further(String further_) { return check_val_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT); }
-
-	public static int check_size(String type_, int size_)
+	
+	public static int check_size(String source_, String type_, int size_)
 	{
 		int size = size_;
 
 		HashMap<String, Object> info = db.get_data_type(type_);
-		if (!arrays.is_ok(info)) return DEFAULT_SIZE;
+		if (!arrays.is_ok(info)) return 0;
 
 		int max = (int)info.get(generic.MAX);
-		if (size <= MIN_SIZE || size > max) size = db.get_default_size(type_);
+		if (size <= 0|| size > max) size = (strings.is_ok(source_) ? db.get_default_size(source_, type_) : db.get_default_size(type_));
 
 		return size;
 	}
-
-	public static boolean default_is_ok(String type_, int size_, Object default_)
+	
+	public static boolean default_is_ok(String source_, String type_, int size_, Object default_)
 	{
 		if (default_ == null) return true;
 
-		int size = check_size(type_, size_);		
+		int size = check_size(source_, type_, size_);		
 		if (size <= 0) return false;
 
 		boolean is_ok = false;		
@@ -103,12 +100,12 @@ public class db_field extends parent
 		return is_ok;
 	}	
 
-	public static db_field adapt(db_field input_)
+	public static db_field adapt(String source_, db_field input_)
 	{
 		db_field output = new db_field(input_);
 		if (!output._is_ok) return output;
 
-		output._size = check_size(input_._type, input_._size);
+		output._size = check_size(source_, input_._type, input_._size);
 		output._decimals = adapt_decimals(input_._decimals);
 
 		return output;
@@ -116,16 +113,14 @@ public class db_field extends parent
 
 	public static int adapt_decimals(int decimals_) { return (numbers.is_ok(decimals_, MIN_DECIMALS, MAX_DECIMALS) ? decimals_ : DEFAULT_DECIMALS); }
 
-	public static <x> boolean complies(x val_, String data_type_) { return complies(val_, new db_field(data_type_)); }
+	public static <x> boolean complies(String source_, x val_, String data_type_) { return complies(source_, val_, new db_field(data_type_)); }
 
-	public static <x> boolean complies(x val_, db_field field_) { return (is_ok(field_) ? complies(val_, field_._type, field_._size, field_._decimals) : false); }
+	public static <x> boolean complies(String source_, x val_, db_field field_) { return (is_ok(field_) ? complies(source_, val_, field_._type, field_._size, field_._decimals) : false); }
 
-	public static <x> boolean complies(x val_, String data_type_, int size_, int decimals_)
+	public static <x> boolean complies(String source_, x val_, String data_type_, int size_, int decimals_)
 	{
-		if (val_ == null || size_ < MIN_SIZE || size_ > MAX_SIZE) return false;
-
 		String type = data.check_type(data_type_);
-		if (!strings.is_ok(type)) return false;
+		if (val_ == null || !strings.is_ok(type) || size_ <= 0 || size_ > db.get_max_size(source_, type)) return false;
 
 		double val = Math.pow(10, size_);
 		size size = new size(-1 * val, val, decimals_);
@@ -204,10 +199,10 @@ public class db_field extends parent
 	private boolean is_ok(String type_, int size_, int decimals_, Object default_, String[] further_)
 	{
 		_temp_type = data.check_type(type_);
-		_temp_size = check_size(type_, size_);
+		_temp_size = check_size(null, type_, size_);
 		_temp_decimals = adapt_decimals(decimals_);
 
-		return (default_is_ok(_temp_type, _temp_size, default_) && further_is_ok(further_));
+		return (default_is_ok(null, _temp_type, _temp_size, default_) && further_is_ok(further_));
 	}
 
 	private void populate(String type_, int size_, int decimals_, Object default_, String[] further_)

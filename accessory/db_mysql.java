@@ -91,7 +91,7 @@ class db_mysql extends parent_db
 		
 		String type = null;
 		if (data_type.equals(data.BOOLEAN)) type = TINYINT;
-		else if (data_type.equals(data.STRING)) type = VARCHAR;
+		else if (data_type.equals(data.STRING_SMALL)) type = VARCHAR;
 		else if (data_type.equals(data.STRING_BIG)) type = TEXT;
 		else if (data_type.equals(data.TIMESTAMP)) type = TIMESTAMP;
 		else if (data_type.equals(data.INT)) type = INT;
@@ -113,7 +113,7 @@ class db_mysql extends parent_db
 		if (!strings.is_ok(type)) return size;
 		
 		if (type.equals(data.BOOLEAN)) size = 1;
-		else if (type.equals(data.STRING)) size = DEFAULT_SIZE_VARCHAR;
+		else if (type.equals(data.STRING_SMALL)) size = DEFAULT_SIZE_VARCHAR;
 		else if (type.equals(data.STRING_BIG)) size = DEFAULT_SIZE_TEXT;
 		else if (type.equals(data.TIMESTAMP)) size = dates.SIZE_DATE_TIME;
 		else if (data.is_number(type)) size = DEFAULT_SIZE_NUMBER;
@@ -133,7 +133,7 @@ class db_mysql extends parent_db
 		else if (data_type.equals(data.DECIMAL)) max = 64;
 		else if (data_type.equals(data.INT)) max = numbers.MAX_DIGITS_INT;
 		else if (data_type.equals(data.LONG)) max = numbers.MAX_DIGITS_LONG;
-		else if (data_type.equals(data.STRING)) max = 255;
+		else if (data_type.equals(data.STRING_SMALL)) max = 255;
 		else if (data_type.equals(data.STRING_BIG)) max = 65535;
 		
 		return max;
@@ -337,13 +337,13 @@ class db_mysql extends parent_db
 					
 				query += item2;
 			}
-			
+		
 			if (!query.equals("")) 
 			{
 				query = "CREATE TABLE " + get_variable(table) + " (" + query + ")";	
 				is_ok = true;
 			}
-			else is_ok = false;
+			else is_ok = false;	
 		}
 		else if (type_.equals(db.TABLE_DROP))
 		{

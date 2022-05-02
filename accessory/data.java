@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 public class data extends parent
 {
-	public static final String STRING = types.DATA_STRING;
+	public static final String STRING_SMALL = types.DATA_STRING_SMALL;
 	public static final String STRING_BIG = types.DATA_STRING_BIG;
 	public static final String INT = types.DATA_INT;	
 	public static final String LONG = types.DATA_LONG;
@@ -28,6 +28,7 @@ public class data extends parent
 	public static final double MIN_LONG = numbers.MIN_LONG;
 	public static final double MIN_INT = numbers.MIN_INT;
 	public static final double MIN_STRING = 0.0;
+	public static final double MIN_STRING_SMALL = MIN_STRING;
 	public static final double MIN_STRING_BIG = MIN_STRING;
 	public static final double MIN_BOOLEAN = 2.0;
 	public static final double MIN_TIMESTAMP = 0.0;
@@ -35,14 +36,14 @@ public class data extends parent
 	public static final double MAX_DECIMAL = numbers.MAX_DECIMAL;
 	public static final double MAX_LONG = numbers.MAX_LONG;
 	public static final double MAX_INT = numbers.MAX_INT;
-	public static final double MAX_STRING = db.get_max_size(STRING);
+	public static final double MAX_STRING_SMALL = db.get_max_size(STRING_SMALL);
 	public static final double MAX_STRING_BIG = db.get_max_size(STRING_BIG);
 	public static final double MAX_BOOLEAN = 2.0;
 	public static final double MAX_TIMESTAMP = dates.SIZE_TIMESTAMP;
 	
 	//---
 	
-	public static final String DEFAULT_TYPE = STRING;
+	public static final String DEFAULT_TYPE = STRING_SMALL;
 	
 	private String _type = strings.DEFAULT;
 	private Class<?> _class = null;
@@ -136,7 +137,7 @@ public class data extends parent
 	
 	public static boolean is_number(String type_) { return is_common(type_, new String[] { DECIMAL, LONG, INT }); }
 
-	public static boolean is_string(String type_) { return is_common(type_, new String[] { STRING, STRING_BIG }); }
+	public static boolean is_string(String type_) { return is_common(type_, new String[] { STRING_SMALL, STRING_BIG }); }
 	
 	public boolean is_ok()
 	{
@@ -149,7 +150,7 @@ public class data extends parent
 	{
 		HashMap<String, Class<?>> classes = new HashMap<String, Class<?>>();
 		
-		classes.put(STRING, String.class);
+		classes.put(STRING_SMALL, String.class);
 		classes.put(STRING_BIG, String.class);
 		classes.put(INT, Integer.class);
 		classes.put(LONG, Long.class);
@@ -192,10 +193,10 @@ public class data extends parent
 		String type = check_type(type_);
 		if (!strings.is_ok(type)) return boundaries;
 
-		if (type.equals(STRING)) 
+		if (type.equals(STRING_SMALL)) 
 		{
-			boundaries._min = MIN_STRING;
-			boundaries._max = MAX_STRING;
+			boundaries._min = MIN_STRING_SMALL;
+			boundaries._max = MAX_STRING_SMALL;
 		}
 		else if (type.equals(STRING_BIG)) 
 		{

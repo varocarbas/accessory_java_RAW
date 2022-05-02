@@ -12,8 +12,9 @@ public abstract class strings
 	public static final int MAX_SIZE = 65535;
 	
 	public static final int SIZE_SMALL = 10;
+	public static final int SIZE_REGULAR = 100;
 	public static final int SIZE_BIG = 500;
-
+	
 	public static final String DEFAULT = _defaults.STRINGS;
 	public static final int DEFAULT_SIZE = _defaults.STRINGS_SIZE;
 	

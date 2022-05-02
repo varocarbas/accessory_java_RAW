@@ -12,7 +12,7 @@ public class _alls extends parent_ini_first
 	private static _alls _instance = new _alls(); 
 	
 	public _alls() { }
-	public static void populate() { _instance.populate_internal(); }
+	public static void populate() { _instance.populate_internal_common(); }
 
 	public static String[] TYPES_ALL = null;
 	public static String[] TYPES_CONFIG_BOOLEAN = null;
@@ -48,7 +48,7 @@ public class _alls extends parent_ini_first
 		TYPES_CONFIG_BOOLEAN = types.populate_all_config_boolean(boolean_add_);
 	}
 	
-	protected void populate_internal_vals() 
+	protected void populate_internal() 
 	{ 
 		populate_types(null, null);
 		

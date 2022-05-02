@@ -10,7 +10,7 @@ abstract class _defaults
 	public static final String USER = "user1";
 		
 	public static final String STRINGS = "";
-	public static final int STRINGS_SIZE = 100;
+	public static final int STRINGS_SIZE = strings.SIZE_REGULAR;
 
 	public static final boolean BOOLEAN = false;
 	public static final int BOOLEAN_INT = generic.boolean_to_int(BOOLEAN);
@@ -68,24 +68,14 @@ abstract class _defaults
 	public static final String DB_WHERE_LINK = types.DB_WHERE_LINK_AND;
 	public static final String DB_WHERE_OPERAND = types.DB_WHERE_OPERAND_EQUAL;
 	public static final boolean DB_WHERE_LITERAL = true;
-	
-	public static final double DB_SIZE_DECIMAL = db.get_default_size(types.DATA_DECIMAL);
-	public static final double DB_SIZE_LONG = db.get_default_size(types.DATA_LONG);
-	public static final double DB_SIZE_INT = db.get_default_size(types.DATA_INT);
-	public static final int DB_SIZE_STRING = db.get_default_size(types.DATA_STRING);
-	public static final int DB_SIZE_STRING_BIG = db.get_default_size(types.DATA_STRING_BIG);
-	public static final int DB_SIZE_BOOLEAN = db.get_default_size(types.DATA_BOOLEAN);
-	public static final int DB_SIZE_TIMESTAMP = db.get_default_size(types.DATA_TIMESTAMP);	
 
 	public static final int DB_SIZE_MYSQL_NUMBER = 8;
 	public static final int DB_SIZE_MYSQL_DECIMALS = NUMBERS_SIZE_DECIMALS;
 	public static final int DB_SIZE_MYSQL_VARCHAR = STRINGS_SIZE;
 	public static final int DB_SIZE_MYSQL_TEXT = strings.SIZE_BIG;
 	
-	public static final String DB_FIELD_TYPE = types.DATA_STRING;
+	public static final String DB_FIELD_TYPE = types.DATA_STRING_SMALL;
 	public static final int DB_FIELD_DECIMALS = SIZE_DECIMALS;
-	public static final int DB_FIELD_SIZE = DB_SIZE_MYSQL_VARCHAR;
-	public static final int DB_FIELD_MAX_SIZE = 500; //db.get_max_size(types.DATA_DECIMAL)
 	
 	public static void populate() { } //Method forcing this class to load when required (e.g., from the ini class).
 

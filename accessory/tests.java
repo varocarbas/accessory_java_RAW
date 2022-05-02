@@ -13,6 +13,7 @@ public abstract class tests
 	public static final String FIELD_STRING = types.CONFIG_TESTS_DB_FIELD_STRING;
 	
 	public static boolean _running = false;
+	public static boolean _report_errors = true;
 	
 	private static int _overload = 0;
 	private static Object _temp_output = null;
@@ -98,7 +99,7 @@ public abstract class tests
 		
 		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
 		
-		boolean is_ok = run_method(type, method, name, args, targets, false);
+		boolean is_ok = run_method(type, method, name, args, targets);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 
@@ -121,7 +122,7 @@ public abstract class tests
 		
 		args.add(args2);
 
-		is_ok = run_method(type, method, name, args, targets, false);
+		is_ok = run_method(type, method, name, args, targets);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 
@@ -139,7 +140,7 @@ public abstract class tests
 		
 		args2.add(wheres);
 		
-		is_ok = run_method(type, method, name, args, targets, false);
+		is_ok = run_method(type, method, name, args, targets);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 
@@ -159,7 +160,7 @@ public abstract class tests
 		
 		int target = val;
 		
-		is_ok = run_method(type, method, name, args, new Object[] { target }, false);
+		is_ok = run_method(type, method, name, args, new Object[] { target });
 		outputs.put(name, is_ok);
 
 		name = "execute_query";
@@ -194,7 +195,7 @@ public abstract class tests
 		target22.put(col, strings.to_string(target));		
 		target2.add(target22);
 		
-		is_ok = run_method(type, method, name, args, new Object[] { target2 }, false);
+		is_ok = run_method(type, method, name, args, new Object[] { target2 });
 		outputs.put(name, is_ok);
 		
 		return outputs;	
@@ -222,7 +223,7 @@ public abstract class tests
 
 		args.add(args2);
 		
-		boolean is_ok = run_method(type, method, name, args, targets, false);
+		boolean is_ok = run_method(type, method, name, args, targets);
 		if (!is_ok) return outputs;
 		
 		outputs.put(name, is_ok);
@@ -242,7 +243,7 @@ public abstract class tests
 
 		targets = new Object[] { inputs };
 		
-		is_ok = run_method(type, method, name, args, targets, false);
+		is_ok = run_method(type, method, name, args, targets);
 
 		outputs.put(name, is_ok);
 		
@@ -367,7 +368,7 @@ public abstract class tests
 			name_prev = name;
 			name = temp;
 			
-			run_outs.put(name, run_method(class_, method, name, (ArrayList<ArrayList<Object>>)arrays.get_value(args_, name), (Object[])arrays.get_value(targets_, name), true));
+			run_outs.put(name, run_method(class_, method, name, (ArrayList<ArrayList<Object>>)arrays.get_value(args_, name), (Object[])arrays.get_value(targets_, name)));
 		}
 		
 		print_start_end(name0, false, level);
@@ -375,7 +376,7 @@ public abstract class tests
 		return run_outs;
 	}
 	
-	public static boolean run_method(Class<?> class_, Method method_, String method_name_, ArrayList<ArrayList<Object>> args_, Object[] targets_, boolean errors_allowed_)
+	public static boolean run_method(Class<?> class_, Method method_, String method_name_, ArrayList<ArrayList<Object>> args_, Object[] targets_)
 	{
 		boolean is_ok = false;
 		
@@ -402,7 +403,7 @@ public abstract class tests
 			result = "ERROR";
 			
 			if (arrays.is_ok(targets)) result += " (targets not met)";
-			else if (!errors_allowed_) is_ok = true;
+			else if (!_report_errors) is_ok = true;
 			
 			if (errors._triggered) errors._triggered = false;
 		}

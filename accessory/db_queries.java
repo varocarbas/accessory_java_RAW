@@ -8,22 +8,18 @@ abstract class db_queries
 {
 	static { _ini.start(); }
 	
-	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_)
+	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_) { return select_one(source_, fields_, db_where.to_string(wheres_), db_order.to_string(orders_)); }
+	
+	public static HashMap<String, String> select_one(String source_, String[] fields_, String wheres_cols_, String orders_cols_)
 	{
-		ArrayList<HashMap<String, String>> temp = select(source_, fields_, wheres_, 1, orders_);
+		ArrayList<HashMap<String, String>> temp = select(source_, fields_, wheres_cols_, 1, orders_cols_);
 		
 		return (arrays.is_ok(temp) ? temp.get(0) : null);
 	}
+		
+	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select(source_, fields_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
 	
-	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order[] orders_)
-	{	
-		return select(source_, fields_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_));
-	}
-	
-	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, String where_cols_, int max_rows_, String order_cols_)
-	{	
-		return select_internal(source_, get_cols(source_, fields_), where_cols_, max_rows_, order_cols_);
-	}
+	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, String where_cols_, int max_rows_, String order_cols_) { return select_internal(source_, get_cols(source_, fields_), where_cols_, max_rows_, order_cols_); }
 	
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_)
 	{
@@ -62,7 +58,7 @@ abstract class db_queries
 			if (exists) drop_table_internal(source);
 		}
 		else if (exists) return;
-		
+
 		HashMap<String, db_field> cols = new HashMap<String, db_field>();
 
 		if (arrays.is_ok(fields_))
@@ -86,7 +82,9 @@ abstract class db_queries
 
 	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_) { return db.get_valid_instance(source_).execute_query(source_, query_); }
 	
-	static Object select_one_common(String source_, String field_, db_where[] wheres_, db_order[] orders_, String what_)
+	static Object select_one_common(String source_, String field_, db_where[] wheres_, db_order[] orders_, String what_) { return select_one_common(source_, field_, db_where.to_string(wheres_), db_order.to_string(orders_), what_); }
+	
+	static Object select_one_common(String source_, String field_, String wheres_cols_, String orders_cols_, String what_)
 	{
 		Object output = null;
 		
@@ -102,8 +100,8 @@ abstract class db_queries
 			
 			return output;
 		}
-		
-		HashMap<String, String> temp = select_one(source_, new String[] { field_ }, wheres_, orders_);
+
+		HashMap<String, String> temp = select_one(source_, new String[] { field_ }, wheres_cols_, orders_cols_);
 		
 		if (arrays.is_ok(temp))
 		{
@@ -118,10 +116,7 @@ abstract class db_queries
 		return output;
 	}
 	
-	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_)
-	{
-		return adapt_outputs(source_, execute_type(source_, db.SELECT, cols_, null, where_, max_rows_, order_, null));
-	}
+	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_outputs(source_, execute_type(source_, db.SELECT, cols_, null, where_, max_rows_, order_, null)); }
 	
 	private static void insert_internal(String source_, HashMap<String, String> vals_) { execute_type(source_, db.INSERT, null, vals_, null, 0, null, null); }
 	

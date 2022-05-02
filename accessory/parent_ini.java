@@ -13,6 +13,7 @@ public abstract class parent_ini
 	protected boolean _dbs_encrypted = false;
 	
 	protected abstract void populate_first_basic();
+	protected abstract void populate_first_starts();
 	protected abstract void populate_first_alls();
 	protected abstract void populate_first_defaults();
 	protected abstract void populate_config();
@@ -20,12 +21,17 @@ public abstract class parent_ini
 	
 	public static void manage_error(String type_)
 	{
-		errors._exit = true;
-		
 		HashMap<String, String> info = new HashMap<String, String>();
 		info.put(get_generic_key(types.WHAT_TYPE), (strings.is_ok(type_) ? type_ : strings.DEFAULT));
 		
-		errors.manage(info);
+		manage_error(info);
+	}
+	
+	public static void manage_error(HashMap<String, String> info_)
+	{
+		errors._exit = true;
+
+		errors.manage(info_);
 	}
 	
 	//The keys in the generic class might not have been loaded yet, so better getting them directly from types.
@@ -54,6 +60,7 @@ public abstract class parent_ini
 	{
 		if (_populated) return;
 		
+		db.start();
 		populate_first();
 		populate_config();
 		populate_db();
@@ -65,6 +72,7 @@ public abstract class parent_ini
 	private void populate_first()
 	{
 		populate_first_basic();
+		populate_first_starts();
 		populate_first_alls();
 		populate_first_defaults();
 	}
