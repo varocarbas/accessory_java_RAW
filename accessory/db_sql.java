@@ -57,7 +57,7 @@ abstract class db_sql
 	static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_)
 	{
 		db.is_ok(source_, false);
-		
+
 		ArrayList<HashMap<String, String>> output = null;
 
 		Connection conn = connect(source_);
@@ -70,11 +70,12 @@ abstract class db_sql
 			if (!return_data_) 
 			{
 				statement.executeUpdate();
+				
 				db.is_ok(source_, true);
 
 				return output;
 			}
-
+			
 			output = new ArrayList<HashMap<String, String>>();
 			try
 			{

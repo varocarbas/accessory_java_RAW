@@ -217,7 +217,7 @@ class db_mysql extends parent_db
 		
 		int size_def = get_default_size(type);
 		
-		if (type.equals(data.BOOLEAN)) output = (String)info.get(generic.MAX);
+		if (type.equals(data.BOOLEAN)) output = strings.to_string(info.get(generic.MAX));
 		else if (type.equals(data.DECIMAL))
 		{
 			int m = ((max > max2 || max < 1) ? size_def : max);
@@ -324,10 +324,10 @@ class db_mysql extends parent_db
 				else if (!arrays.value_exists(further, db_field.AUTO_INCREMENT))
 				{
 					if (generic.is_ok(field._default)) def_val = strings.to_string(field._default);
-					else if (data.is_number(type)) def_val = "0";
-					else if (data.is_string(type)) def_val = get_variable_value(" ", false);
+					else if (data.is_number(type) || type.equals(data.BOOLEAN)) def_val = "0";
+					else if (data.is_string(type)) def_val = " ";
 					
-					if (strings.is_ok(def_val)) def_val = get_value(def_val);
+					if (strings.is_ok(def_val, true)) def_val = get_variable_value(def_val, false);
 				}
 				
 				if (strings.is_ok(def_val)) item2 += " default " + def_val;

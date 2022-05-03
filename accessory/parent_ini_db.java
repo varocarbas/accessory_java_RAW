@@ -154,9 +154,7 @@ public abstract class parent_ini_db
 		String name = strings.DEFAULT;
 		if (source_.contains(db_)) name = strings.remove(new String[] { db_, types.SEPARATOR + "source" }, source_);
 		
-		if (!strings.is_ok(name)) name = strings.remove(new String[] { types.SEPARATOR, "config", "db", "source", "default" }, source_);
-		
-		return name;
+		return (strings.is_ok(name) ? name : get_table_col_loop(source_, new String[] { db_, "config", "db", "source", "default" }));
 	}
 
 	private String get_col_default(String field_, String table_, String db_) 
@@ -164,11 +162,18 @@ public abstract class parent_ini_db
 		String name = strings.DEFAULT;
 		if (field_.contains(db_)) name = strings.remove(new String[] { db_, table_, types.SEPARATOR + "field" + types.SEPARATOR }, field_); 
 		
-		if (!strings.is_ok(name)) name = strings.remove(new String[] { table_, types.SEPARATOR, "config", "db", "field", "default" }, field_);
-
-		return name;
+		return (strings.is_ok(name) ? name : get_table_col_loop(field_, new String[] { db_, table_, "config", "db", "field", "default" }));
 	}
 
+	private String get_table_col_loop(String name_, String[] items_) 
+	{ 
+		String name = name_;
+		
+		for (String item: items_) { name = strings.remove(new String[] { types.SEPARATOR + item, item + types.SEPARATOR, item }, name); }
+		
+		return name;
+	}
+	
 	private boolean populate_source(String source_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object> setup_vals_)
 	{
 		if (!setup_vals_are_ok(setup_vals_)) return false;

@@ -162,7 +162,7 @@ abstract class db_queries
 		ArrayList<HashMap<String, String>> outputs = new ArrayList<HashMap<String, String>>();
 		
 		String source = db.check_source(source_);
-		if (!strings.is_ok(source)) return outputs;
+		if (!strings.is_ok(source) || !arrays.is_ok(outputs_)) return outputs;
 		
 		for (HashMap<String, String> item: outputs_)
 		{

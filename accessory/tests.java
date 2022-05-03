@@ -14,6 +14,7 @@ public abstract class tests
 	
 	public static boolean _running = false;
 	public static boolean _report_errors = true;
+	public static boolean _test_db = true;
 	
 	private static int _overload = 0;
 	private static Object _temp_output = null;
@@ -21,7 +22,7 @@ public abstract class tests
 	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_TESTS);
 	
-	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all(boolean db_too_)
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all()
 	{	
 		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
 
@@ -32,7 +33,7 @@ public abstract class tests
 		outputs = run_accessory_main();
 		print_start_end(name0, false, level);
 		
-		if (!db_too_) return outputs;
+		if (!_test_db) return outputs;
 		
 		name0 = "accessory_db";
 		print_start_end(name0, true, level);
@@ -70,7 +71,7 @@ public abstract class tests
 		Class<?>[] classes = new Class<?>[] 
 		{ 
 			crypto.class, strings.class, arrays.class, dates.class, generic.class,
-			io.class, numbers.class, paths.class, types.class
+			io.class, numbers.class, paths.class, types.class, credentials.class
 		}; 
 		
 		for (Class<?> type: classes) { outputs.put(type.getName(), run_accessory_internal(type)); }
@@ -79,30 +80,44 @@ public abstract class tests
 	}
 
 	public static HashMap<String, Boolean> run_accessory_db()
-	{
+	{			
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
+		Object[] targets = null;
+		
+		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
+		ArrayList<Object> args2 = new ArrayList<Object>();
+
 		Class<?> type = db.class;
+
+		String name0 = type.getName();
+		print_start_end(name0, true, 1);
 		
 		String source = types.CONFIG_TESTS_DB_SOURCE;
-		db._cur_source = source;
 		
 		String name = "create_table";
 		Class<?>[] params = new Class<?>[] { String.class, boolean.class };
 		Method method = generic.get_method(type, name, params);		
+		
+		boolean is_ok = false;
+		String[] sources = new String[] { source, credentials.SOURCE };
+		
+		for (String source2: sources)
+		{
+			args = new ArrayList<ArrayList<Object>>();
+			args2 = new ArrayList<Object>();
+			args2.add(source2);
+			args2.add(false);
+			args.add(args2);
+			
+			db._cur_source = source2;
+			
+			is_ok = run_method(type, method, name, args, targets);
+			outputs.put(name, is_ok);
+			if (!is_ok) return outputs;			
+		}
 
-		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
-		ArrayList<Object> args2 = new ArrayList<Object>();
-		args2.add(source);
-		args2.add(true);
-		args.add(args2);
+		db._cur_source = source;
 		
-		Object[] targets = null;
-		
-		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
-		
-		boolean is_ok = run_method(type, method, name, args, targets);
-		outputs.put(name, is_ok);
-		if (!is_ok) return outputs;
-
 		name = "insert";
 		params = new Class<?>[] { String.class, HashMap.class };
 		method = generic.get_method(type, name, params);		
@@ -198,6 +213,8 @@ public abstract class tests
 		is_ok = run_method(type, method, name, args, new Object[] { target2 });
 		outputs.put(name, is_ok);
 		
+		print_start_end(name0, false, 1);
+		
 		return outputs;	
 	}
 
@@ -207,6 +224,9 @@ public abstract class tests
 		
 		Object[] targets = null;
 		Class<?> type = crypto.class;
+
+		String name0 = type.getName();
+		print_start_end(name0, true, 1);
 		
 		String name = "encrypt";
 		Class<?>[] params = new Class<?>[] { String[].class, String.class };
@@ -224,9 +244,9 @@ public abstract class tests
 		args.add(args2);
 		
 		boolean is_ok = run_method(type, method, name, args, targets);
+		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 		
-		outputs.put(name, is_ok);
 		String[] encrypted = (String[])_temp_output;
 		
 		name = "decrypt";
@@ -244,8 +264,9 @@ public abstract class tests
 		targets = new Object[] { inputs };
 		
 		is_ok = run_method(type, method, name, args, targets);
-
 		outputs.put(name, is_ok);
+
+		print_start_end(name0, false, 1);
 		
 		return outputs;	
 	}
@@ -310,6 +331,84 @@ public abstract class tests
 		String[] skip = new String[] { "check_multiple" };
 		
 		return run(types.class, null, null, skip);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static HashMap<String, Boolean> run_accessory_credentials_internal(Class<?> type_, HashMap<String, Boolean> outputs_, String id_, String user_, String username_, String password_, boolean is_file_)
+	{
+		HashMap<String, Boolean> outputs = (HashMap<String, Boolean>)arrays.get_new(outputs_);
+		
+		String name = "encrypt_username_password_" + (is_file_ ? "file" : "db");
+		
+		Class<?>[] params = new Class<?>[] { String.class, String.class, String.class, String.class };
+		Method method = generic.get_method(type_, name, params);	
+
+		Object[] targets = null;
+		
+		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();		
+		ArrayList<Object> args2 = new ArrayList<Object>();
+	
+		args = new ArrayList<ArrayList<Object>>();		
+		args2 = new ArrayList<Object>();
+		args2.add(id_);
+		args2.add(user_);
+		args2.add(username_);
+		args2.add(password_);
+		
+		args.add(args2);
+		
+		boolean is_ok = run_method(type_, method, name, args, targets);
+		outputs.put(name, is_ok);
+		if (!is_ok) return outputs;
+		
+		name = "get_username_password_" + (is_file_ ? "file" : "db");
+		params = new Class<?>[] { String.class, String.class, boolean.class };
+		method = generic.get_method(type_, name, params);	
+
+		args = new ArrayList<ArrayList<Object>>();		
+		args2 = new ArrayList<Object>();
+		args2.add(id_);
+		args2.add(user_);
+		args2.add(true);
+		
+		args.add(args2);
+		
+		HashMap<String, String> temp = new HashMap<String, String>();
+		temp.put(credentials.USERNAME, username_);
+		temp.put(credentials.PASSWORD, password_);
+		
+		targets = new Object[] { temp }; 
+			
+		is_ok = run_method(type_, method, name, args, targets);
+		outputs.put(name, is_ok);
+		
+		return outputs;
+	}
+	
+	public static HashMap<String, Boolean> run_accessory_credentials()
+	{
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
+
+		Class<?> type = credentials.class;
+
+		String name0 = type.getName();
+		print_start_end(name0, true, 1);
+		
+		String id = _ID;
+		String user = credentials.DEFAULT_USER;
+		String username = strings.get_random(strings.SIZE_SMALL);
+		String password = strings.get_random(strings.SIZE_SMALL);
+		
+		for (boolean is_file: new boolean[] { true, false })
+		{
+			if (!is_file && !_test_db) continue;
+			
+			outputs = run_accessory_credentials_internal(type, outputs, id, user, username, password, is_file);			
+		}
+
+		print_start_end(name0, false, 1);
+		
+		return outputs;
 	}
 	
 	public static HashMap<String, Boolean> run(Class<?> class_) { return run(class_, null, null, null); }
@@ -494,6 +593,7 @@ public abstract class tests
 		else if (class_.equals(numbers.class)) output = run_accessory_numbers();
 		else if (class_.equals(paths.class)) output = run_accessory_paths();
 		else if (class_.equals(types.class)) output = run_accessory_types();
+		else if (class_.equals(credentials.class)) output = run_accessory_credentials();
 		else if (class_.equals(db.class)) output = run_accessory_db();
 
 		return output;
@@ -511,6 +611,8 @@ public abstract class tests
 			info.put("class", (generic.is_ok(class_) ? class_.getName() : strings.DEFAULT));
 
 			errors.manage(info);
+			
+			is_ok = false;
 		}	
 		
 		_running = is_ok;

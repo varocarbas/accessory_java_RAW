@@ -30,13 +30,18 @@ public abstract class credentials
 	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_CREDENTIALS);
 	
+	public static HashMap<String, String> get_username_password_file(String id_, String user_, boolean encrypted_) { return get_username_password(id_, user_, encrypted_, WHERE_FILE); }
+	
+	public static HashMap<String, String> get_username_password_db(String id_, String user_, boolean encrypted_) { return get_username_password(id_, user_, encrypted_, WHERE_DB); }
+	
 	public static HashMap<String, String> get_username_password(String id_, String user_, boolean encrypted_, String where_)
 	{
+		String where = check_where(where_);
+		if (!strings.is_ok(where)) return null;
+		
 		HashMap<String, String> id_user = get_id_user(id_, user_);
 		String id = id_user.get(ID);
 		String user = id_user.get(USER);
-
-		String where = check_where(where_);
 		
 		String username = get_username_password(id, user, encrypted_, where, true);
 		String password = get_username_password(id, user, encrypted_, where, false);
@@ -62,6 +67,19 @@ public abstract class credentials
 
 		return credentials;
 	}
+	
+	public static boolean encrypt_username_password(String id_, String user_, String username_, String password_, String where_)
+	{
+		boolean output = false;
+		
+		String where = check_where(where_);
+		if (!strings.is_ok(where)) return output;
+		
+		if (where_.equals(WHERE_FILE)) output = encrypt_username_password_file(id_, user_, username_, password_);
+		else if (where_.equals(WHERE_DB)) encrypt_username_password_db(id_, user_, username_, password_);
+		
+		return output;
+	}
 		
 	public static boolean encrypt_username_password_file(String id_, String user_)
 	{
@@ -76,9 +94,11 @@ public abstract class credentials
 
 	public static boolean encrypt_username_password_file(String id_, String user_, String username_, String password_) { return encrypt_username_password_internal(id_, user_, username_, password_, WHERE_FILE); }
 
+	public static boolean encrypt_username_password_db(String id_, String user_, String username_, String password_) { return encrypt_username_password_internal(id_, user_, username_, password_, WHERE_DB); }
+
 	private static boolean encrypt_username_password_internal(String id_, String user_, String username_, String password_, String where_)
 	{
-		if (!strings.is_ok(username_) || password_ == null) return false;
+		if (!strings.is_ok(username_) || password_ == null || (where_.equals(WHERE_DB) && !db.table_exists(SOURCE))) return false;
 
 		HashMap<String, String> id_user = get_id_user(id_, user_);
 		String id = id_user.get(ID);
@@ -140,11 +160,11 @@ public abstract class credentials
 		return outputs;
 	}
 		
-	private static boolean encrypt_username_password_db_store(String id_, String user_, HashMap<String, String> outputs_)
+	private static boolean encrypt_username_password_db_store(String id_, String user_, HashMap<String, String> vals_)
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>();
-		vals.put(FIELD_USERNAME, outputs_.get(USERNAME));
-		vals.put(FIELD_PASSWORD, outputs_.get(PASSWORD));
+		vals.put(FIELD_USERNAME, vals_.get(USERNAME));
+		vals.put(FIELD_PASSWORD, vals_.get(PASSWORD));
 		vals.put(FIELD_ID, id_);
 		vals.put(FIELD_ID_ENC, credentials.get_encryption_id(id_, user_));
 		vals.put(FIELD_USER, user_);
@@ -173,19 +193,22 @@ public abstract class credentials
 	
 	private static String get_username_password(String id_, String user_, boolean encrypted_, String where_, boolean is_username_)
 	{
-		String output = strings.DEFAULT;
+		String output = null;
 
-		if (where_.equals(WHERE_DB)) output = get_username_password_db(id_, user_, is_username_);
-		else if (where_.equals(WHERE_FILE)) output = get_username_password_file(id_, user_, encrypted_, is_username_);
+		if (where_.equals(WHERE_DB)) 
+		{
+			if (db.table_exists(SOURCE)) output = get_username_password_db_internal(id_, user_, is_username_);
+		}
+		else if (where_.equals(WHERE_FILE)) output = get_username_password_file_internal(id_, user_, encrypted_, is_username_);
 
 		return output;
 	}
 	
-	private static String get_username_password_db(String id_, String user_, boolean is_username_) { return db.select_one_string(SOURCE, (is_username_ ? FIELD_USERNAME : FIELD_PASSWORD), get_db_where(id_, user_), null); }
+	private static String get_username_password_db_internal(String id_, String user_, boolean is_username_) { return db.select_one_string(SOURCE, (is_username_ ? FIELD_USERNAME : FIELD_PASSWORD), get_db_where(id_, user_), null); }
 	
 	private static db_where[] get_db_where(String id_, String user_) { return new db_where[] { new db_where(SOURCE, FIELD_ID, id_), new db_where(SOURCE, FIELD_USER, user_) }; }
 	
-	private static String get_username_password_file(String id_, String user_, boolean encrypted_, boolean is_username_)
+	private static String get_username_password_file_internal(String id_, String user_, boolean encrypted_, boolean is_username_)
 	{   
 		String path = get_path_username_password(id_, user_, encrypted_, is_username_);
 
