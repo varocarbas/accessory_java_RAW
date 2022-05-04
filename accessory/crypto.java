@@ -347,14 +347,14 @@ public class crypto extends parent
 
 	private boolean is_ok_enc()
 	{
-		_is_ok = false; //To be set to true after a successful encryption.
+		_is_ok = false;
 
 		return is_ok_common(_in, _path_key, _path_iv, _algo_key, _algo_cipher, false);
 	}
 
 	private boolean is_ok_dec()
 	{
-		_is_ok = false; //To be set to true after a successful decryption.
+		_is_ok = false;
 
 		if (!is_ok_common(_in, _path_key, _path_iv, _algo_key, _algo_cipher, false)) return false;
 

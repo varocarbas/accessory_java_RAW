@@ -5,9 +5,7 @@ import java.util.Map.Entry;
 
 public abstract class config 
 {	
-	//--- Initialiased via config_ini.load().
 	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
-	//---
 
 	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_CONFIG);

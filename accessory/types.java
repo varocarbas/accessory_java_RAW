@@ -101,6 +101,7 @@ public abstract class types
 	public static final String CONFIG_TESTS_DB_FIELD_INT = "config_tests_db_field_int";
 	public static final String CONFIG_TESTS_DB_FIELD_STRING = "config_tests_db_field_string";
 	public static final String CONFIG_TESTS_DB_FIELD_DECIMAL = "config_tests_db_field_decimal";
+	public static final String CONFIG_TESTS_DB_FIELD_BOOLEAN = "config_tests_db_field_boolean";
 	
 	public static final String CONFIG_CRYPTO = "config_crypto";
 	public static final String CONFIG_CRYPTO_FILE = "config_crypto_file";
@@ -431,6 +432,7 @@ public abstract class types
 			CONFIG_TESTS_DB_SOURCE, 
 			CONFIG_TESTS_DB_FIELD,
 			CONFIG_TESTS_DB_FIELD_INT, CONFIG_TESTS_DB_FIELD_STRING, CONFIG_TESTS_DB_FIELD_DECIMAL,
+			CONFIG_TESTS_DB_FIELD_BOOLEAN,
 			
 			DB,
 			DB_WHERE,

@@ -61,7 +61,9 @@ public abstract class db
 	public static final String _ID = types.get_id(types.ID_DB);
 	
 	static void start() { } //Method forcing this class to load when required (e.g., from the ini class).
-	
+
+	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  { return credentials.encrypt_username_password_file(get_valid_type(source_), user_, username_, password_);  }
+
 	public static boolean update_db(String db_, String db_name_) 
 	{ 
 		if (!types.is_config_db(db_) || !strings.is_ok(db_name_)) return manage_error("Wrong DB");
@@ -235,7 +237,12 @@ public abstract class db
 		if (!strings.is_ok(_cur_source) || !_sources.containsKey(_cur_source)) _cur_source = strings.DEFAULT;
 		
 		String source = source_;
-		if (!strings.is_ok(source) || !_sources.containsKey(source)) source = strings.DEFAULT;
+		if (!strings.is_ok(source)) source = strings.DEFAULT;
+		else if (!_sources.containsKey(source))
+		{
+			String temp = strings.normalise(source);
+			source = (_sources.containsKey(temp) ? temp : strings.DEFAULT);
+		}
 		if (!strings.is_ok(source) && strings.is_ok(_cur_source)) source = _cur_source;
 		
 		return source;
@@ -243,7 +250,30 @@ public abstract class db
 
 	public static boolean sources_are_equal(String source1_, String source2_) { return generic.are_equal(check_source(source1_), check_source(source2_)); }
 	
-	public static boolean field_is_ok(String source_, String field_) { return strings.is_ok(get_col(source_, field_)); }
+	public static boolean field_is_ok(String source_, String field_) { return (get_field(source_, field_) != null); }
+	
+	@SuppressWarnings("unchecked")
+	public static db_field get_field(String source_, String field_) { return (db_field)arrays.get_value((HashMap<String, db_field>)arrays.get_value(_sources, check_source(source_)), field_); }
+	
+	@SuppressWarnings("unchecked")
+	public static String check_field(String source_, String field_)
+	{
+		String output = strings.DEFAULT;
+		if (!strings.is_ok(field_)) return output; 
+		
+		HashMap<String, db_field> fields = (HashMap<String, db_field>)arrays.get_value(_sources, check_source(source_));
+		if (!arrays.is_ok(fields)) return output;
+		
+		for (Entry<String, db_field> item: fields.entrySet())
+		{
+			String field21 = item.getKey();
+			String field22 = strings.normalise(field21);
+			
+			if (field_.equals(field21) || field_.equals(field22)) return (field_.equals(field21) ? field21 : field22);
+		}
+		
+		return output;
+	}
 	
 	public static boolean add_source_ini(String source_, HashMap<String, db_field> fields_, HashMap<String, Object> setup_vals_)
 	{
@@ -308,10 +338,22 @@ public abstract class db
 
 	public static String get_setup(String source_) { return (String)get_setup_common(get_valid_source(source_), types.CONFIG_DB_SETUP); }
 
+	public static String get_valid_type(String source_) 
+	{ 
+		String output = get_type(get_valid_source(source_));
+		
+		return (strings.is_ok(output) ? output : _defaults.DB_TYPE);
+	}
+	
 	public static String get_current_type() { return get_type(get_current_source()); }
 
-	public static String get_type(String source_) { return (String)get_setup_common(get_valid_source(source_), types.CONFIG_DB_SETUP_TYPE); }
-	
+	public static String get_type(String source_) 
+	{ 
+		String source = check_source(source_);
+		
+		return (strings.is_ok(source) ? (String)get_setup_common(source, types.CONFIG_DB_SETUP_TYPE) : strings.DEFAULT); 
+	}
+		
 	public static HashMap<String, db_field> get_source_fields(String source_)
 	{
 		String source = check_source(source_);
@@ -320,8 +362,6 @@ public abstract class db
 	}
 	
 	public static String get_col(String source_, String field_) { return config.get(get_db(source_), field_); }
-
-	public static String get_field(String source_, String field_) { return config.get(get_db(source_), field_); }
 	
 	public static String get_table(String source_)
 	{
@@ -379,25 +419,25 @@ public abstract class db
 
 	public static <x> HashMap<String, String> adapt_input(String source_, HashMap<String, String> sofar_, String field_, x val_, HashMap<String, db_field> fields_)
 	{
-		HashMap<String, String> output = new HashMap<String, String>(sofar_);
+		String val2 = adapt_input(source_, (db_field)arrays.get_value(fields_, field_), val_);
+		if (val2 == null) return null;
 
-		String source = check_source(source_);
-		
-		String id = field_;
-		if (!fields_.containsKey(id)) return null;
-	
-		db_field field = (db_field)arrays.get_value(fields_, id);
-		if (!generic.is_ok(field) || !db_field.complies(source_, val_, field)) return null;
-
-		String val2 = input_to_string(source_, val_, field._type, false);
-		if (!strings.is_ok(val2)) return null;
-
-		String col = get_col(source, id);
+		String col = get_col(source_, field_);
 		if (!strings.is_ok(col)) return null;
 
+		HashMap<String, String> output = new HashMap<String, String>(sofar_);
 		output.put(col, val2);
 		
 		return output;
+	}
+
+	public static <x> String adapt_input(String source_, String field_, x val_) { return adapt_input(source_, get_field(source_, field_), val_); }
+	
+	public static <x> String adapt_input(String source_, db_field field_, x val_) 
+	{
+		String source = check_source(source_);
+		
+		return (strings.is_ok(source) ? input_to_string(source, val_, field_._type, false) : null); 
 	}
 	
 	public static <x> String input_to_string(x val_, String data_type_) { return input_to_string(get_current_source(), val_, data_type_, true); }
@@ -423,13 +463,9 @@ public abstract class db
 	
 	public static String check_type(String input_) { return types.check_type(input_, types.get_subtypes(types.DB_QUERY), types.ACTION_ADD, types.DB_QUERY); }
 
-	public static String get_current_id_encrypted(String user_) { return get_id_encrypted(get_current_source(), user_); }
-
-	public static String get_id_encrypted(String source_, String user_) { return credentials.get_encryption_id(get_id_encrypted_type(source_), user_); }
+	public static String get_current_encryption_id() { return get_encryption_id(get_current_source()); }
 	
-	public static String get_current_id_encrypted_type() { return get_id_encrypted_type(get_current_source()); }
-	
-	public static String get_id_encrypted_type(String source_) { return types.remove_type(get_type(source_), TYPE); }
+	public static String get_encryption_id(String source_) { return types.remove_type(get_type(source_), TYPE); }
 
 	public static String get_current_host() { return get_host(get_current_setup()); }
 
@@ -524,7 +560,7 @@ public abstract class db
 		boolean encrypted = strings.to_boolean(config.get(setup, CREDENTIALS_ENCRYPTED));
 
 		if (strings.is_ok(username) && password != null) output = credentials.get_username_password(username, password);
-		else if (strings.is_ok(user)) output = credentials.get_username_password(get_id_encrypted_type(source_), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
+		else if (strings.is_ok(user)) output = credentials.get_username_password(get_encryption_id(source_), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
 		
 		return output;
 	}

@@ -26,14 +26,15 @@ public class db_where extends parent
 	public static final String DEFAULT_LINK = _defaults.DB_WHERE_LINK;
 	public static final boolean DEFAULT_LITERAL = _defaults.DB_WHERE_LITERAL;
 	
-	public String _source = strings.DEFAULT;
-	public String _key = strings.DEFAULT;
-	public String _operand = DEFAULT_OPERAND;
-	public Object _value = null;
-	public String _link = DEFAULT_LINK;
-	public boolean _is_literal = _defaults.DB_WHERE_LITERAL; //_value as a literal (e.g., 5 -> '5') or something else (e.g., col + 1 -> col + 1).
+	private String _source = strings.DEFAULT;
+	private String _key = strings.DEFAULT;
+	private String _operand = DEFAULT_OPERAND;
+	private Object _value = null;
+	private String _link = DEFAULT_LINK;
+	private boolean _is_literal = _defaults.DB_WHERE_LITERAL; //_value as a literal (e.g., 5 -> '5') or something else (e.g., col + 1 -> col + 1).
 	
 	private String _temp_source = strings.DEFAULT;
+	private String _temp_key = strings.DEFAULT;
 	private String _temp_operand = strings.DEFAULT;
 	private String _temp_link = strings.DEFAULT;
 
@@ -50,12 +51,15 @@ public class db_where extends parent
 		for (db_where where: wheres_)
 		{
 			if (!is_ok(where)) continue;
-			tot++;
+			
+			String temp = where.toString();
+			if (!strings.is_ok(temp)) continue;
 			
 			if (!output.equals("")) output += " " + link_to_string(last_link) + " ";
-			output += where.toString();
+			output += temp;
 			
 			last_link = (link_is_ok(where._link) ? where._link : DEFAULT_LINK);
+			tot++;
 		}
 		
 		if (tot > 1) output = "(" + output + ")";
@@ -87,14 +91,17 @@ public class db_where extends parent
 	
 	public String toString()
 	{
-		if (!is_ok(_source, _key, _operand, _value, _link)) return strings.DEFAULT;
+		String output = strings.DEFAULT;
+		if (!is_ok(_source, _key, _operand, _value, _link)) return output;
 		
 		String operand = operand_to_string(_temp_operand);
 		String key = db.get_variable(_temp_source, db.get_col(_temp_source, _key));
-		String value = strings.to_string(_value);
+		String value = db.adapt_input(_temp_source, _temp_key, _value);
+		if (value == null) return output;
+		
 		value = (_is_literal ? db.get_value(_temp_source, value) : value);
 		
-		String output = "(" + key + operand + value + ")";
+		output = "(" + key + operand + value + ")";
 				
 		return output;
 	}
@@ -106,7 +113,7 @@ public class db_where extends parent
 		return 
 		(
 			db.sources_are_equal(_temp_source, where2_._source) &&
-			generic.are_equal(_key, where2_._key) &&
+			generic.are_equal(_temp_key, where2_._key) &&
 			generic.are_equal(_temp_operand, where2_._operand) &&
 			generic.are_equal(_value, where2_._value) &&
 			generic.are_equal(_temp_link, where2_._link) &&
@@ -154,7 +161,7 @@ public class db_where extends parent
 		instantiate_common();
 		if (input_ == null || !input_.is_ok()) return;
 
-		populate(input_._temp_source, input_._key, input_._temp_operand, input_._value, input_._temp_link, input_._is_literal);
+		populate(input_._temp_source, input_._temp_key, input_._temp_operand, input_._value, input_._temp_link, input_._is_literal);
 	}
 	
 	private void instantiate(String source_, String key_, String operand_, Object value_, boolean is_literal_, String link_)
@@ -162,16 +169,17 @@ public class db_where extends parent
 		instantiate_common();
 		if (!is_ok(source_, key_, operand_, value_, link_)) return;
 
-		populate(_temp_source, key_, _temp_operand, value_, _temp_link, is_literal_);
+		populate(_temp_source, _temp_key, _temp_operand, value_, _temp_link, is_literal_);
 	}
 	
 	private boolean is_ok(String source_, String key_, String operand_, Object value_, String link_)
 	{
 		_temp_source = db.check_source(source_);
+		_temp_key = db.check_field(_temp_source, key_);
 		_temp_operand = check_operand(operand_);
 		_temp_link = check_link(link_);
 		
-		return (strings.is_ok(_temp_source) && db.field_is_ok(_temp_source, key_) && strings.is_ok(_temp_operand) && generic.is_ok(value_));
+		return (strings.is_ok(_temp_source) && db.field_is_ok(_temp_source, _temp_key) && strings.is_ok(_temp_operand) && generic.is_ok(value_));
 	}
 		
 	private void populate(String source_, String key_, String operand_, Object value_, String link_, boolean is_literal_)

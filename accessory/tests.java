@@ -11,6 +11,7 @@ public abstract class tests
 	public static final String FIELD_DECIMAL = types.CONFIG_TESTS_DB_FIELD_DECIMAL;
 	public static final String FIELD_INT = types.CONFIG_TESTS_DB_FIELD_INT;
 	public static final String FIELD_STRING = types.CONFIG_TESTS_DB_FIELD_STRING;
+	public static final String FIELD_BOOLEAN = types.CONFIG_TESTS_DB_FIELD_BOOLEAN;
 	
 	public static boolean _running = false;
 	public static boolean _report_errors = true;
@@ -26,47 +27,66 @@ public abstract class tests
 	{	
 		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
 
-		int level = 0;		
-		String name0 = "accessory_main";
+		outputs = run_accessory_db(outputs);
+		outputs = run_accessory_main(outputs);
+		
+		check_wrongs(outputs);
+		
+		return outputs;
+	}
 
-		print_start_end(name0, true, level);		
-		outputs = run_accessory_main();
-		print_start_end(name0, false, level);
-		
-		if (!_test_db) return outputs;
-		
-		name0 = "accessory_db";
-		print_start_end(name0, true, level);
-		outputs.put(name0, run_accessory_internal(db.class));
-		print_start_end(name0, false, level);
-		
+	private static void check_wrongs(HashMap<String, HashMap<String, Boolean>> outputs_)
+	{	
 		ArrayList<String> wrongs = new ArrayList<String>();
 		
-		for (Entry<String, HashMap<String, Boolean>> output: outputs.entrySet())
+		if (arrays.is_ok(outputs_))
 		{
-			HashMap<String, Boolean> vals = output.getValue();
-			if (!arrays.is_ok(vals)) continue;
-			
-			for (Entry<String, Boolean> val: vals.entrySet())
+			for (Entry<String, HashMap<String, Boolean>> output: outputs_.entrySet())
 			{
-				String name = val.getKey();
-				if (!strings.is_ok(name)) continue;
+				HashMap<String, Boolean> vals = output.getValue();
+				if (!arrays.is_ok(vals)) continue;
 				
-				if (!val.getValue()) wrongs.add(name);
-			}
+				for (Entry<String, Boolean> val: vals.entrySet())
+				{
+					String name = val.getKey();
+					if (!strings.is_ok(name)) continue;
+					
+					if (!val.getValue()) wrongs.add(name);
+				}
+			}			
 		}
 		
 		int tot = wrongs.size();
 		
 		System.out.println("TOTAL ERRORS: " + tot);
-		if (tot > 0) System.out.println(strings.to_string(wrongs));
+		if (tot > 0) System.out.println(strings.to_string(wrongs));		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_db(HashMap<String, HashMap<String, Boolean>> outputs_)
+	{
+		HashMap<String, HashMap<String, Boolean>> outputs = (HashMap<String, HashMap<String, Boolean>>)arrays.get_new(outputs_);
+		if (!_test_db) return outputs;
+		
+		String name = "accessory_db";
+		int level = 0;
+		
+		print_start_end(name, true, level);
+		outputs.put(name, run_accessory_internal(db.class));
+		print_start_end(name, false, level);
 		
 		return outputs;
 	}
 	
-	public static HashMap<String, HashMap<String, Boolean>> run_accessory_main()
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, HashMap<String, Boolean>> run_accessory_main(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
+		HashMap<String, HashMap<String, Boolean>> outputs = (HashMap<String, HashMap<String, Boolean>>)arrays.get_new(outputs_);
+
+		String name = "accessory_main";
+		int level = 0;
+		
+		print_start_end(name, true, level);		
 		
 		Class<?>[] classes = new Class<?>[] 
 		{ 
@@ -75,6 +95,8 @@ public abstract class tests
 		}; 
 		
 		for (Class<?> type: classes) { outputs.put(type.getName(), run_accessory_internal(type)); }
+
+		print_start_end(name, false, level);
 		
 		return outputs;
 	}
@@ -106,7 +128,7 @@ public abstract class tests
 			args = new ArrayList<ArrayList<Object>>();
 			args2 = new ArrayList<Object>();
 			args2.add(source2);
-			args2.add(false);
+			args2.add(true);
 			args.add(args2);
 			
 			db._cur_source = source2;
@@ -133,8 +155,9 @@ public abstract class tests
 		vals.put(FIELD_STRING, strings.get_random(strings.SIZE_SMALL));
 		double max2 = 123456789.123;
 		vals.put(FIELD_DECIMAL, numbers.get_random_decimal(-1 * max2, max2));		
-		args2.add(vals);
+		vals.put(FIELD_BOOLEAN, generic.get_random_boolean());
 		
+		args2.add(vals);
 		args.add(args2);
 
 		is_ok = run_method(type, method, name, args, targets);
@@ -333,58 +356,6 @@ public abstract class tests
 		return run(types.class, null, null, skip);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private static HashMap<String, Boolean> run_accessory_credentials_internal(Class<?> type_, HashMap<String, Boolean> outputs_, String id_, String user_, String username_, String password_, boolean is_file_)
-	{
-		HashMap<String, Boolean> outputs = (HashMap<String, Boolean>)arrays.get_new(outputs_);
-		
-		String name = "encrypt_username_password_" + (is_file_ ? "file" : "db");
-		
-		Class<?>[] params = new Class<?>[] { String.class, String.class, String.class, String.class };
-		Method method = generic.get_method(type_, name, params);	
-
-		Object[] targets = null;
-		
-		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();		
-		ArrayList<Object> args2 = new ArrayList<Object>();
-	
-		args = new ArrayList<ArrayList<Object>>();		
-		args2 = new ArrayList<Object>();
-		args2.add(id_);
-		args2.add(user_);
-		args2.add(username_);
-		args2.add(password_);
-		
-		args.add(args2);
-		
-		boolean is_ok = run_method(type_, method, name, args, targets);
-		outputs.put(name, is_ok);
-		if (!is_ok) return outputs;
-		
-		name = "get_username_password_" + (is_file_ ? "file" : "db");
-		params = new Class<?>[] { String.class, String.class, boolean.class };
-		method = generic.get_method(type_, name, params);	
-
-		args = new ArrayList<ArrayList<Object>>();		
-		args2 = new ArrayList<Object>();
-		args2.add(id_);
-		args2.add(user_);
-		args2.add(true);
-		
-		args.add(args2);
-		
-		HashMap<String, String> temp = new HashMap<String, String>();
-		temp.put(credentials.USERNAME, username_);
-		temp.put(credentials.PASSWORD, password_);
-		
-		targets = new Object[] { temp }; 
-			
-		is_ok = run_method(type_, method, name, args, targets);
-		outputs.put(name, is_ok);
-		
-		return outputs;
-	}
-	
 	public static HashMap<String, Boolean> run_accessory_credentials()
 	{
 		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
@@ -555,6 +526,58 @@ public abstract class tests
 		else output = generic.get_random(class_);
 
 		return output;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static HashMap<String, Boolean> run_accessory_credentials_internal(Class<?> type_, HashMap<String, Boolean> outputs_, String id_, String user_, String username_, String password_, boolean is_file_)
+	{
+		HashMap<String, Boolean> outputs = (HashMap<String, Boolean>)arrays.get_new(outputs_);
+		
+		String name = "encrypt_username_password_" + (is_file_ ? "file" : "db");
+		
+		Class<?>[] params = new Class<?>[] { String.class, String.class, String.class, String.class };
+		Method method = generic.get_method(type_, name, params);	
+
+		Object[] targets = null;
+		
+		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();		
+		ArrayList<Object> args2 = new ArrayList<Object>();
+	
+		args = new ArrayList<ArrayList<Object>>();		
+		args2 = new ArrayList<Object>();
+		args2.add(id_);
+		args2.add(user_);
+		args2.add(username_);
+		args2.add(password_);
+		
+		args.add(args2);
+		
+		boolean is_ok = run_method(type_, method, name, args, targets);
+		outputs.put(name, is_ok);
+		if (!is_ok) return outputs;
+		
+		name = "get_username_password_" + (is_file_ ? "file" : "db");
+		params = new Class<?>[] { String.class, String.class, boolean.class };
+		method = generic.get_method(type_, name, params);	
+
+		args = new ArrayList<ArrayList<Object>>();		
+		args2 = new ArrayList<Object>();
+		args2.add(id_);
+		args2.add(user_);
+		args2.add(true);
+		
+		args.add(args2);
+		
+		HashMap<String, String> temp = new HashMap<String, String>();
+		temp.put(credentials.USERNAME, username_);
+		temp.put(credentials.PASSWORD, password_);
+		
+		targets = new Object[] { temp }; 
+			
+		is_ok = run_method(type_, method, name, args, targets);
+		outputs.put(name, is_ok);
+		
+		return outputs;
 	}
 
 	private static void print_start_end(String name_, boolean is_start_, int level_)

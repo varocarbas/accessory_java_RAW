@@ -36,7 +36,8 @@ class _ini_db extends parent_ini_db
 		info.put(types.CONFIG_TESTS_DB_FIELD_INT, new db_field(types.DATA_INT));
 		info.put(types.CONFIG_TESTS_DB_FIELD_STRING, new db_field(types.DATA_STRING_SMALL));
 		info.put(types.CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(types.DATA_DECIMAL, 15, 3));
-
+		info.put(types.CONFIG_TESTS_DB_FIELD_BOOLEAN, new db_field(types.DATA_BOOLEAN));
+		
 		return add_source(source, db_, info, default_fields, sources_);		
 	}
 	
