@@ -28,9 +28,9 @@ public abstract class logs
 		String id = id_;
 		if (!strings.is_ok(id)) id = config.get_basic(types.CONFIG_BASIC_NAME);
 		
-		if (tests._running || out_is_ok(SCREEN)) update_screen(message_);
+		if (tests.is_running() || out_is_ok(SCREEN)) update_screen(message_);
 		
-		if (tests._running)
+		if (tests.is_running())
 		{	
 			System.out.println("Only screen logs while tests are running.");
 			

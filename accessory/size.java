@@ -16,9 +16,9 @@ public class size extends parent
 	public static final double DEFAULT_MAX = _defaults.SIZE_MAX;
 	public static final int DEFAULT_DECIMALS = _defaults.SIZE_DECIMALS;
 
-	public double _min = WRONG_MIN;
-	public double _max = WRONG_MAX;
-	public int _decimals = WRONG_DECIMALS;
+	private double _min = WRONG_MIN;
+	private double _max = WRONG_MAX;
+	private int _decimals = WRONG_DECIMALS;
 
 	public static boolean are_equal(size size1_, size size2_) { return are_equal_common(size1_, size2_); }
 	
@@ -35,16 +35,17 @@ public class size extends parent
 
 	public size(double min_, double max_, int decimals_) { instantiate(min_, max_, decimals_); }
 
+	public double get_min() { return _min; }
+	
+	public double get_max() { return _max; }
+	
+	public int get_decimals() { return _decimals; }
+	
 	public String toString() { return toString(true); }
 
 	public boolean equals(size size2_) { return (!is_ok(size2_) ? false : (_min == size2_._min && _max == size2_._max && _decimals == size2_._decimals)); }
 
-	public boolean is_ok()
-	{
-		_is_ok = is_ok(_min, _max, _decimals);
-
-		return _is_ok;
-	}
+	public boolean is_ok() { return is_ok(_min, _max, _decimals); }
 
 	public String toString(boolean is_main_)
 	{
@@ -77,8 +78,6 @@ public class size extends parent
 
 	private void populate(double min_, double max_, int decimals_)
 	{
-		_is_ok = true;
-
 		_min = min_;
 		_max = max_;
 		_decimals = decimals_;

@@ -4,6 +4,9 @@ import java.util.HashMap;
 
 public abstract class parent_ini 
 {
+	public static final String ERROR_DBS = types.ERROR_INI_DB_DBS;
+	public static final String ERROR_SOURCE = types.ERROR_INI_DB_SOURCE;
+	
 	protected boolean _populated = false;
 	
 	protected String _dbs_user = null;

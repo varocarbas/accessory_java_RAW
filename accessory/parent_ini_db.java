@@ -93,7 +93,7 @@ public abstract class parent_ini_db
 			if (!populate_source(id, (String)temp[0], (HashMap<String, Object[]>)temp[1], setup_vals))
 			{
 				HashMap<String, String> info = new HashMap<String, String>();
-				info.put(parent_ini.get_generic_key(types.WHAT_TYPE), types.ERROR_INI_DB_SOURCE);
+				info.put(parent_ini.get_generic_key(types.WHAT_TYPE), parent_ini.ERROR_SOURCE);
 				info.put("source", id);
 
 				_ini.manage_error(info);
@@ -115,7 +115,7 @@ public abstract class parent_ini_db
 	private void populate_all_internal(HashMap<String, Object> dbs_setup_) 
 	{	
 		String error = strings.DEFAULT;
-		if (!populate_all_dbs(dbs_setup_)) error = types.ERROR_INI_DB_DBS;
+		if (!populate_all_dbs(dbs_setup_)) error = parent_ini.ERROR_DBS;
 		
 		_populated = true;
 		if (error.equals(strings.DEFAULT)) return;

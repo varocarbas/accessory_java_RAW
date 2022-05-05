@@ -4,15 +4,25 @@ import java.util.HashMap;
 
 public abstract class errors 
 {		
-	public static boolean _triggered = false; 
 	public static boolean _exit = false;
 	
 	public static final String DEFAULT_TYPE = _defaults.ERRORS_TYPE;
 	public static final String DEFAULT_MESSAGE = _defaults.ERRORS_MESSAGE;
 	public static final String DEFAULT_SEPARATOR = _defaults.ERRORS_SEPARATOR;
+
+	private static boolean _triggered = false; 
 	
 	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_ERRORS);
+	
+	public static boolean triggered() 
+	{
+		boolean output = _triggered;
+		
+		_triggered = false; 
+		
+		return output;
+	}
 	
 	public static void manage(HashMap<String, String> info_)
 	{
@@ -21,7 +31,7 @@ public abstract class errors
 
 		_triggered = true;
 		
-		if (!tests._running && _exit) System.exit(1); 
+		if (!tests.is_running() && _exit) System.exit(1); 
 	}
 
 	public static void manage(String type_, Exception e_, String[] further_)
@@ -41,7 +51,7 @@ public abstract class errors
 
 		_triggered = true;
 		
-		if (!tests._running && _exit) System.exit(1);
+		if (!tests.is_running() && _exit) System.exit(1);
 	}
 
 	public static void manage_io(String type_, String path_, Exception e_)

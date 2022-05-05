@@ -8,19 +8,7 @@ public abstract class parent
 	public abstract String toString();
 	public abstract boolean is_ok();
 	
-	public boolean _is_ok = false;
-	
-	public static boolean is_ok(parent input_)
-	{
-		boolean output = false;
-		if (input_ == null) return output;
-		
-		output = input_.is_ok();
-		
-		input_._is_ok = output;
-		
-		return output;
-	}
+	public static boolean is_ok(parent input_) { return (input_ == null ? false : input_.is_ok()); }
 	
 	public static String to_string(parent input_) { return (input_ != null ? input_.toString() : strings.DEFAULT); }
 	
@@ -43,7 +31,7 @@ public abstract class parent
 		return ((strings.is_ok(val) && arrays.key_exists(types_, val)) ? to_string_internal(types_.get(val)[0]) : strings.DEFAULT);
 	}
 
-	protected void instantiate_common() { _is_ok = false; }
+	protected void instantiate_common() { }
 
 	private static String check_internal(String output_, String default_)
 	{

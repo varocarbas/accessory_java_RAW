@@ -133,7 +133,7 @@ public abstract class credentials
 			String path = item.getValue();
 			
 			io.line_to_file(path, outputs_.get(key), false);
-			if (!io._is_ok) return false;
+			if (!io.is_ok()) return false;
 		}
 		
 		return true;
@@ -187,7 +187,7 @@ public abstract class credentials
 
 		String val = io.file_to_string(path, true);
 
-		return (io._is_ok ? val : strings.DEFAULT);
+		return (io.is_ok() ? val : strings.DEFAULT);
 	}
 
 	private static String get_path_username_password(String id_, String user_, boolean is_encrypted_, boolean is_username_)

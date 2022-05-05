@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 
 public abstract class generic 
 {	
-	static { _ini.start(); }	//_alls.GENERIC_KEYS needs to be populated first.
+	static { _ini.start(); } //_alls.GENERIC_KEYS needs to be populated first.
 	public static final String _ID = types.get_id(types.ID_GENERIC);
 	
 	public static final String TYPE = get_key(types.WHAT_TYPE);
@@ -27,6 +27,9 @@ public abstract class generic
 	public static final String USER = get_key(types.WHAT_USER);
 	public static final String QUERY = get_key(types.WHAT_QUERY);
 	public static final String INSTANCE = get_key(types.WHAT_INSTANCE);
+	
+	public static final String ERROR_METHOD_GET = types.ERROR_GENERIC_METHOD_GET;
+	public static final String ERROR_METHOD_CALL = types.ERROR_GENERIC_METHOD_CALL;
 	
 	public static boolean is_ok(double[] input_) { return is_ok(input_, false); }
 	
@@ -322,7 +325,7 @@ public abstract class generic
 		if (!is_ok(class_) || !strings.is_ok(name_)) return output;
 
 		try { output = class_.getMethod(name_, params_); } 
-		catch (Exception e) { errors.manage(types.ERROR_GENERIC_METHOD_GET, e, new String[] { name_, strings.to_string(params_) }); }
+		catch (Exception e) { errors.manage(ERROR_METHOD_GET, e, new String[] { name_, strings.to_string(params_) }); }
 
 		return output;
 	}
@@ -333,7 +336,7 @@ public abstract class generic
 		if (!is_ok(method_)) return output;
 
 		try { output = method_.invoke(null, args_); } 
-		catch (Exception e) { errors.manage(types.ERROR_GENERIC_METHOD_CALL, e, new String[] { method_.getName(), strings.to_string(args_) }); }
+		catch (Exception e) { errors.manage(ERROR_METHOD_CALL, e, new String[] { method_.getName(), strings.to_string(args_) }); }
 
 		return output;
 	}
@@ -503,12 +506,7 @@ public abstract class generic
 			
 			for (Class<?> val: item.getValue())
 			{
-				if 
-				(
-					(class1_.equals(key) && class2_.equals(val)) || 
-					(class1_.equals(val) && class2_.equals(key))
-				)
-				{ return true; }	
+				if ((class1_.equals(key) && class2_.equals(val)) || (class1_.equals(val) && class2_.equals(key))) return true;	
 			}
 		}
 		

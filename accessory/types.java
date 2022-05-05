@@ -222,6 +222,7 @@ public abstract class types
 	public static final String ID_PATHS = "id_paths";
 	public static final String ID_STRINGS = "id_strings";
 	public static final String ID_TESTS = "id_tests";
+	public static final String ID_TESTS_ACCESSORY = "id_tests_accessory";
 	public static final String ID_TYPES = "id_types";
 	
 	public static final String ERROR = "error";
@@ -475,7 +476,7 @@ public abstract class types
 			
 			ID,
 			ID_ARRAYS, ID_CONFIG, ID_CREDENTIALS, ID_CRYPTO, ID_DATES, ID_DB, ID_ERRORS, ID_GENERIC, ID_IO, 
-			ID_LOGS, ID_MISC, ID_NUMBERS, ID_PATHS, ID_STRINGS, ID_TESTS, ID_TYPES,
+			ID_LOGS, ID_MISC, ID_NUMBERS, ID_PATHS, ID_STRINGS, ID_TESTS, ID_TESTS_ACCESSORY, ID_TYPES,
 			
 			ERROR,
 			ERROR_INI,

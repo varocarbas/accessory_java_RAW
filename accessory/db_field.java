@@ -23,11 +23,11 @@ public class db_field extends parent
 	public static final String DEFAULT_TYPE = _defaults.DB_FIELD_TYPE;
 	public static final int DEFAULT_DECIMALS = _defaults.DB_FIELD_DECIMALS;
 
-	public String _type = WRONG_TYPE;
-	public int _size = WRONG_SIZE;
-	public int _decimals = WRONG_DECIMALS;
-	public Object _default = null;
-	public String[] _further = null;
+	private String _type = WRONG_TYPE;
+	private int _size = WRONG_SIZE;
+	private int _decimals = WRONG_DECIMALS;
+	private Object _default = null;
+	private String[] _further = null;
 
 	private String _temp_type = strings.DEFAULT;
 	private int _temp_size = 0;
@@ -103,7 +103,7 @@ public class db_field extends parent
 	public static db_field adapt(String source_, db_field input_)
 	{
 		db_field output = new db_field(input_);
-		if (!output._is_ok) return output;
+		if (!output.is_ok()) return output;
 
 		output._size = check_size(source_, input_._type, input_._size);
 		output._decimals = adapt_decimals(input_._decimals);
@@ -138,6 +138,16 @@ public class db_field extends parent
 
 	public db_field(String type_, int size_, int decimals_, Object default_, String[] further_) { instantiate(type_, size_, decimals_, default_, further_); }
 
+	public String get_type() { return _type; }
+	
+	public int get_size() { return _size; }
+	
+	public int get_decimals() { return _decimals; }
+
+	public Object get_default() { return _default; }
+	
+	public String[] get_further() { return _further; }
+	
 	public String toString()
 	{
 		String output = "";
@@ -173,12 +183,7 @@ public class db_field extends parent
 		);		
 	}
 
-	public boolean is_ok()
-	{
-		_is_ok = is_ok(_type, _size, _decimals, _default, _further);
-
-		return _is_ok;
-	}
+	public boolean is_ok() { return is_ok(_type, _size, _decimals, _default, _further); }
 
 	private void instantiate(db_field input_)
 	{
@@ -207,8 +212,6 @@ public class db_field extends parent
 
 	private void populate(String type_, int size_, int decimals_, Object default_, String[] further_)
 	{
-		_is_ok = true;
-
 		_type = type_;
 		_size = size_;
 		_decimals = decimals_;

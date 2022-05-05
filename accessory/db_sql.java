@@ -49,7 +49,7 @@ abstract class db_sql
 		String temp = strings.to_string(items);
 		if (strings.is_ok(temp)) message += temp;
 
-		db.manage_error(source_, types.ERROR_DB_QUERY, null, null, message);
+		db.manage_error(source_, db.ERROR_QUERY, null, null, message);
 
 		return false;
 	}
@@ -101,9 +101,9 @@ abstract class db_sql
 
 				db.is_ok(source_, true);
 			}
-			catch (Exception e) { db.manage_error(source_, types.ERROR_DB_QUERY, query_, e, null); }
+			catch (Exception e) { db.manage_error(source_, db.ERROR_QUERY, query_, e, null); }
 		} 
-		catch (Exception e) { db.manage_error(source_, types.ERROR_DB_QUERY, query_, e, null); } 
+		catch (Exception e) { db.manage_error(source_, db.ERROR_QUERY, query_, e, null); } 
 		finally { disconnect(source_, conn); }
 
 		return output;
@@ -132,12 +132,12 @@ abstract class db_sql
 
 		if (!strings.is_ok(username) || !strings.is_ok(password))
 		{
-			type = types.ERROR_DB_CREDENTIALS;
+			type = db.ERROR_CREDENTIALS;
 			message = "credentials";
 		}
 		else if (!strings.is_int(max_pool))
 		{
-			type = types.ERROR_DB_INFO;
+			type = db.ERROR_INFO;
 			message = "MaxPooledStatements";
 		}
 		
@@ -166,7 +166,7 @@ abstract class db_sql
 			conn_.close();
 			conn_ = null;
 		} 
-		catch (Exception e) { db.manage_error(source_, types.ERROR_DB_CONN, null, e, null); }
+		catch (Exception e) { db.manage_error(source_, db.ERROR_CONN, null, e, null); }
 	}
 
 	private static String[] execute_query_get_cols(String source_, ResultSet data_, String[] cols_)
@@ -188,7 +188,7 @@ abstract class db_sql
 		{
 			cols = null;
 
-			db.manage_error(source_, types.ERROR_DB_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns");
+			db.manage_error(source_, db.ERROR_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns");
 		}
 
 		return arrays.to_array(cols);

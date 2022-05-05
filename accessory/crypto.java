@@ -14,6 +14,11 @@ public class crypto extends parent
 	public static final String KEY = "key";
 	public static final String IV = "iv";
 
+	public static final String ERROR_KEY = types.ERROR_CRYPTO_KEY;
+	public static final String ERROR_CIPHER = types.ERROR_CRYPTO_CIPHER;
+	public static final String ERROR_ENCRYPT = types.ERROR_CRYPTO_ENCRYPT;
+	public static final String ERROR_DECRYPT = types.ERROR_CRYPTO_DECRYPT;
+	
 	public static final String DEFAULT_ID = _defaults.CRYPTO_ID;
 	public static final String DEFAULT_ALGORITHM_CIPHER = _defaults.CRYPTO_ALGORITHM_CIPHER;
 	public static final String DEFAULT_ALGORITHM_KEY = _defaults.CRYPTO_ALGORITHM_KEY;
@@ -34,13 +39,14 @@ public class crypto extends parent
 	
 	private String _temp_algo_key = strings.DEFAULT; 
 	private String _temp_algo_cipher = strings.DEFAULT;
-
+	private boolean _is_ok = false;
+	
 	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_CRYPTO);
 	
 	public String toString() { return strings.DEFAULT; }
 	public boolean is_ok() { return _is_ok; }
-
+	
 	public static String get_extension() { return config.get_crypto(types.CONFIG_CRYPTO_FILE_EXTENSION); }
 
 	public static String get_file_full(String id_) { return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension()); }
@@ -79,7 +85,7 @@ public class crypto extends parent
 		} 
 		catch (Exception e) 
 		{ 
-			manage_error(types.ERROR_CRYPTO_ENCRYPT, e); 
+			manage_error(ERROR_ENCRYPT, e); 
 			
 			return;
 		}
@@ -99,14 +105,14 @@ public class crypto extends parent
 		} 
 		catch (Exception e) 
 		{ 
-			manage_error(types.ERROR_CRYPTO_DECRYPT, e); 
+			manage_error(ERROR_DECRYPT, e); 
 			
 			return;
 		}
 
 		_is_ok = true;
 	}
-	
+
 	private void log_encryption_info()
 	{
 		HashMap<String, String> info = new HashMap<String, String>();
@@ -189,12 +195,12 @@ public class crypto extends parent
 
 		Object temp = io.file_to_object(_path_key);
 		
-		if (temp != null && io._is_ok) 
+		if (temp != null && io.is_ok()) 
 		{
 			try { output = (SecretKey)temp;	}
 			catch (Exception e) 
 			{ 
-				manage_error(types.ERROR_CRYPTO_KEY, e);
+				manage_error(ERROR_KEY, e);
 
 				output = null;
 			}
@@ -209,7 +215,7 @@ public class crypto extends parent
 		byte[] output = null;
 
 		byte[] temp = io.file_to_bytes(_path_iv);
-		if (arrays.is_ok(temp) && io._is_ok) output = arrays.get_new(temp);
+		if (arrays.is_ok(temp) && io.is_ok()) output = arrays.get_new(temp);
 		else manage_error();
 
 		return output;
@@ -219,7 +225,7 @@ public class crypto extends parent
 	{
 		io.object_to_file(_path_key, key_);
 		
-		boolean is_ok = io._is_ok;
+		boolean is_ok = io.is_ok();
 		if (!is_ok) manage_error();
 		
 		return is_ok;
@@ -229,7 +235,7 @@ public class crypto extends parent
 	{
 		io.bytes_to_file(_path_iv, iv_);
 		
-		boolean is_ok = io._is_ok;
+		boolean is_ok = io.is_ok();
 		if (!is_ok) manage_error();
 		
 		return is_ok;
@@ -246,7 +252,7 @@ public class crypto extends parent
 
 			output = keyGen.generateKey();	
 		}
-		catch (Exception e) { manage_error(types.ERROR_CRYPTO_KEY, e); }
+		catch (Exception e) { manage_error(ERROR_KEY, e); }
 
 		return output;
 	}
@@ -273,7 +279,7 @@ public class crypto extends parent
 			
 			_cipher_enc.init(Cipher.ENCRYPT_MODE, _key, new SecureRandom());	
 		}
-		catch (Exception e) { manage_error(types.ERROR_CRYPTO_ENCRYPT, e); }
+		catch (Exception e) { manage_error(ERROR_ENCRYPT, e); }
 	}
 
 	private void update_cipher_dec()
@@ -286,7 +292,7 @@ public class crypto extends parent
 			
 			_cipher_dec.init(Cipher.DECRYPT_MODE, _key, new IvParameterSpec(_iv));
 		} 
-		catch (Exception e) { manage_error(types.ERROR_CRYPTO_DECRYPT, e); }
+		catch (Exception e) { manage_error(ERROR_DECRYPT, e); }
 	}
 	
 	private void manage_error(String type_, Exception e_)

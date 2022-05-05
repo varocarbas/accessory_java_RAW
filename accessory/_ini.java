@@ -1,7 +1,7 @@
 package accessory;
 
 public class _ini extends parent_ini
-{
+{	
 	private static _ini _instance = new _ini();
 	
 	public _ini() { }

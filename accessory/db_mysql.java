@@ -25,15 +25,13 @@ class db_mysql extends parent_db
 	private static final int DEFAULT_SIZE_VARCHAR = _defaults.DB_SIZE_MYSQL_VARCHAR;
 	private static final int DEFAULT_SIZE_TEXT = _defaults.DB_SIZE_MYSQL_TEXT;
 	
-	public boolean is_ok() { return _is_ok; }
-	
 	public ArrayList<HashMap<String, String>> execute_query(String source_, String query_)
 	{
 		String type = db.check_type(strings.substring_before(" ", query_, true));
 
 		if (!strings.is_ok(type))
 		{
-			db.manage_error(source_, types.ERROR_DB_QUERY, query_, null, null);
+			db.manage_error(source_, db.ERROR_QUERY, query_, null, null);
 			
 			return null;
 		}
@@ -157,7 +155,7 @@ class db_mysql extends parent_db
 		} 
 		catch (Exception e) 
 		{
-			db.manage_error(source_, types.ERROR_DB_CONN, null, e, null); 
+			db.manage_error(source_, db.ERROR_CONN, null, e, null); 
 			conn = null;
 		}
 
@@ -175,7 +173,7 @@ class db_mysql extends parent_db
 
 		if (!message.equals(""))
 		{
-			db.manage_error(source_, types.ERROR_DB_INFO, null, null, message);
+			db.manage_error(source_, db.ERROR_INFO, null, null, message);
 
 			return strings.DEFAULT;
 		}
@@ -192,7 +190,7 @@ class db_mysql extends parent_db
 		String output = "";
 		if (!db_field.is_ok(field_)) return output;
 
-		HashMap<String, Object> info = get_data_type(field_._type);
+		HashMap<String, Object> info = get_data_type(field_.get_type());
 		if (!arrays.is_ok(info)) return output;
 		
 		output = types.remove_type((String)info.get(generic.TYPE), types.DB_MYSQL_DATA);
@@ -208,8 +206,8 @@ class db_mysql extends parent_db
 	{
 		String output = strings.DEFAULT;
 
-		int max = (field_._size > (double)data.MAX_INT ? 0 : field_._size);
-		String type = field_._type;
+		int max = (field_.get_size() > (double)data.MAX_INT ? 0 : field_.get_size());
+		String type = field_.get_type();
 		if (type.equals(data.TIMESTAMP)) return output;
 			
 		HashMap<String, Object> info = get_data_type(type);
@@ -221,7 +219,7 @@ class db_mysql extends parent_db
 		else if (type.equals(data.DECIMAL))
 		{
 			int m = ((max > max2 || max < 1) ? size_def : max);
-			int d = field_._decimals;
+			int d = field_.get_decimals();
 			
 			if (d < 0 || d > 30 || d > m)
 			{
@@ -309,21 +307,21 @@ class db_mysql extends parent_db
 			{
 				String col = item.getKey();
 				db_field field = item.getValue();
-				String type = field._type;
+				String type = field.get_type();
 
 				String type2 = data_type_to_string(field);
 				if (!strings.is_ok(col) || !strings.is_ok(type2)) continue;
 				
 				if (!query.equals("")) query += ", ";
 				String item2 = get_variable(col) + " " + type2;
-				
-				String[] further = create_table_check_further(field._further);	
+
+				String[] further = create_table_check_further(field.get_further());	
 				String def_val = strings.DEFAULT;
 				
 				if (type.equals(data.TIMESTAMP)) def_val = "current_timestamp";
 				else if (!arrays.value_exists(further, db_field.AUTO_INCREMENT))
 				{
-					if (generic.is_ok(field._default)) def_val = strings.to_string(field._default);
+					if (generic.is_ok(field.get_default())) def_val = strings.to_string(field.get_default());
 					else if (data.is_number(type) || type.equals(data.BOOLEAN)) def_val = "0";
 					else if (data.is_string(type)) def_val = " ";
 					
@@ -358,7 +356,7 @@ class db_mysql extends parent_db
 
 		if (!is_ok)
 		{
-			db.manage_error(source_, types.ERROR_DB_QUERY, null, null, query);
+			db.manage_error(source_, db.ERROR_QUERY, null, null, query);
 			query = strings.DEFAULT;
 		}
 		

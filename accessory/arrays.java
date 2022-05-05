@@ -612,27 +612,27 @@ public abstract class arrays
 	public static char[] get_range(char[] input_, int start_i, int size_) { return (char[])to_small((Character[])get_range((Character[])to_big(input_), start_i, size_)); }
 
 	@SuppressWarnings("unchecked")
-	public static <x> Object get_range(Object input_, int start_i, int size_)
+	public static <x> Object get_range(Object input_, int start_i_, int size_)
 	{
 		Object output = null;
 
 		Class<?> type = generic.get_class(input_);
-		if (!generic.is_array(type) || generic.are_equal(type, HashMap.class) || start_i < 0 || size_ < 0) return output;
+		if (!generic.is_array(type) || generic.are_equal(type, HashMap.class) || start_i_ < 0 || size_ < 0) return output;
 		
 		int size0 = get_size(input_);
-		int size = (size_ < 1 ? size0 : start_i + size_);
-		if (size > size0) return output;
+		int size = (size_ < 1 ? size0 : start_i_ + size_);
+		if (size > size0 || start_i_ >= size0) return output;
 		
-		if (generic.are_equal(type, ArrayList.class)) output = new ArrayList<x>(((ArrayList<x>)input_).subList(start_i, size));
+		if (generic.are_equal(type, ArrayList.class)) output = new ArrayList<x>(((ArrayList<x>)input_).subList(start_i_, size));
 		else 
 		{
-			if (type.equals(double[].class)) output = get_range(to_big((double[])input_), start_i, size_);
-			else if (type.equals(long[].class)) output = get_range(to_big((long[])input_), start_i, size_);
-			else if (type.equals(int[].class)) output = get_range(to_big((int[])input_), start_i, size_);
-			else if (type.equals(boolean[].class)) output = get_range(to_big((boolean[])input_), start_i, size_);
-			else if (type.equals(byte[].class)) output = get_range(to_big((byte[])input_), start_i, size_);
-			else if (type.equals(char[].class)) output = get_range(to_big((char[])input_), start_i, size_);
-			else output = Arrays.copyOfRange((x[])input_, start_i, size);
+			if (type.equals(double[].class)) output = get_range(to_big((double[])input_), start_i_, size);
+			else if (type.equals(long[].class)) output = get_range(to_big((long[])input_), start_i_, size);
+			else if (type.equals(int[].class)) output = get_range(to_big((int[])input_), start_i_, size);
+			else if (type.equals(boolean[].class)) output = get_range(to_big((boolean[])input_), start_i_, size);
+			else if (type.equals(byte[].class)) output = get_range(to_big((byte[])input_), start_i_, size);
+			else if (type.equals(char[].class)) output = get_range(to_big((char[])input_), start_i_, size);
+			else output = Arrays.copyOfRange((x[])input_, start_i_, size);
 		}
 		
 		return output;

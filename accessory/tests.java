@@ -3,7 +3,6 @@ package accessory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 public abstract class tests 
 {		
@@ -12,386 +11,34 @@ public abstract class tests
 	public static final String FIELD_INT = types.CONFIG_TESTS_DB_FIELD_INT;
 	public static final String FIELD_STRING = types.CONFIG_TESTS_DB_FIELD_STRING;
 	public static final String FIELD_BOOLEAN = types.CONFIG_TESTS_DB_FIELD_BOOLEAN;
+
+	public static final String ERROR_RUN = types.ERROR_TEST_RUN;
 	
-	public static boolean _running = false;
-	public static boolean _report_errors = true;
+	public static boolean _report_all_errors = true;
 	public static boolean _test_db = true;
+	public static Object _temp_output = null;
 	
+	private static boolean _is_running = false;
 	private static int _overload = 0;
-	private static Object _temp_output = null;
+	
+	public static boolean is_running() { return _is_running; }
 	
 	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_TESTS);
 	
-	public static HashMap<String, HashMap<String, Boolean>> run_accessory_all()
-	{	
-		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
-
-		outputs = run_accessory_db(outputs);
-		outputs = run_accessory_main(outputs);
-		
-		check_wrongs(outputs);
-		
-		return outputs;
-	}
-
-	private static void check_wrongs(HashMap<String, HashMap<String, Boolean>> outputs_)
-	{	
-		ArrayList<String> wrongs = new ArrayList<String>();
-		
-		if (arrays.is_ok(outputs_))
-		{
-			for (Entry<String, HashMap<String, Boolean>> output: outputs_.entrySet())
-			{
-				HashMap<String, Boolean> vals = output.getValue();
-				if (!arrays.is_ok(vals)) continue;
-				
-				for (Entry<String, Boolean> val: vals.entrySet())
-				{
-					String name = val.getKey();
-					if (!strings.is_ok(name)) continue;
-					
-					if (!val.getValue()) wrongs.add(name);
-				}
-			}			
-		}
-		
-		int tot = wrongs.size();
-		
-		System.out.println("TOTAL ERRORS: " + tot);
-		if (tot > 0) System.out.println(strings.to_string(wrongs));		
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static HashMap<String, HashMap<String, Boolean>> run_accessory_db(HashMap<String, HashMap<String, Boolean>> outputs_)
-	{
-		HashMap<String, HashMap<String, Boolean>> outputs = (HashMap<String, HashMap<String, Boolean>>)arrays.get_new(outputs_);
-		if (!_test_db) return outputs;
-		
-		String name = "accessory_db";
-		int level = 0;
-		
-		print_start_end(name, true, level);
-		outputs.put(name, run_accessory_internal(db.class));
-		print_start_end(name, false, level);
-		
-		return outputs;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static HashMap<String, HashMap<String, Boolean>> run_accessory_main(HashMap<String, HashMap<String, Boolean>> outputs_)
-	{
-		HashMap<String, HashMap<String, Boolean>> outputs = (HashMap<String, HashMap<String, Boolean>>)arrays.get_new(outputs_);
-
-		String name = "accessory_main";
-		int level = 0;
-		
-		print_start_end(name, true, level);		
-		
-		Class<?>[] classes = new Class<?>[] 
-		{ 
-			crypto.class, strings.class, arrays.class, dates.class, generic.class,
-			io.class, numbers.class, paths.class, types.class, credentials.class
-		}; 
-		
-		for (Class<?> type: classes) { outputs.put(type.getName(), run_accessory_internal(type)); }
-
-		print_start_end(name, false, level);
-		
-		return outputs;
-	}
-
-	public static HashMap<String, Boolean> run_accessory_db()
-	{			
-		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
-		Object[] targets = null;
-		
-		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
-		ArrayList<Object> args2 = new ArrayList<Object>();
-
-		Class<?> type = db.class;
-
-		String name0 = type.getName();
-		print_start_end(name0, true, 1);
-		
-		String source = types.CONFIG_TESTS_DB_SOURCE;
-		
-		String name = "create_table";
-		Class<?>[] params = new Class<?>[] { String.class, boolean.class };
-		Method method = generic.get_method(type, name, params);		
-		
-		boolean is_ok = false;
-		String[] sources = new String[] { source, credentials.SOURCE };
-		
-		for (String source2: sources)
-		{
-			args = new ArrayList<ArrayList<Object>>();
-			args2 = new ArrayList<Object>();
-			args2.add(source2);
-			args2.add(true);
-			args.add(args2);
-			
-			db._cur_source = source2;
-			
-			is_ok = run_method(type, method, name, args, targets);
-			outputs.put(name, is_ok);
-			if (!is_ok) return outputs;			
-		}
-
-		db._cur_source = source;
-		
-		name = "insert";
-		params = new Class<?>[] { String.class, HashMap.class };
-		method = generic.get_method(type, name, params);		
-
-		args = new ArrayList<ArrayList<Object>>();
-		
-		args2 = new ArrayList<Object>();
-		args2.add(source);
-		
-		HashMap<String, Object> vals = new HashMap<String, Object>();
-		int max = 123456;
-		vals.put(FIELD_INT, numbers.get_random_int(-1 * max, max));
-		vals.put(FIELD_STRING, strings.get_random(strings.SIZE_SMALL));
-		double max2 = 123456789.123;
-		vals.put(FIELD_DECIMAL, numbers.get_random_decimal(-1 * max2, max2));		
-		vals.put(FIELD_BOOLEAN, generic.get_random_boolean());
-		
-		args2.add(vals);
-		args.add(args2);
-
-		is_ok = run_method(type, method, name, args, targets);
-		outputs.put(name, is_ok);
-		if (!is_ok) return outputs;
-
-		name = "update";
-		params = new Class<?>[] { String.class, HashMap.class, db_where[].class };
-		method = generic.get_method(type, name, params);	
-				
-		int val = numbers.get_random_int(-1 * max, max);
-
-		vals.put(FIELD_INT, val);		
-
-		db._cur_source = source;
-		db_where where = new db_where(null, db.FIELD_ID, 1);
-		db_where[] wheres = new db_where[] { where };
-		
-		args2.add(wheres);
-		
-		is_ok = run_method(type, method, name, args, targets);
-		outputs.put(name, is_ok);
-		if (!is_ok) return outputs;
-
-		name = "select_one_int";
-		params = new Class<?>[] { String.class, String.class, db_where[].class, db_order[].class };
-		method = generic.get_method(type, name, params);	
-		
-		args = new ArrayList<ArrayList<Object>>();
-		
-		args2 = new ArrayList<Object>();
-		args2.add(source);
-		args2.add(FIELD_INT);
-		args2.add(wheres);
-		args2.add(null);
-
-		args.add(args2);
-		
-		int target = val;
-		
-		is_ok = run_method(type, method, name, args, new Object[] { target });
-		outputs.put(name, is_ok);
-
-		name = "execute_query";
-		params = new Class<?>[] { String.class };
-		method = generic.get_method(type, name, params);	
-
-		String field = FIELD_INT;
-		String col = db.get_col(source, field);
-
-		String table = db.get_variable_table(source);
-
-		db._cur_source = source;
-		db_order[] orders = new db_order[] 
-		{ 
-			new db_order(null, field, db_order.DESC, true), 
-			new db_order(null, where.toString(), db_order.ASC, false)
-		};
-		
-		String query = "SELECT " + db.get_variable(source, col) + " FROM " + table;
-		query += " WHERE " + db_where.to_string(wheres);
-		query += " ORDER BY " + db_order.to_string(orders);
-		
-		args = new ArrayList<ArrayList<Object>>();
-		
-		args2 = new ArrayList<Object>();
-		args2.add(query);
-		
-		args.add(args2);
-		
-		ArrayList<HashMap<String, String>> target2 = new ArrayList<HashMap<String, String>>();
-		HashMap<String, String> target22 = new HashMap<String, String>();
-		target22.put(col, strings.to_string(target));		
-		target2.add(target22);
-		
-		is_ok = run_method(type, method, name, args, new Object[] { target2 });
-		outputs.put(name, is_ok);
-		
-		print_start_end(name0, false, 1);
-		
-		return outputs;	
-	}
-
-	public static HashMap<String, Boolean> run_accessory_crypto()
-	{		
-		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
-		
-		Object[] targets = null;
-		Class<?> type = crypto.class;
-
-		String name0 = type.getName();
-		print_start_end(name0, true, 1);
-		
-		String name = "encrypt";
-		Class<?>[] params = new Class<?>[] { String[].class, String.class };
-		Method method = generic.get_method(type, name, params);	
-		
-		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
-		
-		String[] inputs = (String[])arrays.get_random(String[].class);
-		String id = null;
-		
-		ArrayList<Object> args2 = new ArrayList<Object>();
-		args2.add(inputs);
-		args2.add(id);
-
-		args.add(args2);
-		
-		boolean is_ok = run_method(type, method, name, args, targets);
-		outputs.put(name, is_ok);
-		if (!is_ok) return outputs;
-		
-		String[] encrypted = (String[])_temp_output;
-		
-		name = "decrypt";
-		params = new Class<?>[] { String[].class, String.class };
-		method = generic.get_method(type, name, params);	
-
-		args = new ArrayList<ArrayList<Object>>();
-		
-		args2 = new ArrayList<Object>();
-		args2.add(encrypted);
-		args2.add(id);
-		
-		args.add(args2);
-
-		targets = new Object[] { inputs };
-		
-		is_ok = run_method(type, method, name, args, targets);
-		outputs.put(name, is_ok);
-
-		print_start_end(name0, false, 1);
-		
-		return outputs;	
-	}
-
-	public static HashMap<String, Boolean> run_accessory_strings()
-	{		
-		Class<?> type = strings.class;
-		
-		HashMap<String, ArrayList<ArrayList<Object>>> args_all = new HashMap<String, ArrayList<ArrayList<Object>>>();
-		
-		String name = "get_random";
-		
-		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
-		ArrayList<Object> args2 = new ArrayList<Object>();
-		args2.add(strings.DEFAULT_SIZE);
-		args2.add(true);
-		args2.add(true);
-		args2.add(true);
-		args.add(args2);
-		
-		args2 = new ArrayList<Object>();
-		args2.add(strings.DEFAULT_SIZE);
-		args.add(args2);
-		
-		args_all.put(name, args);
-		
-		HashMap<String, Object[]> targets = null; 
-		String[] skip = null;
-		
-		return run(type, args_all, targets, skip);
-	}
-				
-	public static HashMap<String, Boolean> run_accessory_arrays() { return run(arrays.class); }
-	
-	public static HashMap<String, Boolean> run_accessory_dates() { return run(dates.class); }
-	
-	public static HashMap<String, Boolean> run_accessory_generic()
-	{
-		String[] skip = new String[] { "get_method", "call_static_method" };
-		
-		return run(generic.class, null, null, skip);
-	}
-	
-	public static HashMap<String, Boolean> run_accessory_io()
-	{
-		String[] skip = new String[] { "array_to_file", "line_to_file", "object_to_file", "bytes_to_file" };
-		
-		return run(io.class, null, null, skip);
-	}
-	
-	public static HashMap<String, Boolean> run_accessory_numbers() { return run(numbers.class); }
-	
-	public static HashMap<String, Boolean> run_accessory_paths()
-	{
-		String[] skip = new String[] { "update_main_dir" };
-		
-		return run(paths.class, null, null, skip);
-	}
-	
-	public static HashMap<String, Boolean> run_accessory_types()
-	{
-		String[] skip = new String[] { "check_multiple" };
-		
-		return run(types.class, null, null, skip);
-	}
-	
-	public static HashMap<String, Boolean> run_accessory_credentials()
-	{
-		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
-
-		Class<?> type = credentials.class;
-
-		String name0 = type.getName();
-		print_start_end(name0, true, 1);
-		
-		String id = _ID;
-		String user = credentials.DEFAULT_USER;
-		String username = strings.get_random(strings.SIZE_SMALL);
-		String password = strings.get_random(strings.SIZE_SMALL);
-		
-		for (boolean is_file: new boolean[] { true, false })
-		{
-			if (!is_file && !_test_db) continue;
-			
-			outputs = run_accessory_credentials_internal(type, outputs, id, user, username, password, is_file);			
-		}
-
-		print_start_end(name0, false, 1);
-		
-		return outputs;
-	}
-	
 	public static HashMap<String, Boolean> run(Class<?> class_) { return run(class_, null, null, null); }
 	
-	public static HashMap<String, Boolean> run(Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_) { return run(class_, null, args_, targets_, skip_); }
+	public static HashMap<String, Boolean> run(Class<?> class_, String[] skip_) { return run(class_, null, null, skip_); }
 
+	public static HashMap<String, Boolean> run(Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_) { return run(class_, null, args_, targets_, skip_); }
+	
 	@SuppressWarnings("unchecked")
 	public static HashMap<String, Boolean> run(Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_)
 	{
 		HashMap<String, Boolean> run_outs = new HashMap<String, Boolean>();
-
+		
 		int level = 1;
+		_is_running = true;
 		
 		Method[] methods = (arrays.is_ok(methods_) ? methods_ : generic.get_all_methods(class_, null));
 		
@@ -403,7 +50,7 @@ public abstract class tests
 		}
 		
 		String name0 = class_.getName();
-		print_start_end(name0, true, level);
+		update_console(name0, true, level);
 		
 		run_outs = new HashMap<String, Boolean>();
 		
@@ -441,21 +88,41 @@ public abstract class tests
 			run_outs.put(name, run_method(class_, method, name, (ArrayList<ArrayList<Object>>)arrays.get_value(args_, name), (Object[])arrays.get_value(targets_, name)));
 		}
 		
-		print_start_end(name0, false, level);
+		update_console(name0, false, level);
+		
+		_is_running = false;
 		
 		return run_outs;
+	}
+	
+	public static boolean run_method(Class<?> class_, String method_name_, Class<?>[] params_, ArrayList<Object> args_, Object target_)
+	{
+		ArrayList<ArrayList<Object>> args = null;
+		
+		if (arrays.is_ok(args_))
+		{
+			args = new ArrayList<ArrayList<Object>>();
+			args.add(args_);			
+		}
+	
+		Object[] targets = null;
+		if (target_ != null) targets = new Object[] { target_ };
+		
+		return run_method(class_, generic.get_method(class_, method_name_, params_), method_name_, args, targets);
 	}
 	
 	public static boolean run_method(Class<?> class_, Method method_, String method_name_, ArrayList<ArrayList<Object>> args_, Object[] targets_)
 	{
 		boolean is_ok = false;
-		
+
+		_is_running = true;
 		_temp_output = null;
+		
 		if (!method_is_ok(class_, method_, method_name_)) return is_ok;
 
 		Class<?>[] params = (Class<?>[])arrays.get_new(method_.getParameterTypes());
 		
-		print_start_end(method_name_ + " " + strings.to_string(params), true, 2);		
+		update_console(method_name_ + " " + strings.to_string(params), true, 2);		
 
 		is_ok = true;
 		String result = strings.DEFAULT;
@@ -467,15 +134,13 @@ public abstract class tests
 		
 		boolean out_is_ok = output_is_ok(output, targets);
 		
-		if (errors._triggered || !out_is_ok)
+		if (errors.triggered() || !out_is_ok)
 		{
 			is_ok = false;
 			result = "ERROR";
 			
 			if (arrays.is_ok(targets)) result += " (targets not met)";
-			else if (!_report_errors) is_ok = true;
-			
-			if (errors._triggered) errors._triggered = false;
+			else if (!_report_all_errors) is_ok = true;
 		}
 		else result = "OK";
 
@@ -493,9 +158,9 @@ public abstract class tests
 		if (generic.is_ok(output)) out += strings.to_string(output);
 		System.out.println(out);
 
-		print_start_end(method_name_, false, 2);
+		update_console(method_name_, false, 2);
 		
-		_running = false;
+		_is_running = false;
 		
 		return is_ok;
 	}
@@ -506,10 +171,7 @@ public abstract class tests
 
 		ArrayList<Object> output = new ArrayList<Object>();
 		
-		for (Class<?> param: params_)
-		{
-			output.add(get_default_arg(param));
-		}
+		for (Class<?> param: params_) { output.add(get_default_arg(param)); }
 		
 		return arrays.to_array(output);
 	}
@@ -517,74 +179,23 @@ public abstract class tests
 	public static Object get_default_arg(Class<?> class_)
 	{
 		Object output = null;
-		if (!generic.is_ok(class_)) return output;
+		if (class_ == null) return output;
 
 		if (generic.are_equal(class_, Double.class)) output = numbers.get_random_decimal(-12345.67, 12345.67);
 		else if (generic.are_equal(class_, Long.class)) output = numbers.get_random_long(-12345l, 12345l);
-		else if (generic.are_equal(class_, Integer.class)) output = numbers.get_random_int(-12345, 12345); 
+		else if (generic.are_equal(class_, Integer.class)) output = numbers.get_random_int(-123, 123); 
 		else if (generic.are_equal(class_, String.class)) output = strings.get_random(strings.SIZE_SMALL);
 		else output = generic.get_random(class_);
 
 		return output;
 	}
-	
-	@SuppressWarnings("unchecked")
-	private static HashMap<String, Boolean> run_accessory_credentials_internal(Class<?> type_, HashMap<String, Boolean> outputs_, String id_, String user_, String username_, String password_, boolean is_file_)
-	{
-		HashMap<String, Boolean> outputs = (HashMap<String, Boolean>)arrays.get_new(outputs_);
-		
-		String name = "encrypt_username_password_" + (is_file_ ? "file" : "db");
-		
-		Class<?>[] params = new Class<?>[] { String.class, String.class, String.class, String.class };
-		Method method = generic.get_method(type_, name, params);	
 
-		Object[] targets = null;
-		
-		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();		
-		ArrayList<Object> args2 = new ArrayList<Object>();
-	
-		args = new ArrayList<ArrayList<Object>>();		
-		args2 = new ArrayList<Object>();
-		args2.add(id_);
-		args2.add(user_);
-		args2.add(username_);
-		args2.add(password_);
-		
-		args.add(args2);
-		
-		boolean is_ok = run_method(type_, method, name, args, targets);
-		outputs.put(name, is_ok);
-		if (!is_ok) return outputs;
-		
-		name = "get_username_password_" + (is_file_ ? "file" : "db");
-		params = new Class<?>[] { String.class, String.class, boolean.class };
-		method = generic.get_method(type_, name, params);	
-
-		args = new ArrayList<ArrayList<Object>>();		
-		args2 = new ArrayList<Object>();
-		args2.add(id_);
-		args2.add(user_);
-		args2.add(true);
-		
-		args.add(args2);
-		
-		HashMap<String, String> temp = new HashMap<String, String>();
-		temp.put(credentials.USERNAME, username_);
-		temp.put(credentials.PASSWORD, password_);
-		
-		targets = new Object[] { temp }; 
-			
-		is_ok = run_method(type_, method, name, args, targets);
-		outputs.put(name, is_ok);
-		
-		return outputs;
-	}
-
-	private static void print_start_end(String name_, boolean is_start_, int level_)
+	public static void update_console(String name_, boolean is_start_, int level_)
 	{
 		String output = "";
 		
-		int count = 2;
+		int max = 2;
+		int count = max;
 		boolean is_last = (level_ == count);
 		
 		while (count >= level_)
@@ -603,23 +214,17 @@ public abstract class tests
 		System.out.println(output);
 	}
 
-	private static HashMap<String, Boolean> run_accessory_internal(Class<?> class_)
+	private static void manage_error(String type_, Class<?> class_, String method_name_)
 	{
-		HashMap<String, Boolean> output = null;
+		HashMap<String, String> info = new HashMap<String, String>();
 		
-		if (class_.equals(crypto.class)) output = run_accessory_crypto();
-		else if (class_.equals(strings.class)) output = run_accessory_strings();
-		else if (class_.equals(arrays.class)) output = run_accessory_arrays();
-		else if (class_.equals(dates.class)) output = run_accessory_dates();
-		else if (class_.equals(generic.class)) output = run_accessory_generic();
-		else if (class_.equals(io.class)) output = run_accessory_io();
-		else if (class_.equals(numbers.class)) output = run_accessory_numbers();
-		else if (class_.equals(paths.class)) output = run_accessory_paths();
-		else if (class_.equals(types.class)) output = run_accessory_types();
-		else if (class_.equals(credentials.class)) output = run_accessory_credentials();
-		else if (class_.equals(db.class)) output = run_accessory_db();
+		info.put(generic.TYPE, type_);
+		if (class_ != null) info.put("class", strings.to_string(class_));
+		if (strings.is_ok(method_name_)) info.put("method", method_name_);
 
-		return output;
+		errors.manage(info);
+		
+		_is_running = false;
 	}
 
 	private static boolean method_is_ok(Class<?> class_, Method method_, String method_name_)
@@ -628,18 +233,10 @@ public abstract class tests
 		
 		if (!generic.is_ok(method_))
 		{
-			HashMap<String, String> info = new HashMap<String, String>();
-			info.put(generic.TYPE, types.ERROR_TEST_RUN);
-			info.put("method", strings.to_string(method_name_));
-			info.put("class", (generic.is_ok(class_) ? class_.getName() : strings.DEFAULT));
+			manage_error(ERROR_RUN, class_, method_name_);
 
-			errors.manage(info);
-			
 			is_ok = false;
 		}	
-		
-		_running = is_ok;
-		errors._triggered = false;
 		
 		return is_ok;
 	}
@@ -701,10 +298,7 @@ public abstract class tests
 		
 		Object[] output = new Object[size];
 		
-		for (int i = 0; i < size; i++)
-		{
-			output[i] = ((defaults ? get_default_arg(params_[i]) : args0.get(i)));
-		}
+		for (int i = 0; i < size; i++) { output[i] = ((defaults ? get_default_arg(params_[i]) : args0.get(i))); }
 	
 		return output;
 	}

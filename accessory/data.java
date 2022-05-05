@@ -114,7 +114,7 @@ public class data extends parent
 			else return false;
 
 			size size2 = data_.get_size();
-			is_ok = numbers.is_ok(size, size2._min, size2._max);
+			is_ok = numbers.is_ok(size, size2.get_min(), size2.get_max());
 		}
 
 		return is_ok;
@@ -139,12 +139,7 @@ public class data extends parent
 
 	public static boolean is_string(String type_) { return is_common(type_, new String[] { STRING_SMALL, STRING_BIG }); }
 	
-	public boolean is_ok()
-	{
-		_is_ok = is_ok(_type, _class, _size);
-
-		return _is_ok;
-	}
+	public boolean is_ok() { return is_ok(_type, _class, _size); }
 	
 	static HashMap<String, Class<?>> populate_all_classes()
 	{
@@ -188,49 +183,51 @@ public class data extends parent
 
 	private static size get_boundaries(String type_)
 	{
-		size boundaries = new size(size.WRONG_MIN, size.WRONG_MAX, size.WRONG_DECIMALS);
-
+		double min = size.WRONG_MIN;
+		double max = size.WRONG_MAX;
+		int decimals = size.WRONG_DECIMALS;
+		
 		String type = check_type(type_);
-		if (!strings.is_ok(type)) return boundaries;
-
+		if (!strings.is_ok(type)) return new size(min, max, decimals);
+		
 		if (type.equals(STRING_SMALL)) 
 		{
-			boundaries._min = MIN_STRING_SMALL;
-			boundaries._max = MAX_STRING_SMALL;
+			min = MIN_STRING_SMALL;
+			max = MAX_STRING_SMALL;
 		}
 		else if (type.equals(STRING_BIG)) 
 		{
-			boundaries._min = MIN_STRING_BIG;
-			boundaries._max = MAX_STRING_BIG;
+			min = MIN_STRING_BIG;
+			max = MAX_STRING_BIG;
 		}
 		else if (type.equals(INT))
 		{
-			boundaries._min = MIN_INT;
-			boundaries._max = MAX_INT;
+			min = MIN_INT;
+			max = MAX_INT;
 		}
 		else if (type.equals(LONG))
 		{
-			boundaries._min = MIN_LONG;
-			boundaries._max = MAX_LONG;
+			min = MIN_LONG;
+			max = MAX_LONG;
 		}
 		else if (type.equals(DECIMAL))
 		{
-			boundaries._min = MIN_DECIMAL;
-			boundaries._max = MAX_DECIMAL;
-			boundaries._decimals = size.DEFAULT_DECIMALS;
+			min = MIN_DECIMAL;
+			max = MAX_DECIMAL;
+			decimals = size.DEFAULT_DECIMALS;
 		}
 		else if (type.equals(BOOLEAN)) 
 		{
-			boundaries._min = MIN_BOOLEAN;
-			boundaries._max = MAX_BOOLEAN;	
+			min = MIN_BOOLEAN;
+			max = MAX_BOOLEAN;	
 		}
 		else if (type.equals(TIMESTAMP)) 
 		{
-			boundaries._min = MIN_TIMESTAMP;
-			boundaries._max = MAX_TIMESTAMP;		
+			min = MIN_TIMESTAMP;
+			max = MAX_TIMESTAMP;		
 		}
 
-		return boundaries;
+		return new size(min, max, decimals);
 	}
 
 	private static boolean class_is_ok(Class<?> class_) { return (class_ != null && get_all_classes().containsValue(class_)); }
@@ -281,8 +278,6 @@ public class data extends parent
 
 	private void populate(String type_, Class<?> class_, size size_)
 	{
-		_is_ok = true;
-
 		_type = type_;
 		_class = class_;
 		_size = new size(size_);

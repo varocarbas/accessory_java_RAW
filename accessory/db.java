@@ -41,6 +41,15 @@ public abstract class db
 	public static final String QUERY_TABLE_DROP = TABLE_DROP;
 	public static final String QUERY_TABLE_TRUNCATE = TABLE_TRUNCATE;
 
+	public static final String ERROR_INFO = types.ERROR_DB_INFO;
+	public static final String ERROR_CREDENTIALS = types.ERROR_DB_CREDENTIALS;
+	public static final String ERROR_TYPE = types.ERROR_DB_TYPE;
+	public static final String ERROR_CONN = types.ERROR_DB_CONN;
+	public static final String ERROR_QUERY = types.ERROR_DB_QUERY;
+	public static final String ERROR_SOURCE = types.ERROR_DB_SOURCE;
+	public static final String ERROR_FIELD = types.ERROR_DB_FIELD;
+	public static final String ERROR_VALS = types.ERROR_DB_VALS;
+	
 	public static final String DEFAULT_DB = _defaults.DB;
 	public static final String DEFAULT_SOURCE = _defaults.DB_SOURCE;
 	public static final String DEFAULT_SETUP = _defaults.DB_SETUP;
@@ -62,7 +71,7 @@ public abstract class db
 	
 	static void start() { } //Method forcing this class to load when required (e.g., from the ini class).
 
-	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  { return credentials.encrypt_username_password_file(get_valid_type(source_), user_, username_, password_);  }
+	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  { return credentials.encrypt_username_password_file(get_type(source_), user_, username_, password_);  }
 
 	public static boolean update_db(String db_, String db_name_) 
 	{ 
@@ -285,9 +294,9 @@ public abstract class db
 		for (Entry<String, db_field> item: fields_.entrySet())
 		{
 			db_field field = db_field.adapt(source_, new db_field(item.getValue()));			
-			if (!field._is_ok)
+			if (!field.is_ok())
 			{
-				manage_error(source_, types.ERROR_DB_FIELD, null, null, field.toString());
+				manage_error(source_, db.ERROR_FIELD, null, null, field.toString());
 				
 				return false;
 			}
@@ -299,7 +308,7 @@ public abstract class db
 
 		if (!_ini_db.setup_vals_are_ok(setup_vals_))
 		{
-			manage_error(source_, types.ERROR_DB_SOURCE, null, null, "Wrong setup vals for source " + source_);
+			manage_error(source_, db.ERROR_SOURCE, null, null, "Wrong setup vals for source " + source_);
 			
 			return false;
 		}
@@ -437,7 +446,7 @@ public abstract class db
 	{
 		String source = check_source(source_);
 		
-		return (strings.is_ok(source) ? input_to_string(source, val_, field_._type, false) : null); 
+		return (strings.is_ok(source) ? input_to_string(source, val_, field_.get_type(), false) : null); 
 	}
 	
 	public static <x> String input_to_string(x val_, String data_type_) { return input_to_string(get_current_source(), val_, data_type_, true); }
@@ -475,11 +484,11 @@ public abstract class db
 
 	public static boolean is_ok() { return is_ok(get_current_source()); }
 
-	public static boolean is_ok(String source_) { return get_valid_instance(source_)._is_ok; }
+	public static boolean is_ok(String source_) { return get_valid_instance(source_).is_ok(); }
 	
 	static void is_ok(boolean is_ok_) { is_ok(get_current_source(), is_ok_); }
 	
-	static void is_ok(String source_, boolean is_ok_) { get_valid_instance(source_)._is_ok = is_ok_; }
+	static void is_ok(String source_, boolean is_ok_) { get_valid_instance(source_).is_ok(is_ok_); }
 	
 	static String get_host(String setup_) { return config.get(setup_, HOST); }
 
@@ -522,7 +531,7 @@ public abstract class db
 		
 		String source = check_source(source_);
 		
-		if (!strings.is_ok(source)) manage_error(source_, types.ERROR_DB_SOURCE, null, null, null);
+		if (!strings.is_ok(source)) manage_error(source_, db.ERROR_SOURCE, null, null, null);
 		else is_ok(source, true);
 		
 		return source;
@@ -531,7 +540,7 @@ public abstract class db
 	static <x> HashMap<String, String> check_vals_error(String source_, HashMap<String, x> vals_raw_)
 	{
 		HashMap<String, String> vals = adapt_inputs(source_, null, vals_raw_);
-		if (!arrays.is_ok(vals)) manage_error(source_, types.ERROR_DB_VALS, null, null, null);
+		if (!arrays.is_ok(vals)) manage_error(source_, db.ERROR_VALS, null, null, null);
 		
 		return vals;
 	}
@@ -622,7 +631,7 @@ public abstract class db
 	{
 		String message = (!strings.is_ok(message_) ? "ERROR" : message_);
 		
-		manage_error(null, types.ERROR_DB_INFO, null, null, message);
+		manage_error(null, db.ERROR_INFO, null, null, message);
 		
 		return false;
 	}

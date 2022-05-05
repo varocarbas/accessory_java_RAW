@@ -15,12 +15,17 @@ import java.util.Scanner;
 
 public abstract class io 
 {	
-	public static boolean _is_ok = false;
-	
+	public static final String ERROR_WRITE = types.ERROR_FILE_WRITE;
+	public static final String ERROR_READ = types.ERROR_FILE_READ;
+		
 	static boolean _log_exceptions = true; //To avoid infinite recursion provoked by writing exceptions triggered by writing.
-	
+
+	private static boolean _is_ok = false;
+
 	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_IO);
+
+	public static boolean is_ok() { return _is_ok; }
 	
 	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{
@@ -30,14 +35,11 @@ public abstract class io
 
 		try (FileWriter writer = new FileWriter(path_, append_)) 
 		{
-			for (String val: vals_)
-			{
-				line_to_file(path_, val, append_, writer);
-			}
+			for (String val: vals_) { line_to_file(path_, val, append_, writer); }
 		} 
 		catch (Exception e) 
 		{ 
-			if (_log_exceptions) errors.manage_io(types.ERROR_FILE_WRITE, path_, e); 
+			if (_log_exceptions) errors.manage_io(ERROR_WRITE, path_, e); 
 		}
 		
 		_is_ok = true;
@@ -53,16 +55,13 @@ public abstract class io
 
 		try (Scanner scanner = new Scanner(new FileReader(path_))) 
 		{
-			while (scanner.hasNext()) 
-			{
-				lines.add(scanner.nextLine().trim());
-			}
+			while (scanner.hasNext()) { lines.add(scanner.nextLine().trim()); }
 		} 
 		catch (Exception e) 
 		{ 
 			lines = null;
 			
-			errors.manage_io(types.ERROR_FILE_READ, path_, e);
+			errors.manage_io(ERROR_READ, path_, e);
 		}
 
 		_is_ok = true;
@@ -73,7 +72,7 @@ public abstract class io
 	public static String file_to_string(String path_, boolean only_first_)
 	{
 		String[] lines = file_to_array(path_);
-		if (!_is_ok || arrays.get_size(lines) < 1) return strings.DEFAULT;
+		if (!is_ok() || arrays.get_size(lines) < 1) return strings.DEFAULT;
 
 		return (only_first_ ? lines[0] : arrays.lines_to_string(lines));
 	}
@@ -118,11 +117,8 @@ public abstract class io
 		
 		if (!strings.is_ok(path_) || !arrays.is_ok(vals_)) return;
 		
-		try (FileOutputStream stream = new FileOutputStream(new File(path_)))
-		{
-			stream.write(vals_);
-		} 
-		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e); }
+		try (FileOutputStream stream = new FileOutputStream(new File(path_))) { stream.write(vals_); } 
+		catch (Exception e) { errors.manage_io(ERROR_WRITE, path_, e); }
 		
 		_is_ok = true;
 	}
@@ -134,11 +130,8 @@ public abstract class io
 		byte[] output = null;
 		if (!paths.exists(path_)) return output;
 		
-		try
-		{
-			output = Files.readAllBytes(Paths.get(path_));
-		} 
-		catch (Exception e) { errors.manage_io(types.ERROR_FILE_READ, path_, e); }
+		try { output = Files.readAllBytes(Paths.get(path_)); } 
+		catch (Exception e) { errors.manage_io(ERROR_READ, path_, e); }
 		
 		_is_ok = true;
 		
@@ -151,11 +144,8 @@ public abstract class io
 
 		if (!strings.is_ok(path_) || vals_ == null) return;
 		
-		try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(path_)))
-		{
-			stream.writeObject(vals_);
-		} 
-		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e); }
+		try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(path_))) { stream.writeObject(vals_); } 
+		catch (Exception e) { errors.manage_io(ERROR_WRITE, path_, e); }
 		
 		_is_ok = true;
 	}
@@ -167,17 +157,14 @@ public abstract class io
 		Object output = null;
 		if (!paths.exists(path_)) return output;
 		
-		try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(path_)))
-		{
-			output = stream.readObject();
-		} 
-		catch (Exception e) { errors.manage_io(types.ERROR_FILE_WRITE, path_, e); }
+		try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(path_))) { output = stream.readObject(); } 
+		catch (Exception e) { errors.manage_io(ERROR_WRITE, path_, e); }
 		
 		_is_ok = true;
 		
 		return output;
 	}
-	
+
 	private static void line_to_file(String path_, String line_, boolean append_, FileWriter writer_)
 	{
 		if (!strings.is_ok(path_) || !strings.is_ok(line_)) return;
@@ -201,7 +188,7 @@ public abstract class io
 		} 
 		catch (Exception e) 
 		{ 
-			if (_log_exceptions) errors.manage_io(types.ERROR_FILE_WRITE, path_, e); 
+			if (_log_exceptions) errors.manage_io(ERROR_WRITE, path_, e); 
 		}
 	}
 }
