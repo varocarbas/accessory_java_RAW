@@ -95,7 +95,7 @@ public class db_where extends parent
 		if (!is_ok(_source, _field, _operand, _value, _link)) return output;
 		
 		String operand = operand_to_string(_temp_operand);
-		String field = db.get_variable(_temp_source, db.get_col(_temp_source, _field));
+		String field = db.get_variable(_temp_source, db.get_col(_temp_source, _temp_field));
 		String value = db.adapt_input(_temp_source, _temp_field, _value);
 		if (value == null) return output;
 		

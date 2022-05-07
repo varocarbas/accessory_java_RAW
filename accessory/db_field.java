@@ -23,7 +23,7 @@ public class db_field extends parent
 	public static final String DEFAULT_TYPE = _defaults.DB_FIELD_TYPE;
 	public static final int DEFAULT_DECIMALS = _defaults.DB_FIELD_DECIMALS;
 
-	private String _type = WRONG_TYPE;
+	private String _type = WRONG_TYPE; //It is a data type. The specific DB type is automatically determined from that type and the size right before interacting with the DB.
 	private int _size = WRONG_SIZE;
 	private int _decimals = WRONG_DECIMALS;
 	private Object _default = null;
@@ -69,37 +69,10 @@ public class db_field extends parent
 		if (default_ == null) return true;
 
 		int size = check_size(source_, type_, size_);		
-		if (size <= 0) return false;
 
-		boolean is_ok = false;		
-		int max = size;
-		if (max <= 0) return is_ok;
-
-		if (data.is_number(type_) && generic.is_number(default_)) is_ok = (numbers.to_number(default_) <= max);
-		else if (data.is_string(type_) && generic.is_string(default_)) is_ok = (strings.get_length((String)default_) <= max);
-		else if (type_.equals(data.BOOLEAN))
-		{
-			if (generic.is_boolean(default_)) is_ok = true;
-			else if (generic.is_number(default_))
-			{
-				double temp = numbers.to_number(default_);
-				if (temp == 0 || temp == 1) is_ok = true;
-			}
-			else if (generic.is_string(default_))
-			{
-				String temp = (String)default_;
-				if (strings.is_boolean(temp)) is_ok = true;
-				else if (strings.is_number(temp))
-				{
-					double temp2 = numbers.to_decimal(temp);
-					if (temp2 == 0.0 || temp2 == 1.0) is_ok = true;
-				}
-			}
-		}
-
-		return is_ok;
+		return (size > 0 ? data.complies(default_, to_data(type_, size, DEFAULT_DECIMALS)) : false);
 	}	
-
+	
 	public static db_field adapt(String source_, db_field input_)
 	{
 		db_field output = new db_field(input_);
@@ -111,6 +84,12 @@ public class db_field extends parent
 		return output;
 	}
 
+	public static <x> Object adapt_value(String source_, x val_, String data_type_, boolean check_) { return adapt_value(source_, val_, new db_field(data_type_), check_); }
+
+	public static <x> Object adapt_value(String source_, x val_, db_field field_, boolean check_) { return (is_ok(field_) ? adapt_value(source_, val_, field_._type, field_._size, field_._decimals, check_) : null); }
+
+	public static <x> Object adapt_value(String source_, x val_, String data_type_, int size_, int decimals_, boolean check_) { return ((check_ && !complies(source_, val_, data_type_, size_, decimals_)) ? null : data.adapt_value(val_, to_data(data_type_, size_, decimals_), false)); }
+
 	public static int adapt_decimals(int decimals_) { return (numbers.is_ok(decimals_, MIN_DECIMALS, MAX_DECIMALS) ? decimals_ : DEFAULT_DECIMALS); }
 
 	public static <x> boolean complies(String source_, x val_, String data_type_) { return complies(source_, val_, new db_field(data_type_)); }
@@ -120,12 +99,21 @@ public class db_field extends parent
 	public static <x> boolean complies(String source_, x val_, String data_type_, int size_, int decimals_)
 	{
 		String type = data.check_type(data_type_);
-		if (val_ == null || !strings.is_ok(type) || size_ <= 0 || size_ > db.get_max_size(source_, type)) return false;
+		int size = check_size(source_, type, size_);
 
-		double val = Math.pow(10, size_);
-		size size = new size(-1 * val, val, decimals_);
+		return ((val_ == null || !strings.is_ok(type) || size <= 0) ? false : data.complies(val_, to_data(type, size, decimals_)));
+	}
+	
+	public static data to_data(db_field field_) { return (is_ok(field_) ? to_data(field_._type, field_._size, field_._decimals) : null); }
+	
+	public static data to_data(String type_, int size_, int decimals_)
+	{	
+		String type = types.check_type(type_);
+		if (!strings.is_ok(type) || size_ < 1 || decimals_ < 0) return null;
+		
+		double temp = Math.pow(10, size_);
 
-		return data.complies(val_, new data(type, size));
+		return new data(type_, new size(-1 * temp, temp, decimals_));
 	}
 
 	public db_field(db_field input_) { instantiate(input_); }

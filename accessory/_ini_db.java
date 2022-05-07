@@ -55,7 +55,7 @@ class _ini_db extends parent_ini_db
 		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_USER, new db_field(field_string));
 		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_USERNAME, new db_field(field_string));
 		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD, new db_field(field_string));
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC, new db_field(data.BOOLEAN));
+		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC, new db_field(types.DATA_BOOLEAN));
 		
 		return add_source(source, db_, info, default_fields, sources_);		
 	}

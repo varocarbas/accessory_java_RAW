@@ -92,7 +92,7 @@ abstract class db_queries
 		else if (what_.equals(data.DECIMAL)) output = numbers.DEFAULT_DECIMAL;
 		else if (what_.equals(data.LONG)) output = numbers.DEFAULT_LONG;
 		else if (what_.equals(data.INT)) output = numbers.DEFAULT_INT;
-		else if (what_.equals(data.BOOLEAN)) output = _defaults.BOOLEAN_INT;
+		else if (data.is_boolean(what_)) output = _defaults.BOOLEAN_INT;
 		
 		if (!strings.is_ok(field_)) 
 		{
@@ -110,7 +110,7 @@ abstract class db_queries
 			if (data.is_string(what_)) output = temp2;
 			else if (what_.equals(data.DECIMAL)) output = numbers.to_decimal(temp2);
 			else if (what_.equals(data.LONG)) output = numbers.to_long(temp2);
-			else if (what_.equals(data.INT) || what_.equals(data.BOOLEAN)) output = numbers.to_int(temp2);	
+			else if (what_.equals(data.INT) || data.is_boolean(what_)) output = numbers.to_int(temp2);	
 		}
 		
 		return output;

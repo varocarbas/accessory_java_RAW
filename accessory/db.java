@@ -457,15 +457,18 @@ public abstract class db
 		if (val_ == null) return output;
 		
 		String type = data.check_type(data_type_);
-		if (!strings.is_ok(type) || (check_ && !db_field.complies(source_, val_, type))) return output;
+		if (!strings.is_ok(type)) return output;
 
-		Object val = (type.equals(data.BOOLEAN) ? generic.boolean_to_int((boolean)val_) : val_);
+		Object val0 = db_field.adapt_value(source_, val_, data_type_, check_);
+		if (val0 == null) return output;
+		
+		Object val = (data.is_boolean(type) ? generic.boolean_to_int((boolean)val0) : val0);
 		output = strings.to_string(val);
 		output = sanitise_string(source_, output);
 	
 		return output;
 	}
-	
+
 	public static String sanitise_string(String input_) { return sanitise_string(get_current_source(), input_); }
 	
 	public static String sanitise_string(String source_, String input_) { return get_valid_instance(source_).sanitise_string(input_); }

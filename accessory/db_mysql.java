@@ -88,7 +88,7 @@ class db_mysql extends parent_db
 		if (!strings.is_ok(data_type)) return output;
 		
 		String type = null;
-		if (data_type.equals(data.BOOLEAN)) type = TINYINT;
+		if (data.is_boolean(data_type)) type = TINYINT;
 		else if (data_type.equals(data.STRING_SMALL)) type = VARCHAR;
 		else if (data_type.equals(data.STRING_BIG)) type = TEXT;
 		else if (data_type.equals(data.TIMESTAMP)) type = TIMESTAMP;
@@ -126,7 +126,7 @@ class db_mysql extends parent_db
 		String data_type = data.check_type(data_type_);
 		if (!strings.is_ok(data_type)) return max;
 		
-		if (data_type.equals(data.BOOLEAN)) max = 1;
+		if (data.is_boolean(data_type)) max = 1;
 		else if (data_type.equals(data.TIMESTAMP)) max = dates.SIZE_TIMESTAMP;		
 		else if (data_type.equals(data.DECIMAL)) max = 64;
 		else if (data_type.equals(data.INT)) max = numbers.MAX_DIGITS_INT;
@@ -215,7 +215,7 @@ class db_mysql extends parent_db
 		
 		int size_def = get_default_size(type);
 		
-		if (type.equals(data.BOOLEAN)) output = strings.to_string(info.get(generic.MAX));
+		if (data.is_boolean(type)) output = strings.to_string(info.get(generic.MAX));
 		else if (type.equals(data.DECIMAL))
 		{
 			int m = ((max > max2 || max < 1) ? size_def : max);
@@ -315,16 +315,19 @@ class db_mysql extends parent_db
 				if (!query.equals("")) query += ", ";
 				String item2 = get_variable(col) + " " + type2;
 
-				String[] further = create_table_check_further(field.get_further());	
+				String[] further = create_table_check_further(field.get_further());					
 				String def_val = strings.DEFAULT;
 				
 				if (type.equals(data.TIMESTAMP)) def_val = "current_timestamp";
 				else if (!arrays.value_exists(further, db_field.AUTO_INCREMENT))
 				{
-					if (generic.is_ok(field.get_default())) def_val = strings.to_string(field.get_default());
-					else if (data.is_number(type) || type.equals(data.BOOLEAN)) def_val = "0";
-					else if (data.is_string(type)) def_val = " ";
+					def_val = db.input_to_string(source_, field.get_default(), type, true);
 					
+					if (!strings.is_ok(def_val))
+					{
+						if (data.is_number(type) || data.is_boolean(type)) def_val = "0";
+						else if (data.is_string(type)) def_val = " ";						
+					}					
 					if (strings.is_ok(def_val, true)) def_val = get_variable_value(def_val, false);
 				}
 				

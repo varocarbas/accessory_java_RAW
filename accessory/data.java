@@ -93,23 +93,35 @@ public class data extends parent
 		boolean is_ok = false;
 		
 		Class<?> type = generic.get_class(val_);
-		Class<?> type2 = data_.get_class();
-		if (val_ == null || !is_ok(data_) || !type_complies(type, type2)) return is_ok;
+		if (type == null || !is_ok(data_)) return is_ok;
 
+		Class<?> type2 = data_.get_class();
+		if (!type_complies(type, type2)) return is_ok;
+		
 		if (generic.are_equal(type2, Boolean.class)) 
 		{
 			if (generic.are_equal(type, Boolean.class)) is_ok = true;
-			else if (generic.are_equal(type, Integer.class)) 
+			else if (generic.is_number(type)) 
 			{
-				int val = (int)val_;
-				is_ok = (val == 0 || val == 1);
+				double val = numbers.to_number(val_);
+				is_ok = (val == 0.0 || val == 1.0);
+			}
+			else if (generic.is_string(type)) 
+			{
+				String val2 = (String)val_;		
+				if (strings.is_boolean(val2)) is_ok = true;
+				else if (strings.is_number(val2))
+				{
+					double val3 = strings.to_number_decimal(val2);
+					is_ok = (val3 == 0.0 || val3 == 1.0);
+				}
 			}
 		}
 		else 
 		{
 			double size = 0;
 			
-			if (generic.are_equal(type2, String.class)) size = ((String)val_).length();
+			if (generic.is_string(type2)) size = ((String)val_).length();
 			else if (generic.is_number(type2)) size = numbers.to_number(val_);
 			else return false;
 
@@ -118,6 +130,30 @@ public class data extends parent
 		}
 
 		return is_ok;
+	}
+
+	public static <x> Object adapt_value(x val_, data data_, boolean check_)
+	{
+		if (val_ == null || !is_ok(data_) || (check_ && !complies(val_, data_))) return null;
+	
+		Object output = val_;
+		
+		if (is_boolean(data_._type))
+		{
+			Class<?> type = generic.get_class(val_);
+			output = false;
+	
+			if (generic.is_number(type)) output = (numbers.to_number(val_) == 1.0 ? true : false);
+			else if (generic.is_string(type)) 
+			{
+				String val2 = (String)val_;		
+				
+				if (strings.is_boolean(val2)) output = strings.to_boolean(val2);
+				else if (strings.is_number(val2)) output = (strings.to_number_decimal(val2) == 1.0 ? true : false);
+			}
+		}
+				
+		return output;
 	}
 
 	public static boolean type_is_ok(String type_) { return val_is_ok_common(type_, types.DATA, DEFAULT_TYPE); }
@@ -135,9 +171,11 @@ public class data extends parent
 
 	public static size get_default_size(String type_) { return get_boundaries(type_); }
 	
-	public static boolean is_number(String type_) { return is_common(type_, new String[] { DECIMAL, LONG, INT }); }
+	public static boolean is_number(String type_) { return is_common(type_, new String[] { INT, LONG, DECIMAL }); }
 
-	public static boolean is_string(String type_) { return is_common(type_, new String[] { STRING_SMALL, STRING_BIG }); }
+	public static boolean is_string(String type_) { return is_common(type_, new String[] { STRING_SMALL, STRING_BIG, TIMESTAMP }); }
+
+	public static boolean is_boolean(String type_) { return is_common(type_, new String[] { BOOLEAN }); }
 	
 	public boolean is_ok() { return is_ok(_type, _class, _size); }
 	
@@ -147,11 +185,11 @@ public class data extends parent
 		
 		classes.put(STRING_SMALL, String.class);
 		classes.put(STRING_BIG, String.class);
+		classes.put(TIMESTAMP, String.class);
 		classes.put(INT, Integer.class);
 		classes.put(LONG, Long.class);
 		classes.put(DECIMAL, Double.class);
 		classes.put(BOOLEAN, Boolean.class);
-		classes.put(TIMESTAMP, String.class);
 		
 		return classes;
 	}
@@ -164,10 +202,13 @@ public class data extends parent
 		classes.put(Double.class, Long.class);
 		classes.put(Long.class, Integer.class);
 		classes.put(Boolean.class, Integer.class);
+		classes.put(Boolean.class, Long.class);
+		classes.put(Boolean.class, Double.class);
+		classes.put(Boolean.class, String.class);
 		
 		return classes;
 	}
-
+		
 	private static boolean is_common(String type_, String[] targets_)
 	{
 		String type = check_type(type_);

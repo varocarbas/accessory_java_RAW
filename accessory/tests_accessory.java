@@ -1,6 +1,5 @@
 package accessory;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -94,36 +93,31 @@ public class tests_accessory
 	public static HashMap<String, Boolean> run_db()
 	{			
 		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
-		Object[] targets = null;
+
+		Object target = null;
+		ArrayList<Object> args = null;
+		boolean is_ok = false;
 		
-		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
-		ArrayList<Object> args2 = new ArrayList<Object>();
-
-		Class<?> type = db.class;
-
-		String name0 = type.getName();
+		Class<?> class0 = db.class;
+		String name0 = class0.getName();
 		tests.update_console(name0, true, 1);
 		
 		String source = types.CONFIG_TESTS_DB_SOURCE;
-		
+
 		String name = "create_table";
-		Class<?>[] params = new Class<?>[] { String.class, boolean.class };
-		Method method = generic.get_method(type, name, params);		
 		
-		boolean is_ok = false;
 		String[] sources = new String[] { source, credentials.SOURCE };
 		
 		for (String source2: sources)
 		{
-			args = new ArrayList<ArrayList<Object>>();
-			args2 = new ArrayList<Object>();
-			args2.add(source2);
-			args2.add(true);
-			args.add(args2);
+			args = new ArrayList<Object>();
+			args.add(source2);
+			args.add(true);
 			
 			db._cur_source = source2;
 			
-			is_ok = tests.run_method(type, method, name, args, targets);
+			is_ok = tests.run_method(class0, name, new Class<?>[] { String.class, boolean.class }, args, target);
+
 			outputs.put(name, is_ok);
 			if (!is_ok) return outputs;			
 		}
@@ -131,104 +125,134 @@ public class tests_accessory
 		db._cur_source = source;
 		
 		name = "insert";
-		params = new Class<?>[] { String.class, HashMap.class };
-		method = generic.get_method(type, name, params);		
-
-		args = new ArrayList<ArrayList<Object>>();
-		
-		args2 = new ArrayList<Object>();
-		args2.add(source);
 		
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		int max = 123456;
 		vals.put(tests.FIELD_INT, numbers.get_random_int(-1 * max, max));
-		vals.put(tests.FIELD_STRING, strings.get_random(strings.SIZE_SMALL));
+		String val_string = strings.get_random(strings.SIZE_SMALL);
+		vals.put(tests.FIELD_STRING, val_string);
 		double max2 = 123456789.123;
 		vals.put(tests.FIELD_DECIMAL, numbers.get_random_decimal(-1 * max2, max2));		
 		vals.put(tests.FIELD_BOOLEAN, generic.get_random_boolean());
 		
-		args2.add(vals);
-		args.add(args2);
+		args = new ArrayList<Object>();
+		args.add(source);
+		args.add(vals);
 
-		is_ok = tests.run_method(type, method, name, args, targets);
+		is_ok = tests.run_method(class0, name, new Class<?>[] { String.class, HashMap.class }, args, target);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 
 		name = "update";
-		params = new Class<?>[] { String.class, HashMap.class, db_where[].class };
-		method = generic.get_method(type, name, params);	
 				
 		int val = numbers.get_random_int(-1 * max, max);
 
 		vals.put(tests.FIELD_INT, val);		
 
-		db._cur_source = source;
-		db_where where = new db_where(null, db.FIELD_ID, 1);
+		db_where where = new db_where(null, tests.FIELD_STRING, val_string);
 		db_where[] wheres = new db_where[] { where };
 		
-		args2.add(wheres);
+		args.add(wheres);
 		
-		is_ok = tests.run_method(type, method, name, args, targets);
+		is_ok = tests.run_method(class0, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, target);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 
-		name = "select_one_int";
-		params = new Class<?>[] { String.class, String.class, db_where[].class, db_order[].class };
-		method = generic.get_method(type, name, params);	
-		
-		args = new ArrayList<ArrayList<Object>>();
-		
-		args2 = new ArrayList<Object>();
-		args2.add(source);
-		args2.add(tests.FIELD_INT);
-		args2.add(wheres);
-		args2.add(null);
-
-		args.add(args2);
-		
-		int target = val;
-		
-		is_ok = tests.run_method(type, method, name, args, new Object[] { target });
-		outputs.put(name, is_ok);
+		outputs = run_db_select_int(class0, source, wheres, val, outputs);
 
 		name = "execute_query";
-		params = new Class<?>[] { String.class };
-		method = generic.get_method(type, name, params);	
 
 		String field = tests.FIELD_INT;
 		String col = db.get_col(source, field);
 
 		String table = db.get_variable_table(source);
 
-		db._cur_source = source;
-		db_order[] orders = new db_order[] 
-		{ 
-			new db_order(null, field, db_order.DESC, true), 
-			new db_order(null, where.toString(), db_order.ASC, false)
-		};
+		db_order[] orders = new db_order[] { new db_order(null, field, db_order.DESC, true), new db_order(null, where.toString(), db_order.ASC, false) };
 		
 		String query = "SELECT " + db.get_variable(source, col) + " FROM " + table;
 		query += " WHERE " + db_where.to_string(wheres);
 		query += " ORDER BY " + db_order.to_string(orders);
-		
-		args = new ArrayList<ArrayList<Object>>();
-		
-		args2 = new ArrayList<Object>();
-		args2.add(query);
-		
-		args.add(args2);
+				
+		args = new ArrayList<Object>();
+		args.add(query);
+
+		target = val;
 		
 		ArrayList<HashMap<String, String>> target2 = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> target22 = new HashMap<String, String>();
 		target22.put(col, strings.to_string(target));		
 		target2.add(target22);
 		
-		is_ok = tests.run_method(type, method, name, args, new Object[] { target2 });
+		target = target2;
+		
+		is_ok = tests.run_method(class0, name, new Class<?>[] { String.class }, args, target);
 		outputs.put(name, is_ok);
+
+		name = "delete";
+		
+		args = new ArrayList<Object>();
+		args.add(source);
+		args.add(wheres);
+		
+		target = null;
+		
+		is_ok = tests.run_method(class0, name, new Class<?>[] { String.class, db_where[].class }, args, target);
+		outputs.put(name, is_ok);
+
+		val = numbers.get_random_int(-1 * max, max);
+		vals.put(tests.FIELD_INT, val);
+		
+		//insert_update (insert).
+		outputs = run_db_insert_update(class0, source, wheres, vals, outputs);
+		
+		outputs = run_db_select_int(class0, source, wheres, val, outputs);
+		
+		val = numbers.get_random_int(-1 * max, max);
+		vals.put(tests.FIELD_INT, val);
+
+		//insert_update (update).
+		outputs = run_db_insert_update(class0, source, wheres, vals, outputs);
+		
+		outputs = run_db_select_int(class0, source, wheres, val, outputs);
 		
 		tests.update_console(name0, false, 1);
 		
 		return outputs;	
+	}
+	
+	private static HashMap<String, Boolean> run_db_select_int(Class<?> class0_, String source_, db_where[] wheres_, int target_, HashMap<String, Boolean> outputs_)
+	{	
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>(outputs_);
+		
+		String name = "select_one_int";
+		
+		ArrayList<Object> args = new ArrayList<Object>();
+		args.add(source_);
+		args.add(tests.FIELD_INT);
+		args.add(wheres_);
+		args.add(null);
+		
+		boolean is_ok = tests.run_method(class0_, name, new Class<?>[] { String.class, String.class, db_where[].class, db_order[].class }, args, target_);
+		outputs.put(name, is_ok);
+		
+		return outputs;
+	}
+	
+	private static HashMap<String, Boolean> run_db_insert_update(Class<?> class0_, String source_, db_where[] wheres_, HashMap<String, Object> vals_, HashMap<String, Boolean> outputs_)
+	{	
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>(outputs_);
+		
+		String name = "insert_update";
+		
+		ArrayList<Object> args = new ArrayList<Object>();
+		args.add(source_);
+		args.add(vals_);
+		args.add(wheres_);
+		
+		boolean is_ok = tests.run_method(class0_, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, null);
+		outputs.put(name, is_ok);
+		
+		return outputs;
 	}
 	
 	public static HashMap<String, Boolean> run_crypto()

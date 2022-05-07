@@ -34,7 +34,7 @@ public class _alls extends parent_ini_first
 	
 	public static HashMap<String, Class<?>> DATA_CLASSES = null;
 	public static HashMap<Class<?>, Class<?>> DATA_COMPATIBLE = null;
-
+	
 	public static HashMap<String, String[]> DB_WHERE_OPERANDS = null;
 	public static HashMap<String, String[]> DB_WHERE_LINKS = null;
 	
