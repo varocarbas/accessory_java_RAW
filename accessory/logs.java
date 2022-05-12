@@ -3,8 +3,10 @@ package accessory;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class logs 
-{		
+public abstract class logs extends parent_static
+{	
+	public static final String _ID = types.get_id(types.ID_LOGS);
+
 	public static final String SCREEN = types.CONFIG_LOGS_OUT_SCREEN;
 	public static final String FILE = types.CONFIG_LOGS_OUT_FILE;
 	public static final String OUT_SCREEN = SCREEN;
@@ -12,10 +14,7 @@ public abstract class logs
 	
 	public static final boolean DEFAULT_SCREEN = _defaults.LOGS_SCREEN;
 	public static final boolean DEFAULT_FILE = _defaults.LOGS_FILE;
-	
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_LOGS);
-	
+		
 	public static void update_activity(HashMap<String, String> inputs_, String id_)
 	{
 		update_file(arrays.to_string(inputs_, misc.SEPARATOR_ITEM, misc.SEPARATOR_KEYVAL, null), id_, false);		
@@ -28,9 +27,9 @@ public abstract class logs
 		String id = id_;
 		if (!strings.is_ok(id)) id = config.get_basic(types.CONFIG_BASIC_NAME);
 		
-		if (tests.is_running() || out_is_ok(SCREEN)) update_screen(message_);
+		if (parent_tests.is_running() || out_is_ok(SCREEN)) update_screen(message_);
 		
-		if (tests.is_running())
+		if (parent_tests.is_running())
 		{	
 			System.out.println("Only screen logs while tests are running.");
 			

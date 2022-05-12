@@ -3,8 +3,10 @@ package accessory;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public abstract class credentials 
+public abstract class credentials extends parent_static
 {
+	public static final String _ID = types.get_id(types.ID_CREDENTIALS);
+	
 	public static final String SOURCE = types.CONFIG_CREDENTIALS_DB_SOURCE;
 	public static final String FIELD_ID = types.CONFIG_CREDENTIALS_DB_FIELD_ID;
 	public static final String FIELD_ID_ENC = types.CONFIG_CREDENTIALS_DB_FIELD_ID_ENC;
@@ -26,9 +28,6 @@ public abstract class credentials
 	public static final String DEFAULT_WHERE = _defaults.CREDENTIALS_WHERE;
 
 	private static final String SEPARATOR = misc.SEPARATOR_NAME;
-	
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_CREDENTIALS);
 	
 	public static HashMap<String, String> get_username_password_file(String id_, String user_, boolean is_encrypted_) { return get_username_password(id_, user_, is_encrypted_, WHERE_FILE); }
 	
@@ -202,7 +201,7 @@ public abstract class credentials
 	
 	private static String check_where(String where_)
 	{
-		String where = types.check_type(where_, types.get_subtypes(WHERE));
+		String where = types.check_type(where_, WHERE);
 
 		return (strings.is_ok(where) ? where : DEFAULT_WHERE);
 	}

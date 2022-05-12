@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public abstract class db 
-{	
+{
+	public static final String _ID = types.get_id(types.ID_DB);
+
 	public static final String NAME = types.CONFIG_DB_NAME;
 	public static final String HOST = types.CONFIG_DB_SETUP_HOST;
 	public static final String USERNAME = types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME;
@@ -65,11 +67,6 @@ public abstract class db
 	private static HashMap<String, HashMap<String, Object>> _source_setups = new HashMap<String, HashMap<String, Object>>();
 	private static HashMap<String, String> _db_setups = new HashMap<String, String>();
 	//---
-	
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_DB);
-	
-	static void start() { } //Method forcing this class to load when required (e.g., from the ini class).
 
 	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  { return credentials.encrypt_username_password_file(get_type(source_), user_, username_, password_);  }
 
@@ -459,7 +456,7 @@ public abstract class db
 		String type = data.check_type(data_type_);
 		if (!strings.is_ok(type)) return output;
 
-		Object val0 = db_field.adapt_value(source_, val_, data_type_, check_);
+		Object val0 = db_field.adapt_value(source_, val_, type, check_);
 		if (val0 == null) return output;
 		
 		Object val = (data.is_boolean(type) ? generic.boolean_to_int((boolean)val0) : val0);
@@ -515,7 +512,7 @@ public abstract class db
 	
 	static boolean query_returns_data(String type_)
 	{
-		String type = types.check_type(type_, types.get_subtypes(types.DB_QUERY));
+		String type = types.check_type(type_, types.DB_QUERY);
 		if (!strings.is_ok(type)) return false;
 		
 		String[] targets = new String[] { SELECT, TABLE_EXISTS };
@@ -533,7 +530,7 @@ public abstract class db
 		is_ok(source_, true);
 		
 		String source = check_source(source_);
-		
+	 	
 		if (!strings.is_ok(source)) manage_error(source_, db.ERROR_SOURCE, null, null, null);
 		else is_ok(source, true);
 		
@@ -552,7 +549,7 @@ public abstract class db
 	{ 
 		parent_db output = null;
 		
-		String type = types.check_type(type_, types.get_subtypes(TYPE));
+		String type = types.check_type(type_, TYPE);
 		if (!strings.is_ok(type)) type = DEFAULT_TYPE;
 		
 		if (type.equals(MYSQL)) output = new db_mysql();

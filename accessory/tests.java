@@ -1,305 +1,418 @@
 package accessory;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class tests 
-{		
-	public static final String SOURCE = types.CONFIG_TESTS_DB_SOURCE;
-	public static final String FIELD_DECIMAL = types.CONFIG_TESTS_DB_FIELD_DECIMAL;
-	public static final String FIELD_INT = types.CONFIG_TESTS_DB_FIELD_INT;
-	public static final String FIELD_STRING = types.CONFIG_TESTS_DB_FIELD_STRING;
-	public static final String FIELD_BOOLEAN = types.CONFIG_TESTS_DB_FIELD_BOOLEAN;
-
-	public static final String ERROR_RUN = types.ERROR_TEST_RUN;
-	
-	public static boolean _report_all_errors = true;
-	public static boolean _test_db = true;
-	public static Object _temp_output = null;
-	
-	private static boolean _is_running = false;
-	private static int _overload = 0;
-	
-	public static boolean is_running() { return _is_running; }
-	
-	static { _ini.start(); }
+public class tests extends parent_tests 
+{
 	public static final String _ID = types.get_id(types.ID_TESTS);
-	
-	public static HashMap<String, Boolean> run(Class<?> class_) { return run(class_, null, null, null); }
-	
-	public static HashMap<String, Boolean> run(Class<?> class_, String[] skip_) { return run(class_, null, null, skip_); }
 
-	public static HashMap<String, Boolean> run(Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_) { return run(class_, null, args_, targets_, skip_); }
+	private static tests _instance = new tests();
+	
+	public tests() { }
+	
+	public static HashMap<String, HashMap<String, Boolean>> run_all() { return _instance.run_all_internal(); }
+	
+	public HashMap<String, HashMap<String, Boolean>> run_all_internal()
+	{	
+		HashMap<String, HashMap<String, Boolean>> outputs = new HashMap<String, HashMap<String, Boolean>>();
+
+		outputs = run_db(outputs);
+		outputs = run_main(outputs);
+		
+		check_wrongs(outputs);
+		
+		return outputs;
+	}
 	
 	@SuppressWarnings("unchecked")
-	public static HashMap<String, Boolean> run(Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_)
+	public static HashMap<String, HashMap<String, Boolean>> run_db(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		HashMap<String, Boolean> run_outs = new HashMap<String, Boolean>();
+		HashMap<String, HashMap<String, Boolean>> outputs = (HashMap<String, HashMap<String, Boolean>>)arrays.get_new(outputs_);
+		if (!parent_tests._test_db) return outputs;
 		
-		int level = 1;
-		_is_running = true;
+		String name = "accessory_db";
+		int level = 0;
 		
-		Method[] methods = (arrays.is_ok(methods_) ? methods_ : generic.get_all_methods(class_, null));
+		parent_tests.update_console(name, true, level);
+		outputs.put(name, run_internal(db.class));
+		parent_tests.update_console(name, false, level);
 		
-		if (!arrays.is_ok(methods))
-		{
-			errors.manage(types.ERROR_TEST_RUN, null, (generic.is_ok(class_) ? new String[] { class_.getName() } : null));
-			
-			return run_outs;
-		}
-		
-		String name0 = class_.getName();
-		update_console(name0, true, level);
-		
-		run_outs = new HashMap<String, Boolean>();
-		
-		String name_prev = strings.DEFAULT;
-		int overload = 0;
-		
-		for (int i = 0; i < methods.length; i++)
-		{
-			boolean is_ok = false;
-			
-			String name = "method" + misc.SEPARATOR_NAME + i;
-			Method method = methods[i];
-			
-			if (!method_is_ok(class_, method, name))
-			{
-				run_outs.put(name, is_ok);
-				
-				continue;
-			}
-			
-			name = method.getName();
-			if (arrays.value_exists(skip_, name) || strings.are_equivalent(name, "load")) continue;
-			
-			String temp = name;
-			if (temp.equals(name_prev))
-			{
-				overload++;
-				temp += "(" + overload + ")";
-			}
-			else overload = 0;
-			
-			name_prev = name;
-			name = temp;
-			
-			run_outs.put(name, run_method(class_, method, name, (ArrayList<ArrayList<Object>>)arrays.get_value(args_, name), (Object[])arrays.get_value(targets_, name)));
-		}
-		
-		update_console(name0, false, level);
-		
-		_is_running = false;
-		
-		return run_outs;
+		return outputs;
 	}
 	
-	public static boolean run_method(Class<?> class_, String method_name_, Class<?>[] params_, ArrayList<Object> args_, Object target_)
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, HashMap<String, Boolean>> run_main(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		ArrayList<ArrayList<Object>> args = null;
+		HashMap<String, HashMap<String, Boolean>> outputs = (HashMap<String, HashMap<String, Boolean>>)arrays.get_new(outputs_);
+
+		String name = "accessory_main";
+		int level = 0;
 		
-		if (arrays.is_ok(args_))
-		{
-			args = new ArrayList<ArrayList<Object>>();
-			args.add(args_);			
-		}
-	
-		Object[] targets = null;
-		if (target_ != null) targets = new Object[] { target_ };
+		parent_tests.update_console(name, true, level);		
 		
-		return run_method(class_, generic.get_method(class_, method_name_, params_), method_name_, args, targets);
+		Class<?>[] classes = new Class<?>[] 
+		{ 
+			crypto.class, strings.class, arrays.class, dates.class, generic.class,
+			io.class, numbers.class, paths.class, types.class, credentials.class
+		}; 
+		
+		for (Class<?> type: classes) { outputs.put(type.getName(), run_internal(type)); }
+
+		parent_tests.update_console(name, false, level);
+		
+		return outputs;
 	}
-	
-	public static boolean run_method(Class<?> class_, Method method_, String method_name_, ArrayList<ArrayList<Object>> args_, Object[] targets_)
-	{
+
+	public static HashMap<String, Boolean> run_db()
+	{			
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
+
+		Object target = null;
+		ArrayList<Object> args = null;
 		boolean is_ok = false;
-
-		_is_running = true;
-		_temp_output = null;
 		
-		if (!method_is_ok(class_, method_, method_name_)) return is_ok;
-
-		Class<?>[] params = (Class<?>[])arrays.get_new(method_.getParameterTypes());
+		Class<?> class0 = db.class;
+		String name0 = class0.getName();
+		parent_tests.update_console(name0, true, 1);
 		
-		update_console(method_name_ + " " + strings.to_string(params), true, 2);		
+		String source = types.CONFIG_TESTS_DB_SOURCE;
 
-		is_ok = true;
-		String result = strings.DEFAULT;
-
-		Object[] targets = (Object[])arrays.get_new(targets_);
-		Object[] args = get_args(params, arrays.get_new(args_));			
-		Object output = generic.call_static_method(method_, args);
-		_temp_output = output;
+		String name = "create_table";
 		
-		boolean out_is_ok = output_is_ok(output, targets);
+		String[] sources = new String[] { source, credentials.SOURCE };
 		
-		if (errors.triggered() || !out_is_ok)
+		for (String source2: sources)
 		{
-			is_ok = false;
-			result = "ERROR";
+			args = new ArrayList<Object>();
+			args.add(source2);
+			args.add(true);
 			
-			if (arrays.is_ok(targets)) result += " (targets not met)";
-			else if (!_report_all_errors) is_ok = true;
-		}
-		else result = "OK";
+			db._cur_source = source2;
+			
+			is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String.class, boolean.class }, args, target);
 
-		System.out.println(result);
-		
-		String in = "IN: ";
-		if (arrays.is_ok(args)) in += strings.to_string(args);
-		System.out.println(in);
-		
-		String target = "TARGETS: ";
-		if (arrays.is_ok(targets)) target += strings.to_string(targets);
-		System.out.println(target);
-		
-		String out = "OUT: ";
-		if (generic.is_ok(output)) out += strings.to_string(output);
-		System.out.println(out);
-
-		update_console(method_name_, false, 2);
-		
-		_is_running = false;
-		
-		return is_ok;
-	}
-
-	public static Object[] get_default_args(Class<?>[] params_)
-	{
-		if (!arrays.is_ok(params_)) return null;
-
-		ArrayList<Object> output = new ArrayList<Object>();
-		
-		for (Class<?> param: params_) { output.add(get_default_arg(param)); }
-		
-		return arrays.to_array(output);
-	}
-	
-	public static Object get_default_arg(Class<?> class_)
-	{
-		Object output = null;
-		if (class_ == null) return output;
-
-		if (generic.are_equal(class_, Double.class)) output = numbers.get_random_decimal(-12345.67, 12345.67);
-		else if (generic.are_equal(class_, Long.class)) output = numbers.get_random_long(-12345l, 12345l);
-		else if (generic.are_equal(class_, Integer.class)) output = numbers.get_random_int(-123, 123); 
-		else if (generic.are_equal(class_, String.class)) output = strings.get_random(strings.SIZE_SMALL);
-		else output = generic.get_random(class_);
-
-		return output;
-	}
-
-	public static void update_console(String name_, boolean is_start_, int level_)
-	{
-		String output = "";
-		
-		int max = 2;
-		int count = max;
-		boolean is_last = (level_ == count);
-		
-		while (count >= level_)
-		{
-			count--;
-			output += "---";
+			outputs.put(name, is_ok);
+			if (!is_ok) return outputs;			
 		}
 
-		if (!is_last) output += " " + (is_start_ ? "START" : "END") + " " + name_ + misc.NEW_LINE;
-		else
-		{
-			if (is_start_) output += " " + name_;
-			else output += misc.NEW_LINE;
-		}
-
-		System.out.println(output);
-	}
-
-	private static void manage_error(String type_, Class<?> class_, String method_name_)
-	{
-		HashMap<String, String> info = new HashMap<String, String>();
+		db._cur_source = source;
 		
-		info.put(generic.TYPE, type_);
-		if (class_ != null) info.put("class", strings.to_string(class_));
-		if (strings.is_ok(method_name_)) info.put("method", method_name_);
-
-		errors.manage(info);
+		name = "insert";
 		
-		_is_running = false;
-	}
-
-	private static boolean method_is_ok(Class<?> class_, Method method_, String method_name_)
-	{
-		boolean is_ok = true;
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+		int max = 123456;
+		vals.put(parent_tests.FIELD_INT, numbers.get_random_int(-1 * max, max));
+		String val_string = strings.get_random(strings.SIZE_SMALL);
+		vals.put(parent_tests.FIELD_STRING, val_string);
+		double max2 = 123456789.123;
+		vals.put(parent_tests.FIELD_DECIMAL, numbers.get_random_decimal(-1 * max2, max2));		
+		vals.put(parent_tests.FIELD_BOOLEAN, generic.get_random_boolean());
 		
-		if (!generic.is_ok(method_))
-		{
-			manage_error(ERROR_RUN, class_, method_name_);
+		args = new ArrayList<Object>();
+		args.add(source);
+		args.add(vals);
 
-			is_ok = false;
-		}	
-		
-		return is_ok;
-	}
-	
-	private static boolean output_is_ok(Object output_, Object[] targets_)
-	{
-		boolean output_ok = generic.is_ok(output_);
-		if (!arrays.is_ok(targets_)) return true;
+		is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String.class, HashMap.class }, args, target);
+		outputs.put(name, is_ok);
+		if (!is_ok) return outputs;
 
-		boolean is_ok = false;
-		Object target = (targets_.length - 1 >= _overload ? targets_[_overload] : null);
-		
-		if (!generic.is_ok(target)) is_ok = !output_ok;
-		else is_ok = generic.are_equal(target, output_);
-		
-		return is_ok;
-	}
-	
-	private static Object[] get_args(Class<?>[] params_, ArrayList<ArrayList<Object>> args_all_)
-	{
-		_overload = 0;
-	
-		int size = arrays.get_size(params_);
-		if (size < 1) return null;
-
-		boolean args_ok = false;
-		ArrayList<ArrayList<Object>> args_all = (ArrayList<ArrayList<Object>>)arrays.get_new(args_all_);
-		if (!arrays.is_ok(args_all)) args_all.add(null);
-		else args_ok = true;
-		
-		ArrayList<Object> args0 = null;
-		for (int i = 0; i < args_all.size(); i++)
-		{
-			ArrayList<Object> args = (ArrayList<Object>)arrays.get_new(args_all.get(i));
-			if (arrays.get_size(args) != size) continue;
-
-			boolean is_ok = true;
-
-			for (int i2 = 0; i2 < size; i2++)
-			{
-				if (args.get(i2) == null) continue;
+		name = "update";
 				
-				if (!generic.are_equal(generic.get_class(args.get(i2)), params_[i2]))
-				{
-					is_ok = false;
-					break;
-				}
-			}
-			if (!is_ok) continue;
-			
-			_overload = i;
-			args0 = new ArrayList<Object>(args);
-			
-			break;
-		}
+		int val = numbers.get_random_int(-1 * max, max);
+
+		vals.put(parent_tests.FIELD_INT, val);		
+
+		db_where where = new db_where(null, parent_tests.FIELD_STRING, val_string);
+		db_where[] wheres = new db_where[] { where };
 		
-		boolean defaults = (!arrays.is_ok(args0));
-		if (defaults && args_ok) return null;
+		args.add(wheres);
 		
-		Object[] output = new Object[size];
+		is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, target);
+		outputs.put(name, is_ok);
+		if (!is_ok) return outputs;
+
+		outputs = run_db_select_int(class0, source, wheres, val, outputs);
+
+		name = "execute_query";
+
+		String field = parent_tests.FIELD_INT;
+		String col = db.get_col(source, field);
+
+		String table = db.get_variable_table(source);
+
+		db_order[] orders = new db_order[] { new db_order(null, field, db_order.DESC, true), new db_order(null, where.toString(), db_order.ASC, false) };
 		
-		for (int i = 0; i < size; i++) { output[i] = ((defaults ? get_default_arg(params_[i]) : args0.get(i))); }
+		String query = "SELECT " + db.get_variable(source, col) + " FROM " + table;
+		query += " WHERE " + db_where.to_string(wheres);
+		query += " ORDER BY " + db_order.to_string(orders);
+				
+		args = new ArrayList<Object>();
+		args.add(query);
+
+		target = val;
+		
+		ArrayList<HashMap<String, String>> target2 = new ArrayList<HashMap<String, String>>();
+		HashMap<String, String> target22 = new HashMap<String, String>();
+		target22.put(col, strings.to_string(target));		
+		target2.add(target22);
+		
+		target = target2;
+		
+		is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String.class }, args, target);
+		outputs.put(name, is_ok);
+
+		name = "delete";
+		
+		args = new ArrayList<Object>();
+		args.add(source);
+		args.add(wheres);
+		
+		target = null;
+		
+		is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String.class, db_where[].class }, args, target);
+		outputs.put(name, is_ok);
+
+		val = numbers.get_random_int(-1 * max, max);
+		vals.put(parent_tests.FIELD_INT, val);
+		
+		//insert_update (insert).
+		outputs = run_db_insert_update(class0, source, wheres, vals, outputs);
+		
+		outputs = run_db_select_int(class0, source, wheres, val, outputs);
+		
+		val = numbers.get_random_int(-1 * max, max);
+		vals.put(parent_tests.FIELD_INT, val);
+
+		//insert_update (update).
+		outputs = run_db_insert_update(class0, source, wheres, vals, outputs);
+		
+		outputs = run_db_select_int(class0, source, wheres, val, outputs);
+		
+		parent_tests.update_console(name0, false, 1);
+		
+		return outputs;	
+	}
 	
+	private static HashMap<String, Boolean> run_db_select_int(Class<?> class0_, String source_, db_where[] wheres_, int target_, HashMap<String, Boolean> outputs_)
+	{	
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>(outputs_);
+		
+		String name = "select_one_int";
+		
+		ArrayList<Object> args = new ArrayList<Object>();
+		args.add(source_);
+		args.add(parent_tests.FIELD_INT);
+		args.add(wheres_);
+		args.add(null);
+		
+		boolean is_ok = parent_tests.run_method(class0_, name, new Class<?>[] { String.class, String.class, db_where[].class, db_order[].class }, args, target_);
+		outputs.put(name, is_ok);
+		
+		return outputs;
+	}
+	
+	private static HashMap<String, Boolean> run_db_insert_update(Class<?> class0_, String source_, db_where[] wheres_, HashMap<String, Object> vals_, HashMap<String, Boolean> outputs_)
+	{	
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>(outputs_);
+		
+		String name = "insert_update";
+		
+		ArrayList<Object> args = new ArrayList<Object>();
+		args.add(source_);
+		args.add(vals_);
+		args.add(wheres_);
+		
+		boolean is_ok = parent_tests.run_method(class0_, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, null);
+		outputs.put(name, is_ok);
+		
+		return outputs;
+	}
+	
+	public static HashMap<String, Boolean> run_crypto()
+	{		
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
+		
+		Class<?> class0 = crypto.class;
+		String name0 = class0.getName();		
+		parent_tests.update_console(name0, true, 1);
+		
+		String name = "encrypt";
+		
+		String[] input = (String[])arrays.get_random(String[].class);
+		String id = null;
+		
+		ArrayList<Object> args = new ArrayList<Object>();
+		args.add(input);
+		args.add(id);
+		
+		Object target = null;
+		
+		boolean is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String[].class, String.class }, args, target);
+
+		outputs.put(name, is_ok);
+		if (!is_ok) return outputs;
+		
+		String[] encrypted = (String[])parent_tests._temp_output;
+		
+		name = "decrypt";
+
+		args = new ArrayList<Object>();
+		args.add(encrypted);
+		args.add(id);
+		
+		target = input;
+
+		is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String[].class, String.class }, args, input);
+		outputs.put(name, is_ok);
+
+		parent_tests.update_console(name0, false, 1);
+		
+		return outputs;	
+	}
+
+	public static HashMap<String, Boolean> run_strings()
+	{		
+		Class<?> type = strings.class;
+		
+		HashMap<String, ArrayList<ArrayList<Object>>> args_all = new HashMap<String, ArrayList<ArrayList<Object>>>();
+		
+		String name = "get_random";
+		
+		ArrayList<ArrayList<Object>> args = new ArrayList<ArrayList<Object>>();
+		ArrayList<Object> args2 = new ArrayList<Object>();
+		args2.add(strings.DEFAULT_SIZE);
+		args2.add(true);
+		args2.add(true);
+		args2.add(true);
+		args.add(args2);
+		
+		args2 = new ArrayList<Object>();
+		args2.add(strings.DEFAULT_SIZE);
+		args.add(args2);
+		
+		args_all.put(name, args);
+		
+		HashMap<String, Object[]> targets = null; 
+		String[] skip = null;
+		
+		return parent_tests.run(type, args_all, targets, skip);
+	}
+				
+	public static HashMap<String, Boolean> run_arrays() { return parent_tests.run(arrays.class); }
+	
+	public static HashMap<String, Boolean> run_dates() { return parent_tests.run(dates.class); }
+	
+	public static HashMap<String, Boolean> run_generic()
+	{
+		String[] skip = new String[] { "get_method", "call_static_method" };
+		
+		return parent_tests.run(generic.class, skip);
+	}
+	
+	public static HashMap<String, Boolean> run_io()
+	{
+		String[] skip = new String[] { "array_to_file", "line_to_file", "object_to_file", "bytes_to_file" };
+		
+		return parent_tests.run(io.class, skip);
+	}
+	
+	public static HashMap<String, Boolean> run_numbers() { return parent_tests.run(numbers.class); }
+	
+	public static HashMap<String, Boolean> run_paths()
+	{
+		String[] skip = new String[] { "update_main_dir" };
+		
+		return parent_tests.run(paths.class, skip);
+	}
+	
+	public static HashMap<String, Boolean> run_types()
+	{
+		String[] skip = new String[] { "check_multiple" };
+		
+		return parent_tests.run(types.class, skip);
+	}
+	
+	public static HashMap<String, Boolean> run_credentials()
+	{
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
+
+		Class<?> class0 = credentials.class;
+		String name0 = class0.getName();
+		parent_tests.update_console(name0, true, 1);
+		
+		String id = _ID;
+		String user = credentials.DEFAULT_USER;
+		String username = strings.get_random(strings.SIZE_SMALL);
+		String password = strings.get_random(strings.SIZE_SMALL);
+		
+		for (boolean is_file: new boolean[] { true, false })
+		{
+			if (!is_file && !parent_tests._test_db) continue;
+			
+			outputs = run_credentials_internal(class0, outputs, id, user, username, password, is_file);			
+		}
+
+		parent_tests.update_console(name0, false, 1);
+		
+		return outputs;
+	}
+		
+	@SuppressWarnings("unchecked")
+	private static HashMap<String, Boolean> run_credentials_internal(Class<?> class_, HashMap<String, Boolean> outputs_, String id_, String user_, String username_, String password_, boolean is_file_)
+	{
+		HashMap<String, Boolean> outputs = (HashMap<String, Boolean>)arrays.get_new(outputs_);
+		
+		String name = "encrypt_username_password_" + (is_file_ ? "file" : "db");
+			
+		ArrayList<Object> args = new ArrayList<Object>();
+		args.add(id_);
+		args.add(user_);
+		args.add(username_);
+		args.add(password_);
+
+		Object target = null;
+		
+		boolean is_ok = parent_tests.run_method(class_, name, new Class<?>[] { String.class, String.class, String.class, String.class }, args, target);
+		
+		outputs.put(name, is_ok);
+		if (!is_ok) return outputs;
+		
+		name = "get_username_password_" + (is_file_ ? "file" : "db");
+	
+		args = new ArrayList<Object>();
+		args.add(id_);
+		args.add(user_);
+		args.add(true);
+		
+		HashMap<String, String> temp = new HashMap<String, String>();
+		temp.put(credentials.USERNAME, username_);
+		temp.put(credentials.PASSWORD, password_);
+		
+		target = temp; 
+			
+		is_ok = parent_tests.run_method(class_, name, new Class<?>[] { String.class, String.class, boolean.class }, args, target);
+		outputs.put(name, is_ok);
+		
+		return outputs;
+	}
+	
+	private static HashMap<String, Boolean> run_internal(Class<?> class_)
+	{
+		HashMap<String, Boolean> output = null;
+		
+		if (class_.equals(crypto.class)) output = run_crypto();
+		else if (class_.equals(strings.class)) output = run_strings();
+		else if (class_.equals(arrays.class)) output = run_arrays();
+		else if (class_.equals(dates.class)) output = run_dates();
+		else if (class_.equals(generic.class)) output = run_generic();
+		else if (class_.equals(io.class)) output = run_io();
+		else if (class_.equals(numbers.class)) output = run_numbers();
+		else if (class_.equals(paths.class)) output = run_paths();
+		else if (class_.equals(types.class)) output = run_types();
+		else if (class_.equals(credentials.class)) output = run_credentials();
+		else if (class_.equals(db.class)) output = run_db();
+
 		return output;
 	}
 }

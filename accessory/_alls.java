@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 //This class includes all the array constants to be loaded at the very beginning, except for the ones included in _basic. 
 //Rules for all the constants in this class:
-//- All the values will be assigned in the main method below by calling the corresponding methods in other classes.
+//- All the values will be assigned in the main method below by calling the corresponding local methods in other classes.
 //- All these constants will be accessed directly here, via the corresponding local methods (i.e., no local copies).
 
 public class _alls extends parent_ini_first

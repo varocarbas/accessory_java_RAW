@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-abstract class db_queries 
-{
-	static { _ini.start(); }
-	
+abstract class db_queries
+{	
 	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_) { return select_one(source_, fields_, db_where.to_string(wheres_), db_order.to_string(orders_)); }
 	
 	public static HashMap<String, String> select_one(String source_, String[] fields_, String wheres_cols_, String orders_cols_)

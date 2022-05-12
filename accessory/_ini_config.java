@@ -24,10 +24,7 @@ class _ini_config extends parent_ini_config
 		
 		config.update_ini(type, types.CONFIG_BASIC_NAME, _defaults.APP_NAME);
 		
-		for (String subtype: types.get_subtypes(types.CONFIG_BASIC_DIR))
-		{
-			config.update_ini(type, subtype, paths.get_default_dir(subtype));
-		}
+		for (String subtype: types.get_subtypes(types.CONFIG_BASIC_DIR)) { config.update_ini(type, subtype, paths.get_default_dir(subtype)); }
 	}
 
 	private boolean populate_generic_credentials()

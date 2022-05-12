@@ -1,26 +1,27 @@
 package accessory;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 public abstract class parent_ini 
 {
+	//The value of the LEGACY constant is the name of the package expected to include all the legacy ini classes.
+	//This legacy support basically means that it is possible to have two overlapping ini configurations which
+	//can be enabled/disabled by simply changing the value of a boolean variable. For example, there could be a 
+	//main/new set of tables or DB setup whose values could be partially or completely overwritten from the legacy package.
+	public static final String LEGACY = "legacy";  
+	
 	public static final String ERROR_DBS = types.ERROR_INI_DB_DBS;
 	public static final String ERROR_SOURCE = types.ERROR_INI_DB_SOURCE;
 	
 	protected boolean _populated = false;
+	protected boolean _includes_legacy = false;
 	
 	protected String _dbs_user = null;
 	protected String _dbs_username = null;
 	protected String _dbs_password = null;
 	protected String _dbs_host = null;
 	protected boolean _dbs_encrypted = false;
-	
-	protected abstract void populate_first_basic();
-	protected abstract void populate_first_starts();
-	protected abstract void populate_first_alls();
-	protected abstract void populate_first_defaults();
-	protected abstract void populate_config();
-	protected abstract void populate_db();
 	
 	public static void manage_error(String type_)
 	{
@@ -40,43 +41,88 @@ public abstract class parent_ini
 	//The keys in the generic class might not have been loaded yet, so better getting them directly from types.
 	public static String get_generic_key(String what_)
 	{
-		String what = types.check_type(what_, types.get_subtypes(types.WHAT));
+		String what = types.check_type(what_, types.WHAT);
 		
 		return (strings.is_ok(what) ? types.what_to_key(what) : strings.DEFAULT);
 	}
 	
-	protected void populate_all() { populate_all_internal(); }
+	protected void populate_all(boolean includes_legacy_) { populate_all_internal(includes_legacy_); }
 	
-	protected void populate_all(String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_) 
+	protected void populate_all(String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_, boolean includes_legacy_) 
 	{		
 		if (dbs_user_ != null) _dbs_user = dbs_user_;
 		if (dbs_username_ != null) _dbs_username = dbs_username_;
 		if (dbs_password_ != null) _dbs_password = dbs_password_;
 		if (dbs_host_ != null) _dbs_host = dbs_host_;
+		if (!_dbs_encrypted) _dbs_encrypted = dbs_encrypted_;
 		
-		_dbs_encrypted = dbs_encrypted_;
-
-		populate_all_internal();
+		populate_all_internal(includes_legacy_);
 	}
 	
-	private void populate_all_internal() 
+	private void populate_all_internal(boolean includes_legacy_) 
 	{
 		if (_populated) return;
+	
+		_includes_legacy = includes_legacy_;
 		
-		db.start();
-		populate_first();
-		populate_config();
-		populate_db();
+		String package_name = this.getClass().getPackageName();
+		
+		if (package_name.equals("accessory")) populate_all_internal_accessory();
+		else populate_all_internal_other_all(package_name);
 		
 		_populated = true;
 	}
 	
-	//Loading all the first classes, the ones whose names start with "_".
-	private void populate_first()
+	private void populate_all_internal_accessory() 
 	{
-		populate_first_basic();
-		populate_first_starts();
-		populate_first_alls();
-		populate_first_defaults();
+		_basic.populate();
+		_starts.populate();
+		_alls.populate();
+		_defaults.populate();
+		
+		_ini_config.populate();
+		_ini_db.populate(_dbs_user, _dbs_username, _dbs_password, _dbs_host, _dbs_encrypted);
+	}
+	
+	private void populate_all_internal_other_all(String package_) 
+	{
+		String[] classes = new String[] { "_basic", "_starts", "_alls", "_defaults", "_ini_config", "_ini_db" };
+		
+		for (String class0: classes) { populate_all_internal_other_class(package_, class0); }
+		
+		if (_includes_legacy && !package_.equals(LEGACY)) populate_all_internal_other_all(LEGACY);
+	}
+	
+	private void populate_all_internal_other_class(String package_, String class_) 
+	{
+		String method0 = "populate";
+		
+		generic.ignore_errors(true);
+		
+		String name = package_ + "." + class_;
+		Class<?> class1 = generic.get_class_from_name(name);
+		if (class1 == null) return;
+		
+		Class<?>[] params = null;
+		Object[] args = null;
+		
+		if (class_.equals("_ini_db"))
+		{
+			params = new Class<?>[] { String.class, String.class, String.class, String.class, boolean.class };
+			args = new Object[] { _dbs_user, _dbs_username, _dbs_password, _dbs_host, _dbs_encrypted };
+		}
+		
+		Method method = generic.get_method(class1, method0, params);
+		if (method == null && params != null)
+		{
+			params = null;
+			args = null;
+			
+			method = generic.get_method(class1, method0, params);
+		}
+		
+		generic.call_static_method(method, args);
+		
+		generic.ignore_errors_persistent_end();		
 	}
 }

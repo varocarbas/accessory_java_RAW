@@ -10,7 +10,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
 public class crypto extends parent 
-{	
+{
+	public static final String _ID = types.get_id(types.ID_CRYPTO);
+	
 	public static final String KEY = "key";
 	public static final String IV = "iv";
 
@@ -40,9 +42,6 @@ public class crypto extends parent
 	private String _temp_algo_key = strings.DEFAULT; 
 	private String _temp_algo_cipher = strings.DEFAULT;
 	private boolean _is_ok = false;
-	
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_CRYPTO);
 	
 	public String toString() { return strings.DEFAULT; }
 	public boolean is_ok() { return _is_ok; }

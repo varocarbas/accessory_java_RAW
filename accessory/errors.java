@@ -2,8 +2,10 @@ package accessory;
 
 import java.util.HashMap;
 
-public abstract class errors 
-{		
+public abstract class errors extends parent_static 
+{
+	public static final String _ID = types.get_id(types.ID_ERRORS);
+
 	public static boolean _exit = false;
 	
 	public static final String DEFAULT_TYPE = _defaults.ERRORS_TYPE;
@@ -11,10 +13,7 @@ public abstract class errors
 	public static final String DEFAULT_SEPARATOR = _defaults.ERRORS_SEPARATOR;
 
 	private static boolean _triggered = false; 
-	
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_ERRORS);
-	
+		
 	public static boolean triggered() 
 	{
 		boolean output = _triggered;
@@ -31,7 +30,7 @@ public abstract class errors
 
 		_triggered = true;
 		
-		if (!tests.is_running() && _exit) System.exit(1); 
+		if (!parent_tests.is_running() && _exit) System.exit(1); 
 	}
 
 	public static void manage(String type_, Exception e_, String[] further_)
@@ -51,7 +50,7 @@ public abstract class errors
 
 		_triggered = true;
 		
-		if (!tests.is_running() && _exit) System.exit(1);
+		if (!parent_tests.is_running() && _exit) System.exit(1);
 	}
 
 	public static void manage_io(String type_, String path_, Exception e_)
@@ -67,7 +66,7 @@ public abstract class errors
 	@SuppressWarnings("unchecked")
 	private static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_, HashMap<String, String> info_)
 	{
-		String type = types.check_type(type_, types.get_subtypes(types.ERROR_DB));
+		String type = types.check_type(type_, types.ERROR_DB);
 
 		HashMap<String, String> info = (HashMap<String, String>)arrays.get_new(info_);
 		info.put(get_generic(types.WHAT_TYPE), (strings.is_ok(type) ? type : DEFAULT_TYPE));
@@ -76,7 +75,7 @@ public abstract class errors
 		String message2 = get_message(e_, type);
 		
 		if ((strings.is_ok(message2) && (generic.is_ok(e_)) || !strings.is_ok(message))) message = message2;
-		info.put("message", message);
+		info.put(get_generic(types.WHAT_MESSAGE), message);
 
 		if (strings.is_ok(query_)) info.put(get_generic(types.WHAT_QUERY), query_);
 
@@ -90,7 +89,7 @@ public abstract class errors
 		info.put(get_generic(types.WHAT_TYPE), (strings.is_ok(type_) ? type_ : DEFAULT_TYPE));
 		
 		if (strings.is_ok(path_)) info.put("path", path_);
-		info.put("message", get_message(e_, type_));
+		info.put(get_generic(types.WHAT_MESSAGE), get_message(e_, type_));
 		
 		return info;
 	}

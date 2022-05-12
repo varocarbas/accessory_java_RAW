@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-abstract class db_sql 
+abstract class db_sql
 {
-	static { _ini.start(); }
-
 	public static boolean params_are_ok(String source_, String what_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
 		String table = db.get_table(source_);

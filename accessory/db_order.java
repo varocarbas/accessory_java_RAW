@@ -7,13 +7,13 @@ public class db_order extends parent
 	public static final String ORDER_ASC = ASC;
 	public static final String ORDER_DESC = DESC;
 
-	public static final String DEFAULT = _defaults.DB_ORDER;
-	public static final String DEFAULT_ORDER = DEFAULT;
-
+	public static final String DEFAULT_ORDER = _defaults.DB_ORDER;
+	public static final boolean DEFAULT_IS_FIELD = _defaults.DB_ORDER_IS_FIELD;
+	
 	private String _source = strings.DEFAULT;
 	private String _field_condition = strings.DEFAULT; //When _is_field is true, it is always treated as a field except inside to_string() methods, where it is converted into a col.
-	private String _order = DEFAULT;
-	private boolean _is_field = _defaults.DB_ORDER_FIELD; //_field_condition being a field/col vs. something else like a condition.
+	private String _order = DEFAULT_ORDER;
+	private boolean _is_field = DEFAULT_IS_FIELD; //_field_condition being a field/col vs. something else like a condition.
 
 	private String _temp_source = strings.DEFAULT;
 	private String _temp_field_condition = strings.DEFAULT;
@@ -37,13 +37,15 @@ public class db_order extends parent
 		return output;
 	}
 
-	public static boolean order_is_ok(String order_) { return val_is_ok_common(order_, types.DB_ORDER, DEFAULT); }
+	public static boolean order_is_ok(String order_) { return val_is_ok_common(order_, types.DB_ORDER, DEFAULT_ORDER); }
 
-	public static String check_order(String order_) { return check_val_common(order_, types.DB_ORDER, DEFAULT); }
+	public static String check_order(String order_) { return check_val_common(order_, types.DB_ORDER, DEFAULT_ORDER); }
 
-	public static String order_to_string(String order_) { return val_to_string_common(order_, types.DB_ORDER, DEFAULT); }
+	public static String order_to_string(String order_) { return val_to_string_common(order_, types.DB_ORDER, DEFAULT_ORDER); }
 
 	public db_order(db_order input_) { instantiate(input_); }
+
+	public db_order(String source_, String field_condition_, String order_) { instantiate(source_, field_condition_, order_, DEFAULT_IS_FIELD); }
 
 	public db_order(String source_, String field_condition_, String order_, boolean is_field_) { instantiate(source_, field_condition_, order_, is_field_); }
 
@@ -93,7 +95,7 @@ public class db_order extends parent
 	{
 		_temp_source = db.check_source(source_);
 		_temp_field_condition = (is_field_ ? db.check_field(_temp_source, field_condition_) : field_condition_);
-		_temp_order = types.check_type(order_);
+		_temp_order = types.check_type(order_, types.DB_ORDER);
 		
 		return (strings.are_ok(new String[] { _temp_source, _temp_field_condition, _temp_order }));
 	}

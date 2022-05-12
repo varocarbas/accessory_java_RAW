@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public abstract class strings 
+public abstract class strings extends parent_static
 {	
+	public static final String _ID = types.get_id(types.ID_STRINGS);
+
 	public static final int MIN_SIZE = 0;
 	public static final int MAX_SIZE = 65535;
 	
@@ -17,10 +19,7 @@ public abstract class strings
 	
 	public static final String DEFAULT = _defaults.STRINGS;
 	public static final int DEFAULT_SIZE = _defaults.STRINGS_SIZE;
-	
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_STRINGS);
-	
+		
 	public static boolean is_ok(String string_) { return is_ok(string_, false); }
 	
 	public static boolean are_ok(String[] strings_)

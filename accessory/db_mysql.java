@@ -84,7 +84,7 @@ class db_mysql extends parent_db
 	{
 		HashMap<String, Object> output = new HashMap<String, Object>();
 		
-		String data_type = types.check_type(data_type_, types.get_subtypes(types.DATA));
+		String data_type = data.check_type(data_type_);
 		if (!strings.is_ok(data_type)) return output;
 		
 		String type = null;
@@ -321,16 +321,16 @@ class db_mysql extends parent_db
 				if (type.equals(data.TIMESTAMP)) def_val = "current_timestamp";
 				else if (!arrays.value_exists(further, db_field.AUTO_INCREMENT))
 				{
-					def_val = db.input_to_string(source_, field.get_default(), type, true);
+					def_val = db.input_to_string(source_, field.get_default(), type, true);	
 					
 					if (!strings.is_ok(def_val))
 					{
 						if (data.is_number(type) || data.is_boolean(type)) def_val = "0";
 						else if (data.is_string(type)) def_val = " ";						
-					}					
+					}	
+					
 					if (strings.is_ok(def_val, true)) def_val = get_variable_value(def_val, false);
 				}
-				
 				if (strings.is_ok(def_val)) item2 += " default " + def_val;
 				
 				String further2 = create_table_further_to_query(further);

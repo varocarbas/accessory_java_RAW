@@ -3,8 +3,10 @@ package accessory;
 import java.io.File;
 import java.util.ArrayList;
 
-public abstract class paths 
-{		
+public abstract class paths extends parent_static 
+{
+	public static final String _ID = types.get_id(types.ID_PATHS);
+
 	public static final String HOME = paths.get_dir_home();
 	
 	public static final String DIR_APP = types.CONFIG_BASIC_DIR_APP;
@@ -19,10 +21,7 @@ public abstract class paths
 	public static final String EXTENSION_JAR = ".jar";
 	public static final String EXTENSION_INI = ".ini";
 	public static final String EXTENSION_LOG = ".log";
-	
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_PATHS);
-	
+		
 	public static boolean exists(String path_) { return (strings.is_ok(path_) && (new File(path_)).exists()); }
 	
 	public static String build(String[] pieces_, boolean last_file_)
@@ -96,7 +95,7 @@ public abstract class paths
 
 	static String get_default_dir(String type_)
 	{
-		String type = types.check_type(type_, types.get_subtypes(types.CONFIG_BASIC_DIR));
+		String type = types.check_type(type_, types.CONFIG_BASIC_DIR);
 		
 		if (!strings.is_ok(type)) return strings.DEFAULT;
 		else if (strings.are_equal(type, types.CONFIG_BASIC_DIR_APP)) return get_dir_app_default();
@@ -118,7 +117,7 @@ public abstract class paths
 	{
 		String output = strings.DEFAULT;
 		
-		String type = types.check_type(type_, types.get_subtypes(types.CONFIG_BASIC_DIR));
+		String type = types.check_type(type_, types.CONFIG_BASIC_DIR);
 		if (!strings.is_ok(type)) return output;
 	
 		if (is_get_) output = config.get_basic(type);

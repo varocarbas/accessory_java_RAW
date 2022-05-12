@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public abstract class types 
-{	
+public abstract class types extends parent_static
+{
+	public static final String _ID = types.get_id(types.ID_TYPES);
+
 	public static final String SEPARATOR = misc.SEPARATOR_NAME;
 
 	//--------- To be synced with the populate_all_[] methods below.
@@ -205,6 +207,8 @@ public abstract class types
 	public static final String WHAT_SERVER = "what_server";
 	public static final String WHAT_ID = "what_id";
 	public static final String WHAT_INSTANCE = "what_instance";
+	public static final String WHAT_MESSAGE = "what_message";
+	public static final String WHAT_LEGACY = "what_legacy";
 	
 	public static final String ID = "id";
 	public static final String ID_ARRAYS = "id_arrays";
@@ -222,7 +226,6 @@ public abstract class types
 	public static final String ID_PATHS = "id_paths";
 	public static final String ID_STRINGS = "id_strings";
 	public static final String ID_TESTS = "id_tests";
-	public static final String ID_TESTS_ACCESSORY = "id_tests_accessory";
 	public static final String ID_TYPES = "id_types";
 	
 	public static final String ERROR = "error";
@@ -256,15 +259,12 @@ public abstract class types
 	public static final String ERROR_CRYPTO_DECRYPT = "error_crypto_decrypt";
 
 	//---------
-
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_TYPES);
 	
-	public static String check_what(String what_) { return check_type(what_, get_subtypes(WHAT)); }
+	public static String check_what(String what_) { return check_type(what_, WHAT); }
 	
 	public static String what_to_key(String what_) { return check_type(what_, get_subtypes(WHAT), ACTION_REMOVE, WHAT); }
 	
-	public static String check_action(String action_) { return check_type(action_, get_subtypes(ACTION)); }
+	public static String check_action(String action_) { return check_type(action_, ACTION); }
 	
 	public static String action_to_key(String action_) { return check_type(action_, get_subtypes(ACTION), ACTION_REMOVE, ACTION); }
 	
@@ -286,7 +286,9 @@ public abstract class types
 		return output;
 	}
 
-	public static String check_type(String type_) { return check_type(type_, null); }
+	public static String check_type(String type_) { return check_type(type_, (String)null); }
+
+	public static String check_type(String type_, String root_) { return check_type(type_, (strings.is_ok(root_) ? get_subtypes(root_) : null)); }
 
 	public static String check_type(String type_, String[] types_) { return check_type(type_, types_, null, null); }
 	
@@ -471,12 +473,12 @@ public abstract class types
 			
 			WHAT,
 			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 
-			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER,
-			WHAT_TYPE, WHAT_APP, WHAT_SERVER, WHAT_ID, WHAT_INSTANCE,
+			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER, WHAT_TYPE, WHAT_APP, 
+			WHAT_SERVER, WHAT_ID, WHAT_INSTANCE, WHAT_MESSAGE, WHAT_LEGACY,
 			
 			ID,
 			ID_ARRAYS, ID_CONFIG, ID_CREDENTIALS, ID_CRYPTO, ID_DATES, ID_DB, ID_ERRORS, ID_GENERIC, ID_IO, 
-			ID_LOGS, ID_MISC, ID_NUMBERS, ID_PATHS, ID_STRINGS, ID_TESTS, ID_TESTS_ACCESSORY, ID_TYPES,
+			ID_LOGS, ID_MISC, ID_NUMBERS, ID_PATHS, ID_STRINGS, ID_TESTS, ID_TYPES,
 			
 			ERROR,
 			ERROR_INI,

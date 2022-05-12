@@ -3,8 +3,10 @@ package accessory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public abstract class dates 
-{		
+public abstract class dates extends parent_static
+{
+	public static final String _ID = types.get_id(types.ID_DATES);
+	
 	public static final String TIME = types.DATES_FORMAT_TIME;
 	public static final String TIME_FULL = types.DATES_FORMAT_TIME_FULL;
 	public static final String TIME_SHORT = types.DATES_FORMAT_TIME_SHORT;
@@ -19,9 +21,6 @@ public abstract class dates
 	public static final int SIZE_TIMESTAMP = SIZE_DATE_TIME;
 
 	public static final String DEFAULT_FORMAT = _defaults.DATES_FORMAT;
-	
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_DATES);
 	
 	public static String get_current_time(String format_, int offset_)
 	{
@@ -72,7 +71,7 @@ public abstract class dates
 	{
 		String pattern = strings.DEFAULT;
 
-		String format = types.check_type(format_, types.get_subtypes(types.DATES_FORMAT));
+		String format = types.check_type(format_, types.DATES_FORMAT);
 		if (!strings.is_ok(format)) format = DEFAULT_FORMAT;
 		
 		if (format.equals(TIME_FULL) || format.equals(TIME)) pattern = "HH:mm:ss";

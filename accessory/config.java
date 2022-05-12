@@ -3,13 +3,12 @@ package accessory;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public abstract class config 
-{	
-	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
-
-	static { _ini.start(); }
+public abstract class config extends parent_static 
+{
 	public static final String _ID = types.get_id(types.ID_CONFIG);
 	
+	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
+
 	public static String get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
 	
 	public static boolean update_basic(String key_, boolean val_) { return update_basic(key_, strings.to_string(val_)); }
@@ -66,7 +65,7 @@ public abstract class config
 	
 	public static boolean matches(String type_, String key_, String val_) { return update_matches(type_, key_, val_, false, false); }	
 
-	public static String check_type(String type_) { return types.check_type(type_, types.get_subtypes(types.CONFIG)); }
+	public static String check_type(String type_) { return types.check_type(type_, types.CONFIG); }
 
 	public static boolean vals_are_ok(HashMap<String, Object> vals_, String type_)
 	{

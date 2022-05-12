@@ -9,8 +9,5 @@ class _starts extends parent_ini_first
 	public _starts() { }
 	public static void populate() { _instance.populate_internal_common(); }
 	
-	protected void populate_internal() 
-	{ 
-		db.start();
-	}
+	protected void populate_internal() { }
 }

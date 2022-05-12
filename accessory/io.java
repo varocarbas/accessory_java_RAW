@@ -13,19 +13,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public abstract class io 
-{	
+public abstract class io extends parent_static 
+{
+	public static final String _ID = types.get_id(types.ID_IO);
+
 	public static final String ERROR_WRITE = types.ERROR_FILE_WRITE;
 	public static final String ERROR_READ = types.ERROR_FILE_READ;
 		
 	static boolean _log_exceptions = true; //To avoid infinite recursion provoked by writing exceptions triggered by writing.
-
-	private static boolean _is_ok = false;
-
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_IO);
-
-	public static boolean is_ok() { return _is_ok; }
 	
 	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{

@@ -15,13 +15,13 @@ public abstract class parent_db
 	public abstract int get_max_size(String data_type_);
 	public abstract String get_value(String input_);
 	public abstract String get_variable(String input_);
-
-	public boolean is_ok() { return _is_ok; }
-	public void is_ok(boolean is_ok_) { _is_ok = is_ok_; }
 	
 	protected abstract Connection connect_internal(String source_, Properties properties);
 	
 	private boolean _is_ok = false;
+	
+	public boolean is_ok() { return _is_ok; }
+	public void is_ok(boolean is_ok_) { _is_ok = is_ok_; }
 	
 	public Connection connect(String source_, Properties properties_)
 	{

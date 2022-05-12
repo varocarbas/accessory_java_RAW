@@ -81,7 +81,7 @@ public abstract class parent_ini_db
 		
 		boolean is_ok = true;
 		String db = config.check_type(db_);
-		
+
 		config.update_ini(db, types.CONFIG_DB_NAME, (strings.is_ok(name_) ? name_ : get_db_name_default(db)));		
 		HashMap<String, Object> setup_vals = get_setup_vals(db, setup_vals_);
 		
@@ -89,7 +89,7 @@ public abstract class parent_ini_db
 		{
 			String id = item.getKey();
 			Object[] temp = item.getValue();
-			
+
 			if (!populate_source(id, (String)temp[0], (HashMap<String, Object[]>)temp[1], setup_vals))
 			{
 				HashMap<String, String> info = new HashMap<String, String>();
@@ -99,9 +99,9 @@ public abstract class parent_ini_db
 				_ini.manage_error(info);
 				
 				return false;
-			}	
+			}
 		}
-		
+			
 		return is_ok;
 	}	
 
@@ -152,7 +152,7 @@ public abstract class parent_ini_db
 	private String get_table_default(String source_, String db_) 
 	{ 
 		String name = strings.DEFAULT;
-		if (source_.contains(db_)) name = strings.remove(new String[] { db_, types.SEPARATOR + "source" }, source_);
+		if (source_.contains(db_)) name = strings.remove(new String[] { db_ + types.SEPARATOR, types.SEPARATOR + "source" }, source_);
 		
 		return (strings.is_ok(name) ? name : get_table_col_loop(source_, new String[] { db_, "config", "db", "source", "default" }));
 	}
@@ -160,7 +160,7 @@ public abstract class parent_ini_db
 	private String get_col_default(String field_, String table_, String db_) 
 	{ 
 		String name = strings.DEFAULT;
-		if (field_.contains(db_)) name = strings.remove(new String[] { db_, table_, types.SEPARATOR + "field" + types.SEPARATOR }, field_); 
+		if (field_.contains(db_)) name = strings.remove(new String[] { db_ + types.SEPARATOR, table_ + types.SEPARATOR, "field" + types.SEPARATOR }, field_); 
 		
 		return (strings.is_ok(name) ? name : get_table_col_loop(field_, new String[] { db_, table_, "config", "db", "field", "default" }));
 	}
@@ -180,6 +180,7 @@ public abstract class parent_ini_db
 
 		String db = config.check_type((String)setup_vals_.get(types.CONFIG_DB));
 		String source = config.check_type(source_);
+		
 		if (!strings.is_ok(db) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
 	
 		HashMap<String, db_field> fields = new HashMap<String, db_field>();		

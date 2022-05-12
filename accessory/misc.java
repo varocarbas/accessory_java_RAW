@@ -1,7 +1,9 @@
 package accessory;
 
-public abstract class misc 
-{	
+public abstract class misc extends parent_static
+{
+	public static final String _ID = types.get_id(types.ID_MISC);
+
 	public static final String NEW_LINE = System.lineSeparator();
 	
 	public static final String BRACKET_MAIN_OPEN = "{ ";
@@ -15,10 +17,7 @@ public abstract class misc
 	public static final String SEPARATOR_NAME = "_";	
 	public static final String SEPARATOR_KEYVAL = ": ";
 	public static final String SEPARATOR_ITEM = ", ";
-	
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_MISC);
-	
+		
 	public static void pause_min()
 	{
 		pause_milli(50);

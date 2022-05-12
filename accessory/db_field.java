@@ -84,13 +84,13 @@ public class db_field extends parent
 		return output;
 	}
 
+	public static int adapt_decimals(int decimals_) { return (numbers.is_ok(decimals_, MIN_DECIMALS, MAX_DECIMALS) ? decimals_ : DEFAULT_DECIMALS); }
+
 	public static <x> Object adapt_value(String source_, x val_, String data_type_, boolean check_) { return adapt_value(source_, val_, new db_field(data_type_), check_); }
 
 	public static <x> Object adapt_value(String source_, x val_, db_field field_, boolean check_) { return (is_ok(field_) ? adapt_value(source_, val_, field_._type, field_._size, field_._decimals, check_) : null); }
 
 	public static <x> Object adapt_value(String source_, x val_, String data_type_, int size_, int decimals_, boolean check_) { return ((check_ && !complies(source_, val_, data_type_, size_, decimals_)) ? null : data.adapt_value(val_, to_data(data_type_, size_, decimals_), false)); }
-
-	public static int adapt_decimals(int decimals_) { return (numbers.is_ok(decimals_, MIN_DECIMALS, MAX_DECIMALS) ? decimals_ : DEFAULT_DECIMALS); }
 
 	public static <x> boolean complies(String source_, x val_, String data_type_) { return complies(source_, val_, new db_field(data_type_)); }
 
@@ -108,7 +108,7 @@ public class db_field extends parent
 	
 	public static data to_data(String type_, int size_, int decimals_)
 	{	
-		String type = types.check_type(type_);
+		String type = types.check_type(type_, types.DATA);
 		if (!strings.is_ok(type) || size_ < 1 || decimals_ < 0) return null;
 		
 		double temp = Math.pow(10, size_);
