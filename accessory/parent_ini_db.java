@@ -48,7 +48,7 @@ public abstract class parent_ini_db
 	
 	public static boolean setup_vals_are_ok(HashMap<String, Object> setup_vals_)
 	{
-		String instance = _ini.get_generic_key(types.WHAT_INSTANCE);
+		String instance = _keys.get_key(types.WHAT_INSTANCE);
 		if (!arrays.keys_exist(setup_vals_, new String[] { types.CONFIG_DB, types.CONFIG_DB_SETUP, types.CONFIG_DB_SETUP_TYPE, instance })) return false;
 		if (!strings.are_ok(new String[] { (String)setup_vals_.get(types.CONFIG_DB), (String)setup_vals_.get(types.CONFIG_DB_SETUP), (String)setup_vals_.get(types.CONFIG_DB_SETUP_TYPE) })) return false;
 		
@@ -93,7 +93,7 @@ public abstract class parent_ini_db
 			if (!populate_source(id, (String)temp[0], (HashMap<String, Object[]>)temp[1], setup_vals))
 			{
 				HashMap<String, String> info = new HashMap<String, String>();
-				info.put(parent_ini.get_generic_key(types.WHAT_TYPE), parent_ini.ERROR_SOURCE);
+				info.put(_keys.get_key(types.WHAT_TYPE), parent_ini.ERROR_SOURCE);
 				info.put("source", id);
 
 				_ini.manage_error(info);
@@ -105,9 +105,9 @@ public abstract class parent_ini_db
 		return is_ok;
 	}	
 
-	protected HashMap<String, Object[]> add_source(String source_, String db_, HashMap<String, db_field> fields_info_, boolean add_default_fields_, HashMap<String, Object[]> all_sources_)
+	protected HashMap<String, Object[]> add_source(String source_, String table_, String db_, HashMap<String, db_field> fields_info_, boolean add_default_fields_, HashMap<String, Object[]> all_sources_)
 	{
-		all_sources_.put(source_, new Object[] { get_table_default(source_, db_), get_fields(fields_info_, source_, db_, add_default_fields_) });
+		all_sources_.put(source_, new Object[] { get_table_default(source_, db_), get_fields(fields_info_, source_, table_, db_, add_default_fields_) });
 		
 		return all_sources_;
 	}
@@ -123,13 +123,13 @@ public abstract class parent_ini_db
 		_ini.manage_error(error);
 	}
 	
-	private HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String source_, String db_, boolean add_default_)
+	private HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String source_, String table_, String db_, boolean add_default_)
 	{		
 		if (!arrays.is_ok(info_)) return null;
 
 		HashMap<String, Object[]> fields = (add_default_ ? get_default_fields() : new HashMap<String, Object[]>());
 		
-		String table = get_table_default(source_, db_);
+		String table = (strings.is_ok(table_) ? table_ : get_table_default(source_, db_));
 		
 		for (Entry<String, db_field> item: info_.entrySet())
 		{
@@ -160,9 +160,9 @@ public abstract class parent_ini_db
 	private String get_col_default(String field_, String table_, String db_) 
 	{ 
 		String name = strings.DEFAULT;
-		if (field_.contains(db_)) name = strings.remove(new String[] { db_ + types.SEPARATOR, table_ + types.SEPARATOR, "field" + types.SEPARATOR }, field_); 
+		if (field_.contains(db_)) name = strings.remove(new String[] { db_ + types.SEPARATOR, table_ + types.SEPARATOR, "common_field" + types.SEPARATOR, "field" + types.SEPARATOR }, field_); 
 		
-		return (strings.is_ok(name) ? name : get_table_col_loop(field_, new String[] { db_, table_, "config", "db", "field", "default" }));
+		return (strings.is_ok(name) ? name : get_table_col_loop(field_, new String[] { db_, table_, "config", "db", "common_field", "field", "default" }));
 	}
 
 	private String get_table_col_loop(String name_, String[] items_) 
@@ -180,7 +180,6 @@ public abstract class parent_ini_db
 
 		String db = config.check_type((String)setup_vals_.get(types.CONFIG_DB));
 		String source = config.check_type(source_);
-		
 		if (!strings.is_ok(db) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
 	
 		HashMap<String, db_field> fields = new HashMap<String, db_field>();		
@@ -224,7 +223,7 @@ public abstract class parent_ini_db
 		vals = parent_ini_config.get_config_default_generic(types.CONFIG_DB_SETUP_CREDENTIALS, vals);
 		if (arrays.value_exists(config.update_ini((String)vals.get(types.CONFIG_DB_SETUP), vals), false)) return null;
 
-		vals.put(_ini.get_generic_key(types.WHAT_INSTANCE), db.get_instance_ini((String)vals.get(types.CONFIG_DB_SETUP_TYPE)));
+		vals.put(_keys.get_key(types.WHAT_INSTANCE), db.get_instance_ini((String)vals.get(types.CONFIG_DB_SETUP_TYPE)));
 		
 		return vals;
 	}

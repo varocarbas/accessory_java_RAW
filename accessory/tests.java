@@ -29,14 +29,16 @@ public class tests extends parent_tests
 	public static HashMap<String, HashMap<String, Boolean>> run_db(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
 		HashMap<String, HashMap<String, Boolean>> outputs = (HashMap<String, HashMap<String, Boolean>>)arrays.get_new(outputs_);
-		if (!parent_tests._test_db) return outputs;
+		if (!_test_db) return outputs;
 		
 		String name = "accessory_db";
 		int level = 0;
 		
-		parent_tests.update_console(name, true, level);
+		update_screen(name, true, level);
+		
 		outputs.put(name, run_internal(db.class));
-		parent_tests.update_console(name, false, level);
+		
+		update_screen(name, false, level);
 		
 		return outputs;
 	}
@@ -49,7 +51,7 @@ public class tests extends parent_tests
 		String name = "accessory_main";
 		int level = 0;
 		
-		parent_tests.update_console(name, true, level);		
+		update_screen(name, true, level);		
 		
 		Class<?>[] classes = new Class<?>[] 
 		{ 
@@ -59,7 +61,7 @@ public class tests extends parent_tests
 		
 		for (Class<?> type: classes) { outputs.put(type.getName(), run_internal(type)); }
 
-		parent_tests.update_console(name, false, level);
+		update_screen(name, false, level);
 		
 		return outputs;
 	}
@@ -74,7 +76,8 @@ public class tests extends parent_tests
 		
 		Class<?> class0 = db.class;
 		String name0 = class0.getName();
-		parent_tests.update_console(name0, true, 1);
+		
+		update_screen(name0, true, 1);
 		
 		String source = types.CONFIG_TESTS_DB_SOURCE;
 
@@ -90,7 +93,7 @@ public class tests extends parent_tests
 			
 			db._cur_source = source2;
 			
-			is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String.class, boolean.class }, args, target);
+			is_ok = run_method(class0, name, new Class<?>[] { String.class, boolean.class }, args, target);
 
 			outputs.put(name, is_ok);
 			if (!is_ok) return outputs;			
@@ -101,19 +104,22 @@ public class tests extends parent_tests
 		name = "insert";
 		
 		HashMap<String, Object> vals = new HashMap<String, Object>();
+		
 		int max = 123456;
-		vals.put(parent_tests.FIELD_INT, numbers.get_random_int(-1 * max, max));
+		vals.put(FIELD_INT, numbers.get_random_int(-1 * max, max));
+		
 		String val_string = strings.get_random(strings.SIZE_SMALL);
-		vals.put(parent_tests.FIELD_STRING, val_string);
+		vals.put(FIELD_STRING, val_string);
+		
 		double max2 = 123456789.123;
-		vals.put(parent_tests.FIELD_DECIMAL, numbers.get_random_decimal(-1 * max2, max2));		
-		vals.put(parent_tests.FIELD_BOOLEAN, generic.get_random_boolean());
+		vals.put(FIELD_DECIMAL, numbers.get_random_decimal(-1 * max2, max2));		
+		vals.put(FIELD_BOOLEAN, generic.get_random_boolean());
 		
 		args = new ArrayList<Object>();
 		args.add(source);
 		args.add(vals);
 
-		is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String.class, HashMap.class }, args, target);
+		is_ok = run_method(class0, name, new Class<?>[] { String.class, HashMap.class }, args, target);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 
@@ -121,14 +127,14 @@ public class tests extends parent_tests
 				
 		int val = numbers.get_random_int(-1 * max, max);
 
-		vals.put(parent_tests.FIELD_INT, val);		
+		vals.put(FIELD_INT, val);		
 
-		db_where where = new db_where(null, parent_tests.FIELD_STRING, val_string);
+		db_where where = new db_where(null, FIELD_STRING, val_string);
 		db_where[] wheres = new db_where[] { where };
 		
 		args.add(wheres);
 		
-		is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, target);
+		is_ok = run_method(class0, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, target);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 
@@ -136,7 +142,7 @@ public class tests extends parent_tests
 
 		name = "execute_query";
 
-		String field = parent_tests.FIELD_INT;
+		String field = FIELD_INT;
 		String col = db.get_col(source, field);
 
 		String table = db.get_variable_table(source);
@@ -159,7 +165,7 @@ public class tests extends parent_tests
 		
 		target = target2;
 		
-		is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String.class }, args, target);
+		is_ok = run_method(class0, name, new Class<?>[] { String.class }, args, target);
 		outputs.put(name, is_ok);
 
 		name = "delete";
@@ -170,11 +176,11 @@ public class tests extends parent_tests
 		
 		target = null;
 		
-		is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String.class, db_where[].class }, args, target);
+		is_ok = run_method(class0, name, new Class<?>[] { String.class, db_where[].class }, args, target);
 		outputs.put(name, is_ok);
 
 		val = numbers.get_random_int(-1 * max, max);
-		vals.put(parent_tests.FIELD_INT, val);
+		vals.put(FIELD_INT, val);
 		
 		//insert_update (insert).
 		outputs = run_db_insert_update(class0, source, wheres, vals, outputs);
@@ -182,14 +188,14 @@ public class tests extends parent_tests
 		outputs = run_db_select_int(class0, source, wheres, val, outputs);
 		
 		val = numbers.get_random_int(-1 * max, max);
-		vals.put(parent_tests.FIELD_INT, val);
+		vals.put(FIELD_INT, val);
 
 		//insert_update (update).
 		outputs = run_db_insert_update(class0, source, wheres, vals, outputs);
 		
 		outputs = run_db_select_int(class0, source, wheres, val, outputs);
 		
-		parent_tests.update_console(name0, false, 1);
+		update_screen(name0, false, 1);
 		
 		return outputs;	
 	}
@@ -202,11 +208,11 @@ public class tests extends parent_tests
 		
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add(source_);
-		args.add(parent_tests.FIELD_INT);
+		args.add(FIELD_INT);
 		args.add(wheres_);
 		args.add(null);
 		
-		boolean is_ok = parent_tests.run_method(class0_, name, new Class<?>[] { String.class, String.class, db_where[].class, db_order[].class }, args, target_);
+		boolean is_ok = run_method(class0_, name, new Class<?>[] { String.class, String.class, db_where[].class, db_order[].class }, args, target_);
 		outputs.put(name, is_ok);
 		
 		return outputs;
@@ -223,7 +229,7 @@ public class tests extends parent_tests
 		args.add(vals_);
 		args.add(wheres_);
 		
-		boolean is_ok = parent_tests.run_method(class0_, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, null);
+		boolean is_ok = run_method(class0_, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, null);
 		outputs.put(name, is_ok);
 		
 		return outputs;
@@ -235,7 +241,8 @@ public class tests extends parent_tests
 		
 		Class<?> class0 = crypto.class;
 		String name0 = class0.getName();		
-		parent_tests.update_console(name0, true, 1);
+		
+		update_screen(name0, true, 1);
 		
 		String name = "encrypt";
 		
@@ -248,12 +255,12 @@ public class tests extends parent_tests
 		
 		Object target = null;
 		
-		boolean is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String[].class, String.class }, args, target);
+		boolean is_ok = run_method(class0, name, new Class<?>[] { String[].class, String.class }, args, target);
 
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 		
-		String[] encrypted = (String[])parent_tests._temp_output;
+		String[] encrypted = (String[])_temp_output;
 		
 		name = "decrypt";
 
@@ -263,10 +270,10 @@ public class tests extends parent_tests
 		
 		target = input;
 
-		is_ok = parent_tests.run_method(class0, name, new Class<?>[] { String[].class, String.class }, args, input);
+		is_ok = run_method(class0, name, new Class<?>[] { String[].class, String.class }, args, input);
 		outputs.put(name, is_ok);
 
-		parent_tests.update_console(name0, false, 1);
+		update_screen(name0, false, 1);
 		
 		return outputs;	
 	}
@@ -296,41 +303,46 @@ public class tests extends parent_tests
 		HashMap<String, Object[]> targets = null; 
 		String[] skip = null;
 		
-		return parent_tests.run(type, args_all, targets, skip);
+		return run(type, args_all, targets, skip);
 	}
 				
-	public static HashMap<String, Boolean> run_arrays() { return parent_tests.run(arrays.class); }
+	public static HashMap<String, Boolean> run_arrays() { return run(arrays.class); }
 	
-	public static HashMap<String, Boolean> run_dates() { return parent_tests.run(dates.class); }
+	public static HashMap<String, Boolean> run_dates() 
+	{ 
+		String[] skip = new String[] { "get_diff", "from_string" };
+		
+		return run(dates.class, skip); 
+	}
 	
 	public static HashMap<String, Boolean> run_generic()
 	{
 		String[] skip = new String[] { "get_method", "call_static_method" };
 		
-		return parent_tests.run(generic.class, skip);
+		return run(generic.class, skip);
 	}
 	
 	public static HashMap<String, Boolean> run_io()
 	{
 		String[] skip = new String[] { "array_to_file", "line_to_file", "object_to_file", "bytes_to_file" };
 		
-		return parent_tests.run(io.class, skip);
+		return run(io.class, skip);
 	}
 	
-	public static HashMap<String, Boolean> run_numbers() { return parent_tests.run(numbers.class); }
+	public static HashMap<String, Boolean> run_numbers() { return run(numbers.class); }
 	
 	public static HashMap<String, Boolean> run_paths()
 	{
 		String[] skip = new String[] { "update_main_dir" };
 		
-		return parent_tests.run(paths.class, skip);
+		return run(paths.class, skip);
 	}
 	
 	public static HashMap<String, Boolean> run_types()
 	{
 		String[] skip = new String[] { "check_multiple" };
 		
-		return parent_tests.run(types.class, skip);
+		return run(types.class, skip);
 	}
 	
 	public static HashMap<String, Boolean> run_credentials()
@@ -339,7 +351,7 @@ public class tests extends parent_tests
 
 		Class<?> class0 = credentials.class;
 		String name0 = class0.getName();
-		parent_tests.update_console(name0, true, 1);
+		update_screen(name0, true, 1);
 		
 		String id = _ID;
 		String user = credentials.DEFAULT_USER;
@@ -348,12 +360,12 @@ public class tests extends parent_tests
 		
 		for (boolean is_file: new boolean[] { true, false })
 		{
-			if (!is_file && !parent_tests._test_db) continue;
+			if (!is_file && !_test_db) continue;
 			
 			outputs = run_credentials_internal(class0, outputs, id, user, username, password, is_file);			
 		}
 
-		parent_tests.update_console(name0, false, 1);
+		update_screen(name0, false, 1);
 		
 		return outputs;
 	}
@@ -373,7 +385,7 @@ public class tests extends parent_tests
 
 		Object target = null;
 		
-		boolean is_ok = parent_tests.run_method(class_, name, new Class<?>[] { String.class, String.class, String.class, String.class }, args, target);
+		boolean is_ok = run_method(class_, name, new Class<?>[] { String.class, String.class, String.class, String.class }, args, target);
 		
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
@@ -391,7 +403,7 @@ public class tests extends parent_tests
 		
 		target = temp; 
 			
-		is_ok = parent_tests.run_method(class_, name, new Class<?>[] { String.class, String.class, boolean.class }, args, target);
+		is_ok = run_method(class_, name, new Class<?>[] { String.class, String.class, boolean.class }, args, target);
 		outputs.put(name, is_ok);
 		
 		return outputs;

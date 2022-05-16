@@ -92,20 +92,21 @@ class db_mysql extends parent_db
 		else if (data_type.equals(data.STRING_SMALL)) type = VARCHAR;
 		else if (data_type.equals(data.STRING_BIG)) type = TEXT;
 		else if (data_type.equals(data.TIMESTAMP)) type = TIMESTAMP;
+		else if (data_type.equals(data.TINYINT)) type = TINYINT;
 		else if (data_type.equals(data.INT)) type = INT;
 		else if (data_type.equals(data.LONG)) type = BIGINT;
 		else if (data_type.equals(data.DECIMAL)) type = DECIMAL;
 		else return output;
 	
-		output.put(generic.TYPE, type);
-		output.put(generic.MAX, get_max_size(data_type_));
+		output.put(_keys.TYPE, type);
+		output.put(_keys.MAX, get_max_size(data_type_));
 		
 		return output;
 	}
 	
-	public int get_default_size(String data_type_)
+	public long get_default_size(String data_type_)
 	{
-		int size = 0;
+		long size = 0;
 		
 		String type = data.check_type(data_type_);
 		if (!strings.is_ok(type)) return size;
@@ -113,27 +114,28 @@ class db_mysql extends parent_db
 		if (type.equals(data.BOOLEAN)) size = 1;
 		else if (type.equals(data.STRING_SMALL)) size = DEFAULT_SIZE_VARCHAR;
 		else if (type.equals(data.STRING_BIG)) size = DEFAULT_SIZE_TEXT;
-		else if (type.equals(data.TIMESTAMP)) size = dates.SIZE_DATE_TIME;
+		else if (type.equals(data.TIMESTAMP)) size = dates.get_length(dates.FORMAT_TIMESTAMP);
 		else if (data.is_number(type)) size = DEFAULT_SIZE_NUMBER;
 		
 		return size;
 	}
 
-	public int get_max_size(String data_type_)
+	public long get_max_size(String data_type_)
 	{
-		int max = 0;
+		long max = 0;
 		
 		String data_type = data.check_type(data_type_);
 		if (!strings.is_ok(data_type)) return max;
 		
 		if (data.is_boolean(data_type)) max = 1;
-		else if (data_type.equals(data.TIMESTAMP)) max = dates.SIZE_TIMESTAMP;		
+		else if (data_type.equals(data.TIMESTAMP)) max = dates.get_length(dates.FORMAT_TIMESTAMP);		
 		else if (data_type.equals(data.DECIMAL)) max = 64;
-		else if (data_type.equals(data.INT)) max = numbers.MAX_DIGITS_INT;
-		else if (data_type.equals(data.LONG)) max = numbers.MAX_DIGITS_LONG;
+		else if (data_type.equals(data.TINYINT)) max = 127;
+		else if (data_type.equals(data.INT)) max = numbers.MAX_INT;
+		else if (data_type.equals(data.LONG)) max = numbers.MAX_LONG;
 		else if (data_type.equals(data.STRING_SMALL)) max = 255;
 		else if (data_type.equals(data.STRING_BIG)) max = 65535;
-		
+
 		return max;
 	}
 	
@@ -193,7 +195,7 @@ class db_mysql extends parent_db
 		HashMap<String, Object> info = get_data_type(field_.get_type());
 		if (!arrays.is_ok(info)) return output;
 		
-		output = types.remove_type((String)info.get(generic.TYPE), types.DB_MYSQL_DATA);
+		output = types.remove_type((String)info.get(_keys.TYPE), types.DB_MYSQL_DATA);
 		String size = get_data_type_size(field_);
 		if (!strings.is_ok(size)) return output;
 		
@@ -206,20 +208,20 @@ class db_mysql extends parent_db
 	{
 		String output = strings.DEFAULT;
 
-		int max = (field_.get_size() > (double)data.MAX_INT ? 0 : field_.get_size());
+		long max = (field_.get_size() > get_max_size(data.LONG) ? 0 : field_.get_size());
 		String type = field_.get_type();
 		if (type.equals(data.TIMESTAMP)) return output;
 			
 		HashMap<String, Object> info = get_data_type(type);
-		int max2 = (int)info.get(generic.MAX);
+		long max2 = (long)info.get(_keys.MAX);
 		
-		int size_def = get_default_size(type);
+		long size_def = get_default_size(type);
 		
-		if (data.is_boolean(type)) output = strings.to_string(info.get(generic.MAX));
+		if (data.is_boolean(type)) output = strings.to_string(info.get(_keys.MAX));
 		else if (type.equals(data.DECIMAL))
 		{
-			int m = ((max > max2 || max < 1) ? size_def : max);
-			int d = field_.get_decimals();
+			long m = ((max > max2 || max < 1) ? size_def : max);
+			long d = field_.get_decimals();
 			
 			if (d < 0 || d > 30 || d > m)
 			{
@@ -260,13 +262,13 @@ class db_mysql extends parent_db
 		else if (type_.equals(db.INSERT))
 		{
 			query = "INSERT INTO " + get_variable(table); 
-			String temp = get_query_cols(vals_, generic.KEY);
+			String temp = get_query_cols(vals_, _keys.KEY);
 
 			if (strings.is_ok(temp)) 
 			{
 				query += "(" + temp + ")";
 
-				temp = get_query_cols(vals_, generic.VALUE);
+				temp = get_query_cols(vals_, _keys.VALUE);
 				if (strings.is_ok(temp)) 
 				{
 					query += " VALUES (" + temp + ")"; 
@@ -278,7 +280,7 @@ class db_mysql extends parent_db
 		{
 			query = "UPDATE " + get_variable(table); 
 			
-			String temp = get_query_cols(vals_, generic.FURTHER);
+			String temp = get_query_cols(vals_, _keys.FURTHER);
 			if (strings.is_ok(temp)) 
 			{
 				query += " SET " + temp;
@@ -448,15 +450,15 @@ class db_mysql extends parent_db
 		{    		
 			String item = "";
 
-			if (type_.equals(generic.KEY)) 
+			if (type_.equals(_keys.KEY)) 
 			{
 				item = get_variable(entry.getKey());
 			}
-			else if (type_.equals(generic.VALUE)) 
+			else if (type_.equals(_keys.VALUE)) 
 			{
 				item = get_value(entry.getValue());
 			}
-			else if (type_.equals(generic.FURTHER)) 
+			else if (type_.equals(_keys.FURTHER)) 
 			{
 				item = get_variable(entry.getKey()) + "=";
 				item += get_value(entry.getValue());

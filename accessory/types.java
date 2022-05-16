@@ -161,6 +161,7 @@ public abstract class types extends parent_static
 	public static final String DATA = "data";
 	public static final String DATA_STRING_SMALL = "data_string_small";
 	public static final String DATA_STRING_BIG = "data_string_big";
+	public static final String DATA_TINYINT = "data_tinyint";
 	public static final String DATA_INT = "data_int";
 	public static final String DATA_LONG = "data_long";
 	public static final String DATA_DECIMAL = "data_decimal";
@@ -176,6 +177,12 @@ public abstract class types extends parent_static
 	public static final String DATES_FORMAT_TIME_SHORT = "dates_format_time_short";
 	public static final String DATES_FORMAT_DATE = "dates_format_date";
 	public static final String DATES_FORMAT_DATE_TIME = "dates_format_date_time";
+	public static final String DATES_FORMAT_TIMESTAMP = "dates_format_timestamp";
+	public static final String DATES_UNIT = "dates_unit";
+	public static final String DATES_UNIT_SECONDS = "dates_unit_seconds";
+	public static final String DATES_UNIT_MINUTES = "dates_unit_minutes";
+	public static final String DATES_UNIT_HOURS = "dates_unit_hours";
+	public static final String DATES_UNIT_DAYS = "dates_unit_days";
 	
 	public static final String ACTION = "action";
 	public static final String ACTION_ADD = "action_add";
@@ -257,7 +264,8 @@ public abstract class types extends parent_static
 	public static final String ERROR_CRYPTO_CIPHER = "error_crypto_cipher";
 	public static final String ERROR_CRYPTO_ENCRYPT = "error_crypto_encrypt";
 	public static final String ERROR_CRYPTO_DECRYPT = "error_crypto_decrypt";
-
+	public static final String ERROR_DATES = "error_dates";
+	public static final String ERROR_DATES_STRING = "error_dates_string";
 	//---------
 	
 	public static String check_what(String what_) { return check_type(what_, WHAT); }
@@ -458,14 +466,16 @@ public abstract class types extends parent_static
 			DB_MYSQL_DATA_BIGINT, DB_MYSQL_DATA_DECIMAL,
 			
 			DATA,
-			DATA_STRING_SMALL, DATA_STRING_BIG, DATA_INT, DATA_LONG, DATA_DECIMAL, DATA_TIMESTAMP,
+			DATA_STRING_SMALL, DATA_STRING_BIG, DATA_TINYINT, DATA_INT, DATA_LONG, DATA_DECIMAL, DATA_TIMESTAMP,
 			DATA_BOOLEAN,
 			DATA_BOOLEAN_TRUE, DATA_BOOLEAN_FALSE,
 			
 			DATES,
 			DATES_FORMAT,
 			DATES_FORMAT_TIME, DATES_FORMAT_TIME_FULL, DATES_FORMAT_TIME_SHORT,
-			DATES_FORMAT_DATE, DATES_FORMAT_DATE_TIME,
+			DATES_FORMAT_DATE, DATES_FORMAT_DATE_TIME, DATES_FORMAT_TIMESTAMP,
+			DATES_UNIT, 
+			DATES_UNIT_SECONDS, DATES_UNIT_MINUTES, DATES_UNIT_HOURS, DATES_UNIT_DAYS,
 			
 			ACTION,
 			ACTION_ADD, ACTION_REMOVE, ACTION_ESCAPE, ACTION_REPLACE, ACTION_ENCRYPT, ACTION_DECRYPT, 
@@ -497,7 +507,10 @@ public abstract class types extends parent_static
 			ERROR_TEST_RUN,
 			
 			ERROR_CRYPTO,
-			ERROR_CRYPTO_KEY, ERROR_CRYPTO_CIPHER, ERROR_CRYPTO_ENCRYPT, ERROR_CRYPTO_DECRYPT
+			ERROR_CRYPTO_KEY, ERROR_CRYPTO_CIPHER, ERROR_CRYPTO_ENCRYPT, ERROR_CRYPTO_DECRYPT,
+			
+			ERROR_DATES, 
+			ERROR_DATES_STRING
 		};
 		
 		return populate_all_internal(main, additional_);

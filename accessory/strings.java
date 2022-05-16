@@ -2,6 +2,9 @@ package accessory;
 
 import java.lang.reflect.Method;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -299,6 +302,9 @@ public abstract class strings extends parent_static
 		else if (generic.are_equal(type, Class.class)) output = ((Class<?>)input_).getSimpleName();
 		else if (generic.are_equal(type, Method.class)) output = ((Method)input_).getName();
 		else if (generic.are_equal(type, Exception.class)) output = ((Exception)input_).getMessage();
+		else if (generic.are_equal(type, LocalDateTime.class)) output = dates.to_string((LocalDateTime)input_, dates.FORMAT_DATE_TIME);
+		else if (generic.are_equal(type, LocalDate.class)) output = dates.to_string((LocalDate)input_, dates.FORMAT_DATE);
+		else if (generic.are_equal(type, LocalTime.class)) output = dates.to_string((LocalTime)input_, dates.FORMAT_TIME);
 		else if (generic.are_equal(type, Double.class)) output = from_number_decimal((Double)input_, false);
 		else if (generic.are_equal(type, Integer.class)) output = from_number_int((Integer)input_);
 		else if (generic.are_equal(type, Long.class)) output = from_number_long((Long)input_);

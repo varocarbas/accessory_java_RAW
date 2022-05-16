@@ -2,6 +2,7 @@ package accessory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -13,22 +14,6 @@ public abstract class generic extends parent_static
 {	
 	static { _ini.start(); }
 	public static final String _ID = types.get_id(types.ID_GENERIC);
-
-	public static final String TYPE = get_key(types.WHAT_TYPE);
-	public static final String KEY = get_key(types.WHAT_KEY);
-	public static final String VALUE = get_key(types.WHAT_VALUE);
-	public static final String FURTHER = get_key(types.WHAT_FURTHER);
-	public static final String INFO = get_key(types.WHAT_INFO);
-	public static final String MIN = get_key(types.WHAT_MIN);
-	public static final String MAX = get_key(types.WHAT_MAX);	
-	public static final String USERNAME = get_key(types.WHAT_USERNAME);
-	public static final String PASSWORD = get_key(types.WHAT_PASSWORD);
-	public static final String ID = get_key(types.WHAT_ID);
-	public static final String USER = get_key(types.WHAT_USER);
-	public static final String QUERY = get_key(types.WHAT_QUERY);
-	public static final String INSTANCE = get_key(types.WHAT_INSTANCE);
-	public static final String MESSAGE = get_key(types.WHAT_MESSAGE);
-	public static final String LEGACY = get_key(types.WHAT_LEGACY);
 
 	public static final String ERROR_METHOD_GET = types.ERROR_GENERIC_METHOD_GET;
 	public static final String ERROR_METHOD_CALL = types.ERROR_GENERIC_METHOD_CALL;
@@ -214,6 +199,9 @@ public abstract class generic extends parent_static
 		else if (is_byte(class_)) output = get_random_byte();
 		else if (is_char(class_)) output = get_random_char(true, true, true);
 		else if (is_array(class_)) output = arrays.get_random(class_); 
+		else if (are_equal(class_, LocalDateTime.class)) output = dates.get_random_datetime(); 
+		else if (are_equal(class_, LocalDate.class)) output = dates.get_random_date(); 
+		else if (are_equal(class_, LocalTime.class)) output = dates.get_random_time(); 
 		else if (class_.equals(Object.class)) output = arrays.get_random(String[].class);
 
 		return output;
@@ -251,8 +239,9 @@ public abstract class generic extends parent_static
 		else if (input_ instanceof Class<?>) type = Class.class;
 		else if (input_ instanceof Method) type = Method.class;
 		else if (input_ instanceof Exception) type = Exception.class;
-		else if (input_ instanceof LocalTime) type = LocalTime.class;
 		else if (input_ instanceof LocalDateTime) type = LocalDateTime.class;
+		else if (input_ instanceof LocalDate) type = LocalDate.class;
+		else if (input_ instanceof LocalTime) type = LocalTime.class;
 		else if (input_ instanceof size) type = size.class;
 		else if (input_ instanceof data) type = data.class;
 		else if (input_ instanceof db_field) type = db_field.class;
@@ -276,8 +265,9 @@ public abstract class generic extends parent_static
 		else if (input_ instanceof Class[]) type = Class[].class;
 		else if (input_ instanceof Method[]) type = Method[].class;
 		else if (input_ instanceof Exception[]) type = Exception[].class;
-		else if (input_ instanceof LocalTime[]) type = LocalTime[].class;
 		else if (input_ instanceof LocalDateTime[]) type = LocalDateTime[].class;
+		else if (input_ instanceof LocalDate[]) type = LocalDate[].class;
+		else if (input_ instanceof LocalTime[]) type = LocalTime[].class;
 		else if (input_ instanceof size[]) type = size[].class;
 		else if (input_ instanceof data[]) type = data[].class;
 		else if (input_ instanceof db_field[]) type = db_field[].class;
@@ -329,7 +319,15 @@ public abstract class generic extends parent_static
 		try { output = class_.getMethod(name_, params_); } 
 		catch (Exception e) 
 		{
-			if (!ignore_errors_internal()) errors.manage(ERROR_METHOD_GET, e, new String[] { name_, strings.to_string(params_) }); 
+			if (!ignore_errors_internal()) 
+			{
+				HashMap<String, String> info = new HashMap<String, String>();
+				info.put("class", strings.to_string(class_));
+				info.put("name", name_);
+				info.put("params", strings.to_string(params_));
+				
+				errors.manage(ERROR_METHOD_GET, e, info); 
+			}
 		}
 
 		return output;
@@ -348,8 +346,15 @@ public abstract class generic extends parent_static
 			_is_ok = true;
 		} 
 		catch (Exception e) 
-		{ 
-			if (!ignore_errors_internal()) errors.manage(ERROR_METHOD_CALL, e, new String[] { method_.getName(), strings.to_string(args_) }); 
+		{  
+			if (!ignore_errors_internal()) 
+			{
+				HashMap<String, String> info = new HashMap<String, String>();
+				info.put("method", method_.getName());
+				info.put("args", strings.to_string(args_));
+				
+				errors.manage(ERROR_METHOD_CALL, e, info); 
+			}
 		}
 
 		return output;
@@ -385,7 +390,7 @@ public abstract class generic extends parent_static
 
 	static String get_key(String what_) { return get_all_keys().get(what_); }
 
-	static String[] populate_all_default_methods() { return new String[] { "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll" }; }	
+	static String[] populate_all_default_methods() { return new String[] { "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll", "is_ok", "ignore_errors", "ignore_errors_persistent_end" }; }	
 
 	static HashMap<String, String> populate_all_keys()
 	{
@@ -410,9 +415,10 @@ public abstract class generic extends parent_static
 		classes.add(Class.class);
 		classes.add(Method.class);
 		classes.add(Exception.class);
-		classes.add(LocalTime.class);
 		classes.add(LocalDateTime.class);
-
+		classes.add(LocalDate.class);
+		classes.add(LocalTime.class);
+		
 		classes.add(size.class);
 		classes.add(data.class);
 		classes.add(db_field.class);

@@ -2,6 +2,7 @@ package accessory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -538,6 +539,9 @@ public abstract class arrays extends parent_static
 		else if (generic.are_equal(type, Class.class)) output = (x[])input.toArray(new Class<?>[size]);
 		else if (generic.are_equal(type, Method.class)) output = (x[])input.toArray(new Method[size]);
 		else if (generic.are_equal(type, Exception.class)) output = (x[])input.toArray(new Exception[size]);
+		else if (generic.are_equal(type, LocalDateTime.class)) output = (x[])input.toArray(new LocalDateTime[size]);
+		else if (generic.are_equal(type, LocalDate.class)) output = (x[])input.toArray(new LocalDate[size]);
+		else if (generic.are_equal(type, LocalTime.class)) output = (x[])input.toArray(new LocalTime[size]);
 		else if (generic.are_equal(type, size.class)) output = (x[])input.toArray(new size[size]);
 		else if (generic.are_equal(type, data.class)) output = (x[])input.toArray(new data[size]);
 		else if (generic.are_equal(type, db_field.class)) output = (x[])input.toArray(new db_field[size]);

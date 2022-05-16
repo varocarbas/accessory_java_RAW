@@ -299,7 +299,7 @@ public class crypto extends parent
 		manage_error();
 
 		HashMap<String, String> items = new HashMap<String, String>();
-		items.put(generic.TYPE, type_);
+		items.put(_keys.TYPE, type_);
 		items.put("in", _in);
 		items.put("path_key", _path_key);
 		items.put("path_iv", _path_iv);

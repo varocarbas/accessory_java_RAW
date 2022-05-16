@@ -26,31 +26,43 @@ public abstract class errors extends parent_static
 	public static void manage(HashMap<String, String> info_)
 	{
 		String message = get_all(info_);
-		logs.update(message, (String)arrays.get_value(info_, get_generic(types.WHAT_ID)), true);
+		logs.update(message, (String)arrays.get_value(info_, get_key(types.WHAT_ID)), true);
 
 		_triggered = true;
 		
 		if (!parent_tests.is_running() && _exit) System.exit(1); 
 	}
 
-	public static void manage(String type_, Exception e_, String[] further_)
+	public static void manage(String type_, Exception e_, HashMap<String, String> info_) { manage(type_, e_, to_string(info_)); }
+	
+	public static void manage(String type_, Exception e_, String[] further_) { manage(type_, e_, to_string(further_)); }
+		
+	private static void manage(String type_, Exception e_, String further_)
 	{		
 		String all = (strings.is_ok(type_) ? type_ : DEFAULT_TYPE);
+		
 		all += DEFAULT_SEPARATOR + get_message(e_, type_);
-
-		if (arrays.is_ok(further_))
-		{
-			for (String val: further_)
-			{
-				all += DEFAULT_SEPARATOR + val;
-			}
-		}
+		if (strings.is_ok(further_)) all += further_;
 
 		logs.update(all, null, true);
 
 		_triggered = true;
 		
 		if (!parent_tests.is_running() && _exit) System.exit(1);
+	}
+
+	private static String to_string(HashMap<String, String> info_) { return (arrays.is_ok(info_) ? arrays.to_string(info_, DEFAULT_SEPARATOR, misc.SEPARATOR_KEYVAL, null) : DEFAULT_MESSAGE); }
+	
+	private static String to_string(String[] further_)
+	{
+		String output = DEFAULT_MESSAGE;
+		
+		if (arrays.is_ok(further_))
+		{
+			for (String val: further_) { output += DEFAULT_SEPARATOR + val; }
+		}
+		
+		return output;
 	}
 
 	public static void manage_io(String type_, String path_, Exception e_)
@@ -69,15 +81,15 @@ public abstract class errors extends parent_static
 		String type = types.check_type(type_, types.ERROR_DB);
 
 		HashMap<String, String> info = (HashMap<String, String>)arrays.get_new(info_);
-		info.put(get_generic(types.WHAT_TYPE), (strings.is_ok(type) ? type : DEFAULT_TYPE));
+		info.put(get_key(types.WHAT_TYPE), (strings.is_ok(type) ? type : DEFAULT_TYPE));
 		
 		String message = message_;
 		String message2 = get_message(e_, type);
 		
 		if ((strings.is_ok(message2) && (generic.is_ok(e_)) || !strings.is_ok(message))) message = message2;
-		info.put(get_generic(types.WHAT_MESSAGE), message);
+		info.put(get_key(types.WHAT_MESSAGE), message);
 
-		if (strings.is_ok(query_)) info.put(get_generic(types.WHAT_QUERY), query_);
+		if (strings.is_ok(query_)) info.put(get_key(types.WHAT_QUERY), query_);
 
 		return info;
 	}
@@ -86,28 +98,26 @@ public abstract class errors extends parent_static
 	{
 		HashMap<String, String> info = new HashMap<String, String>();
 
-		info.put(get_generic(types.WHAT_TYPE), (strings.is_ok(type_) ? type_ : DEFAULT_TYPE));
+		info.put(get_key(types.WHAT_TYPE), (strings.is_ok(type_) ? type_ : DEFAULT_TYPE));
 		
 		if (strings.is_ok(path_)) info.put("path", path_);
-		info.put(get_generic(types.WHAT_MESSAGE), get_message(e_, type_));
+		info.put(get_key(types.WHAT_MESSAGE), get_message(e_, type_));
 		
 		return info;
 	}
 
 	private static String get_all(HashMap<String, String> info_)
 	{
-		if (!arrays.is_ok(info_)) return DEFAULT_MESSAGE;
-
-		String all = arrays.to_string(info_, DEFAULT_SEPARATOR, misc.SEPARATOR_KEYVAL, null);
+		String all = to_string(info_);
 		
-		String type = (String)arrays.get_value(info_, get_generic(types.WHAT_TYPE));
+		String type = (String)arrays.get_value(info_, get_key(types.WHAT_TYPE));
 		if (!strings.is_ok(type)) type = DEFAULT_TYPE;
 		all = type + DEFAULT_SEPARATOR + all;
 
 		return (strings.is_ok(all) ? all : DEFAULT_MESSAGE);
 	}
 	
-	private static String get_generic(String what_) { return parent_ini.get_generic_key(what_); }
+	private static String get_key(String what_) { return _keys.get_key(what_); }
 	
 	private static String get_message(Exception e_, String type_)
 	{

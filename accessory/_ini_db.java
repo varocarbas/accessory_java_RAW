@@ -38,7 +38,7 @@ class _ini_db extends parent_ini_db
 		info.put(types.CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(types.DATA_DECIMAL, 15, 3));
 		info.put(types.CONFIG_TESTS_DB_FIELD_BOOLEAN, new db_field(types.DATA_BOOLEAN));
 		
-		return add_source(source, db_, info, default_fields, sources_);		
+		return add_source(source, null, db_, info, default_fields, sources_);		
 	}
 	
 	private HashMap<String, Object[]> add_source_credentials(String db_, HashMap<String, Object[]> sources_)
@@ -57,6 +57,6 @@ class _ini_db extends parent_ini_db
 		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD, new db_field(field_string));
 		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC, new db_field(types.DATA_BOOLEAN));
 		
-		return add_source(source, db_, info, default_fields, sources_);		
+		return add_source(source, null, db_, info, default_fields, sources_);		
 	}
 }

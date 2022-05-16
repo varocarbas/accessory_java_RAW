@@ -145,6 +145,10 @@ public abstract class db
 	
 	public static HashMap<String, String> select_one(String source_, String[] fields_, String wheres_cols_, String orders_cols_) { return db_queries.select_one(source_, fields_, wheres_cols_, orders_cols_); }
 	
+	public static ArrayList<HashMap<String, String>> select(String source_, db_where[] wheres_) { return select(source_, null, wheres_, 0, null); }
+	
+	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_) { return select(source_, fields_, wheres_, 0, null); }
+
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select(source_, fields_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
 	
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, String where_cols_, int max_rows_, String order_cols_) { return db_queries.select(source_, fields_, where_cols_, max_rows_, order_cols_); }
@@ -222,13 +226,13 @@ public abstract class db
 
 	public static HashMap<String, Object> get_data_type(String source_, String data_type_) { return get_valid_instance(source_).get_data_type(data_type_); }
 
-	public static int get_default_size(String type_) { return get_default_size(get_current_source(), type_); }
+	public static long get_default_size(String type_) { return get_default_size(get_current_source(), type_); }
 
-	public static int get_default_size(String source_, String type_) { return get_valid_instance(source_).get_default_size(type_); }
+	public static long get_default_size(String source_, String type_) { return get_valid_instance(source_).get_default_size(type_); }
 	
-	public static int get_max_size(String type_) { return get_max_size(get_current_source(), type_); }
+	public static long get_max_size(String type_) { return get_max_size(get_current_source(), type_); }
 
-	public static int get_max_size(String source_, String type_) { return get_valid_instance(source_).get_max_size(type_); }
+	public static long get_max_size(String source_, String type_) { return get_valid_instance(source_).get_max_size(type_); }
 	
 	public static boolean source_is_ok(String source_) { return (strings.is_ok(check_source(source_))); }
 	
@@ -317,7 +321,7 @@ public abstract class db
 		vals.put(types.CONFIG_DB, db);
 		vals.put(types.CONFIG_DB_SETUP, setup);
 		vals.put(types.CONFIG_DB_SETUP_TYPE, (String)setup_vals_.get(types.CONFIG_DB_SETUP_TYPE));
-		String instance = _ini.get_generic_key(types.WHAT_INSTANCE);
+		String instance = _keys.get_key(types.WHAT_INSTANCE);
 		vals.put(instance, setup_vals_.get(instance));
 		
 		if (!arrays.is_ok(_source_setups)) _source_setups = new HashMap<String, HashMap<String, Object>>();
@@ -582,7 +586,7 @@ public abstract class db
 		return (instance != null ? instance : get_instance_ini(get_type(source_)));
 	}
 
-	private static parent_db get_instance(String source_) { return (parent_db)get_setup_common(get_valid_source(source_), generic.INSTANCE); }
+	private static parent_db get_instance(String source_) { return (parent_db)get_setup_common(get_valid_source(source_), _keys.INSTANCE); }
 
 	private static boolean update_vals(String type_, HashMap<String, Object> vals_) { return manage_error((arrays.is_ok(vals_) ? config.update(type_, vals_) : null)); }
 	

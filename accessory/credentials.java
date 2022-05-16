@@ -18,10 +18,10 @@ public abstract class credentials extends parent_static
 	public static final String WHERE = types.CONFIG_CREDENTIALS_WHERE;
 	public static final String WHERE_FILE = types.CONFIG_CREDENTIALS_WHERE_FILE;
 	public static final String WHERE_DB = types.CONFIG_CREDENTIALS_WHERE_DB;
-	public static final String ID = generic.ID;
-	public static final String USER = generic.USER;
-	public static final String USERNAME = generic.USERNAME;
-	public static final String PASSWORD = generic.PASSWORD;
+	public static final String ID = _keys.ID;
+	public static final String USER = _keys.USER;
+	public static final String USERNAME = _keys.USERNAME;
+	public static final String PASSWORD = _keys.PASSWORD;
 	
 	public static final String DEFAULT_ID = _defaults.CREDENTIALS_ID;
 	public static final String DEFAULT_USER = _defaults.USER;

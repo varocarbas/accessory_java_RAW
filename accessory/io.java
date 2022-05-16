@@ -19,8 +19,6 @@ public abstract class io extends parent_static
 
 	public static final String ERROR_WRITE = types.ERROR_FILE_WRITE;
 	public static final String ERROR_READ = types.ERROR_FILE_READ;
-		
-	static boolean _log_exceptions = true; //To avoid infinite recursion provoked by writing exceptions triggered by writing.
 	
 	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{
@@ -34,7 +32,7 @@ public abstract class io extends parent_static
 		} 
 		catch (Exception e) 
 		{ 
-			if (_log_exceptions) errors.manage_io(ERROR_WRITE, path_, e); 
+			if (!ignore_errors_internal()) errors.manage_io(ERROR_WRITE, path_, e); 
 		}
 		
 		_is_ok = true;
@@ -56,7 +54,7 @@ public abstract class io extends parent_static
 		{ 
 			lines = null;
 			
-			errors.manage_io(ERROR_READ, path_, e);
+			if (!ignore_errors_internal()) errors.manage_io(ERROR_READ, path_, e);
 		}
 
 		_is_ok = true;
@@ -113,7 +111,7 @@ public abstract class io extends parent_static
 		if (!strings.is_ok(path_) || !arrays.is_ok(vals_)) return;
 		
 		try (FileOutputStream stream = new FileOutputStream(new File(path_))) { stream.write(vals_); } 
-		catch (Exception e) { errors.manage_io(ERROR_WRITE, path_, e); }
+		catch (Exception e) { if (!ignore_errors_internal()) errors.manage_io(ERROR_WRITE, path_, e); }
 		
 		_is_ok = true;
 	}
@@ -126,7 +124,7 @@ public abstract class io extends parent_static
 		if (!paths.exists(path_)) return output;
 		
 		try { output = Files.readAllBytes(Paths.get(path_)); } 
-		catch (Exception e) { errors.manage_io(ERROR_READ, path_, e); }
+		catch (Exception e) { if (!ignore_errors_internal()) errors.manage_io(ERROR_READ, path_, e); }
 		
 		_is_ok = true;
 		
@@ -140,7 +138,7 @@ public abstract class io extends parent_static
 		if (!strings.is_ok(path_) || vals_ == null) return;
 		
 		try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(path_))) { stream.writeObject(vals_); } 
-		catch (Exception e) { errors.manage_io(ERROR_WRITE, path_, e); }
+		catch (Exception e) { if (!ignore_errors_internal()) errors.manage_io(ERROR_WRITE, path_, e); }
 		
 		_is_ok = true;
 	}
@@ -153,7 +151,7 @@ public abstract class io extends parent_static
 		if (!paths.exists(path_)) return output;
 		
 		try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(path_))) { output = stream.readObject(); } 
-		catch (Exception e) { errors.manage_io(ERROR_WRITE, path_, e); }
+		catch (Exception e) { if (!ignore_errors_internal()) errors.manage_io(ERROR_WRITE, path_, e); }
 		
 		_is_ok = true;
 		
@@ -183,7 +181,7 @@ public abstract class io extends parent_static
 		} 
 		catch (Exception e) 
 		{ 
-			if (_log_exceptions) errors.manage_io(ERROR_WRITE, path_, e); 
+			if (!ignore_errors_internal()) errors.manage_io(ERROR_WRITE, path_, e); 
 		}
 	}
 }

@@ -5,11 +5,11 @@ import java.util.HashMap;
 
 public abstract class parent_ini 
 {
-	//The value of the LEGACY constant is the name of the package expected to include all the legacy ini classes.
-	//This legacy support basically means that it is possible to have two overlapping ini configurations which
-	//can be enabled/disabled by simply changing the value of a boolean variable. For example, there could be a 
-	//main/new set of tables or DB setup whose values could be partially or completely overwritten from the legacy package.
-	public static final String LEGACY = "legacy";  
+	//The value of the LEGACY_PACKAGE constant is the name of the package expected to include all the legacy ini classes.
+	//This legacy support basically means that it is possible to have two overlapping ini configurations which can be 
+	//enabled/disabled by simply changing the value of a boolean variable. For example, there could be a main/new set of 
+	//tables or DB setup whose values could be partially or completely overwritten from the legacy package.
+	public static final String LEGACY_PACKAGE = "legacy";  
 	
 	public static final String ERROR_DBS = types.ERROR_INI_DB_DBS;
 	public static final String ERROR_SOURCE = types.ERROR_INI_DB_SOURCE;
@@ -26,7 +26,7 @@ public abstract class parent_ini
 	public static void manage_error(String type_)
 	{
 		HashMap<String, String> info = new HashMap<String, String>();
-		info.put(get_generic_key(types.WHAT_TYPE), (strings.is_ok(type_) ? type_ : strings.DEFAULT));
+		info.put(_keys.get_key(types.WHAT_TYPE), (strings.is_ok(type_) ? type_ : strings.DEFAULT));
 		
 		manage_error(info);
 	}
@@ -36,14 +36,6 @@ public abstract class parent_ini
 		errors._exit = true;
 
 		errors.manage(info_);
-	}
-	
-	//The keys in the generic class might not have been loaded yet, so better getting them directly from types.
-	public static String get_generic_key(String what_)
-	{
-		String what = types.check_type(what_, types.WHAT);
-		
-		return (strings.is_ok(what) ? types.what_to_key(what) : strings.DEFAULT);
 	}
 	
 	protected void populate_all(boolean includes_legacy_) { populate_all_internal(includes_legacy_); }
@@ -65,7 +57,7 @@ public abstract class parent_ini
 	
 		_includes_legacy = includes_legacy_;
 		
-		String package_name = this.getClass().getPackageName();
+		String package_name = getClass().getPackageName();
 		
 		if (package_name.equals("accessory")) populate_all_internal_accessory();
 		else populate_all_internal_other_all(package_name);
@@ -79,6 +71,7 @@ public abstract class parent_ini
 		_starts.populate();
 		_alls.populate();
 		_defaults.populate();
+		_keys.populate();
 		
 		_ini_config.populate();
 		_ini_db.populate(_dbs_user, _dbs_username, _dbs_password, _dbs_host, _dbs_encrypted);
@@ -86,23 +79,21 @@ public abstract class parent_ini
 	
 	private void populate_all_internal_other_all(String package_) 
 	{
-		String[] classes = new String[] { "_basic", "_starts", "_alls", "_defaults", "_ini_config", "_ini_db" };
+		String[] classes = new String[] { "_basic", "_starts", "_alls", "_defaults", "_keys", "_ini_config", "_ini_db" };
 		
 		for (String class0: classes) { populate_all_internal_other_class(package_, class0); }
 		
-		if (_includes_legacy && !package_.equals(LEGACY)) populate_all_internal_other_all(LEGACY);
+		if (_includes_legacy && !package_.equals(LEGACY_PACKAGE)) populate_all_internal_other_all(LEGACY_PACKAGE);
 	}
 	
 	private void populate_all_internal_other_class(String package_, String class_) 
 	{
 		String method0 = "populate";
 		
-		generic.ignore_errors(true);
-		
 		String name = package_ + "." + class_;
 		Class<?> class1 = generic.get_class_from_name(name);
 		if (class1 == null) return;
-		
+
 		Class<?>[] params = null;
 		Object[] args = null;
 		
@@ -111,6 +102,8 @@ public abstract class parent_ini
 			params = new Class<?>[] { String.class, String.class, String.class, String.class, boolean.class };
 			args = new Object[] { _dbs_user, _dbs_username, _dbs_password, _dbs_host, _dbs_encrypted };
 		}
+	
+		generic.ignore_errors(true);
 		
 		Method method = generic.get_method(class1, method0, params);
 		if (method == null && params != null)

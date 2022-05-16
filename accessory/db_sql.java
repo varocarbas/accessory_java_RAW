@@ -40,8 +40,8 @@ abstract class db_sql
 			items.put("where", strings.to_string(where_));
 		}
 		
-		if (what_.equals(db.INSERT) || what_.equals(db.UPDATE)) items.put(generic.VALUE, strings.to_string(vals_));
-		if (what_.equals(db.TABLE_CREATE)) items.put(generic.INFO, strings.to_string(cols_info_));
+		if (what_.equals(db.INSERT) || what_.equals(db.UPDATE)) items.put(_keys.VALUE, strings.to_string(vals_));
+		if (what_.equals(db.TABLE_CREATE)) items.put(_keys.INFO, strings.to_string(cols_info_));
 		
 		String message = "Wrong " + types.remove_type(what_, types.DB_QUERY).toUpperCase() + " query" + misc.SEPARATOR_CONTENT;
 		String temp = strings.to_string(items);

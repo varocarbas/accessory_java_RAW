@@ -52,9 +52,8 @@ public abstract class logs extends parent_static
 		String message = message_;
 		if (!strings.is_ok(message)) return;
 		
-		io._log_exceptions = false;
-		io.line_to_file(get_path(id_, is_error_), dates.add_timestamp(message, dates.DATE_TIME, false), true);
-		io._log_exceptions = true;
+		io.ignore_errors();
+		io.line_to_file(get_path(id_, is_error_), dates.add_timestamp(message, dates.FORMAT_DATE_TIME, false), true);
 	}
 
 	private static String get_path(String id_, boolean is_error_)

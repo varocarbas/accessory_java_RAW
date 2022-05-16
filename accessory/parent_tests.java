@@ -28,14 +28,18 @@ public abstract class parent_tests
 	
 	protected abstract HashMap<String, HashMap<String, Boolean>> run_all_internal();
 	
+	protected static HashMap<String, Boolean> run_methods(Class<?> class_, String[] names_) { return run(class_, null, null, null, null, names_); }
+
 	protected static HashMap<String, Boolean> run(Class<?> class_) { return run(class_, null, null, null); }
 	
-	protected static HashMap<String, Boolean> run(Class<?> class_, String[] skip_) { return run(class_, null, null, skip_); }
+	protected static HashMap<String, Boolean> run(Class<?> class_, String[] names_skip_) { return run(class_, null, null, names_skip_); }
 
-	protected static HashMap<String, Boolean> run(Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_) { return run(class_, null, args_, targets_, skip_); }
+	protected static HashMap<String, Boolean> run(Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] names_skip_) { return run(class_, null, args_, targets_, names_skip_); }
+	
+	protected static HashMap<String, Boolean> run(Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] names_skip_) { return run(class_, methods_, args_, targets_, names_skip_, null); }
 	
 	@SuppressWarnings("unchecked")
-	protected static HashMap<String, Boolean> run(Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] skip_)
+	private static HashMap<String, Boolean> run(Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] names_skip_, String[] names_all_)
 	{
 		HashMap<String, Boolean> run_outs = new HashMap<String, Boolean>();
 		
@@ -52,12 +56,14 @@ public abstract class parent_tests
 		}
 		
 		String name0 = class_.getName();
-		update_console(name0, true, level);
+		update_screen(name0, true, level);
 		
 		run_outs = new HashMap<String, Boolean>();
 		
 		String name_prev = strings.DEFAULT;
 		int overload = 0;
+	
+		boolean is_all = arrays.is_ok(names_all_);
 		
 		for (int i = 0; i < methods.length; i++)
 		{
@@ -74,7 +80,7 @@ public abstract class parent_tests
 			}
 			
 			name = method.getName();
-			if (arrays.value_exists(skip_, name) || strings.are_equivalent(name, "load")) continue;
+			if ((is_all && !arrays.value_exists(names_all_, name)) || arrays.value_exists(names_skip_, name)) continue;
 			
 			String temp = name;
 			if (temp.equals(name_prev))
@@ -90,7 +96,7 @@ public abstract class parent_tests
 			run_outs.put(name, run_method(class_, method, name, (ArrayList<ArrayList<Object>>)arrays.get_value(args_, name), (Object[])arrays.get_value(targets_, name)));
 		}
 		
-		update_console(name0, false, level);
+		update_screen(name0, false, level);
 		
 		_is_running = false;
 		
@@ -124,7 +130,7 @@ public abstract class parent_tests
 
 		Class<?>[] params = (Class<?>[])arrays.get_new(method_.getParameterTypes());
 		
-		update_console(method_name_ + " " + strings.to_string(params), true, 2);		
+		update_screen(method_name_ + " " + strings.to_string(params), true, 2);		
 
 		is_ok = true;
 		String result = strings.DEFAULT;
@@ -160,7 +166,7 @@ public abstract class parent_tests
 		if (generic.is_ok(output)) out += strings.to_string(output);
 		System.out.println(out);
 
-		update_console(method_name_, false, 2);
+		update_screen(method_name_, false, 2);
 		
 		_is_running = false;
 		
@@ -192,7 +198,7 @@ public abstract class parent_tests
 		return output;
 	}
 
-	protected static void update_console(String name_, boolean is_start_, int level_)
+	protected static void update_screen(String name_, boolean is_start_, int level_)
 	{
 		String output = "";
 		
@@ -247,7 +253,7 @@ public abstract class parent_tests
 	{
 		HashMap<String, String> info = new HashMap<String, String>();
 		
-		info.put(generic.TYPE, type_);
+		info.put(_keys.TYPE, type_);
 		if (class_ != null) info.put("class", strings.to_string(class_));
 		if (strings.is_ok(method_name_)) info.put("method", method_name_);
 

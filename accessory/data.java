@@ -10,6 +10,7 @@ public class data extends parent
 {
 	public static final String STRING_SMALL = types.DATA_STRING_SMALL;
 	public static final String STRING_BIG = types.DATA_STRING_BIG;
+	public static final String TINYINT = types.DATA_TINYINT;
 	public static final String INT = types.DATA_INT;	
 	public static final String LONG = types.DATA_LONG;
 	public static final String DECIMAL = types.DATA_DECIMAL;
@@ -26,6 +27,7 @@ public class data extends parent
 	
 	public static final double MIN_DECIMAL = numbers.MIN_DECIMAL;
 	public static final double MIN_LONG = numbers.MIN_LONG;
+	public static final double MIN_TINYINT = numbers.MIN_INT;
 	public static final double MIN_INT = numbers.MIN_INT;
 	public static final double MIN_STRING = 0.0;
 	public static final double MIN_STRING_SMALL = MIN_STRING;
@@ -35,11 +37,12 @@ public class data extends parent
 	
 	public static final double MAX_DECIMAL = numbers.MAX_DECIMAL;
 	public static final double MAX_LONG = numbers.MAX_LONG;
+	public static final double MAX_TINYINT = db.get_max_size(TINYINT);
 	public static final double MAX_INT = numbers.MAX_INT;
 	public static final double MAX_STRING_SMALL = db.get_max_size(STRING_SMALL);
 	public static final double MAX_STRING_BIG = db.get_max_size(STRING_BIG);
 	public static final double MAX_BOOLEAN = 2.0;
-	public static final double MAX_TIMESTAMP = dates.SIZE_TIMESTAMP;
+	public static final double MAX_TIMESTAMP = dates.get_length(dates.FORMAT_TIMESTAMP);
 	
 	//---
 	
@@ -171,7 +174,7 @@ public class data extends parent
 
 	public static size get_default_size(String type_) { return get_boundaries(type_); }
 	
-	public static boolean is_number(String type_) { return is_common(type_, new String[] { INT, LONG, DECIMAL }); }
+	public static boolean is_number(String type_) { return is_common(type_, new String[] { TINYINT, INT, LONG, DECIMAL }); }
 
 	public static boolean is_string(String type_) { return is_common(type_, new String[] { STRING_SMALL, STRING_BIG, TIMESTAMP }); }
 
@@ -186,6 +189,7 @@ public class data extends parent
 		classes.put(STRING_SMALL, String.class);
 		classes.put(STRING_BIG, String.class);
 		classes.put(TIMESTAMP, String.class);
+		classes.put(TINYINT, Integer.class);
 		classes.put(INT, Integer.class);
 		classes.put(LONG, Long.class);
 		classes.put(DECIMAL, Double.class);
@@ -245,6 +249,11 @@ public class data extends parent
 		{
 			min = MIN_INT;
 			max = MAX_INT;
+		}
+		else if (type.equals(TINYINT))
+		{
+			min = MIN_TINYINT;
+			max = MAX_TINYINT;
 		}
 		else if (type.equals(LONG))
 		{

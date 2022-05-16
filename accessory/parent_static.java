@@ -23,7 +23,11 @@ public class parent_static
 		_ignore_errors_persistent = persistent_;
 	}
 	
-	public static void ignore_errors_persistent_end() { _ignore_errors_persistent = false; }
+	public static void ignore_errors_persistent_end() 
+	{ 
+		_ignore_errors_persistent = false; 
+		_ignore_errors = false;
+	}
 	
 	protected static boolean ignore_errors_internal() 
 	{ 

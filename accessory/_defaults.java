@@ -25,8 +25,17 @@ abstract class _defaults
 	
 	public static final int ARRAYS_SIZE = 5;
 
-	public static final String DATES_FORMAT = dates.DATE;
-
+	public static final String DATES_FORMAT = dates.FORMAT_DATE_TIME;
+	public static final String DATES_FORMAT_DATE_TIME = dates.FORMAT_DATE_TIME;
+	public static final String DATES_FORMAT_DATE = dates.FORMAT_DATE;
+	public static final String DATES_FORMAT_TIME = dates.FORMAT_TIME;
+	public static final String DATES_UNIT = types.DATES_UNIT_SECONDS;
+	public static final String DATES_UNIT_DATE_TIME = types.DATES_UNIT_DAYS;
+	public static final String DATES_UNIT_DATE = types.DATES_UNIT_DAYS;
+	public static final String DATES_UNIT_TIME = types.DATES_UNIT_SECONDS;
+	public static final int DATES_SIZE_DAYS = 50;
+	public static final int DATES_SIZE_HOURS = 10;
+	
 	public static final String CREDENTIALS_WHERE = types.CONFIG_CREDENTIALS_WHERE_FILE;
 	public static final String CREDENTIALS_FILE_EXTENSION = STRINGS;
 	public static final String CREDENTIALS_FILE_USERNAME = "username";
