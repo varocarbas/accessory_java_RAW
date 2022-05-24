@@ -5,9 +5,9 @@ import java.util.HashMap;
 class _ini_config extends parent_ini_config 
 {
 	private static _ini_config _instance = new _ini_config();
-	
+
 	public _ini_config() { }
-	
+
 	public static void populate() { _instance.populate_all(); }
 
 	protected void populate_all_internal()
@@ -17,20 +17,20 @@ class _ini_config extends parent_ini_config
 		populate_generic_crypto();
 		populate_generic_logs();
 	}
-	
+
 	private static void populate_generic_basic()
 	{
 		String type = types.CONFIG_BASIC;
-		
+
 		config.update_ini(type, types.CONFIG_BASIC_NAME, _defaults.APP_NAME);
-		
+
 		for (String subtype: types.get_subtypes(types.CONFIG_BASIC_DIR)) { config.update_ini(type, subtype, paths.get_default_dir(subtype)); }
 	}
 
 	private boolean populate_generic_credentials()
 	{
 		String type = types.CONFIG_CREDENTIALS;
-		
+
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		vals.put(types.CONFIG_CREDENTIALS_WHERE, _defaults.CREDENTIALS_WHERE);
 		vals.put(types.CONFIG_CREDENTIALS_FILE_EXTENSION, _defaults.CREDENTIALS_FILE_EXTENSION);
@@ -60,7 +60,7 @@ class _ini_config extends parent_ini_config
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		vals.put(types.CONFIG_LOGS_OUT_SCREEN, _defaults.LOGS_SCREEN);
 		vals.put(types.CONFIG_LOGS_OUT_FILE, _defaults.LOGS_FILE);
-		
+
 		return populate(type, null, vals);
 	}	
 }

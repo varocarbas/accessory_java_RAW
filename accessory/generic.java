@@ -12,12 +12,11 @@ import java.util.Map.Entry;
 
 public abstract class generic extends parent_static 
 {	
-	static { _ini.start(); }
-	public static final String _ID = types.get_id(types.ID_GENERIC);
-
 	public static final String ERROR_METHOD_GET = types.ERROR_GENERIC_METHOD_GET;
 	public static final String ERROR_METHOD_CALL = types.ERROR_GENERIC_METHOD_CALL;
-	
+
+	public static String get_id() { return types.get_id(types.ID_GENERIC); }
+
 	public static boolean is_ok(double[] input_) { return is_ok(input_, false); }
 
 	public static boolean is_ok(long[] input_) { return is_ok(input_, false); }
@@ -108,23 +107,6 @@ public abstract class generic extends parent_static
 
 	public static boolean is_array(Object input_) { return is_common(input_, arrays.get_all_classes(), false); }
 
-	@SuppressWarnings("unchecked")
-	public static <x, y> HashMap<x, y> get_new(HashMap<x, y> input_) { return (HashMap<x, y>)arrays.get_new(input_); }
-
-	public static <x> ArrayList<ArrayList<x>> get_new(ArrayList<ArrayList<x>> input_) { return arrays.get_new(input_); }
-
-	public static double[] get_new(double[] input_) { return arrays.get_new(input_); }
-
-	public static long[] get_new(long[] input_) { return arrays.get_new(input_); }
-
-	public static int[] get_new(int[] input_) { return arrays.get_new(input_); }
-
-	public static boolean[] get_new(boolean[] input_) { return arrays.get_new(input_); }
-
-	public static byte[] get_new(byte[] input_) { return arrays.get_new(input_); }
-
-	public static char[] get_new(char[] input_) { return arrays.get_new(input_); }
-
 	public static boolean get_random_boolean() { return (new Random()).nextBoolean(); }
 
 	public static byte get_random_byte() { return get_random_bytes(1)[0]; }
@@ -162,31 +144,6 @@ public abstract class generic extends parent_static
 
 	public static Class<?>[] get_all_classes() { return _alls.GENERIC_CLASSES; }
 
-	public static Object get_new(Object input_)
-	{
-		Object output = null;
-		if (!is_ok(input_, true)) return output;
-
-		Class<?> type = get_class(input_);
-		if (type == null) return output;
-
-		if (type.equals(double[].class)) output = get_new((double[])input_);
-		else if (type.equals(long[].class)) output = get_new((long[])input_);
-		else if (type.equals(int[].class)) output = get_new((int[])input_);
-		else if (type.equals(boolean[].class)) output = get_new((boolean[])input_);
-		else if (type.equals(byte[].class)) output = get_new((byte[])input_);
-		else if (type.equals(char[].class)) output = get_new((char[])input_);
-		else if (is_array(type)) output = arrays.get_new(input_);
-		else if (are_equal(type, size.class)) output = new size((size)input_);
-		else if (are_equal(type, data.class)) output = new data((data)input_);
-		else if (are_equal(type, db_field.class)) output = new db_field((db_field)input_);
-		else if (are_equal(type, db_where.class)) output = new db_where((db_where)input_);
-		else if (are_equal(type, db_order.class)) output = new db_order((db_order)input_);
-		else output = input_;
-
-		return output;
-	}
-
 	public static Object get_random(Class<?> class_)
 	{
 		Object output = null;
@@ -215,6 +172,8 @@ public abstract class generic extends parent_static
 	}
 
 	public static boolean are_equal(Object input1_, Object input2_) { return are_equal(input1_, input2_, true); }	
+
+	public static void to_screen(Object input_) { System.out.println(strings.to_string(input_)); }
 
 	public static int boolean_to_int(boolean input_) { return numbers.from_boolean(input_); }
 
@@ -313,62 +272,58 @@ public abstract class generic extends parent_static
 
 	public static Method get_method(Class<?> class_, String name_, Class<?>[] params_)
 	{
+		method_start();
+
 		Method output = null;
 		if (!is_ok(class_) || !strings.is_ok(name_)) return output;
 
 		try { output = class_.getMethod(name_, params_); } 
 		catch (Exception e) 
 		{
-			if (!ignore_errors_internal()) 
-			{
-				HashMap<String, String> info = new HashMap<String, String>();
-				info.put("class", strings.to_string(class_));
-				info.put("name", name_);
-				info.put("params", strings.to_string(params_));
-				
-				errors.manage(ERROR_METHOD_GET, e, info); 
-			}
+			HashMap<String, String> info = new HashMap<String, String>();
+			info.put("class", strings.to_string(class_));
+			info.put("name", name_);
+			info.put("params", strings.to_string(params_));
+
+			manage_error(ERROR_METHOD_GET, e, info);
 		}
+
+		method_end();
 
 		return output;
 	}
 
 	public static Object call_static_method(Method method_, Object[] args_)
 	{
-		_is_ok = false;
-	
+		method_start();
+
 		Object output = null;
 		if (!is_ok(method_)) return output;
 
-		try 
-		{ 
-			output = method_.invoke(null, args_); 
-			_is_ok = true;
-		} 
+		try { output = method_.invoke(null, args_); } 
 		catch (Exception e) 
 		{  
-			if (!ignore_errors_internal()) 
-			{
-				HashMap<String, String> info = new HashMap<String, String>();
-				info.put("method", method_.getName());
-				info.put("args", strings.to_string(args_));
-				
-				errors.manage(ERROR_METHOD_CALL, e, info); 
-			}
+			HashMap<String, String> info = new HashMap<String, String>();
+			info.put("method", method_.getName());
+			info.put("args", strings.to_string(args_));
+
+			manage_error(ERROR_METHOD_CALL, e, info);
 		}
+
+		method_end();
 
 		return output;
 	}
-	
+
 	public static boolean class_exists(String name_) { return (get_class_from_name(name_) != null); }
 
 	public static Class<?> get_class_from_name(String name_)
 	{
 		Class<?> output = null;
-		
+
 		try { output = Class.forName(name_); } 
 		catch (Exception e) { output = null; }	
-		
+
 		return output;
 	}
 
@@ -388,25 +343,7 @@ public abstract class generic extends parent_static
 
 	static <x, y> boolean is_ok(HashMap<x, y> input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 
-	static String get_key(String what_) { return get_all_keys().get(what_); }
-
-	static String[] populate_all_default_methods() { return new String[] { "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll", "is_ok", "ignore_errors", "ignore_errors_persistent_end" }; }	
-
-	static HashMap<String, String> populate_all_keys()
-	{
-		HashMap<String, String> output = new HashMap<String, String>();
-
-		String[] whats = new String[] 
-		{
-			types.WHAT_TYPE, types.WHAT_KEY, types.WHAT_VALUE, types.WHAT_FURTHER,
-			types.WHAT_INFO, types.WHAT_MIN, types.WHAT_MAX, types.WHAT_USERNAME,
-			types.WHAT_PASSWORD, types.WHAT_ID, types.WHAT_QUERY, types.WHAT_INSTANCE
-		};
-
-		for (String what: whats) { output.put(what, types.what_to_key(what)); }
-
-		return output;
-	}
+	static String[] populate_all_default_methods() { return new String[] { "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll", "ignore_errors", "ignore_errors_persistent_end" }; }	
 
 	static Class<?>[] populate_all_classes()
 	{
@@ -418,7 +355,7 @@ public abstract class generic extends parent_static
 		classes.add(LocalDateTime.class);
 		classes.add(LocalDate.class);
 		classes.add(LocalTime.class);
-		
+
 		classes.add(size.class);
 		classes.add(data.class);
 		classes.add(db_field.class);
@@ -502,8 +439,6 @@ public abstract class generic extends parent_static
 
 		return output;
 	}
-
-	private static HashMap<String, String> get_all_keys() { return _alls.GENERIC_KEYS; }
 
 	private static String[] get_all_default_methods() { return _alls.GENERIC_DEFAULT_METHOD_NAMES; }
 

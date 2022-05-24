@@ -4,14 +4,14 @@ public class size extends parent
 {	
 	public static final double MIN = numbers.MIN_DECIMAL;
 	public static final int MIN_DECIMALS = numbers.MIN_DIGITS_DECIMALS;
-	
+
 	public static final double MAX = numbers.MAX_DECIMAL;
 	public static final int MAX_DECIMALS = numbers.MAX_DIGITS_DECIMALS;
-	
+
 	public static final double WRONG_MIN = numbers.DEFAULT_DECIMAL;
 	public static final double WRONG_MAX = numbers.DEFAULT_DECIMAL;
 	public static final int WRONG_DECIMALS = numbers.DEFAULT_INT;
-	
+
 	public static final double DEFAULT_MIN = _defaults.SIZE_MIN;
 	public static final double DEFAULT_MAX = _defaults.SIZE_MAX;
 	public static final int DEFAULT_DECIMALS = _defaults.SIZE_DECIMALS;
@@ -21,9 +21,9 @@ public class size extends parent
 	private int _decimals = WRONG_DECIMALS;
 
 	public static boolean are_equal(size size1_, size size2_) { return are_equal_common(size1_, size2_); }
-	
+
 	public static String to_string(size size_, boolean is_main_) { return (size_ != null ? size_.toString(is_main_) : strings.DEFAULT); }
-	
+
 	public static boolean complies(size input_, size boundaries_)
 	{
 		if (!is_ok(input_) || !is_ok(boundaries_)) return false;
@@ -36,11 +36,11 @@ public class size extends parent
 	public size(double min_, double max_, int decimals_) { instantiate(min_, max_, decimals_); }
 
 	public double get_min() { return _min; }
-	
+
 	public double get_max() { return _max; }
-	
+
 	public int get_decimals() { return _decimals; }
-	
+
 	public String toString() { return toString(true); }
 
 	public boolean equals(size size2_) { return (!is_ok(size2_) ? false : (_min == size2_._min && _max == size2_._max && _decimals == size2_._decimals)); }

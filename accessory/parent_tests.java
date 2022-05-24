@@ -152,19 +152,19 @@ public abstract class parent_tests
 		}
 		else result = "OK";
 
-		System.out.println(result);
+		generic.to_screen(result);
 		
 		String in = "IN: ";
 		if (arrays.is_ok(args)) in += strings.to_string(args);
-		System.out.println(in);
+		generic.to_screen(in);
 		
 		String target = "TARGETS: ";
 		if (arrays.is_ok(targets)) target += strings.to_string(targets);
-		System.out.println(target);
+		generic.to_screen(target);
 		
 		String out = "OUT: ";
 		if (generic.is_ok(output)) out += strings.to_string(output);
-		System.out.println(out);
+		generic.to_screen(out);
 
 		update_screen(method_name_, false, 2);
 		
@@ -219,7 +219,7 @@ public abstract class parent_tests
 			else output += misc.NEW_LINE;
 		}
 
-		System.out.println(output);
+		generic.to_screen(output);
 	}
 
 	protected static void check_wrongs(HashMap<String, HashMap<String, Boolean>> outputs_)
@@ -245,8 +245,8 @@ public abstract class parent_tests
 		
 		int tot = wrongs.size();
 		
-		System.out.println("TOTAL ERRORS: " + tot);
-		if (tot > 0) System.out.println(strings.to_string(wrongs));		
+		generic.to_screen("TOTAL ERRORS: " + tot);
+		if (tot > 0) generic.to_screen(wrongs);		
 	}
 	
 	private static void manage_error(String type_, Class<?> class_, String method_name_)

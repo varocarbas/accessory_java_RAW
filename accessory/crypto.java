@@ -11,8 +11,6 @@ import javax.crypto.spec.IvParameterSpec;
 
 public class crypto extends parent 
 {
-	public static final String _ID = types.get_id(types.ID_CRYPTO);
-	
 	public static final String KEY = "key";
 	public static final String IV = "iv";
 
@@ -20,13 +18,13 @@ public class crypto extends parent
 	public static final String ERROR_CIPHER = types.ERROR_CRYPTO_CIPHER;
 	public static final String ERROR_ENCRYPT = types.ERROR_CRYPTO_ENCRYPT;
 	public static final String ERROR_DECRYPT = types.ERROR_CRYPTO_DECRYPT;
-	
+
 	public static final String DEFAULT_ID = _defaults.CRYPTO_ID;
 	public static final String DEFAULT_ALGORITHM_CIPHER = _defaults.CRYPTO_ALGORITHM_CIPHER;
 	public static final String DEFAULT_ALGORITHM_KEY = _defaults.CRYPTO_ALGORITHM_KEY;
 
 	public static boolean _log_encryption_info = _defaults.CRYPTO_LOG_ENCRYPTION_INFO;
-	
+
 	public Cipher _cipher_enc = null; 
 	public Cipher _cipher_dec = null;
 	public String _algo_cipher = DEFAULT_ALGORITHM_CIPHER;
@@ -38,14 +36,16 @@ public class crypto extends parent
 	public String _path = strings.DEFAULT;
 	public SecretKey _key = null;
 	public byte[] _iv = null;
-	
+
 	private String _temp_algo_key = strings.DEFAULT; 
 	private String _temp_algo_cipher = strings.DEFAULT;
 	private boolean _is_ok = false;
-	
+
 	public String toString() { return strings.DEFAULT; }
 	public boolean is_ok() { return _is_ok; }
-	
+
+	public static String get_id() { return types.get_id(types.ID_CRYPTO); }
+
 	public static String get_extension() { return config.get_crypto(types.CONFIG_CRYPTO_FILE_EXTENSION); }
 
 	public static String get_file_full(String id_) { return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension()); }
@@ -53,15 +53,15 @@ public class crypto extends parent
 	public static String[] encrypt_file(String path_, String id_) { return encrypt_decrypt_file(path_, id_, true); }
 
 	public static String[] decrypt_file(String path_, String id_) { return encrypt_decrypt_file(path_, id_, false); }
-	
+
 	public static String[] encrypt(String[] inputs_, String id_) { return encrypt_decrypt(inputs_, id_, true); }
 
 	public static String[] decrypt(String[] inputs_, String id_) { return encrypt_decrypt(inputs_, id_, false); }
-	
+
 	public static String encrypt(String input_, String id_) { return encrypt_decrypt(input_, id_, true); }
 
 	public static String decrypt(String input_, String id_) { return encrypt_decrypt(input_, id_, false); }
-	
+
 	public crypto(String in_, String path_key_, String path_iv_, String algo_key_, String algo_cipher_, SecretKey key_, byte[] iv_) { instantiate(in_, path_key_, path_iv_, algo_key_, algo_cipher_, key_, iv_); }
 
 	public void encrypt()
@@ -85,7 +85,7 @@ public class crypto extends parent
 		catch (Exception e) 
 		{ 
 			manage_error(ERROR_ENCRYPT, e); 
-			
+
 			return;
 		}
 
@@ -105,7 +105,7 @@ public class crypto extends parent
 		catch (Exception e) 
 		{ 
 			manage_error(ERROR_DECRYPT, e); 
-			
+
 			return;
 		}
 
@@ -115,22 +115,22 @@ public class crypto extends parent
 	private void log_encryption_info()
 	{
 		HashMap<String, String> info = new HashMap<String, String>();
-		
+
 		info.put("algo_cipher", _algo_cipher);
 		info.put("path_iv", _path_iv);
 		info.put("algo_key", _algo_key);
 		info.put("path_key", _path_key);
-		
-		logs.update_activity(info, _ID);
+
+		logs.update_activity(info, get_id());
 	}
-	
-	private static String[] encrypt_decrypt_file(String path_, String id_, boolean is_encrypt_) { return encrypt_decrypt(io.file_to_array(path_), id_, is_encrypt_); }
-	
+
+	private static String[] encrypt_decrypt_file(String path_, String id_, boolean is_encrypt_) { return encrypt_decrypt(io.file_to_array(path_), id_, is_encrypt_); }	
+
 	private static String[] encrypt_decrypt(String[] inputs_, String id_, boolean is_encrypt_)
 	{
 		int size = arrays.get_size(inputs_);
 		if (size < 1) return null;
-		
+
 		String[] output = new String[size];
 		HashMap<String, String> paths = get_default_paths(id_);
 
@@ -139,20 +139,20 @@ public class crypto extends parent
 
 		int last_i = size - 1;
 		int i = -1;
-		
+
 		while (i < last_i)
 		{
 			i++;
 			instance._in = inputs_[i];
-			
+
 			if (is_encrypt_) instance.encrypt();
 			else instance.decrypt();
-			
+
 			if (!instance.is_ok()) return null;
-			
+
 			output[i] = instance._out;
 		}
-		
+
 		return output;
 	}
 
@@ -174,26 +174,18 @@ public class crypto extends parent
 	{
 		HashMap<String, String> output = new HashMap<String, String>();
 
-		String[] whats = new String[] { KEY, IV };
-		
-		for (String what: whats) { output.put(what, get_default_path(id_, what)); }
+		for (String what: new String[] { KEY, IV }) { output.put(what, get_default_path(id_, what)); }
 
 		return output;
 	}
 
-	private static String get_default_path(String id_, String what_)
-	{
-		String id = (strings.is_ok(id_) ? id_ : DEFAULT_ID);
-
-		return paths.build(new String[] { paths.get_dir(paths.DIR_CRYPTO), get_file_full(id + misc.SEPARATOR_NAME + what_) }, true);
-	}
+	private static String get_default_path(String id_, String what_) { return paths.build(new String[] { paths.get_dir(paths.DIR_CRYPTO), get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID) + misc.SEPARATOR_NAME + what_) }, true); }
 
 	private SecretKey key_from_file()
 	{
 		SecretKey output = null;
-
 		Object temp = io.file_to_object(_path_key);
-		
+
 		if (temp != null && io.is_ok()) 
 		{
 			try { output = (SecretKey)temp;	}
@@ -212,8 +204,8 @@ public class crypto extends parent
 	private byte[] iv_from_file()
 	{
 		byte[] output = null;
-
 		byte[] temp = io.file_to_bytes(_path_iv);
+
 		if (arrays.is_ok(temp) && io.is_ok()) output = arrays.get_new(temp);
 		else manage_error();
 
@@ -223,20 +215,20 @@ public class crypto extends parent
 	private boolean key_to_file(SecretKey key_)
 	{
 		io.object_to_file(_path_key, key_);
-		
+
 		boolean is_ok = io.is_ok();
 		if (!is_ok) manage_error();
-		
+
 		return is_ok;
 	}
 
 	private boolean iv_to_file(byte[] iv_)
 	{
 		io.bytes_to_file(_path_iv, iv_);
-		
+
 		boolean is_ok = io.is_ok();
 		if (!is_ok) manage_error();
-		
+
 		return is_ok;
 	}
 
@@ -255,27 +247,27 @@ public class crypto extends parent
 
 		return output;
 	}
-	
+
 	private void update_cipher_enc()
 	{	
 		if (_cipher_enc != null) return;
-		
+
 		try
 		{	
 			_cipher_enc = Cipher.getInstance(_algo_cipher);
-			
+
 			if (_key == null) 
 			{
 				_key = get_key();
-				
+
 				if (!key_to_file(_key)) 
 				{
 					manage_error();
-					
+
 					return;
 				}
 			}
-			
+
 			_cipher_enc.init(Cipher.ENCRYPT_MODE, _key, new SecureRandom());	
 		}
 		catch (Exception e) { manage_error(ERROR_ENCRYPT, e); }
@@ -284,16 +276,16 @@ public class crypto extends parent
 	private void update_cipher_dec()
 	{	
 		if (_cipher_dec != null) return;
-		
+
 		try 
 		{
 			_cipher_dec = Cipher.getInstance(_algo_cipher);
-			
+
 			_cipher_dec.init(Cipher.DECRYPT_MODE, _key, new IvParameterSpec(_iv));
 		} 
 		catch (Exception e) { manage_error(ERROR_DECRYPT, e); }
 	}
-	
+
 	private void manage_error(String type_, Exception e_)
 	{	
 		manage_error();

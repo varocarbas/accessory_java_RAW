@@ -3,7 +3,7 @@ package accessory;
 import java.util.HashMap;
 
 //All the sizes and min/max values in this class refer to specific DB types and, as such, are defined 
-//according to the given rules. For example, MySQL's data size being the max number of characters 
+//according to the corresponding rules. For example, MySQL's data size is the max number of characters 
 //allowed in the given column. 
 
 public class db_field extends parent
@@ -50,7 +50,7 @@ public class db_field extends parent
 	public static boolean further_is_ok(String further_) { return val_is_ok_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT); }
 
 	public static String check_further(String further_) { return check_val_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT); }
-	
+
 	public static long check_size(String source_, String type_, long size_)
 	{
 		long size = size_;
@@ -63,7 +63,7 @@ public class db_field extends parent
 
 		return size;
 	}
-	
+
 	public static boolean default_is_ok(String source_, String type_, long size_, Object default_)
 	{
 		if (default_ == null) return true;
@@ -72,7 +72,7 @@ public class db_field extends parent
 
 		return (size > 0 ? data.complies(default_, to_data(type_, size, DEFAULT_DECIMALS)) : false);
 	}	
-	
+
 	public static db_field adapt(String source_, db_field input_)
 	{
 		db_field output = new db_field(input_);
@@ -103,15 +103,15 @@ public class db_field extends parent
 
 		return ((val_ == null || !strings.is_ok(type) || size <= 0) ? false : data.complies(val_, to_data(type, size, decimals_)));
 	}
-	
+
 	public static data to_data(db_field field_) { return (is_ok(field_) ? to_data(field_._type, field_._size, field_._decimals) : null); }
-	
+
 	public static data to_data(String type_, long size_, int decimals_)
 	{	
 		String type = types.check_type(type_, types.DATA);
 		if (!strings.is_ok(type) || size_ < 1 || decimals_ < 0) return null;
-		
-		double temp = Math.pow(10, size_);
+
+		double temp = db.get_max_value(type_);
 
 		return new data(type_, new size(-1 * temp, temp, decimals_));
 	}
@@ -131,15 +131,15 @@ public class db_field extends parent
 	public db_field(String type_, long size_, int decimals_, Object default_, String[] further_) { instantiate(type_, size_, decimals_, default_, further_); }
 
 	public String get_type() { return _type; }
-	
+
 	public long get_size() { return _size; }
-	
+
 	public int get_decimals() { return _decimals; }
 
 	public Object get_default() { return _default; }
-	
+
 	public String[] get_further() { return _further; }
-	
+
 	public String toString()
 	{
 		String output = "";
@@ -177,6 +177,10 @@ public class db_field extends parent
 
 	public boolean is_ok() { return is_ok(_type, _size, _decimals, _default, _further); }
 
+	public static String[] get_all_types_no_size() { return _alls.DB_FIELD_TYPES_NO_SIZE; }
+
+	static String[] populate_all_types_no_size() { return new String[] { data.TIMESTAMP, data.BOOLEAN, data.TINYINT }; }
+
 	private void instantiate(db_field input_)
 	{
 		instantiate_common();
@@ -207,7 +211,7 @@ public class db_field extends parent
 		_type = type_;
 		_size = size_;
 		_decimals = decimals_;
-		_default = generic.get_new(default_);
-		_further = (String[])generic.get_new(further_);
+		_default = default_;
+		_further = (String[])arrays.get_new(further_);
 	}
 }

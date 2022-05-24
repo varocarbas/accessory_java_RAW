@@ -19,12 +19,12 @@ public class data extends parent
 
 	public static final String TRUE = types.DATA_BOOLEAN_TRUE;
 	public static final String FALSE = types.DATA_BOOLEAN_FALSE;
-	
-	//--- For numeric types, min/max values (e.g., max decimal value). For other types, min/max
-	//lengths or number of elements (e.g., max string length). 
-	//These limits are theoretically independent from the DB/db_field ones, although they are expected
-	//to be highly compatible with those for purely practical reasons.
-	
+
+	//--- For numeric types, min/max variables refer to values (e.g., max decimal value); and, for other types, 
+	//they refer to lengths or numbers of elements (e.g., max string length). 
+	//These limits are theoretically independent from the DB/db_field ones, although they are likely to be highly 
+	//compatible with those for purely practical reasons.
+
 	public static final double MIN_DECIMAL = numbers.MIN_DECIMAL;
 	public static final double MIN_LONG = numbers.MIN_LONG;
 	public static final double MIN_TINYINT = numbers.MIN_INT;
@@ -34,28 +34,28 @@ public class data extends parent
 	public static final double MIN_STRING_BIG = MIN_STRING;
 	public static final double MIN_BOOLEAN = 2.0;
 	public static final double MIN_TIMESTAMP = 0.0;
-	
+
 	public static final double MAX_DECIMAL = numbers.MAX_DECIMAL;
 	public static final double MAX_LONG = numbers.MAX_LONG;
-	public static final double MAX_TINYINT = db.get_max_size(TINYINT);
+	public static final double MAX_TINYINT = db.get_max_value(TINYINT);
 	public static final double MAX_INT = numbers.MAX_INT;
 	public static final double MAX_STRING_SMALL = db.get_max_size(STRING_SMALL);
 	public static final double MAX_STRING_BIG = db.get_max_size(STRING_BIG);
 	public static final double MAX_BOOLEAN = 2.0;
 	public static final double MAX_TIMESTAMP = dates.get_length(dates.FORMAT_TIMESTAMP);
-	
+
 	//---
-	
+
 	public static final String DEFAULT_TYPE = STRING_SMALL;
-	
+
 	private String _type = strings.DEFAULT;
 	private Class<?> _class = null;
 	private size _size = null;	
-	
+
 	private String _temp_type = strings.DEFAULT;
 	private Class<?> _temp_class = null;
 	private size _temp_size = null;
-	
+
 	public static boolean are_equal(data data1_, data data2_) { return are_equal_common(data1_, data2_); }	
 
 	public data(data input_) { instantiate(input_); }
@@ -67,12 +67,10 @@ public class data extends parent
 	public Class<?> get_class() { return _class; }
 
 	public size get_size() { return _size; }
-	
+
 	public String toString()
 	{
-		String output = "";
-
-		if (strings.is_ok(_type)) output = _type;
+		String output = (strings.is_ok(_type) ? _type : "");
 
 		if (generic.is_ok(_class))
 		{
@@ -94,13 +92,13 @@ public class data extends parent
 	public static <x> boolean complies(x val_, data data_)
 	{
 		boolean is_ok = false;
-		
+
 		Class<?> type = generic.get_class(val_);
 		if (type == null || !is_ok(data_)) return is_ok;
 
 		Class<?> type2 = data_.get_class();
 		if (!type_complies(type, type2)) return is_ok;
-		
+
 		if (generic.are_equal(type2, Boolean.class)) 
 		{
 			if (generic.are_equal(type, Boolean.class)) is_ok = true;
@@ -111,7 +109,8 @@ public class data extends parent
 			}
 			else if (generic.is_string(type)) 
 			{
-				String val2 = (String)val_;		
+				String val2 = (String)val_;	
+
 				if (strings.is_boolean(val2)) is_ok = true;
 				else if (strings.is_number(val2))
 				{
@@ -123,8 +122,8 @@ public class data extends parent
 		else 
 		{
 			double size = 0;
-			
-			if (generic.is_string(type2)) size = ((String)val_).length();
+
+			if (generic.is_string(type2)) size = (double)((String)val_).length();
 			else if (generic.is_number(type2)) size = numbers.to_number(val_);
 			else return false;
 
@@ -138,24 +137,30 @@ public class data extends parent
 	public static <x> Object adapt_value(x val_, data data_, boolean check_)
 	{
 		if (val_ == null || !is_ok(data_) || (check_ && !complies(val_, data_))) return null;
-	
+
 		Object output = val_;
-		
+
 		if (is_boolean(data_._type))
 		{
-			Class<?> type = generic.get_class(val_);
 			output = false;
-	
-			if (generic.is_number(type)) output = (numbers.to_number(val_) == 1.0 ? true : false);
+			Class<?> type = generic.get_class(val_);
+
+			if (generic.is_number(type)) 
+			{
+				if (numbers.to_number(val_) == 1.0) output = true;
+			}
 			else if (generic.is_string(type)) 
 			{
 				String val2 = (String)val_;		
-				
+
 				if (strings.is_boolean(val2)) output = strings.to_boolean(val2);
-				else if (strings.is_number(val2)) output = (strings.to_number_decimal(val2) == 1.0 ? true : false);
+				else if (strings.is_number(val2))
+				{
+					if (strings.to_number_decimal(val2) == 1.0) output = true;
+				}
 			}
 		}
-				
+
 		return output;
 	}
 
@@ -173,19 +178,19 @@ public class data extends parent
 	}
 
 	public static size get_default_size(String type_) { return get_boundaries(type_); }
-	
+
 	public static boolean is_number(String type_) { return is_common(type_, new String[] { TINYINT, INT, LONG, DECIMAL }); }
 
 	public static boolean is_string(String type_) { return is_common(type_, new String[] { STRING_SMALL, STRING_BIG, TIMESTAMP }); }
 
 	public static boolean is_boolean(String type_) { return is_common(type_, new String[] { BOOLEAN }); }
-	
+
 	public boolean is_ok() { return is_ok(_type, _class, _size); }
-	
+
 	static HashMap<String, Class<?>> populate_all_classes()
 	{
 		HashMap<String, Class<?>> classes = new HashMap<String, Class<?>>();
-		
+
 		classes.put(STRING_SMALL, String.class);
 		classes.put(STRING_BIG, String.class);
 		classes.put(TIMESTAMP, String.class);
@@ -194,14 +199,14 @@ public class data extends parent
 		classes.put(LONG, Long.class);
 		classes.put(DECIMAL, Double.class);
 		classes.put(BOOLEAN, Boolean.class);
-		
+
 		return classes;
 	}
-	
+
 	static HashMap<Class<?>, Class<?>> populate_all_compatible()
 	{
 		HashMap<Class<?>, Class<?>> classes = new HashMap<Class<?>, Class<?>>();
-		
+
 		classes.put(Double.class, Integer.class);
 		classes.put(Double.class, Long.class);
 		classes.put(Long.class, Integer.class);
@@ -209,10 +214,10 @@ public class data extends parent
 		classes.put(Boolean.class, Long.class);
 		classes.put(Boolean.class, Double.class);
 		classes.put(Boolean.class, String.class);
-		
+
 		return classes;
 	}
-		
+
 	private static boolean is_common(String type_, String[] targets_)
 	{
 		String type = check_type(type_);
@@ -231,10 +236,10 @@ public class data extends parent
 		double min = size.WRONG_MIN;
 		double max = size.WRONG_MAX;
 		int decimals = size.WRONG_DECIMALS;
-		
+
 		String type = check_type(type_);
 		if (!strings.is_ok(type)) return new size(min, max, decimals);
-		
+
 		if (type.equals(STRING_SMALL)) 
 		{
 			min = MIN_STRING_SMALL;
@@ -308,7 +313,7 @@ public class data extends parent
 
 		populate(input_._temp_type, input_._temp_class, input_._temp_size);
 	}
-	
+
 	private void instantiate(String type_, Class<?> class_, size size_)
 	{
 		instantiate_common();
@@ -316,13 +321,13 @@ public class data extends parent
 
 		populate(_temp_type, _temp_class, _temp_size);
 	}
-	
+
 	private boolean is_ok(String type_, Class<?> class_, size size_)
 	{
 		_temp_type = check_type(type_);
 		_temp_class = (class_is_ok(class_) ? class_ : get_class(_temp_type));
 		_temp_size = check_size(_temp_type, size_);
-		
+
 		return (strings.is_ok(_temp_type) && class_is_ok(_temp_class) && size_is_ok(_temp_type, _temp_size));
 	}
 

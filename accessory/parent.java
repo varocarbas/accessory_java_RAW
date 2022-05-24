@@ -7,11 +7,11 @@ public abstract class parent
 	//Despite the abstract method absence, equals() is also expected to be always implemented.
 	public abstract String toString();
 	public abstract boolean is_ok();
-	
+
 	public static boolean is_ok(parent input_) { return (input_ == null ? false : input_.is_ok()); }
-	
+
 	public static String to_string(parent input_) { return (input_ != null ? input_.toString() : strings.DEFAULT); }
-	
+
 	protected static boolean are_equal_common(Object input1_, Object input2_) { return generic.are_equal(input1_, input2_); }
 
 	protected static boolean val_is_ok_common(String val_, String type_, String default_) { return (strings.is_ok(check_val_common(val_, type_, default_))); }

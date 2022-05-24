@@ -9,18 +9,18 @@ package accessory;
 class _basic extends parent_ini_first 
 {
 	private static _basic _instance = new _basic(); 
-	
+
 	public _basic() { }
 	public static void populate() { _instance.populate_internal_common(); }
-	
+
 	public static String DIR_SEPARATOR = null;
 
 	protected void populate_internal() 
 	{ 
 		if (_populated) return;
-		
+
 		DIR_SEPARATOR = (System.getProperty("os.name").contains("Windows") ? "\\" : "/");
-		
+
 		_populated = true;
 	} 
 }

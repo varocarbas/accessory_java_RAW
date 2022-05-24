@@ -1,5 +1,7 @@
 package accessory;
 
+import java.util.ArrayList;
+
 public class db_order extends parent
 {	
 	public static final String ASC = types.DB_ORDER_ASC;
@@ -9,7 +11,7 @@ public class db_order extends parent
 
 	public static final String DEFAULT_ORDER = _defaults.DB_ORDER;
 	public static final boolean DEFAULT_IS_FIELD = _defaults.DB_ORDER_IS_FIELD;
-	
+
 	private String _source = strings.DEFAULT;
 	private String _field_condition = strings.DEFAULT; //When _is_field is true, it is always treated as a field except inside to_string() methods, where it is converted into a col.
 	private String _order = DEFAULT_ORDER;
@@ -18,7 +20,7 @@ public class db_order extends parent
 	private String _temp_source = strings.DEFAULT;
 	private String _temp_field_condition = strings.DEFAULT;
 	private String _temp_order = strings.DEFAULT;
-	
+
 	public static boolean are_equal(db_order order1_, db_order order2_) { return are_equal_common(order1_, order2_); }
 
 	public static String to_string(db_order[] orders_)
@@ -43,9 +45,17 @@ public class db_order extends parent
 
 	public static String order_to_string(String order_) { return val_to_string_common(order_, types.DB_ORDER, DEFAULT_ORDER); }
 
+	public static db_order[] get_orders_desc(String source_, String[] fields_) { return get_orders_desc_asc(source_, fields_, ORDER_DESC); }
+
+	public static db_order[] get_orders_asc(String source_, String[] fields_) { return get_orders_desc_asc(source_, fields_, ORDER_ASC); }
+
 	public db_order(db_order input_) { instantiate(input_); }
 
+	public db_order(String field_condition_, String order_) { instantiate(db._cur_source, field_condition_, order_, DEFAULT_IS_FIELD); }
+
 	public db_order(String source_, String field_condition_, String order_) { instantiate(source_, field_condition_, order_, DEFAULT_IS_FIELD); }
+
+	public db_order(String field_condition_, String order_, boolean is_field_) { instantiate(db._cur_source, field_condition_, order_, is_field_); }
 
 	public db_order(String source_, String field_condition_, String order_, boolean is_field_) { instantiate(source_, field_condition_, order_, is_field_); }
 
@@ -75,6 +85,19 @@ public class db_order extends parent
 
 	public boolean is_ok() { return is_ok(_source, _field_condition, _order, _is_field); }
 
+	private static db_order[] get_orders_desc_asc(String source_, String[] fields_, String order_)
+	{
+		String source = db.check_source(source_);
+		String order = check_order(order_);
+		if (!strings.is_ok(source) || !strings.is_ok(order) || !arrays.is_ok(fields_)) return null;
+
+		ArrayList<db_order> output = new ArrayList<db_order>();
+
+		for (String field: fields_) { output.add(new db_order(source, field, order)); }
+
+		return arrays.to_array(output);
+	}
+
 	private void instantiate(db_order input_)
 	{
 		instantiate_common();
@@ -96,7 +119,7 @@ public class db_order extends parent
 		_temp_source = db.check_source(source_);
 		_temp_field_condition = (is_field_ ? db.check_field(_temp_source, field_condition_) : field_condition_);
 		_temp_order = types.check_type(order_, types.DB_ORDER);
-		
+
 		return (strings.are_ok(new String[] { _temp_source, _temp_field_condition, _temp_order }));
 	}
 

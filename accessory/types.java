@@ -6,13 +6,11 @@ import java.util.Map.Entry;
 
 public abstract class types extends parent_static
 {
-	public static final String _ID = types.get_id(types.ID_TYPES);
-
 	public static final String SEPARATOR = misc.SEPARATOR_NAME;
 
-	//--------- To be synced with the populate_all_[] methods below.
+	//--------- To be synced with the populate_all_types() method below.
 
-	//IMPORTANT: these constants follow pretty rigid and predictable naming conventions, whose main
+	//IMPORTANT: these constants follow pretty rigid and predictable naming conventions whose main
 	//point is to facilitate their automated treatment (e.g., easy subtype extraction). In any case,
 	//the most important aspect of these constants is them representing a major cornerstone of a common 
 	//structure ensuring the most intuitive and coherent management of (programming) resources and 
@@ -21,19 +19,19 @@ public abstract class types extends parent_static
 	//CONFIG_DB_SETUP subtypes are, by default, copies of the corresponding DB root constants, which will 
 	//surely not follow the CONFIG_DB_SETUP naming convention. In any case, these scenarios are quite 
 	//exceptional and, in general, trusting the overall applicability of the naming conventions and the 
-	//associated perks (e.g., get_subtypes() methods below) is pretty sensible, although this shouldn't 
-	//be done in a blind, careless, disrespectful (respect the code, maaaaan!) manner, what is a quite 
+	//associated perks (e.g., using the check_type() methods below) is pretty sensible. In any case, that 
+	//shouldn't be done in a blind, careless, disrespectful (respect the code, maaaaan!) manner, what is a quite 
 	//bad idea when dealing with pretty much anything or anyone anyway.
-	
-	//------ To be synced with the corresponding config methods/variables, mainly via config_ini.
+
+	//------ To be synced with the corresponding config methods/variables like the ones in _ini_config or _ini_db.
 
 	//Note for DB types: the sources/fields are the types/ids, constant, used in most of the code. 
 	//The tables/cols are the values, variable, only used when performing the corresponding query.
 	//The config class deals with the main in-memory setup, including that source-table/field-col mapping.
-	//That is, the given type, the key which remains constant, (e.g., CONFIG_DB_FIELD_WHATEVER) is the 
-	//source/field and the associated value, which can be modified at runtime, (e.g., "whatever") is the 
+	//That is, the given type, the key which remains constant (e.g., CONFIG_DB_FIELD_WHATEVER), is the 
+	//source/field and the associated value, which can be modified at runtime (e.g., "whatever"), is the 
 	//table/col.
-	
+
 	public static final String CONFIG = "config";
 	public static final String CONFIG_BASIC = "config_basic";
 	public static final String CONFIG_BASIC_NAME = "config_basic_name";
@@ -45,16 +43,16 @@ public abstract class types extends parent_static
 	public static final String CONFIG_BASIC_DIR_LOGS_ERRORS = "config_basic_dir_logs_errors";
 	public static final String CONFIG_BASIC_DIR_LOGS_ACTIVITY = "config_basic_dir_logs_activity";
 	public static final String CONFIG_BASIC_DIR_CRYPTO = "config_basic_dir_crypto";
-	
+
 	//--- CONFIG_DB variables deal with the generic, common configuration of DBs. Specific CONFIG constants
 	//have to be added to manage each DB's specific information like, for example, sources and fields.
-	
+
 	//CONFIG_DB is only used for internal purposes. Its associated value, the corresponding root CONFIG constant,
 	//is the config._info key under which all the DB information is stored. CONFIG_DB_NAME is associated with the
 	//actual name of the DB. Hence, CONFIG_DB/CONFIG_DB_NAME is equivalent to source/table and field/col.
 	public static final String CONFIG_DB = "config_db";
 	public static final String CONFIG_DB_NAME = "config_db_name";
-	
+
 	//DB setups allow to support multiple basic configurations (e.g., different credentials or operating
 	//conditions) at the same time. The value associated with the corresponding CONFIG_DB_SETUP is the
 	//main key of the given DB, that is, the corresponding root CONFIG key, the one used to store
@@ -76,7 +74,7 @@ public abstract class types extends parent_static
 	public static final String CONFIG_DB_DEFAULT_FIELD_ID = "config_db_default_field_id";
 	public static final String CONFIG_DB_DEFAULT_FIELD_TIMESTAMP = "config_db_default_field_timestamp";
 	//---
-	
+
 	public static final String CONFIG_CREDENTIALS = "config_credentials";
 	public static final String CONFIG_CREDENTIALS_WHERE = "config_credentials_where";
 	public static final String CONFIG_CREDENTIALS_WHERE_DB = "config_credentials_where_db";
@@ -104,19 +102,19 @@ public abstract class types extends parent_static
 	public static final String CONFIG_TESTS_DB_FIELD_STRING = "config_tests_db_field_string";
 	public static final String CONFIG_TESTS_DB_FIELD_DECIMAL = "config_tests_db_field_decimal";
 	public static final String CONFIG_TESTS_DB_FIELD_BOOLEAN = "config_tests_db_field_boolean";
-	
+
 	public static final String CONFIG_CRYPTO = "config_crypto";
 	public static final String CONFIG_CRYPTO_FILE = "config_crypto_file";
 	public static final String CONFIG_CRYPTO_FILE_CIPHER = "config_crypto_file_cipher";
 	public static final String CONFIG_CRYPTO_FILE_KEY = "config_crypto_file_key";
 	public static final String CONFIG_CRYPTO_FILE_EXTENSION = "config_crypto_file_extension";
-	
+
 	public static final String CONFIG_LOGS = "config_logs";
 	public static final String CONFIG_LOGS_OUT = "config_logs_out";
 	public static final String CONFIG_LOGS_OUT_SCREEN = "config_logs_out_screen";
 	public static final String CONFIG_LOGS_OUT_FILE = "config_logs_out_file";
 	//------
-	
+
 	public static final String DB = "db";
 	public static final String DB_WHERE = "db_where";
 	public static final String DB_WHERE_OPERAND = "db_where_operand";
@@ -140,6 +138,7 @@ public abstract class types extends parent_static
 	public static final String DB_FIELD_FURTHER_TIMESTAMP = "db_field_further_timestamp";
 	public static final String DB_QUERY = "db_query";
 	public static final String DB_QUERY_SELECT = "db_query_select";
+	public static final String DB_QUERY_SELECT_COUNT = "db_query_select_count";
 	public static final String DB_QUERY_INSERT = "db_query_insert";
 	public static final String DB_QUERY_UPDATE = "db_query_update";
 	public static final String DB_QUERY_DELETE = "db_query_delete";
@@ -157,7 +156,7 @@ public abstract class types extends parent_static
 	public static final String DB_MYSQL_DATA_BIGINT = "db_mysql_data_bigint";
 	public static final String DB_MYSQL_DATA_DECIMAL = "db_mysql_data_decimal";
 	public static final String DB_MYSQL_DATA_TIMESTAMP = "db_mysql_data_timestamp";
-	
+
 	public static final String DATA = "data";
 	public static final String DATA_STRING_SMALL = "data_string_small";
 	public static final String DATA_STRING_BIG = "data_string_big";
@@ -169,7 +168,7 @@ public abstract class types extends parent_static
 	public static final String DATA_BOOLEAN = "data_boolean";
 	public static final String DATA_BOOLEAN_TRUE = "data_boolean_true";
 	public static final String DATA_BOOLEAN_FALSE = "data_boolean_false";
-	
+
 	public static final String DATES = "dates";
 	public static final String DATES_FORMAT = "dates_format";
 	public static final String DATES_FORMAT_TIME = "dates_format_time";
@@ -183,7 +182,7 @@ public abstract class types extends parent_static
 	public static final String DATES_UNIT_MINUTES = "dates_unit_minutes";
 	public static final String DATES_UNIT_HOURS = "dates_unit_hours";
 	public static final String DATES_UNIT_DAYS = "dates_unit_days";
-	
+
 	public static final String ACTION = "action";
 	public static final String ACTION_ADD = "action_add";
 	public static final String ACTION_REMOVE = "action_remove";
@@ -193,7 +192,7 @@ public abstract class types extends parent_static
 	public static final String ACTION_DECRYPT = "action_decrypt";
 	public static final String ACTION_START = "action_start";
 	public static final String ACTION_STOP = "action_stop";
-	
+
 	public static final String WHAT = "what";
 	public static final String WHAT_USER = "what_user";
 	public static final String WHAT_USERNAME = "what_username";
@@ -215,8 +214,8 @@ public abstract class types extends parent_static
 	public static final String WHAT_ID = "what_id";
 	public static final String WHAT_INSTANCE = "what_instance";
 	public static final String WHAT_MESSAGE = "what_message";
-	public static final String WHAT_LEGACY = "what_legacy";
-	
+	public static final String WHAT_PATH = "what_path";
+
 	public static final String ID = "id";
 	public static final String ID_ARRAYS = "id_arrays";
 	public static final String ID_CONFIG = "id_config";
@@ -234,7 +233,7 @@ public abstract class types extends parent_static
 	public static final String ID_STRINGS = "id_strings";
 	public static final String ID_TESTS = "id_tests";
 	public static final String ID_TYPES = "id_types";
-	
+
 	public static final String ERROR = "error";
 	public static final String ERROR_INI = "error_ini";
 	public static final String ERROR_INI_DB = "error_ini_db";
@@ -267,30 +266,32 @@ public abstract class types extends parent_static
 	public static final String ERROR_DATES = "error_dates";
 	public static final String ERROR_DATES_STRING = "error_dates_string";
 	//---------
-	
+
+	public static String get_id() { return get_id(ID_TYPES); }	
+
 	public static String check_what(String what_) { return check_type(what_, WHAT); }
-	
+
 	public static String what_to_key(String what_) { return check_type(what_, get_subtypes(WHAT), ACTION_REMOVE, WHAT); }
-	
+
 	public static String check_action(String action_) { return check_type(action_, ACTION); }
-	
+
 	public static String action_to_key(String action_) { return check_type(action_, get_subtypes(ACTION), ACTION_REMOVE, ACTION); }
-	
+
 	public static String check_multiple(String subtype_, HashMap<String, String[]> targets_)
 	{
 		String output = strings.DEFAULT;
 		if (!arrays.is_ok(targets_)) return output;
-		
+
 		for (Entry<String, String[]> item: targets_.entrySet())
 		{
 			String key = item.getKey();
-			
+
 			for (String val: item.getValue())
 			{
 				if (strings.matches_any(subtype_, new String[] { key, val }, true)) return key;
 			}
 		}
-		
+
 		return output;
 	}
 
@@ -299,17 +300,17 @@ public abstract class types extends parent_static
 	public static String check_type(String type_, String root_) { return check_type(type_, (strings.is_ok(root_) ? get_subtypes(root_) : null)); }
 
 	public static String check_type(String type_, String[] types_) { return check_type(type_, types_, null, null); }
-	
+
 	public static String check_type(String type_, String[] types_, String action_add_remove_, String type_add_remove_)
 	{	
 		String output = strings.DEFAULT;
-		
+
 		String type2 = strings.normalise(type_);
 		if (!strings.is_ok(type2)) return output;
-		
+
 		String type_add_remove = strings.normalise(type_add_remove_);
 		String action = strings.normalise(action_add_remove_);
-		
+
 		for (String type: get_subtypes(strings.DEFAULT, types_))
 		{
 			if (strings.are_equal(type2, type) || (strings.is_ok(type_add_remove) && strings.are_equal(add_type(type2, type_add_remove), type)))
@@ -328,7 +329,7 @@ public abstract class types extends parent_static
 
 		String type = type_;
 		if (!strings.contains_start(type, subtype_, false)) return subtype_;
-		
+
 		type += SEPARATOR;
 
 		return strings.get_end(subtype_, type.length());
@@ -345,39 +346,35 @@ public abstract class types extends parent_static
 	{ 
 		String type = check_type(type_);
 		if (!strings.is_ok(type) || strings.contains_start(ERROR, type, false)) return false;
-		
+
 		return (strings.contains(DB + SEPARATOR, type, false) || strings.contains(SEPARATOR + DB, type, false));
 	}
 
 	public static boolean is_subtype_of(String subtype_, String type_) { return arrays.value_exists(get_subtypes(type_), subtype_); }
 
 	public static String get_id(String type_) { return check_type(type_, get_subtypes(ID), ACTION_REMOVE, ID); }
-	
+
 	public static String[] get_subtypes(String[] types_) { return get_subtypes(types_, null); }
-	
+
 	public static String[] get_subtypes(String[] types_, String[] all_)
 	{
 		if (!arrays.is_ok(types_)) return get_subtypes(strings.DEFAULT, all_);
 
 		ArrayList<String> subtypes = new ArrayList<String>();
-
-		for (String type: types_)
-		{
-			subtypes.addAll(arrays.to_arraylist(get_subtypes(type, all_)));		
-		}
+		for (String type: types_) { subtypes.addAll(arrays.to_arraylist(get_subtypes(type, all_))); }
 
 		return arrays.to_array(subtypes);
 	}
-	
+
 	public static String[] get_subtypes(String type_) { return get_subtypes(type_, null); }
-	
+
 	public static String[] get_subtypes(String type_, String[] all_)
 	{
 		ArrayList<String> subtypes = new ArrayList<String>();
-		
+
 		String heading = (strings.is_ok(type_) ? type_ + SEPARATOR : null);
 		boolean add_all = !strings.is_ok(heading);
-		
+
 		for (String subtype: (String[])arrays.remove_value((arrays.is_ok(all_) ? all_ : get_all_types()), heading, false))
 		{
 			if (add_all || strings.contains_start(heading, subtype, false)) subtypes.add(subtype);
@@ -387,19 +384,10 @@ public abstract class types extends parent_static
 	}
 
 	public static String[] get_all_types() { return _alls.TYPES_ALL; }
-	
-	public static String[] get_all_config_boolean() { return _alls.TYPES_CONFIG_BOOLEAN; }
-	
-	static String[] populate_all_config_boolean(String[] additional_) 
-	{ 
-		String[] main = new String[] { CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, CONFIG_LOGS_OUT_FILE, CONFIG_LOGS_OUT_SCREEN }; 
-	
-		return populate_all_internal(main, additional_);
-	}
-	
-	static String[] populate_all_types(String[] additional_)
+
+	static String[] populate_all_types()
 	{
-		String[] main = new String[]
+		return new String[]
 		{	
 			CONFIG,
 			CONFIG_BASIC,
@@ -444,7 +432,7 @@ public abstract class types extends parent_static
 			CONFIG_TESTS_DB_FIELD,
 			CONFIG_TESTS_DB_FIELD_INT, CONFIG_TESTS_DB_FIELD_STRING, CONFIG_TESTS_DB_FIELD_DECIMAL,
 			CONFIG_TESTS_DB_FIELD_BOOLEAN,
-			
+
 			DB,
 			DB_WHERE,
 			DB_WHERE_OPERAND,
@@ -458,18 +446,18 @@ public abstract class types extends parent_static
 			DB_FIELD_FURTHER_KEY, DB_FIELD_FURTHER_KEY_PRIMARY, DB_FIELD_FURTHER_KEY_UNIQUE, 
 			DB_FIELD_FURTHER_AUTO_INCREMENT, DB_FIELD_FURTHER_TIMESTAMP,
 			DB_QUERY,
-			DB_QUERY_SELECT, DB_QUERY_INSERT, DB_QUERY_UPDATE, DB_QUERY_DELETE, 
+			DB_QUERY_SELECT, DB_QUERY_SELECT_COUNT, DB_QUERY_INSERT, DB_QUERY_UPDATE, DB_QUERY_DELETE, 
 			DB_QUERY_TABLE,
 			DB_QUERY_TABLE_EXISTS, DB_QUERY_TABLE_CREATE, DB_QUERY_TABLE_DROP, DB_QUERY_TABLE_TRUNCATE,
 			DB_MYSQL,
 			DB_MYSQL_DATA_VARCHAR, DB_MYSQL_DATA_TEXT, DB_MYSQL_DATA_INT, DB_MYSQL_DATA_TINYINT, 
 			DB_MYSQL_DATA_BIGINT, DB_MYSQL_DATA_DECIMAL,
-			
+
 			DATA,
 			DATA_STRING_SMALL, DATA_STRING_BIG, DATA_TINYINT, DATA_INT, DATA_LONG, DATA_DECIMAL, DATA_TIMESTAMP,
 			DATA_BOOLEAN,
 			DATA_BOOLEAN_TRUE, DATA_BOOLEAN_FALSE,
-			
+
 			DATES,
 			DATES_FORMAT,
 			DATES_FORMAT_TIME, DATES_FORMAT_TIME_FULL, DATES_FORMAT_TIME_SHORT,
@@ -480,16 +468,16 @@ public abstract class types extends parent_static
 			ACTION,
 			ACTION_ADD, ACTION_REMOVE, ACTION_ESCAPE, ACTION_REPLACE, ACTION_ENCRYPT, ACTION_DECRYPT, 
 			ACTION_START, ACTION_STOP,
-			
+
 			WHAT,
 			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 
 			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER, WHAT_TYPE, WHAT_APP, 
-			WHAT_SERVER, WHAT_ID, WHAT_INSTANCE, WHAT_MESSAGE, WHAT_LEGACY,
-			
+			WHAT_SERVER, WHAT_ID, WHAT_INSTANCE, WHAT_MESSAGE, WHAT_PATH,
+
 			ID,
 			ID_ARRAYS, ID_CONFIG, ID_CREDENTIALS, ID_CRYPTO, ID_DATES, ID_DB, ID_ERRORS, ID_GENERIC, ID_IO, 
 			ID_LOGS, ID_MISC, ID_NUMBERS, ID_PATHS, ID_STRINGS, ID_TESTS, ID_TYPES,
-			
+
 			ERROR,
 			ERROR_INI,
 			ERROR_INI_DB, 
@@ -505,16 +493,12 @@ public abstract class types extends parent_static
 			ERROR_GENERIC_METHOD_GET, ERROR_GENERIC_METHOD_CALL,
 			ERROR_TEST,
 			ERROR_TEST_RUN,
-			
+
 			ERROR_CRYPTO,
 			ERROR_CRYPTO_KEY, ERROR_CRYPTO_CIPHER, ERROR_CRYPTO_ENCRYPT, ERROR_CRYPTO_DECRYPT,
-			
+
 			ERROR_DATES, 
 			ERROR_DATES_STRING
 		};
-		
-		return populate_all_internal(main, additional_);
 	}
-	
-	private static String[] populate_all_internal(String[] main_, String[] additional_) { return (arrays.is_ok(additional_) ? (String[])arrays.add(main_, additional_) : main_); }
 }

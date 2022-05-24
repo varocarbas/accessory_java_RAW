@@ -13,8 +13,10 @@ public abstract class parent_db
 	public abstract HashMap<String, Object> get_data_type(String data_type_);
 	public abstract long get_default_size(String data_type_);
 	public abstract long get_max_size(String data_type_);
+	public abstract double get_max_value(String data_type_);
 	public abstract String get_value(String input_);
 	public abstract String get_variable(String input_);
+	public abstract String get_select_count_col();
 	
 	protected abstract Connection connect_internal(String source_, Properties properties);
 	

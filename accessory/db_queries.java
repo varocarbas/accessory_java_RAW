@@ -7,55 +7,62 @@ import java.util.Map.Entry;
 abstract class db_queries
 {	
 	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_) { return select_one(source_, fields_, db_where.to_string(wheres_), db_order.to_string(orders_)); }
-	
+
 	public static HashMap<String, String> select_one(String source_, String[] fields_, String wheres_cols_, String orders_cols_)
 	{
 		ArrayList<HashMap<String, String>> temp = select(source_, fields_, wheres_cols_, 1, orders_cols_);
-		
+
 		return (arrays.is_ok(temp) ? temp.get(0) : null);
 	}
-		
+
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select(source_, fields_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
-	
+
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, String where_cols_, int max_rows_, String order_cols_) { return select_internal(source_, get_cols(source_, fields_), where_cols_, max_rows_, order_cols_); }
-	
+
+	public static int select_count(String source_) 
+	{ 
+		ArrayList<HashMap<String, String>> output = select_count_internal(source_);
+
+		return (arrays.is_ok(output) ? strings.to_number_int((String)arrays.get_value(output.get(0), db.get_select_count_col(source_))) : 0); 
+	}
+
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_)
 	{
 		HashMap<String, String> vals = db.check_vals_error(source_, vals_raw_);
 		if (!arrays.is_ok(vals)) return;
-		
+
 		insert_internal(source_, vals);
 	}
-	
+
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_) { update(source_, vals_raw_, db_where.to_string(wheres_)); }
-	
+
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, String where_cols_)
 	{
 		HashMap<String, String> vals = db.check_vals_error(source_, vals_raw_);
 		if (!arrays.is_ok(vals)) return;
-		
+
 		update_internal(source_, vals, where_cols_);
 	}
-	
+
 	public static void delete(String source_, db_where[] wheres_) { delete(source_, db_where.to_string(wheres_)); }
-	
+
 	public static void delete(String source_, String where_cols_) { delete_internal(source_, where_cols_); }
 
 	public static boolean table_exists(String source_) { return table_exists_internal(source_); }
-	
+
 	public static void create_table(String source_, boolean drop_it_) { create_table(source_, db.get_source_fields(source_), drop_it_); }
-	
+
 	public static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_)
 	{
 		String source = db.check_source_error(source_);
 		if (!strings.is_ok(source)) return;
 
 		boolean exists = table_exists_internal(source);
-		if (drop_it_) 
+		if (exists)
 		{
-			if (exists) drop_table_internal(source);
+			if (drop_it_) drop_table_internal(source);
+			else return;		
 		}
-		else if (exists) return;
 
 		HashMap<String, db_field> cols = new HashMap<String, db_field>();
 
@@ -64,137 +71,144 @@ abstract class db_queries
 			for (Entry<String, db_field> item: fields_.entrySet())
 			{
 				String field = item.getKey();
-				String col = db.get_col(source_, field);
+				String col = db.get_col(source, field);
 				if (!strings.is_ok(col)) continue;
-				
+
 				cols.put(col, new db_field(item.getValue()));
 			}
 		}
 
 		create_table_internal(source, cols);
 	}
-	
+
 	public static void drop_table(String source_) { drop_table_internal(source_); }
-	
+
 	public static void truncate_table(String source_) { truncate_table_internal(source_); }
 
 	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_) { return db.get_valid_instance(source_).execute_query(source_, query_); }
-	
+
 	static Object select_one_common(String source_, String field_, db_where[] wheres_, db_order[] orders_, String what_) { return select_one_common(source_, field_, db_where.to_string(wheres_), db_order.to_string(orders_), what_); }
-	
+
 	static Object select_one_common(String source_, String field_, String wheres_cols_, String orders_cols_, String what_)
 	{
 		Object output = null;
-		
+
 		if (data.is_string(what_)) output = strings.DEFAULT;
 		else if (what_.equals(data.DECIMAL)) output = numbers.DEFAULT_DECIMAL;
 		else if (what_.equals(data.LONG)) output = numbers.DEFAULT_LONG;
 		else if (what_.equals(data.INT)) output = numbers.DEFAULT_INT;
 		else if (data.is_boolean(what_)) output = _defaults.BOOLEAN_INT;
-		
+
 		if (!strings.is_ok(field_)) 
 		{
 			db.is_ok(source_, false);
-			
+
 			return output;
 		}
 
-		HashMap<String, String> temp = select_one(source_, new String[] { field_ }, wheres_cols_, orders_cols_);
-		
+		HashMap<String, String> temp = select_one(source_, new String[] { field_ }, wheres_cols_, orders_cols_);		
+
 		if (arrays.is_ok(temp))
 		{
 			String temp2 = temp.get(field_);
-			
+
 			if (data.is_string(what_)) output = temp2;
 			else if (what_.equals(data.DECIMAL)) output = numbers.to_decimal(temp2);
 			else if (what_.equals(data.LONG)) output = numbers.to_long(temp2);
 			else if (what_.equals(data.INT) || data.is_boolean(what_)) output = numbers.to_int(temp2);	
 		}
-		
+
 		return output;
 	}
-	
-	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_outputs(source_, execute_type(source_, db.SELECT, cols_, null, where_, max_rows_, order_, null)); }
-	
-	private static void insert_internal(String source_, HashMap<String, String> vals_) { execute_type(source_, db.INSERT, null, vals_, null, 0, null, null); }
-	
-	private static void update_internal(String source_, HashMap<String, String> vals_, String where_) { execute_type(source_, db.UPDATE, null, vals_, where_, 0, null, null); }
 
-	private static void delete_internal(String source_, String where_) { execute_type(source_, db.DELETE, null, null, where_, 0, null, null); }
-	
-	private static boolean table_exists_internal(String source_) { return arrays.is_ok(execute_type(source_, db.TABLE_EXISTS, null, null, null, 0, null, null)); } 
-	
-	private static void create_table_internal(String source_, HashMap<String, db_field> cols_) { execute_type(source_, db.TABLE_CREATE, null, null, null, 0, null, cols_); } 
-	
-	private static void drop_table_internal(String source_) { execute_type(source_, db.TABLE_DROP, null, null, null, 0, null, null); } 
-	
-	private static void truncate_table_internal(String source_) { execute_type(source_, db.TABLE_TRUNCATE, null, null, null, 0, null, null); }
-	
+	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_outputs(source_, execute_type(source_, db.QUERY_SELECT, cols_, null, where_, max_rows_, order_, null)); }
+
+	private static ArrayList<HashMap<String, String>> select_count_internal(String source_) { return execute_type(source_, db.QUERY_SELECT_COUNT, null, null, null, 0, null, null); }
+
+	private static void insert_internal(String source_, HashMap<String, String> vals_) { execute_type(source_, db.QUERY_INSERT, null, vals_, null, 0, null, null); }
+
+	private static void update_internal(String source_, HashMap<String, String> vals_, String where_) { execute_type(source_, db.QUERY_UPDATE, null, vals_, where_, 0, null, null); }
+
+	private static void delete_internal(String source_, String where_) { execute_type(source_, db.QUERY_DELETE, null, null, where_, 0, null, null); }
+
+	private static boolean table_exists_internal(String source_) { return arrays.is_ok(execute_type(source_, db.QUERY_TABLE_EXISTS, null, null, null, 0, null, null)); } 
+
+	private static void create_table_internal(String source_, HashMap<String, db_field> cols_) { execute_type(source_, db.QUERY_TABLE_CREATE, null, null, null, 0, null, cols_); } 
+
+	private static void drop_table_internal(String source_) { execute_type(source_, db.QUERY_TABLE_DROP, null, null, null, 0, null, null); } 
+
+	private static void truncate_table_internal(String source_) { execute_type(source_, db.QUERY_TABLE_TRUNCATE, null, null, null, 0, null, null); }
+
 	private static ArrayList<HashMap<String, String>> execute_type(String source_, String what_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
 		String source = db.check_source_error(source_);
 		if (!strings.is_ok(source)) return null;
-		
+
 		return db.get_valid_instance(source).execute(source, what_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 	}
-	
+
 	private static String[] get_cols(String source_, String[] fields_)
 	{
 		String source = db.check_source(source_);
-		
+
 		int size = arrays.get_size(fields_);
 		if (!strings.is_ok(source) || size < 1) return null;
-		
+
 		String[] cols = new String[size];
-		
-		for (int i = 0; i < size; i++)
-		{
-			cols[i] = db.get_col(source, fields_[i]);
-		}
-		
+		for (int i = 0; i < size; i++) { cols[i] = db.get_col(source, fields_[i]); }
+
 		return cols;
 	}
-	
+
 	private static ArrayList<HashMap<String, String>> adapt_outputs(String source_, ArrayList<HashMap<String, String>> outputs_)
 	{
 		ArrayList<HashMap<String, String>> outputs = new ArrayList<HashMap<String, String>>();
-		
+
 		String source = db.check_source(source_);
-		if (!strings.is_ok(source) || !arrays.is_ok(outputs_)) return outputs;
-		
+
+		HashMap<String, db_field> fields = db.get_source_fields(source);
+		if (!arrays.is_ok(fields) || !arrays.is_ok(outputs_)) return outputs;
+
+		HashMap<String, String> col_fields = new HashMap<String, String>();
+		boolean first_time = true;
+
 		for (HashMap<String, String> item: outputs_)
 		{
 			HashMap<String, String> output = new HashMap<String, String>();
-			
+
 			for (Entry<String, String> item2: item.entrySet())
 			{
-				String key = col_to_field(source_, item2.getKey());
-				if (!strings.is_ok(key)) continue;
+				String col = item2.getKey();
+				String field = null;
 
-				output.put(key, item2.getValue());
+				if (first_time) 
+				{
+					field = col_to_field(source, col, fields);
+					if (!strings.is_ok(field)) field = col;
+
+					col_fields.put(col, field);
+				}
+				else field = col_fields.get(col);
+
+				output.put(field, item2.getValue());
 			}
+			
+			first_time = false;
 			
 			outputs.add(output);
 		}
 
 		return outputs;
 	}
-	
-	private static String col_to_field(String source_, String col_)
-	{
-		String source = db.check_source(source_);
-		if (!strings.is_ok(source) || !strings.is_ok(col_)) return strings.DEFAULT;
-		
-		HashMap<String, db_field> fields = db.get_source_fields(source);
-		if (!arrays.is_ok(fields)) return strings.DEFAULT;
-		
-		for (Entry<String, db_field> field: fields.entrySet())
+
+	private static String col_to_field(String source_, String col_, HashMap<String, db_field> fields_)
+	{		
+		for (Entry<String, db_field> field: fields_.entrySet())
 		{
 			String key = field.getKey();
-			String col = db.get_col(source_, key);
-			if (strings.are_equal(col_, col)) return key;
+			if (strings.are_equal(col_, db.get_col(source_, key))) return key;
 		}
-		
+
 		return strings.DEFAULT;
 	}
 }

@@ -16,8 +16,8 @@ public class _keys
 	public static final String QUERY = get_key(types.WHAT_QUERY);
 	public static final String INSTANCE = get_key(types.WHAT_INSTANCE);
 	public static final String MESSAGE = get_key(types.WHAT_MESSAGE);
-	public static final String LEGACY = get_key(types.WHAT_LEGACY);
-	
+	public static final String PATH = get_key(types.WHAT_PATH);
+
 	public static void populate() { } //Method forcing this class to load when required (e.g., from the ini class).
 
 	public static String get_key(String what_) { return types.what_to_key(what_); }
