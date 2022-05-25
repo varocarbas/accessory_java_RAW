@@ -37,6 +37,22 @@ public abstract class errors extends parent_static
 
 	public static void manage(String type_, Exception e_, String[] further_) { manage(type_, e_, to_string(further_)); }
 
+	public static String to_string(HashMap<String, String> info_) { return (arrays.is_ok(info_) ? arrays.to_string(info_, DEFAULT_SEPARATOR, misc.SEPARATOR_KEYVAL, null) : DEFAULT_MESSAGE); }
+
+	public static String to_string(String[] further_)
+	{
+		String output = DEFAULT_MESSAGE;
+
+		if (arrays.is_ok(further_))
+		{
+			for (String val: further_) { output += DEFAULT_SEPARATOR + val; }
+		}
+
+		return output;
+	}
+
+	public static void manage_db(String type_, String query_, Exception e_, String message_, HashMap<String, String> info_) { manage(get_info_db(type_, query_, e_, message_, info_)); }
+
 	private static void manage(String type_, Exception e_, String further_)
 	{		
 		String all = (strings.is_ok(type_) ? type_ : DEFAULT_TYPE);
@@ -50,22 +66,6 @@ public abstract class errors extends parent_static
 
 		if (!parent_tests.is_running() && _exit) System.exit(1);
 	}
-
-	private static String to_string(HashMap<String, String> info_) { return (arrays.is_ok(info_) ? arrays.to_string(info_, DEFAULT_SEPARATOR, misc.SEPARATOR_KEYVAL, null) : DEFAULT_MESSAGE); }
-
-	private static String to_string(String[] further_)
-	{
-		String output = DEFAULT_MESSAGE;
-
-		if (arrays.is_ok(further_))
-		{
-			for (String val: further_) { output += DEFAULT_SEPARATOR + val; }
-		}
-
-		return output;
-	}
-
-	public static void manage_db(String type_, String query_, Exception e_, String message_, HashMap<String, String> info_) { manage(get_info_db(type_, query_, e_, message_, info_)); }
 
 	@SuppressWarnings("unchecked")
 	private static HashMap<String, String> get_info_db(String type_, String query_, Exception e_, String message_, HashMap<String, String> info_)
