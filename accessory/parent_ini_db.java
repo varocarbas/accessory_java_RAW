@@ -108,7 +108,9 @@ public abstract class parent_ini_db
 
 	protected HashMap<String, Object[]> add_source(String source_, String table_, String db_, HashMap<String, db_field> fields_info_, boolean add_default_fields_, HashMap<String, Object[]> all_sources_)
 	{
-		all_sources_.put(source_, new Object[] { get_table_default(source_, db_), get_fields(fields_info_, source_, table_, db_, add_default_fields_) });
+		String table = (strings.is_ok(table_) ? table_ : get_table_default(source_, db_));
+		
+		all_sources_.put(source_, new Object[] { table, get_fields(fields_info_, source_, table, db_, add_default_fields_) });
 
 		return all_sources_;
 	}
@@ -135,7 +137,7 @@ public abstract class parent_ini_db
 		for (Entry<String, db_field> item: info_.entrySet())
 		{
 			String id = item.getKey();
-			fields = add_field(id, get_col_default(id, table, db_), item.getValue(), fields);
+			fields = add_field(id, get_col_default(id, source_, table, db_), item.getValue(), fields);
 		}
 
 		return fields;
@@ -148,27 +150,31 @@ public abstract class parent_ini_db
 		return all_fields_;
 	}
 
-	private String get_db_name_default(String db_) { return get_default_common(db_, null, null); }
+	private String get_db_name_default(String db_) { return get_default_common(db_, null, null, null); }
 
 	private String get_table_default(String source_, String db_) 
 	{ 
 		String output = strings.remove(new String[] { types.SEPARATOR + "source" }, source_);
 
-		return get_default_common(output, db_, null);
+		return get_default_common(output, db_, null, null);
 	}
 
-	private String get_col_default(String field_, String table_, String db_) 
+	private String get_col_default(String field_, String source_, String table_, String db_) 
 	{ 
 		String output = strings.remove(new String[] { "common_field" + types.SEPARATOR, "default_field" + types.SEPARATOR, "field" + types.SEPARATOR }, field_); 
 
-		return get_default_common(output, db_, table_);
+		return get_default_common(output, db_, source_, table_);
 	}
 
-	private String get_default_common(String input_, String db_, String table_) 
+	private String get_default_common(String input_, String db_, String source_, String table_) 
 	{ 
 		String output = input_;
-
-		String[] items = new String[] { db_, table_, "config", "db" };
+		
+		String source = source_;
+		String target = types.SEPARATOR + "source";
+		if (strings.contains_end(target, source, true)) source = strings.substring_before(target, source, true);
+		
+		String[] items = new String[] { db_, source, table_, "config", "db" };
 		for (String item: items) { output = strings.remove(new String[] { types.SEPARATOR + item, item + types.SEPARATOR, item }, output); }
 
 		return output;

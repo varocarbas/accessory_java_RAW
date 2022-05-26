@@ -546,7 +546,9 @@ public abstract class strings extends parent_static
 		int i = index_of(needle_, haystack_, normalise_);
 		if (i < 0) return DEFAULT;
 
-		return substring_before_after(haystack_, (i + needle_.length() - 1), is_before_);
+		if (!is_before_) i = i + needle_.length() - 1;
+		
+		return substring_before_after(haystack_, i, is_before_);
 	}
 
 	private static String substring_before_after(String string_, int i_, boolean is_before_)
