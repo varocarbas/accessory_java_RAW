@@ -657,6 +657,8 @@ public abstract class arrays extends parent_static
 
 	public static char[] remove_key(char[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
 
+	public static <x> Object remove_key(Object array_, x value_) { return remove_key(array_, value_, false); }
+
 	public static <x> Object remove_key(Object array_, x key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
 
 	public static double[] remove_value(double[] array_, double value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
@@ -670,6 +672,8 @@ public abstract class arrays extends parent_static
 	public static byte[] remove_value(byte[] array_, byte value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
 
 	public static char[] remove_value(char[] array_, char value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
+
+	public static <x> Object remove_value(Object array_, x value_) { return remove_value(array_, value_, false); }
 
 	public static <x> Object remove_value(Object array_, x value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
 
