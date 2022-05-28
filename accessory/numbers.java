@@ -22,7 +22,7 @@ public abstract class numbers extends parent_static
 	public static final int DEFAULT_INT = _defaults.NUMBERS_INT;
 	public static final int DEFAULT_DECIMALS = _defaults.NUMBERS_SIZE_DECIMALS;
 
-	public static String get_id() { return types.get_id(types.ID_NUMBERS); }
+	public static String get_class_id() { return types.get_id(types.ID_NUMBERS); }
 
 	public static final Class<?>[] get_all_classes() { return _alls.NUMBERS_CLASSES; }
 

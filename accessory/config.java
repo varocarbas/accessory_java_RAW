@@ -7,7 +7,7 @@ public abstract class config extends parent_static
 {
 	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
 
-	public static String get_id() { return types.get_id(types.ID_CONFIG); }
+	public static String get_class_id() { return types.get_id(types.ID_CONFIG); }
 
 	public static String get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
 

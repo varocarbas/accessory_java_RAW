@@ -13,7 +13,7 @@ public abstract class logs extends parent_static
 	public static final boolean DEFAULT_SCREEN = _defaults.LOGS_SCREEN;
 	public static final boolean DEFAULT_FILE = _defaults.LOGS_FILE;
 
-	public static String get_id() { return types.get_id(types.ID_LOGS); }
+	public static String get_class_id() { return types.get_id(types.ID_LOGS); }
 
 	public static void update_activity(HashMap<String, String> inputs_, String id_) { update_file(arrays.to_string(inputs_, misc.SEPARATOR_ITEM, misc.SEPARATOR_KEYVAL, null), id_, false); }
 

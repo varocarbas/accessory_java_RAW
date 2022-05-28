@@ -44,7 +44,7 @@ public class crypto extends parent
 	public String toString() { return strings.DEFAULT; }
 	public boolean is_ok() { return _is_ok; }
 
-	public static String get_id() { return types.get_id(types.ID_CRYPTO); }
+	public static String get_class_id() { return types.get_id(types.ID_CRYPTO); }
 
 	public static String get_extension() { return config.get_crypto(types.CONFIG_CRYPTO_FILE_EXTENSION); }
 
@@ -121,7 +121,7 @@ public class crypto extends parent
 		info.put("algo_key", _algo_key);
 		info.put("path_key", _path_key);
 
-		logs.update_activity(info, get_id());
+		logs.update_activity(info, get_class_id());
 	}
 
 	private static String[] encrypt_decrypt_file(String path_, String id_, boolean is_encrypt_) { return encrypt_decrypt(io.file_to_array(path_), id_, is_encrypt_); }	

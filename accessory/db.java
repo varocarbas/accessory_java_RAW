@@ -52,7 +52,7 @@ public abstract class db
 
 	public static String _cur_source = strings.DEFAULT;
 
-	public static String get_id() { return types.get_id(types.ID_DB); }
+	public static String get_class_id() { return types.get_id(types.ID_DB); }
 
 	static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
 

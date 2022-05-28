@@ -267,7 +267,7 @@ public abstract class types extends parent_static
 	public static final String ERROR_DATES_STRING = "error_dates_string";
 	//---------
 
-	public static String get_id() { return get_id(ID_TYPES); }	
+	public static String get_class_id() { return get_id(ID_TYPES); }	
 
 	public static String check_what(String what_) { return check_type(what_, WHAT); }
 

@@ -38,7 +38,7 @@ public abstract class dates extends parent_static
 	public static final int DEFAULT_SIZE_DAYS = _defaults.DATES_SIZE_DAYS;
 	public static final int DEFAULT_SIZE_HOURS = _defaults.DATES_SIZE_HOURS;
 
-	public static String get_id() { return types.get_id(types.ID_DATES); }
+	public static String get_class_id() { return types.get_id(types.ID_DATES); }
 
 	public static LocalDateTime get_now() { return get_now(0); }
 

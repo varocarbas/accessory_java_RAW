@@ -9,7 +9,7 @@ public class tests extends parent_tests
 
 	public tests() { }
 
-	public static String get_id() { return types.get_id(types.ID_TESTS); }
+	public static String get_class_id() { return types.get_id(types.ID_TESTS); }
 
 	public static HashMap<String, HashMap<String, Boolean>> run_all() { return _instance.run_all_internal(); }
 
@@ -353,7 +353,7 @@ public class tests extends parent_tests
 		String name0 = class0.getName();
 		update_screen(name0, true, 1);
 
-		String id = get_id();
+		String id = get_class_id();
 		String user = credentials.DEFAULT_USER;
 		String username = strings.get_random(strings.SIZE_SMALL);
 		String password = strings.get_random(strings.SIZE_SMALL);
