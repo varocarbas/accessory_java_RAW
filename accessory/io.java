@@ -204,7 +204,7 @@ public abstract class io extends parent_static
 
 	private static void manage_error_io(String type_, Exception e_, String path_)
 	{
-		HashMap<String, String> info = new HashMap<String, String>();
+		HashMap<String, Object> info = new HashMap<String, Object>();
 		info.put(_keys.PATH, path_);
 
 		manage_error(type_, e_, info);

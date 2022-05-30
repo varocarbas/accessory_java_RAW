@@ -251,10 +251,10 @@ public abstract class parent_tests
 	
 	private static void manage_error(String type_, Class<?> class_, String method_name_)
 	{
-		HashMap<String, String> info = new HashMap<String, String>();
+		HashMap<String, Object> info = new HashMap<String, Object>();
 		
 		info.put(_keys.TYPE, type_);
-		if (class_ != null) info.put("class", strings.to_string(class_));
+		if (class_ != null) info.put("class", class_);
 		if (strings.is_ok(method_name_)) info.put("method", method_name_);
 
 		errors.manage(info);

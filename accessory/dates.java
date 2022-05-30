@@ -217,7 +217,7 @@ public abstract class dates extends parent_static
 		}
 		catch (Exception e) 
 		{ 
-			HashMap<String, String> info = new HashMap<String, String>();
+			HashMap<String, Object> info = new HashMap<String, Object>();
 			info.put("input", input_);
 			info.put("format", format_);
 

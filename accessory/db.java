@@ -44,6 +44,7 @@ public abstract class db
 	public static final String ERROR_VALS = types.ERROR_DB_VALS;
 
 	public static final String DEFAULT_DB = _defaults.DB;
+	public static final String DEFAULT_DB_NAME = _defaults.DB_NAME;
 	public static final String DEFAULT_SOURCE = _defaults.DB_SOURCE;
 	public static final String DEFAULT_SETUP = _defaults.DB_SETUP;
 	public static final String DEFAULT_TYPE = _defaults.DB_TYPE;
@@ -58,7 +59,7 @@ public abstract class db
 
 	private static HashMap<String, HashMap<String, Object>> _source_setups = new HashMap<String, HashMap<String, Object>>();
 	private static HashMap<String, String> _db_setups = new HashMap<String, String>();
-
+	
 	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  { return credentials.encrypt_username_password_file(get_type(source_), user_, username_, password_);  }
 
 	public static boolean update_db(String db_, String db_name_) 
@@ -414,7 +415,12 @@ public abstract class db
 	public static <x> HashMap<String, String> adapt_input(String source_, HashMap<String, String> sofar_, String field_, x val_, HashMap<String, db_field> fields_)
 	{
 		String val2 = adapt_input(source_, (db_field)arrays.get_value(fields_, field_), val_);
-		if (val2 == null) return null;
+		if (val2 == null) 
+		{
+			if (strings.is_ok(field_)) errors.update_temp(field_, val_);
+			
+			return null;
+		}
 
 		String col = get_col(source_, field_);
 		if (!strings.is_ok(col)) return null;
@@ -492,14 +498,15 @@ public abstract class db
 	{
 		is_ok(source_, false);
 
+		HashMap<String, Object> info = new HashMap<String, Object>();
+		if (strings.is_ok(query_)) info.put("query", query_);
+		
 		String setup = get_setup(source_);
-
-		HashMap<String, String> info = new HashMap<String, String>();
 		info.put(HOST, get_host(setup));
 		info.put(NAME, get_db_name(get_db(source_)));
 		info.put(USER, config.get(setup, types.CONFIG_DB_SETUP_CREDENTIALS_USER));
 
-		errors.manage_db(type_, query_, e_, message_, info);
+		errors.manage(type_, e_, info);
 	}
 
 	static boolean query_returns_data(String type_)

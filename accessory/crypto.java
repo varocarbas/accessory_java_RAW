@@ -290,7 +290,7 @@ public class crypto extends parent
 	{	
 		manage_error();
 
-		HashMap<String, String> items = new HashMap<String, String>();
+		HashMap<String, Object> items = new HashMap<String, Object>();
 		items.put(_keys.TYPE, type_);
 		items.put("in", _in);
 		items.put("path_key", _path_key);

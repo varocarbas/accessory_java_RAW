@@ -93,7 +93,7 @@ public abstract class parent_ini_db
 
 			if (!populate_source(id, (String)temp[0], (HashMap<String, Object[]>)temp[1], setup_vals))
 			{
-				HashMap<String, String> info = new HashMap<String, String>();
+				HashMap<String, Object> info = new HashMap<String, Object>();
 				info.put(_keys.get_key(types.WHAT_TYPE), parent_ini.ERROR_SOURCE);
 				info.put("source", id);
 

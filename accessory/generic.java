@@ -280,10 +280,10 @@ public abstract class generic extends parent_static
 		try { output = class_.getMethod(name_, params_); } 
 		catch (Exception e) 
 		{
-			HashMap<String, String> info = new HashMap<String, String>();
-			info.put("class", strings.to_string(class_));
+			HashMap<String, Object> info = new HashMap<String, Object>();
+			info.put("class", class_);
 			info.put("name", name_);
-			info.put("params", strings.to_string(params_));
+			info.put("params", params_);
 
 			manage_error(ERROR_METHOD_GET, e, info);
 		}
@@ -303,9 +303,9 @@ public abstract class generic extends parent_static
 		try { output = method_.invoke(null, args_); } 
 		catch (Exception e) 
 		{  
-			HashMap<String, String> info = new HashMap<String, String>();
-			info.put("method", method_.getName());
-			info.put("args", strings.to_string(args_));
+			HashMap<String, Object> info = new HashMap<String, Object>();
+			info.put("method", method_);
+			info.put("args", args_);
 
 			manage_error(ERROR_METHOD_CALL, e, info);
 		}

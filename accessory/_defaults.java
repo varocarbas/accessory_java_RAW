@@ -51,7 +51,7 @@ abstract class _defaults
 	public static final String CRYPTO_ALGORITHM_KEY = "AES";
 	public static final boolean CRYPTO_LOG_ENCRYPTION_INFO = true;
 
-	public static final String ERRORS_TYPE = "ERROR";
+	public static final String ERRORS_TYPE = types.ERROR_DEFAULT;
 	public static final String ERRORS_MESSAGE = ERRORS_TYPE;
 	public static final String ERRORS_SEPARATOR = misc.SEPARATOR_CONTENT;
 

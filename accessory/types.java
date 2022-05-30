@@ -235,6 +235,7 @@ public abstract class types extends parent_static
 	public static final String ID_TYPES = "id_types";
 
 	public static final String ERROR = "error";
+	public static final String ERROR_DEFAULT = "error_default";
 	public static final String ERROR_INI = "error_ini";
 	public static final String ERROR_INI_DB = "error_ini_db";
 	public static final String ERROR_INI_DB_DBS = "error_ini_db_dbs";
@@ -479,6 +480,7 @@ public abstract class types extends parent_static
 			ID_LOGS, ID_MISC, ID_NUMBERS, ID_PATHS, ID_STRINGS, ID_TESTS, ID_TYPES,
 
 			ERROR,
+			ERROR_DEFAULT,
 			ERROR_INI,
 			ERROR_INI_DB, 
 			ERROR_INI_DB_DBS, ERROR_INI_DB_SOURCE,

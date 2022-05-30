@@ -5,10 +5,13 @@ import java.util.HashMap;
 public class parent_static 
 {
 	protected static boolean _is_ok = true;
+	
 	protected static boolean _ignore_errors = false;
 	protected static boolean _ignore_errors_persistent = false;
 	protected static boolean _error_triggered = false;
-
+	
+	protected static HashMap<String, Object> _temp = new HashMap<String, Object>();
+	
 	public static boolean is_ok() 
 	{
 		boolean output = _is_ok;
@@ -31,7 +34,17 @@ public class parent_static
 		_ignore_errors_persistent = false; 
 		_ignore_errors = false;
 	}
-
+	
+	public static boolean update_temp(String key_, Object val_)
+	{
+		if (!strings.is_ok(key_) || val_ == null) return false;
+		
+		if (!arrays.is_ok(_temp)) _temp = new HashMap<String, Object>();
+		_temp.put(key_, val_);
+		
+		return true;
+	}
+	
 	protected static boolean ignore_errors_internal() 
 	{ 
 		boolean output = _ignore_errors;
@@ -41,7 +54,7 @@ public class parent_static
 		return output;
 	}
 
-	protected static void manage_error(String type_, Exception e_, HashMap<String, String> info_)
+	protected static void manage_error(String type_, Exception e_, HashMap<String, Object> info_)
 	{
 		if (!ignore_errors_internal()) 
 		{

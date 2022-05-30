@@ -26,13 +26,13 @@ public abstract class parent_ini
 
 	protected static void manage_error(String type_)
 	{
-		HashMap<String, String> info = new HashMap<String, String>();
+		HashMap<String, Object> info = new HashMap<String, Object>();
 		info.put(_keys.get_key(types.WHAT_TYPE), (strings.is_ok(type_) ? type_ : strings.DEFAULT));
 
 		manage_error(info);
 	}
 
-	protected static void manage_error(HashMap<String, String> info_)
+	protected static void manage_error(HashMap<String, Object> info_)
 	{
 		errors._exit = true;
 
