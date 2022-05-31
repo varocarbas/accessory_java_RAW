@@ -4,13 +4,45 @@ import java.util.HashMap;
 
 public class parent_static 
 {
-	protected static boolean _is_ok = true;
+	private static boolean _is_ok = true;
+	private static boolean _ignore_errors = false;
+	private static boolean _ignore_errors_persistent = false;
+	private static boolean _error_triggered = false;
 	
-	protected static boolean _ignore_errors = false;
-	protected static boolean _ignore_errors_persistent = false;
-	protected static boolean _error_triggered = false;
+	private static volatile boolean _locked = false;
+	private static volatile boolean _locked2 = false;
 	
 	protected static HashMap<String, Object> _temp = new HashMap<String, Object>();
+	
+	public static void lock()
+	{
+		boolean locked2 = false;
+		
+		while (true)
+		{
+			if (!locked2)
+			{
+				if (_locked2) continue;
+				else
+				{
+					_locked2 = true;
+					locked2 = true;
+				}
+			}
+			else
+			{
+				if (!_locked)
+				{
+					_locked = true;
+					_locked2 = false;
+					
+					return;
+				}
+			}
+		}
+	}
+	
+	public static void unlock() { _locked = false; }
 	
 	public static boolean is_ok() 
 	{

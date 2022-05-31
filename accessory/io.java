@@ -70,6 +70,8 @@ public abstract class io extends parent_static
 		return output;
 	}
 
+	public static void empty_file(String path_) { line_to_file(path_, "", false); }
+
 	public static void line_to_file(String path_, String line_, boolean append_) { line_to_file(path_, line_, append_, null); }
 
 	//Ini files are assumed to contain text stored as key-value pairs, one per line. 
@@ -178,7 +180,7 @@ public abstract class io extends parent_static
 	{
 		method_start();
 
-		if (!strings.is_ok(path_) || !strings.is_ok(line_)) return;
+		if (!strings.is_ok(path_) || line_ == null) return;
 
 		try 
 		{

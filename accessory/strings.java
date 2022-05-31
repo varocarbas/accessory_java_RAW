@@ -73,7 +73,11 @@ public abstract class strings extends parent_static
 
 	public static boolean contains_start(String needle_, String haystack_, boolean normalise_) { return contains_start_end(needle_, haystack_, normalise_, true); }
 
+	public static String get_start(String string_) { return get_start(string_, 1); }
+
 	public static String get_start(String string_, int length_) { return substring(string_, 0, length_); }
+
+	public static String get_end(String string_) { return get_end(string_, get_length(string_) - 1); }
 
 	public static String get_end(String string_, int start_) { return substring(string_, start_, 0); }
 

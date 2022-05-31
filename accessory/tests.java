@@ -87,13 +87,7 @@ public class tests extends parent_tests
 
 		for (String source2: sources)
 		{
-			args = new ArrayList<Object>();
-			args.add(source2);
-			args.add(true);
-
-			db._cur_source = source2;
-
-			is_ok = run_method(class0, name, new Class<?>[] { String.class, boolean.class }, args, target);
+			is_ok = create_table(source2);
 
 			outputs.put(name, is_ok);
 			if (!is_ok) return outputs;			
@@ -199,7 +193,16 @@ public class tests extends parent_tests
 
 		return outputs;	
 	}
+	
+	public static boolean create_table(String source_)
+	{
+		ArrayList<Object> args = new ArrayList<Object>();
+		args.add(source_);
+		args.add(true);
 
+		return run_method(db.class, "create_table", new Class<?>[] { String.class, boolean.class }, args, null);		
+	}
+	
 	private static HashMap<String, Boolean> run_db_select_int(Class<?> class0_, String source_, db_where[] wheres_, int target_, HashMap<String, Boolean> outputs_)
 	{	
 		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>(outputs_);

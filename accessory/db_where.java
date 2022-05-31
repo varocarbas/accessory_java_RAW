@@ -1,5 +1,6 @@
 package accessory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class db_where extends parent
@@ -32,6 +33,8 @@ public class db_where extends parent
 
 	public static boolean are_equal(db_where where1_, db_where where2_) { return are_equal_common(where1_, where2_); }
 
+	public static String to_string(ArrayList<db_where> wheres_) { return to_string(arrays.to_array(wheres_)); }
+	
 	public static String to_string(db_where[] wheres_)
 	{
 		String output = "";

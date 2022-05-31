@@ -145,7 +145,8 @@ public class data extends parent
 			output = false;
 			Class<?> type = generic.get_class(val_);
 
-			if (generic.is_number(type)) 
+			if (generic.is_boolean(type)) output = val_;
+			else if (generic.is_number(type)) 
 			{
 				if (numbers.to_number(val_) == 1.0) output = true;
 			}

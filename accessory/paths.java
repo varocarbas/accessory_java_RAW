@@ -55,7 +55,7 @@ public abstract class paths extends parent_static
 		if (!strings.is_ok(dir)) dir = "";
 
 		dir = dir.trim();
-		if (dir.substring(dir.length() - 1) != _basic.DIR_SEPARATOR) dir += _basic.DIR_SEPARATOR;
+		if (!strings.are_equal(strings.get_end(dir), _basic.DIR_SEPARATOR)) dir += _basic.DIR_SEPARATOR;
 
 		return dir;
 	}
@@ -66,7 +66,7 @@ public abstract class paths extends parent_static
 		if (!strings.is_ok(file)) return strings.DEFAULT;
 
 		file = file.trim();
-		if (strings.get_start(file, 1).equals(_basic.DIR_SEPARATOR))
+		if (strings.are_equal(strings.get_start(file), _basic.DIR_SEPARATOR))
 		{ 
 			file = strings.get_end(file, 1);
 			if (!strings.is_ok(file)) return strings.DEFAULT;

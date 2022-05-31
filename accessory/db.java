@@ -405,7 +405,10 @@ public abstract class db
 
 		for (Entry<String, x> item: new_.entrySet())
 		{
-			output = adapt_input(source, output, item.getKey(), item.getValue(), fields);
+			String key = item.getKey();
+			if (key.equals(FIELD_TIMESTAMP) || key.equals(FIELD_ID)) continue;
+
+			output = adapt_input(source, output, key, item.getValue(), fields);
 			if (!arrays.is_ok(output)) return null;
 		}
 
@@ -417,7 +420,7 @@ public abstract class db
 		String val2 = adapt_input(source_, (db_field)arrays.get_value(fields_, field_), val_);
 		if (val2 == null) 
 		{
-			if (strings.is_ok(field_)) errors.update_temp(field_, val_);
+			errors.update_temp("wrong field", strings.to_string(field_) + " (" + strings.to_string(val_) + ")");
 			
 			return null;
 		}
@@ -451,7 +454,7 @@ public abstract class db
 
 		String type = data.check_type(data_type_);
 		if (!strings.is_ok(type)) return output;
-
+		
 		Object val0 = db_field.adapt_value(source_, val_, type, check_);
 		if (val0 == null) return output;
 

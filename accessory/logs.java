@@ -53,7 +53,7 @@ public abstract class logs extends parent_static
 		io.line_to_file(get_path(id, is_error_), dates.add_timestamp(message, false), true);
 	}
 
-	private static String get_path(String id_, boolean is_error_)
+	public static String get_path(String id_, boolean is_error_)
 	{
 		ArrayList<String> pieces = new ArrayList<String>();
 
