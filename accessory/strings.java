@@ -262,9 +262,21 @@ public abstract class strings extends parent_static
 		return Double.parseDouble(string); 
 	}
 
-	public static long to_number_long(String string_) { return (is_long(string_) ? Long.parseLong(string_) : numbers.DEFAULT_LONG); }
+	public static long to_number_long(String string_) 
+	{ 
+		long output = numbers.DEFAULT_LONG;
+		if (!is_number(string_)) return output;
+		
+		return (is_long(string_) ? Long.parseLong(string_) : numbers.to_long(to_number_decimal(string_))); 
+	}
 
-	public static int to_number_int(String string_) { return (is_int(string_) ? Integer.parseInt(string_) : numbers.DEFAULT_INT); }
+	public static int to_number_int(String string_) 
+	{ 
+		int output = numbers.DEFAULT_INT;
+		if (!is_number(string_)) return output;
+		
+		return (is_int(string_) ? Integer.parseInt(string_) : numbers.to_int(to_number_decimal(string_))); 
+	}
 
 	public static String from_boolean(int input_) { return from_boolean(numbers.to_boolean(input_)); }
 

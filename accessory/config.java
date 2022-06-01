@@ -143,8 +143,8 @@ public abstract class config extends parent_static
 
 		is_ok = true;
 		String val = strings.to_string(val_);
-
-		info = update_matches_internal(info, key, val, update_, ini_);		
+		
+		info = update_matches_internal(info, key, val, update_, ini_);	
 		if (!arrays.is_ok(info)) is_ok = false;
 		else if (update_) _info.put(type, new HashMap<String, String>(info));
 

@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 public class parent_static 
 {
+	protected static HashMap<String, Object> _temp = new HashMap<String, Object>();
+	
 	private static boolean _is_ok = true;
 	private static boolean _ignore_errors = false;
 	private static boolean _ignore_errors_persistent = false;
@@ -11,8 +13,6 @@ public class parent_static
 	
 	private static volatile boolean _locked = false;
 	private static volatile boolean _locked2 = false;
-	
-	protected static HashMap<String, Object> _temp = new HashMap<String, Object>();
 	
 	public static void lock()
 	{
