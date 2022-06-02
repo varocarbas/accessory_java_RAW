@@ -120,7 +120,7 @@ public abstract class paths extends parent_static
 		String type = types.check_type(type_, types.CONFIG_BASIC_DIR);
 		if (!strings.is_ok(type)) return output;
 
-		if (is_get_) output = config.get_basic(type);
+		if (is_get_) output = (String)config.get_basic(type);
 		else config.update_basic(type, val_);
 
 		return output;

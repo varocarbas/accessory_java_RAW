@@ -46,7 +46,7 @@ public class crypto extends parent
 
 	public static String get_class_id() { return types.get_id(types.ID_CRYPTO); }
 
-	public static String get_extension() { return config.get_crypto(types.CONFIG_CRYPTO_FILE_EXTENSION); }
+	public static String get_extension() { return (String)config.get_crypto(types.CONFIG_CRYPTO_FILE_EXTENSION); }
 
 	public static String get_file_full(String id_) { return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension()); }
 

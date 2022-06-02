@@ -44,7 +44,7 @@ public abstract class logs extends parent_static
 	public static void update_file(String message_, String id_, boolean is_error_)
 	{
 		String id = id_;
-		if (!strings.is_ok(id)) id = config.get_basic(types.CONFIG_BASIC_NAME);
+		if (!strings.is_ok(id)) id = (String)config.get_basic(types.CONFIG_BASIC_NAME);
 
 		String message = message_;
 		if (!strings.is_ok(message)) return;
@@ -66,5 +66,5 @@ public abstract class logs extends parent_static
 		return paths.build(arrays.to_array(pieces), true);
 	}
 
-	private static boolean out_is_enabled(String type_) { return strings.to_boolean(config.get_logs(type_)); }
+	private static boolean out_is_enabled(String type_) { return (boolean)config.get_logs(type_); }
 }

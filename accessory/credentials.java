@@ -107,7 +107,7 @@ public abstract class credentials extends parent_static
 		return output;
 	}
 
-	public static String get_extension() { return config.get_credentials(types.CONFIG_CREDENTIALS_FILE_EXTENSION); }
+	public static String get_extension() { return (String)config.get_credentials(types.CONFIG_CREDENTIALS_FILE_EXTENSION); }
 
 	public static String get_file_full(String id_) { return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension()); }
 

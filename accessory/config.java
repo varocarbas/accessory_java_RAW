@@ -5,47 +5,31 @@ import java.util.Map.Entry;
 
 public abstract class config extends parent_static 
 {
-	private static HashMap<String, HashMap<String, String>> _info = new HashMap<String, HashMap<String, String>>();
+	private static HashMap<String, HashMap<String, Object>> _info = new HashMap<String, HashMap<String, Object>>();
 
 	public static String get_class_id() { return types.get_id(types.ID_CONFIG); }
 
-	public static String get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
-
-	public static boolean update_basic(String key_, boolean val_) { return update_basic(key_, strings.to_string(val_)); }
+	public static Object get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
 
 	public static boolean update_basic(String key_, String val_) { return update(types.CONFIG_BASIC, key_, val_); }
 
-	public static boolean matches_basic(String key_, boolean val_) { return matches_basic(key_, strings.to_string(val_)); }
-
 	public static boolean matches_basic(String key_, String val_) { return matches(types.CONFIG_BASIC, key_, val_); }
 
-	public static String get_credentials(String key_) { return get(types.CONFIG_CREDENTIALS, key_); }
-
-	public static boolean update_credentials(String key_, boolean val_) { return update_credentials(key_, strings.to_string(val_)); }
+	public static Object get_credentials(String key_) { return get(types.CONFIG_CREDENTIALS, key_); }
 
 	public static boolean update_credentials(String key_, String val_) { return update(types.CONFIG_CREDENTIALS, key_, val_); }
 
-	public static boolean matches_credentials(String key_, boolean val_) { return matches_credentials(key_, strings.to_string(val_)); }
-
 	public static boolean matches_credentials(String key_, String val_) { return matches(types.CONFIG_CREDENTIALS, key_, val_); }
 
-	public static String get_crypto(String key_) { return get(types.CONFIG_CRYPTO, key_); }
-
-	public static boolean update_crypto(String key_, boolean val_) { return update_crypto(key_, strings.to_string(val_)); }
+	public static Object get_crypto(String key_) { return get(types.CONFIG_CRYPTO, key_); }
 
 	public static boolean update_crypto(String key_, String val_) { return update(types.CONFIG_CRYPTO, key_, val_); }
 
-	public static boolean matches_crypto(String key_, boolean val_) { return matches_crypto(key_, strings.to_string(val_)); }
-
 	public static boolean matches_crypto(String key_, String val_) { return matches(types.CONFIG_CRYPTO, key_, val_); }
 
-	public static String get_logs(String key_) { return get(types.CONFIG_LOGS, key_); }
-
-	public static boolean update_logs(String key_, boolean val_) { return update_logs(key_, strings.to_string(val_)); }
+	public static Object get_logs(String key_) { return get(types.CONFIG_LOGS, key_); }
 
 	public static boolean update_logs(String key_, String val_) { return update(types.CONFIG_LOGS, key_, val_); }
-
-	public static boolean matches_logs(String key_, boolean val_) { return matches_logs(key_, strings.to_string(val_)); }
 
 	public static boolean matches_logs(String key_, String val_) { return matches(types.CONFIG_LOGS, key_, val_); }
 
@@ -82,9 +66,9 @@ public abstract class config extends parent_static
 		return true;
 	}
 
-	public static String get(String type_, String key_)
+	public static Object get(String type_, String key_)
 	{		
-		String output = null;
+		Object output = null;
 
 		String type = check_type(type_);
 		if (!strings.is_ok(type) || !strings.is_ok(key_)) return output;
@@ -110,59 +94,45 @@ public abstract class config extends parent_static
 			String key = item.getKey();
 			Object val = item.getValue();
 
-			boolean is_ok = true;
-			String val2 = null;
-
-			if (generic.is_string(val)) val2 = (String)val;
-			else if (generic.is_boolean(val)) val2 = strings.from_boolean((boolean)val);
-			else if (generic.is_number(val)) val2 = strings.from_number(numbers.to_number(val));
-			else is_ok = false;
-
-			if (is_ok) is_ok = update_matches(type, key, val2, true, is_ini_);
-			output.put(key, is_ok);
+			output.put(key, update_matches(type, key, val, true, is_ini_));
 		}
 
 		return output;
 	}
 
-	private static boolean update_matches(String type_, String key_, String val_, boolean update_, boolean ini_)
+	private static boolean update_matches(String type_, String key_, Object val_, boolean update_, boolean ini_)
 	{
 		boolean is_ok = false;
 
 		String type = check_type(type_);
 		String key = check_type(key_);
+		if (!strings.is_ok(type) || !strings.is_ok(key) || (!ini_ && arrays.value_exists(get_all_not_update(), key))) return is_ok;
 
-		if (!strings.is_ok(type) || !strings.is_ok(key)) return is_ok;
-		if (!generic.is_string(val_)) return is_ok;
-		if (!ini_ && arrays.value_exists(get_all_not_update(), key)) return is_ok;
-
-		HashMap<String, String> info = new HashMap<String, String>();
-		if (_info.containsKey(type)) info = new HashMap<String, String>(_info.get(type));
+		HashMap<String, Object> info = new HashMap<String, Object>();
+		if (_info.containsKey(type)) info = new HashMap<String, Object>(_info.get(type));
 		else if (!ini_) return is_ok; 
-		if (!ini_ && !info.containsKey(key_)) return is_ok;
 
 		is_ok = true;
-		String val = strings.to_string(val_);
+		info = update_matches_internal(info, key, val_, update_, ini_);	
 		
-		info = update_matches_internal(info, key, val, update_, ini_);	
 		if (!arrays.is_ok(info)) is_ok = false;
-		else if (update_) _info.put(type, new HashMap<String, String>(info));
+		else if (update_) _info.put(type, new HashMap<String, Object>(info));
 
 		return is_ok;
 	}
 
-	private static HashMap<String, String> update_matches_internal(HashMap<String, String> info_, String key_, String val_, boolean update_, boolean ini_)
+	private static HashMap<String, Object> update_matches_internal(HashMap<String, Object> info_, String key_, Object val_, boolean update_, boolean ini_)
 	{
-		HashMap<String, String> info = new HashMap<String, String>(info_);
+		HashMap<String, Object> info = new HashMap<String, Object>(info_);
 
-		boolean val_is_ok = strings.is_ok(val_);
+		boolean val_is_ok = (val_ != null);
 		boolean key_is_ok = info.containsKey(key_);
 
 		if (update_) 
 		{
 			if ((!ini_ && key_is_ok && val_is_ok) || (ini_ && !key_is_ok)) info.put(key_, (val_is_ok ? val_ : strings.DEFAULT));
 		}
-		else if (key_is_ok && strings.are_equal(info.get(key_), val_)) return info;
+		else if (key_is_ok && generic.are_equal(info.get(key_), val_)) return info;
 
 		return (update_ ? info : null);	
 	}

@@ -87,17 +87,23 @@ abstract class db_queries
 
 	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_) { return db.get_valid_instance(source_).execute_query(source_, query_); }
 
-	static Object select_one_common(String source_, String field_, db_where[] wheres_, db_order[] orders_, String what_) { return select_one_common(source_, field_, db_where.to_string(wheres_), db_order.to_string(orders_), what_); }
+	static Object select_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_) { return select_one_some_common(source_, field_, wheres_cols_, max_rows_, orders_cols_, what_, false); }
 
-	static Object select_one_common(String source_, String field_, String wheres_cols_, String orders_cols_, String what_)
+	static Object select_one_common(String source_, String field_, String wheres_cols_, String orders_cols_, String what_) { return select_one_some_common(source_, field_, wheres_cols_, 1, orders_cols_, what_, true); }
+
+	@SuppressWarnings("unchecked")
+	private static Object select_one_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_, boolean is_one_)
 	{
 		Object output = null;
 
-		if (data.is_string(what_)) output = strings.DEFAULT;
-		else if (what_.equals(data.DECIMAL)) output = numbers.DEFAULT_DECIMAL;
-		else if (what_.equals(data.LONG)) output = numbers.DEFAULT_LONG;
-		else if (what_.equals(data.INT)) output = numbers.DEFAULT_INT;
-		else if (data.is_boolean(what_)) output = _defaults.BOOLEAN_INT;
+		if (is_one_)
+		{
+			if (data.is_string(what_)) output = strings.DEFAULT;
+			else if (what_.equals(data.DECIMAL)) output = numbers.DEFAULT_DECIMAL;
+			else if (what_.equals(data.LONG)) output = numbers.DEFAULT_LONG;
+			else if (what_.equals(data.INT) || what_.equals(data.TINYINT)) output = numbers.DEFAULT_INT;
+			else if (data.is_boolean(what_)) output = _defaults.BOOLEAN;		
+		}
 
 		if (!strings.is_ok(field_)) 
 		{
@@ -106,21 +112,74 @@ abstract class db_queries
 			return output;
 		}
 
-		HashMap<String, String> temp = select_one(source_, new String[] { field_ }, wheres_cols_, orders_cols_);		
-
-		if (arrays.is_ok(temp))
+		Object temp = null; 
+		
+		if (is_one_) temp = select_one(source_, new String[] { field_ }, wheres_cols_, orders_cols_);		
+		else temp = select(source_, new String[] { field_ }, wheres_cols_, max_rows_, orders_cols_);
+		
+		if (!arrays.is_ok(temp)) return output;
+		
+		if (is_one_) output = select_one_some_common_output(((HashMap<String, String>)temp).get(field_), what_);
+		else
 		{
-			String temp2 = temp.get(field_);
-
-			if (data.is_string(what_)) output = temp2;
-			else if (what_.equals(data.DECIMAL)) output = numbers.to_decimal(temp2);
-			else if (what_.equals(data.LONG)) output = numbers.to_long(temp2);
-			else if (what_.equals(data.INT) || data.is_boolean(what_)) output = numbers.to_int(temp2);	
+			output = select_one_some_common_array(null, what_, null);
+			
+			ArrayList<HashMap<String, String>> temp2 = (ArrayList<HashMap<String, String>>)temp;
+				
+			for (HashMap<String, String> item: temp2) 
+			{ 
+				Object val = select_one_some_common_output(item.get(field_), what_);	
+				output = select_one_some_common_array(val, what_, output); 
+			}
 		}
-
+		
 		return output;
 	}
 
+	@SuppressWarnings("unchecked")
+	private static Object select_one_some_common_array(Object val_, String what_, Object output)
+	{
+		if (what_.equals(data.DECIMAL))
+		{
+			if (output == null) output = new ArrayList<Double>();
+			else ((ArrayList<Double>)output).add((double)val_);
+		}
+		else if (what_.equals(data.LONG))
+		{
+			if (output == null) output = new ArrayList<Long>();
+			else ((ArrayList<Long>)output).add((long)val_);
+		}
+		else if (what_.equals(data.INT) || what_.equals(data.TINYINT))
+		{
+			if (output == null) output = new ArrayList<Integer>();
+			else ((ArrayList<Integer>)output).add((int)val_);
+		}
+		else if (data.is_boolean(what_))
+		{
+			if (output == null) output = new ArrayList<Boolean>();
+			else ((ArrayList<Boolean>)output).add((boolean)val_);	
+		}
+		else
+		{
+			if (output == null) output = new ArrayList<String>();
+			else ((ArrayList<String>)output).add((String)val_);	
+		}
+		
+		return output;
+	}
+	
+	private static Object select_one_some_common_output(String input_, String what_)
+	{
+		Object output = input_;
+		
+		if (what_.equals(data.DECIMAL)) output = numbers.to_decimal(input_);
+		else if (what_.equals(data.LONG)) output = numbers.to_long(input_);
+		else if (what_.equals(data.INT) || what_.equals(data.TINYINT)) output = numbers.to_int(input_);
+		else if (data.is_boolean(what_)) output = strings.to_boolean(input_);
+
+		return output;
+	}
+	
 	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_outputs(source_, execute_type(source_, db.QUERY_SELECT, cols_, null, where_, max_rows_, order_, null)); }
 
 	private static ArrayList<HashMap<String, String>> select_count_internal(String source_) { return execute_type(source_, db.QUERY_SELECT_COUNT, null, null, null, 0, null, null); }
