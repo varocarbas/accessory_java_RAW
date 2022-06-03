@@ -33,12 +33,14 @@ public abstract class logs extends parent_static
 		if (out_is_enabled(FILE)) update_file(message_, id_, is_error_);
 	}
 
-	public static void update_screen(String message_)
+	public static void update_screen(String message_) { update_screen(message_, true); }
+
+	public static void update_screen(String message_, boolean add_timestamp_)
 	{
-		String message = message_;
+		String message = get_message(message_, (add_timestamp_ ? dates.FORMAT_TIME_FULL : null));
 		if (!strings.is_ok(message)) return;
 
-		generic.to_screen(message);
+		System.out.println(message);
 	}
 
 	public static void update_file(String message_, String id_, boolean is_error_)
@@ -46,11 +48,11 @@ public abstract class logs extends parent_static
 		String id = id_;
 		if (!strings.is_ok(id)) id = (String)config.get_basic(types.CONFIG_BASIC_NAME);
 
-		String message = message_;
+		String message = get_message(message_, dates.FORMAT_TIMESTAMP);
 		if (!strings.is_ok(message)) return;
-
+		
 		io.ignore_errors();
-		io.line_to_file(get_path(id, is_error_), dates.add_timestamp(message, false), true);
+		io.line_to_file(get_path(id, is_error_), message, true);
 	}
 
 	public static String get_path(String id_, boolean is_error_)
@@ -66,5 +68,13 @@ public abstract class logs extends parent_static
 		return paths.build(arrays.to_array(pieces), true);
 	}
 
+	private static String get_message(String message_, String format_) 
+	{
+		String message = message_;
+		if (!strings.is_ok(message)) return strings.DEFAULT;
+		
+		return (strings.is_ok(format_) ? dates.add_now_string(message, format_, false) : message); 
+	}
+	
 	private static boolean out_is_enabled(String type_) { return (boolean)config.get_logs(type_); }
 }

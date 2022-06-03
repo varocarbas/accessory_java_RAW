@@ -59,7 +59,7 @@ public class db_field extends parent
 		if (!arrays.is_ok(info)) return 0;
 
 		long max = (long)info.get(_keys.MAX);
-		if (size <= 0|| size > max) size = (strings.is_ok(source_) ? db.get_default_size(source_, type_) : db.get_default_size(type_));
+		if (size <= 0 || size > max) size = (strings.is_ok(source_) ? db.get_default_size(source_, type_) : db.get_default_size(type_));
 
 		return size;
 	}

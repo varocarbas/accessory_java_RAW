@@ -168,17 +168,7 @@ abstract class db_queries
 		return output;
 	}
 	
-	private static Object select_one_some_common_output(String input_, String what_)
-	{
-		Object output = input_;
-		
-		if (what_.equals(data.DECIMAL)) output = numbers.to_decimal(input_);
-		else if (what_.equals(data.LONG)) output = numbers.to_long(input_);
-		else if (what_.equals(data.INT) || what_.equals(data.TINYINT)) output = numbers.to_int(input_);
-		else if (data.is_boolean(what_)) output = strings.to_boolean(input_);
-
-		return output;
-	}
+	private static Object select_one_some_common_output(String input_, String what_) { return db.output_to_object(input_, what_); }
 	
 	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_outputs(source_, execute_type(source_, db.QUERY_SELECT, cols_, null, where_, max_rows_, order_, null)); }
 

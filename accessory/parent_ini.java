@@ -18,12 +18,8 @@ public abstract class parent_ini
 	protected boolean _includes_legacy = false;
 	protected String _name = strings.DEFAULT;
 
-	protected String _dbs_user = null;
-	protected String _dbs_username = null;
-	protected String _dbs_password = null;
-	protected String _dbs_host = null;
-	protected boolean _dbs_encrypted = false;
-
+	protected HashMap<String, Object> _dbs_setup = null;
+	
 	protected static void manage_error(String type_)
 	{
 		HashMap<String, Object> info = new HashMap<String, Object>();
@@ -43,19 +39,29 @@ public abstract class parent_ini
 
 	protected void populate_all(String name_, boolean includes_legacy_) { populate_all_internal(name_, includes_legacy_); }
 
+	protected void populate_all(String name_, HashMap<String, Object> dbs_setup_) { populate_all(name_, false, dbs_setup_); } 
+
+	protected void populate_all(String name_, boolean includes_legacy_, HashMap<String, Object> dbs_setup_) 
+	{ 
+		_dbs_setup = (dbs_setup_ == null ? new HashMap<String, Object>() : new HashMap<String, Object>(dbs_setup_));
+
+		populate_all_internal(name_, includes_legacy_); 
+	}
+
 	protected void populate_all(String name_, String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_) { populate_all(name_, dbs_user_, dbs_username_, dbs_password_, dbs_host_, dbs_encrypted_, false); } 
 
 	protected void populate_all(String name_, String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_, boolean includes_legacy_) 
-	{		
-		if (dbs_user_ != null) _dbs_user = dbs_user_;
-		if (dbs_username_ != null) _dbs_username = dbs_username_;
-		if (dbs_password_ != null) _dbs_password = dbs_password_;
-		if (dbs_host_ != null) _dbs_host = dbs_host_;
-		if (!_dbs_encrypted) _dbs_encrypted = dbs_encrypted_;
+	{	
+		_dbs_setup = new HashMap<String, Object>();
+		
+		if (strings.is_ok(dbs_user_)) _dbs_setup = parent_ini_db.get_setup_vals(null, dbs_user_, dbs_host_, dbs_encrypted_);
+		else if (strings.is_ok(dbs_username_) && dbs_password_ != null) _dbs_setup = parent_ini_db.get_setup_vals(null, dbs_username_, dbs_password_, dbs_host_);
 
 		populate_all_internal(name_, includes_legacy_);
 	}
 
+	private Object get_setup_val(String key_) { return arrays.get_value(_dbs_setup, key_); }
+	
 	private void populate_all_internal(String name_, boolean includes_legacy_) 
 	{
 		if (_populated) return;
@@ -82,7 +88,8 @@ public abstract class parent_ini
 		_keys.populate();
 
 		_ini_config.populate();
-		_ini_db.populate(_dbs_user, _dbs_username, _dbs_password, _dbs_host, _dbs_encrypted);
+	
+		_ini_db.populate(_dbs_setup);
 	}
 
 	private void populate_all_internal_other_all(String package_) 
@@ -102,28 +109,54 @@ public abstract class parent_ini
 		Class<?> class1 = generic.get_class_from_name(name);
 		if (class1 == null) return;
 
-		Class<?>[] params = null;
-		Object[] args = null;
-
-		if (class_.equals("_ini_db"))
-		{
-			params = new Class<?>[] { String.class, String.class, String.class, String.class, boolean.class };
-			args = new Object[] { _dbs_user, _dbs_username, _dbs_password, _dbs_host, _dbs_encrypted };
-		}
-
 		generic.ignore_errors(true);
 
-		Method method = generic.get_method(class1, method0, params);
-		if (method == null && params != null)
+		Class<?>[] params = null;
+		Object[] args = null;
+		
+		if (class_.equals("_ini_db"))
 		{
-			params = null;
-			args = null;
-
-			method = generic.get_method(class1, method0, params);
+			params = new Class<?>[] { HashMap.class };
+			args = new Object[] { _dbs_setup };
 		}
-
+		
+		Method method = null;
+		
+		int max = 2;
+		int count = 0;
+		
+		while (count < max)
+		{
+			method = generic.get_method(class1, method0, params);
+			if (method != null) break;
+			
+			count++;
+			
+			if (class_.equals("_ini_db"))
+			{
+				if (count == 1)
+				{
+					params = new Class<?>[] { String.class, String.class, String.class, String.class, boolean.class };
+					
+					args = new Object[] 
+					{ 
+						get_setup_val(types.CONFIG_DB_SETUP_CREDENTIALS_USER), get_setup_val(types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME), 
+						get_setup_val(types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD), get_setup_val(types.CONFIG_DB_SETUP_HOST), 
+						get_setup_val(types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED) 
+					};					
+				}
+				else if (count == 2)
+				{
+					params = null;
+					args = null;
+				}
+				else return;
+			}
+			else return;
+		}
+		
 		generic.call_static_method(method, args);
-
+		
 		generic.ignore_errors_persistent_end();		
 	}
 }

@@ -510,6 +510,36 @@ public abstract class db
 		return output;
 	}
 
+	public static Object adapt_output(String source_, String field_, String val_) { return adapt_output(source_, get_field(source_, field_), val_); }
+
+	public static Object adapt_output(String source_, db_field field_, String val_) 
+	{
+		if (!db_field.is_ok(field_) || !strings.is_ok(val_)) return null;
+
+		String source = check_source(source_);
+
+		return (strings.is_ok(source) ? output_to_object(source, val_, field_.get_type(), false) : null); 
+	}
+
+	public static Object output_to_object(String val_, String data_type_) { return output_to_object(get_current_source(), val_, data_type_, true); }
+
+	public static Object output_to_object(String source_, String val_, String data_type_, boolean check_)
+	{
+		Object output = null;
+		if (!strings.is_ok(val_)) return output;
+
+		String type = data.check_type(data_type_);
+		if (!strings.is_ok(type)) return output;
+		
+		if (type.equals(data.DECIMAL)) output = numbers.to_decimal(val_);
+		else if (type.equals(data.LONG)) output = numbers.to_long(val_);
+		else if (type.equals(data.INT) || type.equals(data.TINYINT)) output = numbers.to_int(val_);
+		else if (data.is_boolean(type)) output = strings.to_boolean(val_);
+		else output = val_;
+
+		return output;
+	}
+
 	public static String sanitise_string(String input_) { return sanitise_string(get_current_source(), input_); }
 
 	public static String sanitise_string(String source_, String input_) { return get_valid_instance(source_).sanitise_string(input_); }

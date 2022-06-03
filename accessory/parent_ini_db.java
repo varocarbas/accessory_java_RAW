@@ -9,13 +9,22 @@ public abstract class parent_ini_db
 
 	protected abstract boolean populate_all_dbs(HashMap<String, Object> dbs_setup_);
 
+	public static HashMap<String, Object> get_setup_vals(String db_name_, String setup_, String user_, String host_, boolean encrypted_)
+	{
+		HashMap<String, Object> vals = get_setup_vals(setup_, user_, host_, encrypted_);
+
+		if (strings.is_ok(db_name_)) vals.put(types.CONFIG_DB_NAME, db_name_);
+		
+		return vals;	
+	}
+
 	public static HashMap<String, Object> get_setup_vals(String setup_, String user_, String host_, boolean encrypted_)
 	{
 		HashMap<String, Object> vals = get_setup_default();
 
-		if (setup_ != null) vals.put(types.CONFIG_DB_SETUP, setup_);
-		if (user_ != null) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USER, user_); 
-		if (host_ != null) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
+		if (strings.is_ok(setup_)) vals.put(types.CONFIG_DB_SETUP, setup_);
+		if (strings.is_ok(user_)) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USER, user_); 
+		if (strings.is_ok(host_)) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
 
 		vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, encrypted_);
 
@@ -26,10 +35,10 @@ public abstract class parent_ini_db
 	{
 		HashMap<String, Object> vals = get_setup_default();
 
-		if (setup_ != null) vals.put(types.CONFIG_DB_SETUP, setup_);
-		if (username_ != null) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME, username_); 
+		if (strings.is_ok(setup_)) vals.put(types.CONFIG_DB_SETUP, setup_);
+		if (strings.is_ok(username_)) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME, username_); 
 		if (password_ != null) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD, password_); 
-		if (host_ != null) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
+		if (strings.is_ok(host_)) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
 
 		return vals;	
 	}
@@ -63,6 +72,13 @@ public abstract class parent_ini_db
 		populate_all_internal(null); 
 	}
 
+	protected void populate_all(HashMap<String, Object> dbs_setup_) 
+	{
+		if (_populated) return;
+
+		populate_all_internal(dbs_setup_); 
+	}
+	
 	protected void populate_all(String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_) 
 	{
 		if (_populated) return;

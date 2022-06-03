@@ -10,13 +10,19 @@ class _ini_db extends parent_ini_db
 
 	public static void populate(String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_) { _instance.populate_all(dbs_user_, dbs_username_, dbs_password_, dbs_host_, dbs_encrypted_); }
 
+	public static void populate(HashMap<String, Object> dbs_setup_) { _instance.populate_all(dbs_setup_); }
+
 	@SuppressWarnings("unchecked")
 	protected boolean populate_all_dbs(HashMap<String, Object> dbs_setup_)
 	{	
-		String db = _defaults.DB;
-		String name = _defaults.DB_NAME;
 		HashMap<String, Object> setup_vals = (HashMap<String, Object>)arrays.get_new(dbs_setup_);
 
+		String db = (String)arrays.get_value(setup_vals, types.CONFIG_DB);
+		if (!strings.is_ok(db)) db = _defaults.DB;
+		
+		String name = (String)arrays.get_value(setup_vals, types.CONFIG_DB_NAME);		
+		if (!strings.is_ok(name)) name = _defaults.DB_NAME;
+	
 		HashMap<String, Object[]> sources = new HashMap<String, Object[]>();
 		sources = add_source_tests(db, sources);
 		sources = add_source_credentials(db, sources);

@@ -1,5 +1,7 @@
 package accessory;
 
+import java.util.HashMap;
+
 public class _ini extends parent_ini
 {	
 	private static _ini _instance = new _ini();
@@ -7,7 +9,9 @@ public class _ini extends parent_ini
 	public _ini() { }
 
 	public static boolean is_populated() { return _instance._populated; }
+	
 	public static boolean includes_legacy() { return _instance._includes_legacy; }
+	
 	public static String get_name_start() { return _instance._name; }
 
 	//One of the start() overloads below these lines has to be called before using any of the resources of this library.
@@ -19,6 +23,8 @@ public class _ini extends parent_ini
 	public static void start() { if (!_instance._populated) start(null, false); }
 
 	public static void start(String name_, boolean includes_legacy_) { if (!_instance._populated) _instance.populate_all(name_, includes_legacy_); }
+
+	public static void start(String name_, boolean includes_legacy_, HashMap<String, Object> dbs_setup_) { if (!_instance._populated) _instance.populate_all(name_, includes_legacy_, dbs_setup_); }
 
 	public static void start(String name_, String dbs_user_, String dbs_host_, boolean dbs_encrypted_, boolean includes_legacy_) { if (!_instance._populated) _instance.populate_all(name_, dbs_user_, null, null, dbs_host_, dbs_encrypted_, includes_legacy_); }
 

@@ -284,13 +284,13 @@ public abstract class strings extends parent_static
 
 	public static boolean to_boolean(String string_)
 	{
-		String string = types.check_type(string_, types.get_subtypes(data.BOOLEAN), types.ACTION_ADD, types.DATA_BOOLEAN);
+		String string = normalise(string_);
 
 		for (Entry<Boolean, String[]> item: get_all_booleans().entrySet())
 		{
 			for (String target: item.getValue())
 			{
-				if (are_equivalent(string, target)) return item.getKey();
+				if (are_equal(string, target)) return item.getKey();
 			}
 		}
 
