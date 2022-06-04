@@ -298,7 +298,19 @@ public abstract class types extends parent_static
 
 	public static String check_type(String type_) { return check_type(type_, (String)null); }
 
-	public static String check_type(String type_, String root_) { return check_type(type_, (strings.is_ok(root_) ? get_subtypes(root_) : null)); }
+	public static String check_type(String type_, String root_) 
+	{
+		String[] types = get_subtypes(root_);
+		
+		if (!arrays.is_ok(types) && strings.is_ok(root_))
+		{
+			String type = strings.normalise(type_);
+			
+			return (strings.are_equivalent(type, root_) ? type : null);
+		}
+		
+		return check_type(type_, types); 
+	}
 
 	public static String check_type(String type_, String[] types_) { return check_type(type_, types_, null, null); }
 
