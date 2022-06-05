@@ -302,12 +302,7 @@ public abstract class types extends parent_static
 	{
 		String[] types = get_subtypes(root_);
 		
-		if (!arrays.is_ok(types) && strings.is_ok(root_))
-		{
-			String type = strings.normalise(type_);
-			
-			return (strings.are_equivalent(type, root_) ? type : null);
-		}
+		if (!arrays.is_ok(types) && strings.is_ok(root_)) return (strings.are_equivalent(type_, root_) ? strings.normalise(type_) : null);
 		
 		return check_type(type_, types); 
 	}
