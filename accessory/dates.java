@@ -145,7 +145,11 @@ public abstract class dates extends parent_static
 
 		return output;			
 	}
-
+	
+	public static long start_elapsed() { return get_elapsed(); }
+	
+	public static long get_elapsed() { return get_elapsed(0); }
+	
 	public static long get_elapsed(long start_)
 	{
 		long current = System.currentTimeMillis();

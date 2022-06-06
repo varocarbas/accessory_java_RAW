@@ -173,7 +173,9 @@ public abstract class generic extends parent_static
 
 	public static boolean are_equal(Object input1_, Object input2_) { return are_equal(input1_, input2_, true); }	
 
-	public static void to_screen(Object input_) { logs.update_screen(strings.to_string(input_), false); }
+	public static void to_screen(Object input_) { to_screen(input_, false); }
+
+	public static void to_screen(Object input_, boolean add_timestamp_) { logs.update_screen(strings.to_string(input_), add_timestamp_); }
 
 	public static int boolean_to_int(boolean input_) { return numbers.from_boolean(input_); }
 

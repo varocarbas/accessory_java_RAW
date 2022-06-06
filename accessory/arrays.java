@@ -1230,8 +1230,8 @@ public abstract class arrays extends parent_static
 	{
 		Object output = null;
 
-		if (is_xy_) output = (!is_ok(input_) ? new HashMap<x, y>() : new HashMap<x, y>((HashMap<x, y>)input_)); 
-		else output = (!is_ok(input_) ? new HashMap<x, x>() : new HashMap<x, x>((HashMap<x, x>)input_)); 
+		if (is_xy_) output = (!is_ok(input_) ? new HashMap<x, y>() : ((HashMap<x, y>)input_).clone()); 
+		else output = (!is_ok(input_) ? new HashMap<x, x>() : ((HashMap<x, x>)input_).clone()); 
 
 		return output;
 	}
@@ -1239,13 +1239,16 @@ public abstract class arrays extends parent_static
 	@SuppressWarnings("unchecked")
 	private static <x, y> boolean are_equal_hashmap(Object input1_, Object input2_, boolean is_xy_)
 	{
-		if ((is_xy_ && (get_size((HashMap<x, y>)input1_) != get_size((HashMap<x, y>)input2_))) || (!is_xy_ && (get_size((HashMap<x, x>)input1_) != get_size((HashMap<x, x>)input2_)))) return false;
-		if ((is_xy_ && !are_equal(get_classes_items((HashMap<x, y>)input1_), get_classes_items((HashMap<x, y>)input2_))) || (!is_xy_ && !are_equal(get_classes_items((HashMap<x, x>)input1_), get_classes_items((HashMap<x, x>)input2_)))) return false;
-		if (input1_.equals(input2_)) return true;
+		Object input1 = get_new_hashmap(input1_, is_xy_);
+		Object input2 = get_new_hashmap(input2_, is_xy_);
+
+		if ((is_xy_ && (get_size((HashMap<x, y>)input1) != get_size((HashMap<x, y>)input2))) || (!is_xy_ && (get_size((HashMap<x, x>)input1) != get_size((HashMap<x, x>)input2)))) return false;
+		if ((is_xy_ && !are_equal(get_classes_items((HashMap<x, y>)input1), get_classes_items((HashMap<x, y>)input2))) || (!is_xy_ && !are_equal(get_classes_items((HashMap<x, x>)input1), get_classes_items((HashMap<x, x>)input2)))) return false;
+		if (input1.equals(input2)) return true;
 
 		ArrayList<x> done = new ArrayList<x>();
-
-		for (Object item1: (is_xy_ ? (HashMap<x, y>)input1_ : (HashMap<x, x>)input1_).entrySet())
+		
+		for (Object item1: (is_xy_ ? (HashMap<x, y>)input1 : (HashMap<x, x>)input1).entrySet())
 		{
 			Object[] temp = get_entry_key_val(item1, is_xy_);
 			x key1 = (x)temp[0];
@@ -1254,8 +1257,8 @@ public abstract class arrays extends parent_static
 			boolean found = false;
 			boolean key1_is_ok = generic.is_ok(key1, true);
 			boolean val1_is_ok = generic.is_ok(val1, true);
-
-			for (Object item2: (is_xy_ ? (HashMap<x, y>)input2_ : (HashMap<x, x>)input2_).entrySet())
+			
+			for (Object item2: (is_xy_ ? (HashMap<x, y>)input2 : (HashMap<x, x>)input2).entrySet())
 			{
 				temp = get_entry_key_val(item2, is_xy_);
 				x key2 = (x)temp[0];
@@ -1340,7 +1343,11 @@ public abstract class arrays extends parent_static
 			if (!is_ok(input_)) return output;			
 		}
 
-		for (Object item: (is_xy_ ? (HashMap<x, y>)input_ : (HashMap<x, x>)input_).entrySet())
+		
+		//Object input = (is_xy_ ? new HashMap<x, y>((HashMap<x, y>)input_) : new HashMap<x, x>((HashMap<x, x>)input_));
+		Object input = (is_xy_ ? ((HashMap<x, y>)input_).clone() : ((HashMap<x, x>)input_).clone());
+		
+		for (Object item: (is_xy_ ? (HashMap<x, y>)input : (HashMap<x, x>)input).entrySet())
 		{
 			Object[] temp = get_entry_key_val(item, is_xy_);
 			Object key = temp[0];
@@ -1381,13 +1388,14 @@ public abstract class arrays extends parent_static
 		else if (type.equals(byte[].class)) return (generic.are_equal(type2, byte.class) ? key_value_get_exists((byte[])array_, target_, is_key_, is_get_) : output);
 		else if (type.equals(char[].class)) return (generic.are_equal(type2, char.class) ? key_value_get_exists((char[])array_, target_, is_key_, is_get_) : output);
 		else if (generic.are_equal(type, HashMap.class))
-		{
+		{			
 			Class<?>[] types22 = get_classes_items(array_);
 			if ((is_key_ && !generic.are_equal(types22[0], type2)) || (!is_key_ && !generic.are_equal(types22[1], type2))) return output;
 
 			boolean is_xy = !generic.are_equal(types22[0], types22[1]);
-
-			for (Object item: (is_xy ? (HashMap<x, y>)array_ : (HashMap<x, x>)array_).entrySet())
+			Object array = get_new_hashmap(array_, is_xy);
+			
+			for (Object item: (is_xy ? (HashMap<x, y>)array : (HashMap<x, x>)array).entrySet())
 			{
 				Object[] temp = get_entry_key_val(item, is_xy);
 				Object key = temp[0];
@@ -1453,7 +1461,9 @@ public abstract class arrays extends parent_static
 
 		boolean first_time = true;
 
-		for (Object item: (is_xy_ ? (HashMap<x, y>)input_ : (HashMap<x, x>)input_).entrySet())
+		Object input = get_new_hashmap(input_, is_xy_);
+		
+		for (Object item: (is_xy_ ? (HashMap<x, y>)input : (HashMap<x, x>)input).entrySet())
 		{
 			Object[] temp = get_entry_key_val(item, is_xy_);
 			Object key = temp[0];
@@ -1509,8 +1519,9 @@ public abstract class arrays extends parent_static
 			boolean is_xy = is_xy(array_);
 
 			output = (is_xy ? new HashMap<x, y>() : new HashMap<x, x>());
-
-			for (Object item: (is_xy ? (HashMap<x, y>)array_ : (HashMap<x, x>)array_).entrySet())
+			Object array = get_new_hashmap(array_, is_xy);
+			
+			for (Object item: (is_xy ? (HashMap<x, y>)array : (HashMap<x, x>)array).entrySet())
 			{
 				Object[] temp = get_entry_key_val(item, is_xy);
 				Object key = temp[0];

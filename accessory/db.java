@@ -332,7 +332,7 @@ public abstract class db
 	public static boolean add_source_ini(String source_, HashMap<String, db_field> fields_, HashMap<String, Object> setup_vals_)
 	{
 		if (!arrays.is_ok(_sources)) _sources = new HashMap<String, HashMap<String, db_field>>();
-		if (!strings.is_ok(source_) || _sources.containsKey(source_)) return false;
+		if (!strings.is_ok(source_)) return false;
 
 		HashMap<String, db_field> fields = new HashMap<String, db_field>();
 
@@ -424,12 +424,20 @@ public abstract class db
 
 		return (String)config.get(get_db(source), source);
 	}
-
-	public static boolean update_table(String source_, String table_)
+	
+	public static boolean change_table_name(String source_, String name_)
 	{	
 		String source = check_source(source_); 
 
-		return ((!strings.is_ok(source) || !strings.is_ok(table_)) ? false : config.update(get_db(source), source, table_));
+		return ((!strings.is_ok(source) || !strings.is_ok(name_)) ? false : config.update(get_db(source), source, name_));
+	}
+	
+	public static boolean change_col_name(String source_, String field_, String name_)
+	{	
+		String source = check_source(source_); 
+		String field = check_field(source_, field_);
+
+		return ((!strings.is_ok(source) || !strings.is_ok(field) || !strings.is_ok(name_)) ? false : config.update(get_db(source), field, name_));
 	}
 
 	public static HashMap<String, String> adapt_inputs(String source_, HashMap<String, String> old_, String field_, double val_) { return adapt_inputs_input(check_source(source_), old_, field_, val_); }

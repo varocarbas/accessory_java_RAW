@@ -131,18 +131,7 @@ public abstract class parent_ini_db
 		return all_sources_;
 	}
 
-	private void populate_all_internal(HashMap<String, Object> dbs_setup_) 
-	{	
-		String error = strings.DEFAULT;
-		if (!populate_all_dbs(dbs_setup_)) error = parent_ini.ERROR_DBS;
-
-		_populated = true;
-		if (error.equals(strings.DEFAULT)) return;
-
-		_ini.manage_error(error);
-	}
-
-	private HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String source_, String table_, String db_, boolean add_default_)
+	protected HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String source_, String table_, String db_, boolean add_default_)
 	{		
 		if (!arrays.is_ok(info_)) return null;
 
@@ -159,11 +148,50 @@ public abstract class parent_ini_db
 		return fields;
 	}
 
-	private HashMap<String, Object[]> add_field(String id_, String col_, db_field field_, HashMap<String, Object[]> all_fields_)
+	protected HashMap<String, Object[]> add_field(String id_, String col_, db_field field_, HashMap<String, Object[]> all_fields_)
 	{
 		all_fields_.put(id_, new Object[] { col_, field_ });
 
 		return all_fields_;
+	}
+
+	protected boolean populate_source(String source_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object> setup_vals_)
+	{
+		if (!setup_vals_are_ok(setup_vals_)) return false;
+
+		String db = config.check_type((String)setup_vals_.get(types.CONFIG_DB));
+		String source = config.check_type(source_);
+		if (!strings.is_ok(db) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
+
+		HashMap<String, db_field> fields = new HashMap<String, db_field>();		
+
+		for (Entry<String, Object[]> item: fields_.entrySet())
+		{
+			String id = item.getKey();
+			Object[] val = item.getValue();
+
+			String col = (String)val[0];
+			config.update_ini(db, id, col);
+
+			db_field field = (db_field)val[1];
+			fields.put(id, field);
+		}
+
+		if (!accessory.db.add_source_ini(source, fields, setup_vals_)) return false;
+		if (!config.update_ini(db, source, table_)) return false;
+
+		return true;
+	}
+	
+	private void populate_all_internal(HashMap<String, Object> dbs_setup_) 
+	{	
+		String error = strings.DEFAULT;
+		if (!populate_all_dbs(dbs_setup_)) error = parent_ini.ERROR_DBS;
+
+		_populated = true;
+		if (error.equals(strings.DEFAULT)) return;
+
+		_ini.manage_error(error);
 	}
 
 	private String get_db_name_default(String db_) { return get_default_common(db_, null, null, null); }
@@ -194,34 +222,6 @@ public abstract class parent_ini_db
 		for (String item: items) { output = strings.remove(new String[] { types.SEPARATOR + item, item + types.SEPARATOR, item }, output); }
 
 		return output;
-	}
-
-	private boolean populate_source(String source_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object> setup_vals_)
-	{
-		if (!setup_vals_are_ok(setup_vals_)) return false;
-
-		String db = config.check_type((String)setup_vals_.get(types.CONFIG_DB));
-		String source = config.check_type(source_);
-		if (!strings.is_ok(db) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
-
-		HashMap<String, db_field> fields = new HashMap<String, db_field>();		
-
-		for (Entry<String, Object[]> item: fields_.entrySet())
-		{
-			String id = item.getKey();
-			Object[] val = item.getValue();
-
-			String col = (String)val[0];
-			config.update_ini(db, id, col);
-
-			db_field field = (db_field)val[1];
-			fields.put(id, field);
-		}
-
-		if (!accessory.db.add_source_ini(source, fields, setup_vals_)) return false;
-		if (!config.update_ini(db, source, table_)) return false;
-
-		return true;
 	}
 
 	private HashMap<String, Object[]> get_default_fields()

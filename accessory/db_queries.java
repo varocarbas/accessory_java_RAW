@@ -122,14 +122,26 @@ abstract class db_queries
 		if (is_one_) output = select_one_some_common_output(((HashMap<String, String>)temp).get(field_), what_);
 		else
 		{
-			output = select_one_some_common_array(null, what_, null);
-			
-			ArrayList<HashMap<String, String>> temp2 = (ArrayList<HashMap<String, String>>)temp;
+			if (data.is_string(what_))
+			{
+				ArrayList<HashMap<String, String>> temp2 = (ArrayList<HashMap<String, String>>)temp;
 				
-			for (HashMap<String, String> item: temp2) 
-			{ 
-				Object val = select_one_some_common_output(item.get(field_), what_);	
-				output = select_one_some_common_array(val, what_, output); 
+				ArrayList<String> output2 = new ArrayList<String>();
+				for (HashMap<String, String> item: temp2) { output2.add(item.get(field_)); }
+				
+				output = output2;
+			}
+			else
+			{
+				output = select_one_some_common_array(null, what_, null);
+				
+				ArrayList<HashMap<String, String>> temp2 = (ArrayList<HashMap<String, String>>)temp;
+					
+				for (HashMap<String, String> item: temp2) 
+				{ 
+					Object val = select_one_some_common_output(item.get(field_), what_);	
+					output = select_one_some_common_array(val, what_, output); 
+				}				
 			}
 		}
 		
