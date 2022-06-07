@@ -72,6 +72,7 @@ abstract class _defaults
 	public static final String DB_HOST = "localhost";
 	public static final String DB_CREDENTIALS_TYPE = types.remove_type(DB_TYPE, types.CONFIG_DB_SETUP_TYPE);
 	public static final boolean DB_CREDENTIALS_ENCRYPTED = false;
+	public static final boolean DB_CREDENTIALS_MEMORY = true;
 	public static final String DB_ORDER = types.DB_ORDER_ASC;
 	public static final boolean DB_ORDER_IS_FIELD = true;
 	public static final String DB_WHERE_LINK = types.DB_WHERE_LINK_AND;

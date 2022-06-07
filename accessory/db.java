@@ -15,6 +15,7 @@ public abstract class db
 	public static final String CREDENTIALS_PASSWORD = PASSWORD;
 	public static final String CREDENTIALS_USER = USER;
 	public static final String CREDENTIALS_ENCRYPTED = types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED;
+	public static final String CREDENTIALS_MEMORY = types.CONFIG_DB_SETUP_CREDENTIALS_MEMORY;
 	public static final String MAX_POOL = types.CONFIG_DB_SETUP_MAX_POOL;
 	public static final String TYPE = types.CONFIG_DB_SETUP_TYPE;
 	public static final String MYSQL = types.CONFIG_DB_SETUP_TYPE_MYSQL;
@@ -59,7 +60,8 @@ public abstract class db
 
 	private static HashMap<String, HashMap<String, Object>> _source_setups = new HashMap<String, HashMap<String, Object>>();
 	private static HashMap<String, String> _db_setups = new HashMap<String, String>();
-	
+	private static HashMap<String, String> _credentials = new HashMap<String, String>();
+
 	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  { return credentials.encrypt_username_password_file(get_type(source_), user_, username_, password_);  }
 
 	public static boolean update_db(String db_, String db_name_) 
@@ -425,17 +427,17 @@ public abstract class db
 		return (String)config.get(get_db(source), source);
 	}
 	
-	public static boolean change_table_name(String source_, String name_)
+	public static boolean change_config_table_name(String source_, String name_)
 	{	
 		String source = check_source(source_); 
 
 		return ((!strings.is_ok(source) || !strings.is_ok(name_)) ? false : config.update(get_db(source), source, name_));
 	}
 	
-	public static boolean change_col_name(String source_, String field_, String name_)
+	public static boolean change_config_col_name(String source_, String field_, String name_)
 	{	
 		String source = check_source(source_); 
-		String field = check_field(source_, field_);
+		String field = check_field(source, field_);
 
 		return ((!strings.is_ok(source) || !strings.is_ok(field) || !strings.is_ok(name_)) ? false : config.update(get_db(source), field, name_));
 	}
@@ -642,8 +644,8 @@ public abstract class db
 
 	static HashMap<String, String> get_credentials(String source_)
 	{
-		HashMap<String, String> output = new HashMap<String, String>();
-
+		if (arrays.is_ok(_credentials) && credentials_in_memory(source_)) return _credentials;
+			
 		String setup = get_setup(source_);
 
 		String user = (String)config.get(setup, USER);
@@ -651,10 +653,15 @@ public abstract class db
 		String password = (String)config.get(setup, PASSWORD);
 		boolean encrypted = (boolean)config.get(setup, CREDENTIALS_ENCRYPTED);
 
-		if (strings.is_ok(username) && password != null) output = credentials.get_username_password(username, password);
-		else if (strings.is_ok(user)) output = credentials.get_username_password(get_encryption_id(source_), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
+		HashMap<String, String> temp = new HashMap<String, String>();
+		if (strings.is_ok(username) && password != null) temp = credentials.get_username_password(username, password);
+		else if (strings.is_ok(user)) temp = credentials.get_username_password(get_encryption_id(source_), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);					
+		
+		if (!arrays.is_ok(temp)) return null;
+		
+		_credentials = new HashMap<String, String>(temp);
 
-		return output;
+		return _credentials;
 	}
 
 	static parent_db get_valid_instance(String source_) 
@@ -667,6 +674,8 @@ public abstract class db
 
 	static String get_select_count_col(String source_) { return get_valid_instance(source_).get_select_count_col(); }
 
+	private static boolean credentials_in_memory(String source_) { return (boolean)config.get(get_setup(source_), CREDENTIALS_MEMORY); }
+	
 	private static String[] get_all_queries_data() { return _alls.DB_QUERIES_DATA; }
 
 	private static parent_db get_instance(String source_) { return (parent_db)get_setup_common(get_valid_source(source_), _keys.INSTANCE); }

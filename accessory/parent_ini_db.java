@@ -51,7 +51,8 @@ public abstract class parent_ini_db
 		vals.put(types.CONFIG_DB_SETUP_TYPE, _defaults.DB_TYPE);
 		vals.put(types.CONFIG_DB_SETUP_MAX_POOL, _defaults.DB_MAX_POOL);
 		vals.put(types.CONFIG_DB_SETUP_HOST, _defaults.DB_HOST);
-
+		vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_MEMORY, _defaults.DB_CREDENTIALS_MEMORY);
+		
 		return vals;
 	}
 

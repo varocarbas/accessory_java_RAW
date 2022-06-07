@@ -68,6 +68,7 @@ public abstract class types extends parent_static
 	//CONFIG_DB_SETUP_CREDENTIALS_USER is a generic ID which is required to encrypt credentials.
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_USER = "config_db_setup_credentials_user";
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED = "config_db_setup_credentials_encrypted";
+	public static final String CONFIG_DB_SETUP_CREDENTIALS_MEMORY = "config_db_setup_credentials_memory";
 
 	public static final String CONFIG_DB_DEFAULT = "config_db_default";
 	public static final String CONFIG_DB_DEFAULT_FIELD = "config_db_default_field";
@@ -431,6 +432,7 @@ public abstract class types extends parent_static
 			CONFIG_DB_SETUP_CREDENTIALS,
 			CONFIG_DB_SETUP_CREDENTIALS_USERNAME, CONFIG_DB_SETUP_CREDENTIALS_PASSWORD,
 			CONFIG_DB_SETUP_CREDENTIALS_USER, CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, 
+			CONFIG_DB_SETUP_CREDENTIALS_MEMORY, 
 			CONFIG_DB_DEFAULT, 
 			CONFIG_DB_DEFAULT_FIELD, 
 			CONFIG_DB_DEFAULT_FIELD_ID, CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, 

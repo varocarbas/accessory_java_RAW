@@ -352,6 +352,139 @@ public abstract class arrays extends parent_static
 		return output;	
 	}
 
+	public static <x> boolean key_exists_async(double[] input_, x key_) { return key_exists_async(to_big(input_), key_); }
+
+	public static <x> boolean key_exists_async(long[] input_, x key_) { return key_exists_async(to_big(input_), key_); }
+
+	public static <x> boolean key_exists_async(int[] input_, x key_) { return key_exists_async(to_big(input_), key_); }
+
+	public static <x> boolean key_exists_async(boolean[] input_, x key_) { return key_exists_async(to_big(input_), key_); }
+
+	public static <x> boolean key_exists_async(byte[] input_, x key_) { return key_exists_async(to_big(input_), key_); }
+
+	public static <x> boolean key_exists_async(char[] input_, x key_) { return key_exists_async(to_big(input_), key_); }
+
+	public static boolean key_exists_async(Object input_, Object key_) { return (boolean)key_value_get_exists_async(input_, key_, true, false); }
+
+	public static <x> boolean value_exists_async(double[] input_, x value_) { return value_exists_async(to_big(input_), value_); }
+
+	public static <x> boolean value_exists_async(long[] input_, x value_) { return value_exists_async(to_big(input_), value_); }
+
+	public static <x> boolean value_exists_async(int[] input_, x value_) { return value_exists_async(to_big(input_), value_); }
+
+	public static <x> boolean value_exists_async(boolean[] input_, x value_) { return value_exists_async(to_big(input_), value_); }
+
+	public static <x> boolean value_exists_async(byte[] input_, x value_) { return value_exists_async(to_big(input_), value_); }
+
+	public static <x> boolean value_exists_async(char[] input_, x value_) { return value_exists_async(to_big(input_), value_); }
+
+	public static boolean value_exists_async(Object input_, Object value_) { return (boolean)key_value_get_exists_async(input_, value_, false, false); }
+
+	public static <x> Object get_key_async(double[] input_, x value_) { return get_key_async(to_big(input_), value_); }
+
+	public static <x> Object get_key_async(long[] input_, x value_) { return get_key_async(to_big(input_), value_); }
+
+	public static <x> Object get_key_async(int[] input_, x value_) { return get_key_async(to_big(input_), value_); }
+
+	public static <x> Object get_key_async(boolean[] input_, x value_) { return get_key_async(to_big(input_), value_); }
+
+	public static <x> Object get_key_async(byte[] input_, x value_) { return get_key_async(to_big(input_), value_); }
+
+	public static <x> Object get_key_async(char[] input_, x value_) { return get_key_async(to_big(input_), value_); }
+
+	public static Object get_key_async(Object input_, Object value_) { return key_value_get_exists_async(input_, value_, false, true); }
+
+	public static <x> Object get_value_async(double[] input_, x key_) { return get_value_async(to_big(input_), key_); }
+
+	public static <x> Object get_value_async(long[] input_, x key_) { return get_value_async(to_big(input_), key_); }
+
+	public static <x> Object get_value_async(int[] input_, x key_) { return get_value_async(to_big(input_), key_); }
+
+	public static <x> Object get_value_async(boolean[] input_, x key_) { return get_value_async(to_big(input_), key_); }
+
+	public static <x> Object get_value_async(byte[] input_, x key_) { return get_value_async(to_big(input_), key_); }
+
+	public static <x> Object get_value_async(char[] input_, x key_) { return get_value_async(to_big(input_), key_); }
+
+	public static Object get_value_async(Object input_, Object key_) { return key_value_get_exists_async(input_, key_, true, true); }
+
+	private static Object key_value_get_exists_async(Object input_, Object key_val_, boolean is_key_, boolean is_get_) 
+	{
+		Class<?> type = generic.get_class(input_);
+		Class<?> type2 = generic.get_class(key_val_);
+
+		Object output = key_value_get_exists_return_wrong(input_, key_val_, is_key_, is_get_, type, type2);
+		if (!generic.is_array(type) || type2 == null) return output;
+		
+		if (type.equals(double[].class)) return key_value_get_exists_async(to_big((double[])input_), key_val_, is_key_, is_get_);
+		else if (type.equals(long[].class)) return key_value_get_exists_async(to_big((long[])input_), key_val_, is_key_, is_get_);
+		else if (type.equals(int[].class)) return key_value_get_exists_async(to_big((int[])input_), key_val_, is_key_, is_get_);
+		else if (type.equals(boolean[].class)) return key_value_get_exists_async(to_big((boolean[])input_), key_val_, is_key_, is_get_);
+		else if (type.equals(byte[].class)) return key_value_get_exists_async(to_big((byte[])input_), key_val_, is_key_, is_get_);
+		else if (type.equals(char[].class)) return key_value_get_exists_async(to_big((char[])input_), key_val_, is_key_, is_get_);
+		
+		lock();
+		
+		output = key_value_get_exists(input_, key_val_, is_key_, is_get_);
+		
+		unlock();
+		
+		return output;
+	}
+
+	public static <x> double[] remove_key_async(double[] input_, x key_) { return to_small((Double[])remove_key_async(to_big(input_), key_)); }
+
+	public static <x> long[] remove_key_async(long[] input_, x key_) { return to_small((Long[])remove_key_async(to_big(input_), key_)); }
+
+	public static <x> int[] remove_key_async(int[] input_, x key_) { return to_small((Integer[])remove_key_async(to_big(input_), key_)); }
+
+	public static <x> boolean[] remove_key_async(boolean[] input_, x key_) { return to_small((Boolean[])remove_key_async(to_big(input_), key_)); }
+
+	public static <x> byte[] remove_key_async(byte[] input_, x key_) { return to_small((Byte[])remove_key_async(to_big(input_), key_)); }
+
+	public static <x> char[] remove_key_async(char[] input_, x key_) { return to_small((Character[])remove_key_async(to_big(input_), key_)); }
+
+	public static Object remove_key_async(Object input_, Object key_) { return remove_key_async(input_, key_, false); }
+
+	public static Object remove_key_async(Object input_, Object key_, boolean normalise_) { return remove_key_value_async(input_, key_, normalise_, true); }
+
+	public static <x> double[] remove_value_async(double[] input_, x value_, boolean normalise_) { return to_small((Double[])remove_value_async(to_big(input_), value_)); }
+
+	public static <x> long[] remove_value_async(long[] input_, x value_, boolean normalise_) { return to_small((Long[])remove_value_async(to_big(input_), value_)); }
+
+	public static <x> int[] remove_value_async(int[] input_, x value_, boolean normalise_) { return to_small((Integer[])remove_value_async(to_big(input_), value_)); }
+
+	public static <x> boolean[] remove_value_async(boolean[] input_, x value_, boolean normalise_) { return to_small((Boolean[])remove_value_async(to_big(input_), value_)); }
+
+	public static <x> byte[] remove_value_async(byte[] input_, x value_) { return to_small((Byte[])remove_value_async(to_big(input_), value_)); }
+
+	public static <x> char[] remove_value_async(char[] input_, x value_) { return to_small((Character[])remove_value_async(to_big(input_), value_)); }
+
+	public static Object remove_value_async(Object input_, Object value_) { return remove_value_async(input_, value_, false); }
+
+	public static Object remove_value_async(Object input_, Object value_, boolean normalise_) { return remove_key_value_async(input_, value_, normalise_, false); }
+
+	private static Object remove_key_value_async(Object input_, Object key_val_, boolean normalise_, boolean is_key_) 
+	{
+		Class<?> type = generic.get_class(input_);
+		if (!generic.is_array(type)) return input_;
+
+		if (type.equals(double[].class)) return remove_key_value_async(to_big((double[])input_), key_val_, normalise_, is_key_);
+		else if (type.equals(long[].class)) return remove_key_value_async(to_big((long[])input_), key_val_, normalise_, is_key_);
+		else if (type.equals(int[].class)) return remove_key_value_async(to_big((int[])input_), key_val_, normalise_, is_key_);
+		else if (type.equals(boolean[].class)) return remove_key_value_async(to_big((boolean[])input_), key_val_, normalise_, is_key_);
+		else if (type.equals(byte[].class)) return remove_key_value_async(to_big((byte[])input_), key_val_, normalise_, is_key_);
+		else if (type.equals(char[].class)) return remove_key_value_async(to_big((char[])input_), key_val_, normalise_, is_key_);
+		
+		lock();
+
+		Object output = arrays.remove_key_value(input_, key_val_, normalise_, is_key_);
+		
+		unlock();
+		
+		return output;
+	}
+
 	public static ArrayList<Double> add(ArrayList<Double> main_, double[] new_) { return (ArrayList<Double>)add(main_, to_big(new_)); }
 
 	public static ArrayList<Long> add(ArrayList<Long> main_, long[] new_) { return (ArrayList<Long>)add(main_, to_big(new_)); }
@@ -645,33 +778,33 @@ public abstract class arrays extends parent_static
 		return output;
 	}
 
-	public static double[] remove_key(double[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
+	public static <x> double[] remove_key(double[] array_, x key_) { return remove_key_value(array_, key_, false, true); }
 
-	public static long[] remove_key(long[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
+	public static <x> long[] remove_key(long[] array_, x key_) { return remove_key_value(array_, key_, false, true); }
 
-	public static int[] remove_key(int[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
+	public static <x> int[] remove_key(int[] array_, x key_) { return remove_key_value(array_, key_, false, true); }
 
-	public static boolean[] remove_key(boolean[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
+	public static <x> boolean[] remove_key(boolean[] array_, x key_) { return remove_key_value(array_, key_, false, true); }
 
-	public static byte[] remove_key(byte[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
+	public static <x> byte[] remove_key(byte[] array_, x key_) { return remove_key_value(array_, key_, false, true); }
 
-	public static char[] remove_key(char[] array_, int key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
+	public static <x> char[] remove_key(char[] array_, x key_) { return remove_key_value(array_, key_, false, true); }
 
-	public static <x> Object remove_key(Object array_, x value_) { return remove_key(array_, value_, false); }
+	public static <x> Object remove_key(Object array_, x key_) { return remove_key(array_, key_, false); }
 
 	public static <x> Object remove_key(Object array_, x key_, boolean normalise_) { return remove_key_value(array_, key_, normalise_, true); }
 
-	public static double[] remove_value(double[] array_, double value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
+	public static <x> double[] remove_value(double[] array_, x value_) { return remove_key_value(array_, value_, false, false); }
 
-	public static long[] remove_value(long[] array_, long value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
+	public static <x> long[] remove_value(long[] array_, x value_) { return remove_key_value(array_, value_, false, false); }
 
-	public static int[] remove_value(int[] array_, int value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
+	public static <x> int[] remove_value(int[] array_, x value_) { return remove_key_value(array_, value_, false, false); }
 
-	public static boolean[] remove_value(boolean[] array_, boolean value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
+	public static <x> boolean[] remove_value(boolean[] array_, x value_) { return remove_key_value(array_, value_, false, false); }
 
-	public static byte[] remove_value(byte[] array_, byte value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
+	public static <x> byte[] remove_value(byte[] array_, x value_) { return remove_key_value(array_, value_, false, false); }
 
-	public static char[] remove_value(char[] array_, char value_, boolean normalise_) { return remove_key_value(array_, value_, normalise_, false); }
+	public static <x> char[] remove_value(char[] array_, x value_) { return remove_key_value(array_, value_, false, false); }
 
 	public static <x> Object remove_value(Object array_, x value_) { return remove_value(array_, value_, false); }
 
@@ -679,31 +812,31 @@ public abstract class arrays extends parent_static
 
 	public static <x, y> Object get_value(HashMap<x, y> array_, x key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static Object get_value(double[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
+	public static <x> Object get_value(double[] array_, x key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static Object get_value(long[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
+	public static <x> Object get_value(long[] array_, x key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static Object get_value(int[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
+	public static <x> Object get_value(int[] array_, x key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static Object get_value(boolean[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
+	public static <x> Object get_value(boolean[] array_, x key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static Object get_value(byte[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
+	public static <x> Object get_value(byte[] array_, x key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static Object get_value(char[] array_, int key_) { return key_value_get_exists(array_, key_, true, true); }
+	public static <x> Object get_value(char[] array_, x key_) { return key_value_get_exists(array_, key_, true, true); }
 
 	public static <x> Object get_value(Object array_, x key_) { return key_value_get_exists(array_, key_, true, true); }
 
-	public static Object get_key(double[] array_, double value_) { return key_value_get_exists(array_, value_, false, true); }
+	public static <x> Object get_key(double[] array_, x value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	public static Object get_key(long[] array_, long value_) { return key_value_get_exists(array_, value_, false, true); }
+	public static <x> Object get_key(long[] array_, x value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	public static Object get_key(int[] array_, int value_) { return key_value_get_exists(array_, value_, false, true); }
+	public static <x> Object get_key(int[] array_, x value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	public static Object get_key(boolean[] array_, boolean value_) { return key_value_get_exists(array_, value_, false, true); }
+	public static <x> Object get_key(boolean[] array_, x value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	public static Object get_key(byte[] array_, byte value_) { return key_value_get_exists(array_, value_, false, true); }
+	public static <x> Object get_key(byte[] array_, x value_) { return key_value_get_exists(array_, value_, false, true); }
 
-	public static Object get_key(char[] array_, char value_) { return key_value_get_exists(array_, value_, false, true); }
+	public static <x> Object get_key(char[] array_, x value_) { return key_value_get_exists(array_, value_, false, true); }
 
 	public static <x> Object get_key(Object array_, x value_) { return key_value_get_exists(array_, value_, false, true); }
 
@@ -745,31 +878,31 @@ public abstract class arrays extends parent_static
 
 	public static <x> boolean keys_exist(Object array_, x[] keys_) { return keys_values_exist(array_, keys_, true); }
 
-	public static boolean key_exists(double[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
+	public static <x> boolean key_exists(double[] array_, x key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 
-	public static boolean key_exists(long[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
+	public static <x> boolean key_exists(long[] array_, x key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 
-	public static boolean key_exists(int[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
+	public static <x> boolean key_exists(int[] array_, x key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 
-	public static boolean key_exists(boolean[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
+	public static <x> boolean key_exists(boolean[] array_, x key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 
-	public static boolean key_exists(byte[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
+	public static <x> boolean key_exists(byte[] array_, x key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 
-	public static boolean key_exists(char[] array_, int key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
+	public static <x> boolean key_exists(char[] array_, x key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 
 	public static <x> boolean key_exists(Object array_, x key_) { return (boolean)key_value_get_exists(array_, key_, true, false); }
 
-	public static boolean value_exists(double[] array_, double value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+	public static <x> boolean value_exists(double[] array_, x value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
 
-	public static boolean value_exists(long[] array_, long value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+	public static <x> boolean value_exists(long[] array_, x value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
 
-	public static boolean value_exists(int[] array_, int value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+	public static <x> boolean value_exists(int[] array_, x value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
 
-	public static boolean value_exists(boolean[] array_, boolean value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+	public static <x> boolean value_exists(boolean[] array_, x value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
 
-	public static boolean value_exists(byte[] array_, byte value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+	public static <x> boolean value_exists(byte[] array_, x value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
 
-	public static boolean value_exists(char[] array_, char value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
+	public static <x> boolean value_exists(char[] array_, x value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
 
 	public static <x> boolean value_exists(Object array_, x value_) { return (boolean)key_value_get_exists(array_, value_, false, false); }
 
@@ -1230,8 +1363,8 @@ public abstract class arrays extends parent_static
 	{
 		Object output = null;
 
-		if (is_xy_) output = (!is_ok(input_) ? new HashMap<x, y>() : ((HashMap<x, y>)input_).clone()); 
-		else output = (!is_ok(input_) ? new HashMap<x, x>() : ((HashMap<x, x>)input_).clone()); 
+		if (is_xy_) output = (!is_ok(input_) ? new HashMap<x, y>() : new HashMap<x, y>((HashMap<x, y>)input_)); 
+		else output = (!is_ok(input_) ? new HashMap<x, x>() : new HashMap<x, x>((HashMap<x, x>)input_)); 
 
 		return output;
 	}
@@ -1343,9 +1476,7 @@ public abstract class arrays extends parent_static
 			if (!is_ok(input_)) return output;			
 		}
 
-		
-		//Object input = (is_xy_ ? new HashMap<x, y>((HashMap<x, y>)input_) : new HashMap<x, x>((HashMap<x, x>)input_));
-		Object input = (is_xy_ ? ((HashMap<x, y>)input_).clone() : ((HashMap<x, x>)input_).clone());
+		Object input = (is_xy_ ? new HashMap<x, y>((HashMap<x, y>)input_) : new HashMap<x, x>((HashMap<x, x>)input_));
 		
 		for (Object item: (is_xy_ ? (HashMap<x, y>)input : (HashMap<x, x>)input).entrySet())
 		{
