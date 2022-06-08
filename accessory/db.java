@@ -203,10 +203,16 @@ public abstract class db
 	}
 
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_) { db_queries.insert(source_, vals_raw_); }
+	
+	//Use this method carefully! No data checks or field/col conversions are performed.
+	public static void insert_quick(String source_, HashMap<String, String> vals_) { db_queries.insert_quick(source_, vals_); }
 
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_) { update(source_, vals_raw_, db_where.to_string(wheres_)); }
 
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, String where_cols_) { db_queries.update(source_, vals_raw_, where_cols_); }
+
+	//Use this method carefully! No data checks or field/col conversions are performed.
+	public static void update_quick(String source_, HashMap<String, String> vals_, String where_cols_) { db_queries.update_quick(source_, vals_, where_cols_); }
 
 	public static void delete(String source_, db_where[] wheres_) { delete(source_, db_where.to_string(wheres_)); }
 
@@ -427,14 +433,14 @@ public abstract class db
 		return (String)config.get(get_db(source), source);
 	}
 	
-	public static boolean change_config_table_name(String source_, String name_)
+	public static boolean change_table_name_queries(String source_, String name_)
 	{	
 		String source = check_source(source_); 
 
 		return ((!strings.is_ok(source) || !strings.is_ok(name_)) ? false : config.update(get_db(source), source, name_));
 	}
 	
-	public static boolean change_config_col_name(String source_, String field_, String name_)
+	public static boolean change_col_name_queries(String source_, String field_, String name_)
 	{	
 		String source = check_source(source_); 
 		String field = check_field(source, field_);

@@ -34,6 +34,8 @@ abstract class db_queries
 		insert_internal(source_, vals);
 	}
 
+	public static void insert_quick(String source_, HashMap<String, String> vals_) { insert_internal(source_, vals_); }
+
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, db_where[] wheres_) { update(source_, vals_raw_, db_where.to_string(wheres_)); }
 
 	public static <x> void update(String source_, HashMap<String, x> vals_raw_, String where_cols_)
@@ -43,6 +45,8 @@ abstract class db_queries
 
 		update_internal(source_, vals, where_cols_);
 	}
+
+	public static void update_quick(String source_, HashMap<String, String> vals_, String where_cols_) { update_internal(source_, vals_, where_cols_); }
 
 	public static void delete(String source_, db_where[] wheres_) { delete(source_, db_where.to_string(wheres_)); }
 
@@ -119,7 +123,13 @@ abstract class db_queries
 		
 		if (!arrays.is_ok(temp)) return output;
 		
-		if (is_one_) output = select_one_some_common_output(((HashMap<String, String>)temp).get(field_), what_);
+		if (is_one_) 
+		{
+			String val = ((HashMap<String, String>)temp).get(field_);
+			
+			if (data.is_string(what_)) output = val;
+			else output = select_one_some_common_output(val, what_);
+		}
 		else
 		{
 			if (data.is_string(what_))

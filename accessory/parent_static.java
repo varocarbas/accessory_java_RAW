@@ -15,7 +15,7 @@ public class parent_static
 	private static volatile boolean _locked2 = false;
 	
 	public static void lock()
-	{
+	{		
 		boolean locked2 = false;
 		
 		while (true)

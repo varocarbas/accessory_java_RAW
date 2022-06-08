@@ -115,7 +115,7 @@ public abstract class parent_tests
 	
 		Object[] targets = null;
 		if (target_ != null) targets = new Object[] { target_ };
-		
+	
 		return run_method(class_, generic.get_method(class_, method_name_, params_), method_name_, args, targets);
 	}
 	
@@ -137,6 +137,7 @@ public abstract class parent_tests
 
 		Object[] targets = (Object[])arrays.get_new(targets_);
 		Object[] args = get_args(params, arrays.get_new(args_));			
+	
 		Object output = generic.call_static_method(method_, args);
 		_temp_output = output;
 		
