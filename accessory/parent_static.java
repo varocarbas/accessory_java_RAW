@@ -5,24 +5,29 @@ import java.util.HashMap;
 public class parent_static 
 {
 	protected static HashMap<String, Object> _temp = new HashMap<String, Object>();
+
+	private static final long MAX_LOCK_ELAPSED = 1;
 	
 	private static boolean _is_ok = true;
 	private static boolean _ignore_errors = false;
 	private static boolean _ignore_errors_persistent = false;
 	private static boolean _error_triggered = false;
-	
+
+	private static volatile long _lock_elapsed = 0;
 	private static volatile boolean _locked = false;
 	private static volatile boolean _locked2 = false;
 	
 	public static void lock()
-	{		
+	{			
+		_lock_elapsed = dates.start_elapsed();
+		
 		boolean locked2 = false;
 		
 		while (true)
 		{
 			if (!locked2)
 			{
-				if (_locked2) continue;
+				if (_locked2 && !lock_timeout()) continue;
 				else
 				{
 					_locked2 = true;
@@ -31,7 +36,7 @@ public class parent_static
 			}
 			else
 			{
-				if (!_locked)
+				if (!_locked || lock_timeout())
 				{
 					_locked = true;
 					_locked2 = false;
@@ -111,4 +116,6 @@ public class parent_static
 		}
 		else _is_ok = true;
 	}
+	
+	private static boolean lock_timeout() { return (dates.get_elapsed(_lock_elapsed) >= MAX_LOCK_ELAPSED); }
 }

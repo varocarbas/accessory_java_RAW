@@ -1276,14 +1276,19 @@ public abstract class arrays extends parent_static
 
 	private static Object key_value_get_exists_async(Object input_, Object key_val_, boolean is_key_, boolean is_get_) 
 	{
+		lock();
+		
 		Class<?> type = generic.get_class(input_);
 		Class<?> type2 = generic.get_class(key_val_);
 
 		Object output = key_value_get_exists_return_wrong(input_, key_val_, is_key_, is_get_, type, type2);
-		if (!generic.is_array(type) || type2 == null) return output;
+		if (!generic.is_array(type) || type2 == null) 
+		{
+			unlock();
+			
+			return output;
+		}
 		
-		lock();
-
 		if (is_small(type)) output = key_value_get_exists_small(input_, key_val_, is_key_, is_get_, type, type2, output);
 		else output = key_value_get_exists(input_, key_val_, is_key_, is_get_);
 		
@@ -1293,20 +1298,34 @@ public abstract class arrays extends parent_static
 	}
 
 	private static Object remove_key_value_async(Object input_, Object key_val_, boolean normalise_, boolean is_key_) 
-	{
-		Class<?> type = generic.get_class(input_);
-		if (!generic.is_array(type)) return input_;
-
-		if (type.equals(double[].class)) return remove_key_value_async(to_big((double[])input_), key_val_, normalise_, is_key_);
-		else if (type.equals(long[].class)) return remove_key_value_async(to_big((long[])input_), key_val_, normalise_, is_key_);
-		else if (type.equals(int[].class)) return remove_key_value_async(to_big((int[])input_), key_val_, normalise_, is_key_);
-		else if (type.equals(boolean[].class)) return remove_key_value_async(to_big((boolean[])input_), key_val_, normalise_, is_key_);
-		else if (type.equals(byte[].class)) return remove_key_value_async(to_big((byte[])input_), key_val_, normalise_, is_key_);
-		else if (type.equals(char[].class)) return remove_key_value_async(to_big((char[])input_), key_val_, normalise_, is_key_);
-		
+	{				
 		lock();
 
-		Object output = arrays.remove_key_value(input_, key_val_, normalise_, is_key_);
+		Object output = null; 
+	
+		Class<?> type = generic.get_class(input_);
+		if (!generic.is_array(type)) 
+		{
+			unlock();
+			
+			return input_;
+		}
+
+		if (is_small(type))
+		{
+			if (type.equals(double[].class)) output = remove_key_value(to_big((double[])input_), key_val_, normalise_, is_key_);
+			else if (type.equals(long[].class)) output = remove_key_value(to_big((long[])input_), key_val_, normalise_, is_key_);
+			else if (type.equals(int[].class)) output = remove_key_value(to_big((int[])input_), key_val_, normalise_, is_key_);
+			else if (type.equals(boolean[].class)) output = remove_key_value(to_big((boolean[])input_), key_val_, normalise_, is_key_);
+			else if (type.equals(byte[].class)) output = remove_key_value(to_big((byte[])input_), key_val_, normalise_, is_key_);
+			else if (type.equals(char[].class)) output = remove_key_value(to_big((char[])input_), key_val_, normalise_, is_key_);
+			
+			unlock();
+			
+			return output;
+		}
+
+		output = arrays.remove_key_value(input_, key_val_, normalise_, is_key_);
 		
 		unlock();
 		
