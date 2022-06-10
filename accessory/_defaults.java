@@ -1,6 +1,6 @@
 package accessory;
 
-abstract class _defaults 
+public abstract class _defaults 
 {
 	public static final String APP_NAME = "app";
 	public static final String USER = "user1";
