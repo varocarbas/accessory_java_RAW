@@ -60,6 +60,43 @@ public abstract class io extends parent_static
 		return (arrays.is_ok(lines) ? arrays.to_array(lines) : null);
 	}
 
+	public static ArrayList<HashMap<String, String>> file_to_hashmap(String path_, String[] cols_, String separator_, boolean normalise_)
+	{
+		method_start();
+
+		int tot = arrays.get_size(cols_);
+		if (tot < 1 || !paths.exists(path_)) return null;
+
+		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
+
+		try (Scanner scanner = new Scanner(new FileReader(path_))) 
+		{
+			while (scanner.hasNext()) 
+			{ 
+				String line = scanner.nextLine().trim();
+				
+				String[] temp = strings.split(separator_, line, normalise_);
+				if (arrays.get_size(temp) != tot) continue;
+				
+				HashMap<String, String> item = new HashMap<String, String>();
+
+				for (int i = 0; i < tot; i++) { item.put(cols_[i], temp[i].trim()); }
+
+				output.add(item);
+			}
+		} 
+		catch (Exception e) 
+		{ 
+			output = null;
+
+			manage_error_io(ERROR_READ, e, path_);
+		}
+
+		method_end();
+
+		return (arrays.is_ok(output) ? output : null);		
+	}
+	
 	public static String file_to_string(String path_, boolean only_first_)
 	{	
 		String output = strings.DEFAULT;

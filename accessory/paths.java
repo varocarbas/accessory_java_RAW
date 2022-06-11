@@ -24,17 +24,22 @@ public abstract class paths extends parent_static
 
 	public static boolean exists(String path_) { return (strings.is_ok(path_) && (new File(path_)).exists()); }
 
-	public static String build(String[] pieces_, boolean last_file_)
+	public static String build(String[] pieces_, boolean last_file_) { return build(arrays.to_arraylist(pieces_), last_file_, false); }
+	
+	public static String build(ArrayList<String> pieces_, boolean last_file_, boolean add_home_always_)
 	{
-		if (!arrays.is_ok(pieces_)) return strings.DEFAULT;
+		ArrayList<String> pieces = arrays.get_new(pieces_);
+		if (add_home_always_ || (last_file_ && !arrays.is_ok(pieces))) pieces.add(0, get_dir_home());
+		
+		if (!arrays.is_ok(pieces)) return strings.DEFAULT;
 
 		String path = "";
-		int last_i = pieces_.length - 1;
+		int last_i = pieces.size() - 1;
 		int tot = 0;
 
 		for (int i = 0; i <= last_i; i++)
 		{
-			String piece = pieces_[i];
+			String piece = pieces.get(i);
 			if (!strings.is_ok(piece)) continue;
 
 			tot++;
@@ -43,7 +48,6 @@ public abstract class paths extends parent_static
 		}
 		if (tot < 1) return strings.DEFAULT;
 
-		if (last_file_ && tot == 1) path = get_dir_home() + normalise_file(path);
 		if (!last_file_) path = normalise_dir(path);
 
 		return path;
