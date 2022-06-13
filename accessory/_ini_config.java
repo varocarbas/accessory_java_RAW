@@ -32,11 +32,11 @@ class _ini_config extends parent_ini_config
 		String type = types.CONFIG_CREDENTIALS;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
-		vals.put(types.CONFIG_CREDENTIALS_WHERE, _defaults.CREDENTIALS_WHERE);
-		vals.put(types.CONFIG_CREDENTIALS_FILE_EXTENSION, _defaults.CREDENTIALS_FILE_EXTENSION);
-		vals.put(types.CONFIG_CREDENTIALS_FILE_USERNAME, _defaults.CREDENTIALS_FILE_USERNAME);
-		vals.put(types.CONFIG_CREDENTIALS_FILE_PASSWORD, _defaults.CREDENTIALS_FILE_PASSWORD);
-		vals.put(types.CONFIG_CREDENTIALS_FILE_ENCRYPTED, _defaults.CREDENTIALS_FILE_ENCRYPTED);
+		vals.put(types.CONFIG_CREDENTIALS_WHERE, credentials.DEFAULT_WHERE);
+		vals.put(types.CONFIG_CREDENTIALS_FILE_EXTENSION, credentials.DEFAULT_FILE_EXTENSION);
+		vals.put(types.CONFIG_CREDENTIALS_FILE_USERNAME, credentials.DEFAULT_FILE_USERNAME);
+		vals.put(types.CONFIG_CREDENTIALS_FILE_PASSWORD, credentials.DEFAULT_FILE_PASSWORD);
+		vals.put(types.CONFIG_CREDENTIALS_FILE_ENCRYPTED, credentials.DEFAULT_FILE_ENCRYPTED);
 
 		return populate(type, null, vals);
 	}
@@ -46,9 +46,9 @@ class _ini_config extends parent_ini_config
 		String type = types.CONFIG_CRYPTO;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
-		vals.put(types.CONFIG_CRYPTO_FILE_CIPHER, _defaults.CRYPTO_FILE_CIPHER);
-		vals.put(types.CONFIG_CRYPTO_FILE_KEY, _defaults.CRYPTO_FILE_KEY);
-		vals.put(types.CONFIG_CRYPTO_FILE_EXTENSION, _defaults.CRYPTO_FILE_EXTENSION);
+		vals.put(types.CONFIG_CRYPTO_FILE_CIPHER, crypto.DEFAULT_FILE_CIPHER);
+		vals.put(types.CONFIG_CRYPTO_FILE_KEY, crypto.DEFAULT_FILE_KEY);
+		vals.put(types.CONFIG_CRYPTO_FILE_EXTENSION, crypto.DEFAULT_FILE_EXTENSION);
 
 		return populate(type, null, vals);
 	}
@@ -58,8 +58,8 @@ class _ini_config extends parent_ini_config
 		String type = types.CONFIG_LOGS;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
-		vals.put(types.CONFIG_LOGS_OUT_SCREEN, _defaults.LOGS_SCREEN);
-		vals.put(types.CONFIG_LOGS_OUT_FILE, _defaults.LOGS_FILE);
+		vals.put(types.CONFIG_LOGS_OUT_SCREEN, logs.DEFAULT_OUT_SCREEN);
+		vals.put(types.CONFIG_LOGS_OUT_FILE, logs.DEFAULT_OUT_FILE);
 
 		return populate(type, null, vals);
 	}	

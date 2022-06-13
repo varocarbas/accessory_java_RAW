@@ -15,16 +15,16 @@ public class db_where extends parent
 	public static final String LINK_AND = types.DB_WHERE_LINK_AND;
 	public static final String LINK_OR = types.DB_WHERE_LINK_OR;
 
-	public static final String DEFAULT_OPERAND = _defaults.DB_WHERE_OPERAND;
-	public static final String DEFAULT_LINK = _defaults.DB_WHERE_LINK;
-	public static final boolean DEFAULT_LITERAL = _defaults.DB_WHERE_LITERAL;
+	public static final String DEFAULT_OPERAND = OPERAND_EQUAL;
+	public static final String DEFAULT_LINK = LINK_AND;
+	public static final boolean DEFAULT_LITERAL = true;
 
 	private String _source = strings.DEFAULT;
 	private String _field = strings.DEFAULT;
 	private String _operand = DEFAULT_OPERAND;
 	private Object _value = null;
 	private String _link = DEFAULT_LINK;
-	private boolean _is_literal = _defaults.DB_WHERE_LITERAL; //_value as a literal (e.g., 5 -> '5') or something else (e.g., col + 1 -> col + 1).
+	private boolean _is_literal = DEFAULT_LITERAL; //_value as a literal (e.g., 5 -> '5') or something else (e.g., col + 1 -> col + 1).
 
 	private String _temp_source = strings.DEFAULT;
 	private String _temp_field = strings.DEFAULT;
@@ -99,7 +99,7 @@ public class db_where extends parent
 
 	public db_where(String source_, String field_, Object value_) { instantiate(source_, field_, DEFAULT_OPERAND, value_, DEFAULT_LITERAL, DEFAULT_LINK); }	
 
-	public db_where(String source_, String field_, String operand_, Object value_) { instantiate(source_, field_, operand_, value_, _defaults.DB_WHERE_LITERAL, DEFAULT_LINK); }
+	public db_where(String source_, String field_, String operand_, Object value_) { instantiate(source_, field_, operand_, value_, DEFAULT_LITERAL, DEFAULT_LINK); }
 
 	public db_where(String source_, String field_, String operand_, Object value_, String link_) { instantiate(source_, field_, operand_, value_, DEFAULT_LITERAL, link_); }
 

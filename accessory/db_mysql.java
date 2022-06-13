@@ -20,11 +20,11 @@ class db_mysql extends parent_db
 	private static final String QUOTE_VARIABLE = "`";
 	private static final String QUOTE_VALUE = "'";
 
-	private static final int DEFAULT_SIZE_NUMBER = _defaults.DB_SIZE_MYSQL_NUMBER;
-	private static final int DEFAULT_SIZE_DECIMALS = _defaults.DB_SIZE_MYSQL_DECIMALS;
-	private static final int DEFAULT_SIZE_VARCHAR = _defaults.DB_SIZE_MYSQL_VARCHAR;
-	private static final int DEFAULT_SIZE_TEXT = _defaults.DB_SIZE_MYSQL_TEXT;
-	private static final int DEFAULT_SIZE_TIMESTAMP = _defaults.DB_SIZE_MYSQL_TIMESTAMP;
+	private static final int DEFAULT_SIZE_NUMBER = 8;
+	private static final int DEFAULT_SIZE_DECIMALS = numbers.DEFAULT_DECIMALS;
+	private static final int DEFAULT_SIZE_VARCHAR = strings.DEFAULT_SIZE;
+	private static final int DEFAULT_SIZE_TEXT = strings.SIZE_BIG;
+	private static final int DEFAULT_SIZE_TIMESTAMP = dates.get_length(dates.FORMAT_TIMESTAMP);
 
 	public ArrayList<HashMap<String, String>> execute_query(String source_, String query_)
 	{

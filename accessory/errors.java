@@ -6,9 +6,9 @@ public abstract class errors extends parent_static
 {
 	public static boolean _exit = false;
 
-	public static final String DEFAULT_TYPE = _defaults.ERRORS_TYPE;
-	public static final String DEFAULT_MESSAGE = _defaults.ERRORS_MESSAGE;
-	public static final String DEFAULT_SEPARATOR = _defaults.ERRORS_SEPARATOR;
+	public static final String DEFAULT_TYPE = types.ERROR_DEFAULT;
+	public static final String DEFAULT_MESSAGE = DEFAULT_TYPE;
+	public static final String DEFAULT_SEPARATOR = misc.SEPARATOR_CONTENT;
 
 	private static boolean _triggered = false; 
 

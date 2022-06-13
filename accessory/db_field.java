@@ -20,8 +20,8 @@ public class db_field extends parent
 	public static final long WRONG_SIZE = numbers.DEFAULT_LONG;
 	public static final int WRONG_DECIMALS = size.WRONG_DECIMALS;
 
-	public static final String DEFAULT_TYPE = _defaults.DB_FIELD_TYPE;
-	public static final int DEFAULT_DECIMALS = _defaults.DB_FIELD_DECIMALS;
+	public static final String DEFAULT_TYPE = types.DATA_STRING_SMALL;
+	public static final int DEFAULT_DECIMALS = numbers.DEFAULT_DECIMALS;
 
 	private String _type = WRONG_TYPE; //It is a data type. The specific DB type is automatically determined from that type and the size right before interacting with the DB.
 	private long _size = WRONG_SIZE;

@@ -25,8 +25,15 @@ public abstract class io extends parent_static
 	{
 		method_start();
 
-		if (!strings.is_ok(path_) || !arrays.is_ok(vals_)) return;
+		if (!strings.is_ok(path_)) return;
 
+		if (!arrays.is_ok(vals_))
+		{
+			empty_file(path_);
+			
+			return;
+		}
+		
 		try (FileWriter writer = new FileWriter(path_, append_)) 
 		{
 			for (String val: vals_) { line_to_file(path_, val, append_, writer); }
@@ -60,7 +67,7 @@ public abstract class io extends parent_static
 		return (arrays.is_ok(lines) ? arrays.to_array(lines) : null);
 	}
 
-	public static ArrayList<HashMap<String, String>> file_to_hashmap(String path_, String[] cols_, String separator_, boolean normalise_)
+	public static ArrayList<HashMap<String, String>> file_to_hashmap(String path_, String[] cols_, String separator_, boolean normalise_, boolean ignore_first_)
 	{
 		method_start();
 
@@ -69,11 +76,20 @@ public abstract class io extends parent_static
 
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
 
+		boolean is_first = true;
+		
 		try (Scanner scanner = new Scanner(new FileReader(path_))) 
 		{
 			while (scanner.hasNext()) 
 			{ 
 				String line = scanner.nextLine().trim();
+				
+				if (is_first) 
+				{
+					is_first = false;
+					
+					if (ignore_first_) continue;
+				}
 				
 				String[] temp = strings.split(separator_, line, normalise_);
 				if (arrays.get_size(temp) != tot) continue;
@@ -96,6 +112,42 @@ public abstract class io extends parent_static
 
 		return (arrays.is_ok(output) ? output : null);		
 	}
+
+	public static void hashmap_to_file(String path_, ArrayList<HashMap<String, String>> vals_, String separator_, boolean cols_to_first_)
+	{
+		method_start();
+
+		if (!strings.is_ok(path_)) return;
+		
+		if (!arrays.is_ok(vals_))
+		{
+			empty_file(path_);
+			
+			return;
+		}
+		
+		boolean is_first = true;
+		
+		try (FileWriter writer = new FileWriter(path_, false)) 
+		{
+			for (HashMap<String, String> item: vals_)
+			{
+				String line = "";
+				
+				if (is_first) 
+				{
+					if (cols_to_first_) line = arrays.to_string(arrays.get_keys_hashmap(item), separator_);
+					is_first = false;
+				}
+				else line = arrays.to_string(item, separator_, null, null);
+				
+				line_to_file(path_, line, false, writer);
+			}
+		} 
+		catch (Exception e) { manage_error_io(ERROR_WRITE, e, path_); }
+
+		method_end();
+	}
 	
 	public static String file_to_string(String path_, boolean only_first_)
 	{	
@@ -107,9 +159,9 @@ public abstract class io extends parent_static
 		return output;
 	}
 
-	public static void empty_file(String path_) { line_to_file(path_, "", false); }
-
 	public static void line_to_file(String path_, String line_, boolean append_) { line_to_file(path_, line_, append_, null); }
+
+	public static void empty_file(String path_) { line_to_file(path_, "", false); }
 
 	//Ini files are assumed to contain text stored as key-value pairs, one per line. 
 	//A descriptive example --> this is key: and all this, including :, is value.
@@ -137,6 +189,8 @@ public abstract class io extends parent_static
 			ini.put(key.trim(), value.trim());
 		}
 
+		method_end();
+		
 		return ini;
 	}
 
@@ -144,8 +198,15 @@ public abstract class io extends parent_static
 	{
 		method_start();
 
-		if (!arrays.is_ok(ini_) || !strings.is_ok(path_)) return;
+		if (!strings.is_ok(path_)) return;
 
+		if (!arrays.is_ok(ini_))
+		{
+			empty_file(path_);
+			
+			return;
+		}
+		
 		try (FileWriter writer = new FileWriter(path_, false)) 
 		{
 			for (Entry<String, String> item: ini_.entrySet())
@@ -163,8 +224,15 @@ public abstract class io extends parent_static
 	{
 		method_start();
 
-		if (!strings.is_ok(path_) || !arrays.is_ok(vals_)) return;
+		if (!strings.is_ok(path_)) return;
 
+		if (!arrays.is_ok(vals_))
+		{
+			empty_file(path_);
+			
+			return;
+		}
+		
 		try (FileOutputStream stream = new FileOutputStream(new File(path_))) { stream.write(vals_); } 
 		catch (Exception e) { manage_error_io(ERROR_WRITE, e, path_); }
 
@@ -190,8 +258,15 @@ public abstract class io extends parent_static
 	{
 		method_start();
 
-		if (!strings.is_ok(path_) || vals_ == null) return;
+		if (!strings.is_ok(path_)) return;
 
+		if (vals_ == null)
+		{
+			empty_file(path_);
+			
+			return;
+		}
+		
 		try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(path_))) { stream.writeObject(vals_); } 
 		catch (Exception e) { manage_error_io(ERROR_WRITE, e, path_); }
 

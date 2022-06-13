@@ -1,5 +1,7 @@
 package accessory;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Random;
 
 public abstract class numbers extends parent_static 
@@ -15,13 +17,20 @@ public abstract class numbers extends parent_static
 	public static final int MAX_DIGITS_DECIMAL = 308;
 	public static final int MAX_DIGITS_LONG = 19;
 	public static final int MAX_DIGITS_INT = 10;	
-	public static final int MAX_DIGITS_DECIMALS = 10;
+	public static final int MAX_DECIMALS = 10;
 
 	public static final double DEFAULT_DECIMAL = _defaults.NUMBERS_DECIMAL;
 	public static final long DEFAULT_LONG = _defaults.NUMBERS_LONG;
 	public static final int DEFAULT_INT = _defaults.NUMBERS_INT;
-	public static final int DEFAULT_DECIMALS = _defaults.NUMBERS_SIZE_DECIMALS;
+	public static final int DEFAULT_DECIMALS = _defaults.NUMBERS_DECIMALS;
 
+	public static final double DEFAULT_PERC_SIMILAR = 0.1;
+	public static final int DEFAULT_ROUND_DECIMALS = DEFAULT_DECIMALS;
+	public static final RoundingMode DEFAULT_ROUND_MODE = RoundingMode.HALF_UP;
+	
+	public static RoundingMode _round_mode = DEFAULT_ROUND_MODE;
+	public static int _round_decimals = DEFAULT_ROUND_DECIMALS;
+	
 	public static String get_class_id() { return types.get_id(types.ID_NUMBERS); }
 
 	public static final Class<?>[] get_all_classes() { return _alls.NUMBERS_CLASSES; }
@@ -156,8 +165,74 @@ public abstract class numbers extends parent_static
 
 	public static String to_string_int(int input_) { return Integer.toString(input_); }
 
+	public static boolean are_similar(double val1_, double val2_) { return are_similar(val1_, val2_, DEFAULT_PERC_SIMILAR); }
+
+	public static boolean are_similar(double val1_, double val2_, double perc_) { return (get_perc_generic(val1_, val2_, false, true) <= Math.abs(perc_)); }
+
+	public static double get_perc(double val1_, double val2_) { return get_perc(val1_, val2_, false, false); }
+
+	public static double get_perc(double val1_, double val2_, boolean round_, boolean out_abs_) { return get_perc_common(val1_, val2_, round_, out_abs_, true); }
+
+	public static double get_perc_generic(double val1_, double val2_) { return get_perc_generic(val1_, val2_, false, false); }
+
+	public static double get_perc_generic(double val1_, double val2_, boolean round_, boolean out_abs_) { return get_perc_common(val1_, val2_, round_, out_abs_, true); }
+	
+	public static double get_perc_hist(double new_, double old_) { return get_perc_hist(new_, old_, false, false); }
+	
+	public static double get_perc_hist(double new_, double old_, boolean round_, boolean out_abs_) { return get_perc_common(new_, old_, round_, out_abs_, false); }
+
+	public static double apply_perc(double val_, double perc_) { return apply_perc(val_, perc_, false); }
+
+	public static double apply_perc(double val_, double perc_, boolean round_) 
+	{ 
+		double output = (val_ * (100.0 + perc_) / 100.0); 
+		if (round_) output = round(output);
+		
+		return output;
+	}
+
+	public static double round(double val_) { return round(val_, _round_decimals, _round_mode); }
+	
 	static final Class<?>[] populate_all_classes() { return new Class<?>[] { Integer.class, int.class, Long.class, long.class, Double.class, double.class }; }	
 
+	private static double get_perc_common(double new_, double old_, boolean round_, boolean out_abs_, boolean is_generic_)
+	{
+		double output = 0;
+		if (old_ == 0) return output;
+		
+		double new2 = new_;
+		double old2 = old_;
+		
+		if (is_generic_)
+		{
+			if (Math.abs(new2) > Math.abs(old2))
+			{
+				new2 = old_;
+				old2 = new_;
+			}
+		}
+		
+		output = 100 * (new2 - old2) / old2;
+		if (out_abs_ || is_generic_) output = Math.abs(output);
+		
+		if (round_) output = round(output);
+		
+		return output;
+	}
+	
+	private static double round(double val_, int decimals_, RoundingMode mode_)
+	{
+		if (decimals_ == 0) return val_;
+	
+		RoundingMode mode = mode_;
+		if (mode == null) mode = DEFAULT_ROUND_MODE;
+		
+		int decimals = decimals_;
+		if (decimals < 0 || decimals > MAX_DECIMALS) decimals = DEFAULT_DECIMALS;
+	
+		return (new BigDecimal(val_)).setScale(decimals, mode_).doubleValue();
+	}
+	
 	private static String to_string_decimal_integer(double input_)
 	{
 		String output = "";

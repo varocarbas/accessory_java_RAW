@@ -327,7 +327,7 @@ public class tests extends parent_tests
 
 	public static HashMap<String, Boolean> run_io()
 	{
-		String[] skip = new String[] { "array_to_file", "line_to_file", "object_to_file", "bytes_to_file", "ini_to_file" };
+		String[] skip = new String[] { "array_to_file", "line_to_file", "object_to_file", "bytes_to_file", "ini_to_file", "hashmap_to_file" };
 
 		return run(io.class, skip);
 	}

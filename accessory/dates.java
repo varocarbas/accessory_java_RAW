@@ -24,19 +24,19 @@ public abstract class dates extends parent_static
 	public static final String DAYS = types.DATES_UNIT_DAYS;
 
 	public static final String ERROR_STRING = types.ERROR_DATES_STRING;
-
-	public static final String DEFAULT_FORMAT = _defaults.DATES_FORMAT;
-	public static final String DEFAULT_FORMAT_DATE_TIME = _defaults.DATES_FORMAT_DATE_TIME;
-	public static final String DEFAULT_FORMAT_DATE = _defaults.DATES_FORMAT_DATE;
-	public static final String DEFAULT_FORMAT_TIME = _defaults.DATES_FORMAT_TIME;
-	public static final String DEFAULT_FORMAT_TIMESTAMP = _defaults.DATES_FORMAT_TIMESTAMP;
-	public static final String DEFAULT_UNIT = _defaults.DATES_UNIT;
-	public static final String DEFAULT_UNIT_DATE_TIME = _defaults.DATES_UNIT_DATE_TIME;
-	public static final String DEFAULT_UNIT_DATE = _defaults.DATES_UNIT_DATE;
-	public static final String DEFAULT_UNIT_TIME = _defaults.DATES_UNIT_TIME;
-	public static final String DEFAULT_UNIT_TIMESTAMP = _defaults.DATES_UNIT_TIMESTAMP;
-	public static final int DEFAULT_SIZE_DAYS = _defaults.DATES_SIZE_DAYS;
-	public static final int DEFAULT_SIZE_HOURS = _defaults.DATES_SIZE_HOURS;
+	
+	public static final String DEFAULT_FORMAT = FORMAT_DATE_TIME;
+	public static final String DEFAULT_FORMAT_DATE_TIME = FORMAT_DATE_TIME;
+	public static final String DEFAULT_FORMAT_DATE = FORMAT_DATE;
+	public static final String DEFAULT_FORMAT_TIME = FORMAT_TIME;
+	public static final String DEFAULT_FORMAT_TIMESTAMP = FORMAT_TIMESTAMP;
+	public static final String DEFAULT_UNIT = SECONDS;
+	public static final String DEFAULT_UNIT_DATE_TIME = DAYS;
+	public static final String DEFAULT_UNIT_DATE = DAYS;
+	public static final String DEFAULT_UNIT_TIME = SECONDS;
+	public static final String DEFAULT_UNIT_TIMESTAMP = MINUTES;
+	public static final int DEFAULT_SIZE_DAYS = 50;
+	public static final int DEFAULT_SIZE_HOURS = 10;
 
 	public static String get_class_id() { return types.get_id(types.ID_DATES); }
 

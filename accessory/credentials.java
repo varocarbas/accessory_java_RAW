@@ -20,11 +20,15 @@ public abstract class credentials extends parent_static
 	public static final String USER = _keys.USER;
 	public static final String USERNAME = _keys.USERNAME;
 	public static final String PASSWORD = _keys.PASSWORD;
-
-	public static final String DEFAULT_ID = _defaults.CREDENTIALS_ID;
+	
+	public static final String DEFAULT_ID = "credentials";
 	public static final String DEFAULT_USER = _defaults.USER;
-	public static final String DEFAULT_WHERE = _defaults.CREDENTIALS_WHERE;
-
+	public static final String DEFAULT_WHERE = WHERE_FILE;
+	public static final String DEFAULT_FILE_EXTENSION = strings.DEFAULT;
+	public static final String DEFAULT_FILE_USERNAME = "username";
+	public static final String DEFAULT_FILE_PASSWORD = "password";
+	public static final String DEFAULT_FILE_ENCRYPTED = "enc";
+	
 	private static final String SEPARATOR = misc.SEPARATOR_NAME;
 
 	public static String get_class_id() { return types.get_id(types.ID_CREDENTIALS); }

@@ -18,12 +18,16 @@ public class crypto extends parent
 	public static final String ERROR_CIPHER = types.ERROR_CRYPTO_CIPHER;
 	public static final String ERROR_ENCRYPT = types.ERROR_CRYPTO_ENCRYPT;
 	public static final String ERROR_DECRYPT = types.ERROR_CRYPTO_DECRYPT;
-
-	public static final String DEFAULT_ID = _defaults.CRYPTO_ID;
-	public static final String DEFAULT_ALGORITHM_CIPHER = _defaults.CRYPTO_ALGORITHM_CIPHER;
-	public static final String DEFAULT_ALGORITHM_KEY = _defaults.CRYPTO_ALGORITHM_KEY;
-
-	public static boolean _log_encryption_info = _defaults.CRYPTO_LOG_ENCRYPTION_INFO;
+	
+	public static final String DEFAULT_ID = "crypto";
+	public static final String DEFAULT_FILE_CIPHER = "cipher";
+	public static final String DEFAULT_FILE_KEY = "key";
+	public static final String DEFAULT_FILE_EXTENSION = strings.DEFAULT;
+	public static final String DEFAULT_ALGORITHM_CIPHER = "AES/CTR/NoPadding";
+	public static final String DEFAULT_ALGORITHM_KEY = "AES";
+	public static final boolean DEFAULT_LOG_ENCRYPTION_INFO = true;	
+	
+	public static boolean _log_encryption_info = DEFAULT_LOG_ENCRYPTION_INFO;
 
 	public Cipher _cipher_enc = null; 
 	public Cipher _cipher_dec = null;

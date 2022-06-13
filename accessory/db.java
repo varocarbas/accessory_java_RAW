@@ -43,14 +43,17 @@ public abstract class db
 	public static final String ERROR_SOURCE = types.ERROR_DB_SOURCE;
 	public static final String ERROR_FIELD = types.ERROR_DB_FIELD;
 	public static final String ERROR_VALS = types.ERROR_DB_VALS;
+	
+	public static final String DEFAULT_DB = types.CONFIG_DB_DEFAULT;
+	public static final String DEFAULT_DB_NAME = "accessory";
+	public static final String DEFAULT_SOURCE = types.CONFIG_TESTS_DB_SOURCE;
+	public static final String DEFAULT_SETUP = types.CONFIG_DB;
+	public static final String DEFAULT_TYPE = types.CONFIG_DB_SETUP_TYPE_MYSQL;
 
-	public static final String DEFAULT_DB = _defaults.DB;
-	public static final String DEFAULT_DB_NAME = _defaults.DB_NAME;
-	public static final String DEFAULT_SOURCE = _defaults.DB_SOURCE;
-	public static final String DEFAULT_SETUP = _defaults.DB_SETUP;
-	public static final String DEFAULT_TYPE = _defaults.DB_TYPE;
-	public static final String DEFAULT_MAX_POOL = _defaults.DB_MAX_POOL;
-	public static final String DEFAULT_HOST = _defaults.DB_HOST;
+	public static final String DEFAULT_MAX_POOL = "500";
+	public static final String DEFAULT_HOST = "localhost";
+	public static final String DEFAULT_CREDENTIALS_TYPE = types.remove_type(DEFAULT_TYPE, types.CONFIG_DB_SETUP_TYPE);
+	public static final boolean DEFAULT_CREDENTIALS_MEMORY = true;
 
 	public static String _cur_source = strings.DEFAULT;
 
@@ -405,7 +408,7 @@ public abstract class db
 	{ 
 		String output = get_type(get_valid_source(source_));
 
-		return (strings.is_ok(output) ? output : _defaults.DB_TYPE);
+		return (strings.is_ok(output) ? output : DEFAULT_TYPE);
 	}
 
 	public static String get_current_type() { return get_type(get_current_source()); }

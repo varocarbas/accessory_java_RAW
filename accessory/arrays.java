@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 
 public abstract class arrays extends parent_static 
 {
-	public static final int DEFAULT_SIZE = _defaults.ARRAYS_SIZE;
+	public static final int DEFAULT_SIZE = 5;
 
 	public static String get_class_id() { return types.get_id(types.ID_ARRAYS); }
 
@@ -887,9 +887,15 @@ public abstract class arrays extends parent_static
 
 	public static <x> boolean values_exist(Object array_, x[] values_) { return keys_values_exist(array_, values_, false); }
 
-	public static <x, y> String to_string(HashMap<x, y> input_, String separator1_, String separator2_, String[] keys_ignore_) { return to_string_internal(input_, separator1_, separator2_, keys_ignore_, false); }
+	@SuppressWarnings("unchecked")
+	public static <x> ArrayList<x> get_keys_hashmap(Object input_) { return (ArrayList<x>)get_keys_values_hashmap(input_, true); }
 
-	public static <x> String to_string(Object input_, String separator1_, String separator2_, String[] keys_ignore_) { return (generic.are_equal(generic.get_class(input_), HashMap.class) ? to_string_internal(input_, separator1_, separator2_, keys_ignore_, false) : strings.DEFAULT); }
+	@SuppressWarnings("unchecked")
+	public static <x> ArrayList<x> get_values_hashmap(Object input_) { return (ArrayList<x>)get_keys_values_hashmap(input_, false); }
+
+	public static <x, y> String to_string(HashMap<x, y> input_, String sep_items_, String sep_keyval_, String[] keys_ignore_) { return to_string_internal(input_, sep_items_, sep_keyval_, keys_ignore_, false); }
+
+	public static <x> String to_string(Object input_, String sep_items_, String sep_keyval_, String[] keys_ignore_) { return (generic.are_equal(generic.get_class(input_), HashMap.class) ? to_string_internal(input_, sep_items_, sep_keyval_, keys_ignore_, false) : strings.DEFAULT); }
 
 	public static String to_string(double[] input_, String separator_) { return to_string(to_big(input_), separator_); }
 
@@ -946,8 +952,6 @@ public abstract class arrays extends parent_static
 				output += to_string_val(item);
 			}
 		}
-
-		if (!first_time) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
 
 		return output;
 	}
@@ -1631,15 +1635,47 @@ public abstract class arrays extends parent_static
 
 		return output;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private static <x, y> Object get_keys_values_hashmap(Object input_, boolean is_keys_) 
+	{ 
+		if (!generic.are_equal(generic.get_class(input_), HashMap.class)) return null;
+		
+		boolean is_xy = is_xy(input_);
+		Object input = get_new_hashmap(input_, is_xy);
+		
+		boolean out_is_y = (is_xy && !is_keys_);
+		
+		ArrayList<x> output_x = null;
+		ArrayList<y> output_y = null;
+		
+		if (out_is_y) output_y = new ArrayList<y>();
+		else output_x = new ArrayList<x>();
+		
+		for (Object item: (is_xy ? (HashMap<x, y>)input : (HashMap<x, x>)input).entrySet())
+		{
+			Object[] temp = get_entry_key_val(item, is_xy);
+
+			x key1 = (x)temp[0];
+			Object val1 = temp[1];
+			
+			Object out = (is_keys_ ? key1 : val1);
+
+			if (out_is_y) output_y.add((y)out);
+			else output_x.add((x)out);
+		}
+		
+		return (out_is_y ? output_y : output_x); 
+	}
 
 	@SuppressWarnings("unchecked")
-	private static <x, y> String to_string_internal(Object input_, String separator1_, String separator2_, String[] keys_ignore_, boolean is_xy_)
+	private static <x, y> String to_string_internal(Object input_, String sep_items_, String sep_keyval_, String[] keys_ignore_, boolean is_xy_)
 	{
 		if (!is_ok(input_)) return strings.DEFAULT;
 
 		String output = "";
-		String separator1 = (strings.is_ok(separator1_) ? separator1_ : misc.SEPARATOR_ITEM);
-		String separator2 = (strings.is_ok(separator2_) ? separator2_ : misc.SEPARATOR_KEYVAL);
+		String separator1 = (strings.is_ok(sep_items_) ? sep_items_ : misc.SEPARATOR_ITEM);
+		String separator2 = (strings.is_ok(sep_keyval_) ? sep_keyval_ : misc.SEPARATOR_KEYVAL);
 
 		boolean first_time = true;
 
@@ -1660,8 +1696,6 @@ public abstract class arrays extends parent_static
 
 			output += (key2 + separator2 + val2);
 		}
-
-		if (!first_time) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
 
 		return output;
 	}

@@ -10,8 +10,8 @@ public abstract class logs extends parent_static
 	public static final String OUT_SCREEN = SCREEN;
 	public static final String OUT_FILE = FILE;
 
-	public static final boolean DEFAULT_SCREEN = _defaults.LOGS_SCREEN;
-	public static final boolean DEFAULT_FILE = _defaults.LOGS_FILE;
+	public static final boolean DEFAULT_OUT_SCREEN = true;
+	public static final boolean DEFAULT_OUT_FILE = true;
 
 	public static String get_class_id() { return types.get_id(types.ID_LOGS); }
 

@@ -6,16 +6,16 @@ public class size extends parent
 	public static final int MIN_DECIMALS = numbers.MIN_DIGITS_DECIMALS;
 
 	public static final double MAX = numbers.MAX_DECIMAL;
-	public static final int MAX_DECIMALS = numbers.MAX_DIGITS_DECIMALS;
+	public static final int MAX_DECIMALS = numbers.MAX_DECIMALS;
 
 	public static final double WRONG_MIN = numbers.DEFAULT_DECIMAL;
 	public static final double WRONG_MAX = numbers.DEFAULT_DECIMAL;
 	public static final int WRONG_DECIMALS = numbers.DEFAULT_INT;
 
-	public static final double DEFAULT_MIN = _defaults.SIZE_MIN;
-	public static final double DEFAULT_MAX = _defaults.SIZE_MAX;
-	public static final int DEFAULT_DECIMALS = _defaults.SIZE_DECIMALS;
-
+	public static final double DEFAULT_MIN = numbers.MIN_DECIMAL;
+	public static final double DEFAULT_MAX = numbers.MAX_DECIMAL;
+	public static final int DEFAULT_DECIMALS = numbers.DEFAULT_DECIMALS;
+	
 	private double _min = WRONG_MIN;
 	private double _max = WRONG_MAX;
 	private int _decimals = WRONG_DECIMALS;

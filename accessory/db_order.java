@@ -9,8 +9,8 @@ public class db_order extends parent
 	public static final String ORDER_ASC = ASC;
 	public static final String ORDER_DESC = DESC;
 
-	public static final String DEFAULT_ORDER = _defaults.DB_ORDER;
-	public static final boolean DEFAULT_IS_FIELD = _defaults.DB_ORDER_IS_FIELD;
+	public static final String DEFAULT_ORDER = types.DB_ORDER_ASC;
+	public static final boolean DEFAULT_IS_FIELD = true;
 
 	private String _source = strings.DEFAULT;
 	private String _field_condition = strings.DEFAULT; //When _is_field is true, it is always treated as a field except inside to_string() methods, where it is converted into a col.
