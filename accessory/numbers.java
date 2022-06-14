@@ -6,6 +6,8 @@ import java.util.Random;
 
 public abstract class numbers extends parent_static 
 {
+	public static final String PERC_REF_LARGER = types.CONFIG_NUMBERS_PERC_REF_LARGER;
+	
 	public static final double MIN_DECIMAL = -1 * Double.MAX_VALUE; //!!!
 	public static final long MIN_LONG = Long.MIN_VALUE;
 	public static final int MIN_INT = Integer.MIN_VALUE;
@@ -25,6 +27,7 @@ public abstract class numbers extends parent_static
 	public static final int DEFAULT_DECIMALS = _defaults.NUMBERS_DECIMALS;
 
 	public static final double DEFAULT_PERC_SIMILAR = 0.1;
+	public static final boolean DEFAULT_PERC_REF_LARGER = true;
 	public static final int DEFAULT_ROUND_DECIMALS = DEFAULT_DECIMALS;
 	public static final RoundingMode DEFAULT_ROUND_MODE = RoundingMode.HALF_UP;
 	
@@ -205,7 +208,7 @@ public abstract class numbers extends parent_static
 		
 		if (is_generic_)
 		{
-			if (Math.abs(new2) > Math.abs(old2))
+			if ((boolean)config.get_numbers(PERC_REF_LARGER) && (Math.abs(new2) > Math.abs(old2)))
 			{
 				new2 = old_;
 				old2 = new_;

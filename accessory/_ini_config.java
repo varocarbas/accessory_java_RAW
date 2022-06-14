@@ -16,6 +16,7 @@ class _ini_config extends parent_ini_config
 		populate_generic_credentials();
 		populate_generic_crypto();
 		populate_generic_logs();
+		populate_generic_numbers();
 	}
 
 	private static void populate_generic_basic()
@@ -63,4 +64,14 @@ class _ini_config extends parent_ini_config
 
 		return populate(type, null, vals);
 	}	
+
+	private boolean populate_generic_numbers()
+	{
+		String type = types.CONFIG_NUMBERS;
+
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+		vals.put(types.CONFIG_NUMBERS_PERC_REF_LARGER, numbers.DEFAULT_PERC_REF_LARGER);
+
+		return populate(type, null, vals);
+	}
 }

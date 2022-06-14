@@ -114,6 +114,9 @@ public abstract class types extends parent_static
 	public static final String CONFIG_LOGS_OUT = "config_logs_out";
 	public static final String CONFIG_LOGS_OUT_SCREEN = "config_logs_out_screen";
 	public static final String CONFIG_LOGS_OUT_FILE = "config_logs_out_file";
+
+	public static final String CONFIG_NUMBERS = "config_numbers";
+	public static final String CONFIG_NUMBERS_PERC_REF_LARGER = "config_numbers_perc_ref_larger";
 	//------
 
 	public static final String DB = "db";
@@ -442,7 +445,9 @@ public abstract class types extends parent_static
 			CONFIG_TESTS_DB_FIELD,
 			CONFIG_TESTS_DB_FIELD_INT, CONFIG_TESTS_DB_FIELD_STRING, CONFIG_TESTS_DB_FIELD_DECIMAL,
 			CONFIG_TESTS_DB_FIELD_BOOLEAN,
-
+			CONFIG_NUMBERS, 
+			CONFIG_NUMBERS_PERC_REF_LARGER,
+			
 			DB,
 			DB_WHERE,
 			DB_WHERE_OPERAND,

@@ -13,25 +13,21 @@ public abstract class config extends parent_static
 
 	public static boolean update_basic(String key_, String val_) { return update(types.CONFIG_BASIC, key_, val_); }
 
-	public static boolean matches_basic(String key_, String val_) { return matches(types.CONFIG_BASIC, key_, val_); }
-
 	public static Object get_credentials(String key_) { return get(types.CONFIG_CREDENTIALS, key_); }
 
 	public static boolean update_credentials(String key_, String val_) { return update(types.CONFIG_CREDENTIALS, key_, val_); }
-
-	public static boolean matches_credentials(String key_, String val_) { return matches(types.CONFIG_CREDENTIALS, key_, val_); }
 
 	public static Object get_crypto(String key_) { return get(types.CONFIG_CRYPTO, key_); }
 
 	public static boolean update_crypto(String key_, String val_) { return update(types.CONFIG_CRYPTO, key_, val_); }
 
-	public static boolean matches_crypto(String key_, String val_) { return matches(types.CONFIG_CRYPTO, key_, val_); }
-
 	public static Object get_logs(String key_) { return get(types.CONFIG_LOGS, key_); }
 
 	public static boolean update_logs(String key_, String val_) { return update(types.CONFIG_LOGS, key_, val_); }
 
-	public static boolean matches_logs(String key_, String val_) { return matches(types.CONFIG_LOGS, key_, val_); }
+	public static Object get_numbers(String key_) { return get(types.CONFIG_NUMBERS, key_); }
+
+	public static boolean update_numbers(String key_, String val_) { return update(types.CONFIG_NUMBERS, key_, val_); }
 
 	public static boolean update(String type_, String key_, boolean val_) { return update(type_, key_, strings.to_string(val_)); }
 
