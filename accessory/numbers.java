@@ -31,13 +31,35 @@ public abstract class numbers extends parent_static
 	public static final int DEFAULT_ROUND_DECIMALS = DEFAULT_DECIMALS;
 	public static final RoundingMode DEFAULT_ROUND_MODE = RoundingMode.HALF_UP;
 	
-	public static RoundingMode _round_mode = DEFAULT_ROUND_MODE;
-	public static int _round_decimals = DEFAULT_ROUND_DECIMALS;
+	private static RoundingMode _round_mode = DEFAULT_ROUND_MODE;
+	private static int _round_decimals = DEFAULT_ROUND_DECIMALS;
 	
 	public static String get_class_id() { return types.get_id(types.ID_NUMBERS); }
 
 	public static final Class<?>[] get_all_classes() { return _alls.NUMBERS_CLASSES; }
 
+	public static RoundingMode get_round_mode() { return _round_mode; }
+
+	public static int get_round_decimals() { return _round_decimals; }
+	
+	public static void update_round_mode(RoundingMode mode_) 
+	{ 
+		RoundingMode mode = mode_;
+		
+		if (mode == null) mode = DEFAULT_ROUND_MODE;
+		
+		_round_mode = mode;
+	}
+		
+	public static void update_round_decimals(int decimals_) 
+	{ 
+		int decimals = decimals_;
+		
+		if (decimals < 0 || decimals > MAX_DIGITS_DECIMAL) decimals = DEFAULT_ROUND_DECIMALS;
+		
+		_round_decimals = decimals;
+	}
+	
 	public static boolean is_ok(double input_, double min_, double max_, double ignore_) { return ((input_ >= min_ || min_ == ignore_) && (input_ <= max_ || max_ == ignore_)); }
 
 	public static boolean is_ok(double input_, double min_, double max_) { return (input_ >= min_ && input_ <= max_); }
@@ -208,7 +230,7 @@ public abstract class numbers extends parent_static
 		
 		if (is_generic_)
 		{
-			if ((boolean)config.get_numbers(PERC_REF_LARGER) && (Math.abs(new2) > Math.abs(old2)))
+			if (config.get_numbers_boolean(PERC_REF_LARGER) && (Math.abs(new2) > Math.abs(old2)))
 			{
 				new2 = old_;
 				old2 = new_;

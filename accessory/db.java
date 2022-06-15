@@ -660,7 +660,7 @@ public abstract class db
 		String user = (String)config.get(setup, USER);
 		String username = (String)config.get(setup, USERNAME);
 		String password = (String)config.get(setup, PASSWORD);
-		boolean encrypted = (boolean)config.get(setup, CREDENTIALS_ENCRYPTED);
+		boolean encrypted = config.get_boolean(setup, CREDENTIALS_ENCRYPTED);
 
 		HashMap<String, String> temp = new HashMap<String, String>();
 		if (strings.is_ok(username) && password != null) temp = credentials.get_username_password(username, password);
@@ -683,7 +683,7 @@ public abstract class db
 
 	static String get_select_count_col(String source_) { return get_valid_instance(source_).get_select_count_col(); }
 
-	private static boolean credentials_in_memory(String source_) { return (boolean)config.get(get_setup(source_), CREDENTIALS_MEMORY); }
+	private static boolean credentials_in_memory(String source_) { return config.get_boolean(get_setup(source_), CREDENTIALS_MEMORY); }
 	
 	private static String[] get_all_queries_data() { return _alls.DB_QUERIES_DATA; }
 

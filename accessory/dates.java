@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public abstract class dates extends parent_static
 	public static final String HOURS = types.DATES_UNIT_HOURS;
 	public static final String DAYS = types.DATES_UNIT_DAYS;
 
+	public static final int MAX_OFFSET = 27 * 60;
+	
 	public static final String ERROR_STRING = types.ERROR_DATES_STRING;
 	
 	public static final String DEFAULT_FORMAT = FORMAT_DATE_TIME;
@@ -37,19 +40,60 @@ public abstract class dates extends parent_static
 	public static final String DEFAULT_UNIT_TIMESTAMP = MINUTES;
 	public static final int DEFAULT_SIZE_DAYS = 50;
 	public static final int DEFAULT_SIZE_HOURS = 10;
+	public static final int DEFAULT_OFFSET = 0;
 
+	private static int _offset = DEFAULT_OFFSET;
+	
 	public static String get_class_id() { return types.get_id(types.ID_DATES); }
 
-	public static LocalDateTime get_now() { return get_now(0); }
+	public static LocalDateTime get_now() { return get_now(_offset); }
 
-	public static LocalDateTime get_now(int offset_) { return LocalDateTime.now().plusHours(offset_); }
+	public static LocalDateTime get_now(int offset_mins_) { return LocalDateTime.now().plusMinutes(check_offset(offset_mins_)); }
 
 	public static LocalDate get_now_date() { return LocalDate.now(); }
 
-	public static LocalTime get_now_time() { return get_now_time(0); }
+	public static LocalTime get_now_time() { return get_now_time(_offset); }
 
-	public static LocalTime get_now_time(int offset_) { return LocalTime.now().plusHours(offset_); }
+	public static LocalTime get_now_time(int offset_mins_) { return LocalTime.now().plusMinutes(check_offset(offset_mins_)); }
+	
+	public static double get_offset() { return _offset; }
 
+	public static void update_offset() { update_offset(DEFAULT_OFFSET); }
+	
+	public static void update_offset(int offset_) { _offset = check_offset(offset_); }
+
+	public static void update_offset(String zone_other_) { get_offset(null, zone_other_, true); }
+	
+	public static double get_offset(String zone_current_, String zone_other_, boolean update_global_) 
+	{ 
+		ZoneId current = (strings.is_ok(zone_current_) ? get_zone(zone_current_) : get_current_zone());
+		if (current == null) current = get_current_zone();
+		
+		ZoneId other = get_zone(zone_other_);
+		if (other == null) return DEFAULT_OFFSET;
+		
+		LocalDateTime now = LocalDateTime.now();
+		
+		int offset = (int)Duration.between(now.atZone(other), now.atZone(current)).toMinutes();
+		offset = check_offset(offset);
+		if (update_global_) _offset = offset;
+		
+		return offset;
+	}
+
+	public static ZoneId get_current_zone() { return ZoneId.systemDefault(); }
+	
+	public static ZoneId get_zone(String zone_)
+	{
+		ZoneId output = null;
+		if (!strings.is_ok(zone_)) return output;
+		
+		try { output = ZoneId.of(zone_); }
+		catch (Exception e) { output = null; }
+	
+		return output;
+	}
+	
 	public static String get_timestamp() { return get_now_string(DEFAULT_FORMAT_TIMESTAMP); }
 
 	public static String get_now_string() { return get_now_string(DEFAULT_FORMAT); }
@@ -60,7 +104,7 @@ public abstract class dates extends parent_static
 
 	public static boolean target_met(LocalDateTime start_, long target_) { return target_met(start_, DEFAULT_UNIT_DATE_TIME, target_); }
 
-	public static String update_timestamp(long increase_) { return update_timestamp(to_string(LocalDateTime.now(), DEFAULT_FORMAT_TIMESTAMP), increase_); }
+	public static String update_timestamp(long increase_) { return update_timestamp(to_string(get_now(), DEFAULT_FORMAT_TIMESTAMP), increase_); }
 
 	public static String update_timestamp(String timestamp_, long increase_) { return update_timestamp(timestamp_, DEFAULT_UNIT_TIMESTAMP, increase_); }
 
@@ -95,17 +139,17 @@ public abstract class dates extends parent_static
 
 	public static boolean target_met(LocalTime start_, long target_) { return target_met(start_, DEFAULT_UNIT_TIME, target_); }
 
-	public static boolean target_met(LocalDateTime start_, String unit_, long target_) { return (get_diff(start_, LocalDateTime.now(), unit_) >= target_); }
+	public static boolean target_met(LocalDateTime start_, String unit_, long target_) { return (get_diff(start_, get_now(), unit_) >= target_); }
 
-	public static boolean target_met(LocalDate start_, String unit_, long target_) { return (get_diff(start_, LocalDate.now(), unit_) >= target_); }
+	public static boolean target_met(LocalDate start_, String unit_, long target_) { return (get_diff(start_, get_now_date(), unit_) >= target_); }
 
-	public static boolean target_met(LocalTime start_, String unit_, long target_) { return (get_diff(start_, LocalTime.now(), unit_) >= target_); }
+	public static boolean target_met(LocalTime start_, String unit_, long target_) { return (get_diff(start_, get_now_time(), unit_) >= target_); }
 
-	public static boolean passed(LocalDateTime input_) { return (get_diff(input_, LocalDateTime.now(), SECONDS) > 0); }
+	public static boolean passed(LocalDateTime input_) { return (get_diff(input_, get_now(), SECONDS) > 0); }
 
-	public static boolean passed(LocalDate input_) { return (get_diff(input_, LocalDate.now(), DAYS) > 0); }
+	public static boolean passed(LocalDate input_) { return (get_diff(input_, get_now_date(), DAYS) > 0); }
 
-	public static boolean passed(LocalTime input_) { return (get_diff(input_, LocalTime.now(), SECONDS) > 0); }
+	public static boolean passed(LocalTime input_) { return (get_diff(input_, get_now_time(), SECONDS) > 0); }
 
 	public static long get_diff(String start_, String end_) { return get_diff(start_, end_, DEFAULT_UNIT); }
 
@@ -188,7 +232,9 @@ public abstract class dates extends parent_static
 
 	public static int get_length(String format_) { return get_pattern(check_format(format_, false)).length(); }
 
-	public static int time_to_seconds(String time_)
+	public static int time_to_seconds(String time_) { return time_to_seconds(time_, false); }
+	
+	public static int time_to_seconds(String time_, boolean no_hours_)
 	{
 		int output = 0;
 
@@ -197,9 +243,13 @@ public abstract class dates extends parent_static
 		if (size < 2 || size > 3) return output;
 
 		int i2 = 3;
+		if (no_hours_) i2--;
+		
 		for (int i = 0; i < size; i++) 
 		{ 
 			i2--;
+			if (i2 < 0) continue;
+			
 			output += (Math.pow(60, i2) * strings.to_number_int(temp[i])); 
 		}
 
@@ -265,11 +315,13 @@ public abstract class dates extends parent_static
 
 	public static String to_string(LocalTime input_, String format_) { return (is_time(format_) ? get_formatter(format_).format(input_) : strings.DEFAULT); }
 
-	public static LocalDateTime get_random_datetime() { return LocalDateTime.now().plusDays((long)numbers.get_random_int(-1 * DEFAULT_SIZE_DAYS, DEFAULT_SIZE_DAYS)); }
+	public static LocalDateTime get_random_datetime() { return get_now().plusDays((long)numbers.get_random_int(-1 * DEFAULT_SIZE_DAYS, DEFAULT_SIZE_DAYS)); }
 
-	public static LocalDate get_random_date() { return LocalDate.now().plusDays((long)numbers.get_random_int(-1 * DEFAULT_SIZE_DAYS, DEFAULT_SIZE_DAYS)); }
+	public static LocalDate get_random_date() { return get_now_date().plusDays((long)numbers.get_random_int(-1 * DEFAULT_SIZE_DAYS, DEFAULT_SIZE_DAYS)); }
 
-	public static LocalTime get_random_time() { return LocalTime.now().plusHours((long)numbers.get_random_int(-1 * DEFAULT_SIZE_HOURS, DEFAULT_SIZE_HOURS)); }
+	public static LocalTime get_random_time() { return get_now_time().plusHours((long)numbers.get_random_int(-1 * DEFAULT_SIZE_HOURS, DEFAULT_SIZE_HOURS)); }
+
+	private static int check_offset(int offset_) { return (Math.abs(offset_) > MAX_OFFSET ? DEFAULT_OFFSET : offset_); }
 
 	private static long get_diff_internal(Object start_, Object end_, String unit_, String what_)
 	{

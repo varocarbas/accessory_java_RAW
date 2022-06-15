@@ -76,5 +76,5 @@ public abstract class logs extends parent_static
 		return (strings.is_ok(format_) ? dates.add_now_string(message, format_, false) : message); 
 	}
 	
-	private static boolean out_is_enabled(String type_) { return (boolean)config.get_logs(type_); }
+	private static boolean out_is_enabled(String type_) { return config.get_logs_boolean(type_); }
 }
