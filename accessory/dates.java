@@ -24,6 +24,13 @@ public abstract class dates extends parent_static
 	public static final String HOURS = types.DATES_UNIT_HOURS;
 	public static final String DAYS = types.DATES_UNIT_DAYS;
 
+	public static final String TZ_MADRID = "Europe/Madrid";
+	public static final String TZ_LONDON = "Europe/London";
+	public static final String TZ_NY = "America/New_York";
+	public static final String TZ_LA = "America/Los_Angeles";
+	public static final String TZ_TOKYO = "Asia/Tokyo";
+	public static final String TZ_SYDNEY = "Australia/Sydney";
+	
 	public static final int MAX_OFFSET = 27 * 60;
 	
 	public static final String ERROR_STRING = types.ERROR_DATES_STRING;
@@ -56,20 +63,20 @@ public abstract class dates extends parent_static
 
 	public static LocalTime get_now_time(int offset_mins_) { return LocalTime.now().plusMinutes(check_offset(offset_mins_)); }
 	
-	public static double get_offset() { return _offset; }
+	public static int get_offset() { return _offset; }
 
 	public static void update_offset() { update_offset(DEFAULT_OFFSET); }
 	
 	public static void update_offset(int offset_) { _offset = check_offset(offset_); }
 
-	public static void update_offset(String zone_other_) { get_offset(null, zone_other_, true); }
+	public static void update_offset(String tz_other_) { get_offset(null, tz_other_, true); }
 	
-	public static double get_offset(String zone_current_, String zone_other_, boolean update_global_) 
+	public static int get_offset(String tz_current_, String tz_other_, boolean update_global_) 
 	{ 
-		ZoneId current = (strings.is_ok(zone_current_) ? get_zone(zone_current_) : get_current_zone());
-		if (current == null) current = get_current_zone();
+		ZoneId current = (strings.is_ok(tz_current_) ? get_timezone(tz_current_) : get_current_timezone());
+		if (current == null) current = get_current_timezone();
 		
-		ZoneId other = get_zone(zone_other_);
+		ZoneId other = get_timezone(tz_other_);
 		if (other == null) return DEFAULT_OFFSET;
 		
 		LocalDateTime now = LocalDateTime.now();
@@ -81,14 +88,14 @@ public abstract class dates extends parent_static
 		return offset;
 	}
 
-	public static ZoneId get_current_zone() { return ZoneId.systemDefault(); }
+	public static ZoneId get_current_timezone() { return ZoneId.systemDefault(); }
 	
-	public static ZoneId get_zone(String zone_)
+	public static ZoneId get_timezone(String tz_)
 	{
 		ZoneId output = null;
-		if (!strings.is_ok(zone_)) return output;
+		if (!strings.is_ok(tz_)) return output;
 		
-		try { output = ZoneId.of(zone_); }
+		try { output = ZoneId.of(tz_); }
 		catch (Exception e) { output = null; }
 	
 		return output;

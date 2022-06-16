@@ -17,7 +17,7 @@ public class parent_static
 	private static volatile boolean _locked = false;
 	private static volatile boolean _locked2 = false;
 	
-	public static void lock()
+	public static void __lock()
 	{			
 		_lock_elapsed = dates.start_elapsed();
 		
@@ -47,7 +47,7 @@ public class parent_static
 		}
 	}
 	
-	public static void unlock() { _locked = false; }
+	public static void __unlock() { _locked = false; }
 	
 	public static boolean is_ok() 
 	{

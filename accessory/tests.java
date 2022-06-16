@@ -141,7 +141,7 @@ public class tests extends parent_tests
 
 		String table = db.get_variable_table(source);
 
-		db_order[] orders = new db_order[] { new db_order(field, db_order.DESC, true), new db_order(where.toString(), db_order.ASC, false) };
+		db_order[] orders = new db_order[] { new db_order(field, db_order.ORDER_DESC, true), new db_order(where.toString(), db_order.ORDER_ASC, false) };
 
 		String query = "SELECT " + db.get_variable(source, col) + " FROM " + table;
 		query += " WHERE " + db_where.to_string(wheres);

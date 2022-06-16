@@ -4,10 +4,8 @@ import java.util.ArrayList;
 
 public class db_order extends parent
 {	
-	public static final String ASC = types.DB_ORDER_ASC;
-	public static final String DESC = types.DB_ORDER_DESC;
-	public static final String ORDER_ASC = ASC;
-	public static final String ORDER_DESC = DESC;
+	public static final String ORDER_ASC = types.DB_ORDER_ASC;
+	public static final String ORDER_DESC = types.DB_ORDER_DESC;
 
 	public static final String DEFAULT_ORDER = types.DB_ORDER_ASC;
 	public static final boolean DEFAULT_IS_FIELD = true;

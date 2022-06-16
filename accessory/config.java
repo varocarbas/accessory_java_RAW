@@ -33,15 +33,11 @@ public abstract class config extends parent_static
 
 	public static boolean update_numbers(String key_, String val_) { return update(types.CONFIG_NUMBERS, key_, val_); }
 
-	public static boolean update(String type_, String key_, boolean val_) { return update(type_, key_, strings.to_string(val_)); }
-
-	public static boolean update(String type_, String key_, String val_) { return update_matches(type_, key_, val_, true, false); }
+	public static boolean update(String type_, String key_, Object val_) { return update_matches(type_, key_, val_, true, false); }
 
 	public static HashMap<String, Boolean> update(String type_, HashMap<String, Object> vals_) { return update_matches(type_, vals_, false); }
 
-	public static boolean update_ini(String type_, String key_, boolean val_) { return update_ini(type_, key_, strings.to_string(val_)); }
-
-	public static boolean update_ini(String type_, String key_, String val_) { return update_matches(type_, key_, val_, true, true); }
+	public static boolean update_ini(String type_, String key_, Object val_) { return update_matches(type_, key_, val_, true, true); }
 
 	public static HashMap<String, Boolean> update_ini(String type_, HashMap<String, Object> vals_) { return update_matches(type_, vals_, true); }
 

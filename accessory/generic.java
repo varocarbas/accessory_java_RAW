@@ -345,7 +345,7 @@ public abstract class generic extends parent_static
 
 	static <x, y> boolean is_ok(HashMap<x, y> input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 
-	static String[] populate_all_default_methods() { return new String[] { "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll", "ignore_errors", "ignore_errors_persistent_end", "lock", "unlock" }; }	
+	static String[] populate_all_default_methods() { return new String[] { "wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll", "ignore_errors", "ignore_errors_persistent_end", "__lock", "__unlock" }; }	
 
 	static Class<?>[] populate_all_classes()
 	{
