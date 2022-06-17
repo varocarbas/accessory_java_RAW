@@ -84,8 +84,8 @@ public abstract class parent_ini
 		_basic.populate();
 		_starts.populate();
 		_alls.populate();
-		_defaults.populate();
 		_keys.populate();
+		_defaults.populate();
 
 		_ini_config.populate();
 	

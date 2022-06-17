@@ -21,4 +21,7 @@ public class _keys
 	public static void populate() { } //Method forcing this class to load when required (e.g., from the ini class).
 
 	public static String get_key(String what_) { return types.what_to_key(what_); }
+
+	public static String get_key(String type_, String root_) { return types.check_type(type_, types.get_subtypes(root_), types.ACTION_REMOVE, root_); }
+
 }
