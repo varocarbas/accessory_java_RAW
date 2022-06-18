@@ -3,7 +3,7 @@ package accessory;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-//All the min/max/size values in this class refer to generic types and, as such, are defined  
+//All the min./max./size values in this class refer to generic types and, as such, are defined  
 //according to intrinsic or pragmatic limitations of the language or the intended approach. 
 
 public class data extends parent
@@ -17,11 +17,13 @@ public class data extends parent
 	public static final String TIMESTAMP = types.DATA_TIMESTAMP;
 	public static final String BOOLEAN = types.DATA_BOOLEAN;
 
+	public static final String STRING = STRING_SMALL;
+	
 	public static final String TRUE = types.DATA_BOOLEAN_TRUE;
 	public static final String FALSE = types.DATA_BOOLEAN_FALSE;
 
-	//--- For numeric types, min/max variables refer to values (e.g., max decimal value); and, for other types, 
-	//they refer to lengths or numbers of elements (e.g., max string length). 
+	//--- For numeric types, min./max. variables refer to values (e.g., max. decimal value); and, for other types, 
+	//they refer to lengths or numbers of elements (e.g., max. string length). 
 	//These limits are theoretically independent from the DB/db_field ones, although they are likely to be highly 
 	//compatible with those for purely practical reasons.
 

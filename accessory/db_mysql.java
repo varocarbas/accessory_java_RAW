@@ -90,7 +90,7 @@ class db_mysql extends parent_db
 
 		String type = null;
 		if (data.is_boolean(data_type)) type = TINYINT;
-		else if (data_type.equals(data.STRING_SMALL)) type = VARCHAR;
+		else if (data_type.equals(data.STRING)) type = VARCHAR;
 		else if (data_type.equals(data.STRING_BIG)) type = TEXT;
 		else if (data_type.equals(data.TIMESTAMP)) type = TIMESTAMP;
 		else if (data_type.equals(data.TINYINT)) type = TINYINT;
@@ -113,7 +113,7 @@ class db_mysql extends parent_db
 		if (!strings.is_ok(type)) return size;
 
 		if (type.equals(data.BOOLEAN)) size = 1;
-		else if (type.equals(data.STRING_SMALL)) size = DEFAULT_SIZE_VARCHAR;
+		else if (type.equals(data.STRING)) size = DEFAULT_SIZE_VARCHAR;
 		else if (type.equals(data.STRING_BIG)) size = DEFAULT_SIZE_TEXT;
 		else if (type.equals(data.TIMESTAMP)) size = DEFAULT_SIZE_TIMESTAMP;
 		else if (data.is_number(type)) size = DEFAULT_SIZE_NUMBER;
@@ -134,7 +134,7 @@ class db_mysql extends parent_db
 		else if (data_type.equals(data.TINYINT)) max = 3;
 		else if (data_type.equals(data.INT)) max = numbers.MAX_DIGITS_INT;
 		else if (data_type.equals(data.LONG)) max = numbers.MAX_DIGITS_LONG;
-		else if (data_type.equals(data.STRING_SMALL)) max = (long)get_max_value(data_type);
+		else if (data_type.equals(data.STRING)) max = (long)get_max_value(data_type);
 		else if (data_type.equals(data.STRING_BIG)) max = (long)get_max_value(data_type);
 		return max;
 	}
@@ -152,7 +152,7 @@ class db_mysql extends parent_db
 		else if (data_type.equals(data.TINYINT)) max = 127;
 		else if (data_type.equals(data.INT)) max = numbers.MAX_INT;
 		else if (data_type.equals(data.LONG)) max = numbers.MAX_LONG;
-		else if (data_type.equals(data.STRING_SMALL)) max = 255;
+		else if (data_type.equals(data.STRING)) max = 255;
 		else if (data_type.equals(data.STRING_BIG)) max = 65535;
 
 		return max;
@@ -244,7 +244,9 @@ class db_mysql extends parent_db
 		{
 			long m = ((max > max2 || max < 1) ? size_def : max);
 			long d = field_.get_decimals();
-
+			
+			m += d;
+			
 			if (d < 0 || d > 30 || d > m)
 			{
 				d = DEFAULT_SIZE_DECIMALS;
@@ -334,7 +336,7 @@ class db_mysql extends parent_db
 				if (!strings.is_ok(col) || !strings.is_ok(type2)) continue;
 
 				if (!query.equals("")) query += ", ";
-				String item2 = get_variable(col) + " " + type2;
+				String item2 = get_variable(col) + " " + type2 + " NOT NULL";
 
 				String[] further = create_table_check_further(field.get_further());					
 				String def_val = strings.DEFAULT;

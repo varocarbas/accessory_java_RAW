@@ -73,22 +73,29 @@ public abstract class strings extends parent_static
 
 	public static boolean contains_start(String needle_, String haystack_, boolean normalise_) { return contains_start_end(needle_, haystack_, normalise_, true); }
 
-	public static String get_start(String string_) { return get_start(string_, 1); }
+	public static String get_start(String input_) { return get_start(input_, 1); }
 
-	public static String get_start(String string_, int length_) { return substring(string_, 0, length_); }
+	public static String get_start(String input_, int length_) { return substring(input_, 0, length_); }
 
-	public static String get_end(String string_) { return get_end(string_, get_length(string_) - 1); }
+	public static String get_end(String input_) { return get_end(input_, get_length(input_) - 1); }
 
-	public static String get_end(String string_, int start_) { return substring(string_, start_, 0); }
+	public static String get_end(String input_, int start_) { return substring(input_, start_, 0); }
 
-	public static String substring(String string_, int start_, int length_)
+	public static String truncate(String input_, int length_)
+	{
+		int length2 = get_length(input_);
+				
+		return ((length_ < 1 || length2 <= length_) ? input_ : substring(input_, 0, length_));
+	}
+	
+	public static String substring(String input_, int start_, int length_)
 	{
 		String output = DEFAULT;
 
-		int length0 = get_length(string_, false);
+		int length0 = get_length(input_, false);
 		if (length_ < 0 || length0 < 1 || start_ < 0 || start_ + length_ > length0 || (((long)start_ + (long)length_) > (long)numbers.MAX_INT)) return output; 
 
-		return (length_ > 0 ? string_.substring(start_, start_ + length_) : string_.substring(start_));
+		return (length_ > 0 ? input_.substring(start_, start_ + length_) : input_.substring(start_));
 	}
 
 	public static String[] split(String needle_, String haystack_) { return split(needle_, haystack_, false); }

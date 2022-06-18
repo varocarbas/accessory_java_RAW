@@ -2,9 +2,10 @@ package accessory;
 
 import java.util.HashMap;
 
-//All the sizes and min/max values in this class refer to specific DB types and, as such, are defined 
-//according to the corresponding rules. For example, MySQL's data size is the max number of characters 
-//allowed in the given column. 
+//All the sizes and min./max. values in this class refer to specific DB types and, as such, are defined 
+//according to the corresponding rules. For example, MySQL's data size is the max. number of characters 
+//allowed in the given column. There might be still some peculiarities to support the intended intuitive 
+//approach (e.g., MySQL decimal size being defined as (m+d, d) rather than as (m, d)).
 
 public class db_field extends parent
 {
@@ -20,7 +21,7 @@ public class db_field extends parent
 	public static final long WRONG_SIZE = numbers.DEFAULT_LONG;
 	public static final int WRONG_DECIMALS = size.WRONG_DECIMALS;
 
-	public static final String DEFAULT_TYPE = types.DATA_STRING_SMALL;
+	public static final String DEFAULT_TYPE = data.STRING;
 	public static final int DEFAULT_DECIMALS = numbers.DEFAULT_DECIMALS;
 
 	private String _type = WRONG_TYPE; //It is a data type. The specific DB type is automatically determined from that type and the size right before interacting with the DB.

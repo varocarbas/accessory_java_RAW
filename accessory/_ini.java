@@ -26,7 +26,7 @@ public class _ini extends parent_ini
 
 	public static void start(String name_, boolean includes_legacy_, HashMap<String, Object> dbs_setup_) { if (!_instance._populated) _instance.populate_all(name_, includes_legacy_, dbs_setup_); }
 
-	public static void start(String name_, String dbs_user_, String dbs_host_, boolean dbs_encrypted_, boolean includes_legacy_) { if (!_instance._populated) _instance.populate_all(name_, dbs_user_, null, null, dbs_host_, dbs_encrypted_, includes_legacy_); }
+	public static void start(String name_, String user_, String dbs_host_, boolean dbs_encrypted_, boolean includes_legacy_) { if (!_instance._populated) _instance.populate_all(name_, user_, null, null, dbs_host_, dbs_encrypted_, includes_legacy_); }
 
 	public static void start(String name_, String dbs_username_, String dbs_password_, String dbs_host_, boolean includes_legacy_) { if (!_instance._populated) _instance.populate_all(name_, null, dbs_username_, dbs_password_, dbs_host_, false, includes_legacy_); }
 }

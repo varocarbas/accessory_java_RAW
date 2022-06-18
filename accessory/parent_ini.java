@@ -16,8 +16,9 @@ public abstract class parent_ini
 
 	protected boolean _populated = false;
 	protected boolean _includes_legacy = false;
-	protected String _name = strings.DEFAULT;
-
+	protected String _name = _defaults.APP_NAME;
+	protected String _user = _defaults.USER;
+	
 	protected HashMap<String, Object> _dbs_setup = null;
 	
 	protected static void manage_error(String type_)
@@ -48,13 +49,15 @@ public abstract class parent_ini
 		populate_all_internal(name_, includes_legacy_); 
 	}
 
-	protected void populate_all(String name_, String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_) { populate_all(name_, dbs_user_, dbs_username_, dbs_password_, dbs_host_, dbs_encrypted_, false); } 
+	protected void populate_all(String name_, String user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_) { populate_all(name_, user_, dbs_username_, dbs_password_, dbs_host_, dbs_encrypted_, false); } 
 
-	protected void populate_all(String name_, String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_, boolean includes_legacy_) 
-	{	
+	protected void populate_all(String name_, String user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_, boolean includes_legacy_) 
+	{
+		if (strings.is_ok(user_)) _user = user_;
+		
 		_dbs_setup = new HashMap<String, Object>();
 		
-		if (strings.is_ok(dbs_user_)) _dbs_setup = parent_ini_db.get_setup_vals(null, dbs_user_, dbs_host_, dbs_encrypted_);
+		if (strings.is_ok(user_)) _dbs_setup = parent_ini_db.get_setup_vals(null, user_, dbs_host_, dbs_encrypted_);
 		else if (strings.is_ok(dbs_username_) && dbs_password_ != null) _dbs_setup = parent_ini_db.get_setup_vals(null, dbs_username_, dbs_password_, dbs_host_);
 
 		populate_all_internal(name_, includes_legacy_);
@@ -66,7 +69,7 @@ public abstract class parent_ini
 	{
 		if (_populated) return;
 
-		_name = (strings.is_ok(name_) ? name_ : _defaults.APP_NAME);
+		if (strings.is_ok(name_)) _name = name_;
 		_includes_legacy = includes_legacy_;
 
 		String package_name = getClass().getPackageName();

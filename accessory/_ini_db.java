@@ -39,10 +39,10 @@ class _ini_db extends parent_ini_db
 
 		HashMap<String, db_field> info = new HashMap<String, db_field>();
 
-		info.put(types.CONFIG_TESTS_DB_FIELD_INT, new db_field(types.DATA_INT));
-		info.put(types.CONFIG_TESTS_DB_FIELD_STRING, new db_field(types.DATA_STRING_SMALL));
-		info.put(types.CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(types.DATA_DECIMAL, 15, 3));
-		info.put(types.CONFIG_TESTS_DB_FIELD_BOOLEAN, new db_field(types.DATA_BOOLEAN));
+		info.put(types.CONFIG_TESTS_DB_FIELD_INT, new db_field(data.INT));
+		info.put(types.CONFIG_TESTS_DB_FIELD_STRING, new db_field(data.STRING));
+		info.put(types.CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(data.DECIMAL, 15, 3));
+		info.put(types.CONFIG_TESTS_DB_FIELD_BOOLEAN, new db_field(data.BOOLEAN));
 
 		return add_source(source, null, db_, info, default_fields, sources_);		
 	}
@@ -54,14 +54,14 @@ class _ini_db extends parent_ini_db
 
 		HashMap<String, db_field> info = new HashMap<String, db_field>();
 
-		db_field field_string = new db_field(types.DATA_STRING_SMALL);
+		db_field field_string = new db_field(data.STRING);
 
 		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_ID, new db_field(field_string));
 		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_ID_ENC, new db_field(field_string));
 		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_USER, new db_field(field_string));
 		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_USERNAME, new db_field(field_string));
 		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD, new db_field(field_string));
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC, new db_field(types.DATA_BOOLEAN));
+		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC, new db_field(data.BOOLEAN));
 
 		return add_source(source, null, db_, info, default_fields, sources_);		
 	}
