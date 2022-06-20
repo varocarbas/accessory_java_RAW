@@ -28,7 +28,7 @@ class db_mysql extends parent_db
 
 	public ArrayList<HashMap<String, String>> execute_query(String source_, String query_)
 	{
-		String type = db.check_type(strings.substring_before(" ", query_, true));
+		String type = db.check_query_type(strings.substring_before(" ", query_, true));
 
 		if (!strings.is_ok(type))
 		{
@@ -71,7 +71,7 @@ class db_mysql extends parent_db
 
 		return db_sql.execute_query(source_, query_, db.query_returns_data(type), cols);
 	}
-
+	
 	public String sanitise_string(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 
 	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)

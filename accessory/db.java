@@ -55,8 +55,9 @@ public abstract class db
 	public static final String DEFAULT_CREDENTIALS_TYPE = types.remove_type(DEFAULT_TYPE, types.CONFIG_DB_SETUP_TYPE);
 	public static final boolean DEFAULT_CREDENTIALS_MEMORY = true;
 
-	public static String _cur_source = strings.DEFAULT;
-
+	static String _cur_source = strings.DEFAULT; //Only updated by the user, as a way to keep using the same source without having to expressly provide it.
+	static String _cur_type = DEFAULT_TYPE; //Automatically updated every time a new DB type is used.
+	
 	public static String get_class_id() { return types.get_id(types.ID_DB); }
 
 	static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
@@ -64,6 +65,35 @@ public abstract class db
 	private static HashMap<String, HashMap<String, Object>> _source_setups = new HashMap<String, HashMap<String, Object>>();
 	private static HashMap<String, String> _db_setups = new HashMap<String, String>();
 	private static HashMap<String, String> _credentials = new HashMap<String, String>();
+
+	public static String get_cur_source() { return _cur_source; }
+	
+	public static boolean update_cur_source(String source_)
+	{
+		String source = check_source(source_);
+		
+		_cur_source = (strings.is_ok(source) ? source : strings.DEFAULT);
+		
+		return true;
+	}
+
+	public static String get_cur_type() { return _cur_type; }
+	
+	public static boolean update_cur_type(String type_)
+	{
+		boolean is_ok = false;
+		
+		String type = types.check_type(type_, TYPE);
+
+		if (strings.is_ok(type)) 
+		{
+			_cur_type = type;
+			
+			is_ok = true;
+		}
+		
+		return is_ok;
+	}
 
 	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  { return credentials.encrypt_username_password_file(get_type(source_), user_, username_, password_);  }
 
@@ -288,7 +318,7 @@ public abstract class db
 	public static double get_max_value(String type_) { return get_max_value(get_current_source(), type_); }
 
 	public static double get_max_value(String source_, String type_) { return get_valid_instance(source_).get_max_value(type_); }
-
+	
 	public static boolean source_is_ok(String source_) { return (strings.is_ok(check_source(source_))); }
 
 	public static String check_source(String source_)
@@ -407,8 +437,12 @@ public abstract class db
 	public static String get_valid_type(String source_) 
 	{ 
 		String output = get_type(get_valid_source(source_));
-
-		return (strings.is_ok(output) ? output : DEFAULT_TYPE);
+		if (!strings.is_ok(output)) output = _cur_type;
+		
+		String type = (strings.is_ok(output) ? output : DEFAULT_TYPE);	
+		if (strings.is_ok(type) && !type.equals(_cur_type)) _cur_type = type;
+	
+		return type;
 	}
 
 	public static String get_current_type() { return get_type(get_current_source()); }
@@ -417,7 +451,10 @@ public abstract class db
 	{ 
 		String source = check_source(source_);
 
-		return (strings.is_ok(source) ? (String)get_setup_common(source, types.CONFIG_DB_SETUP_TYPE) : strings.DEFAULT); 
+		String type = (strings.is_ok(source) ? (String)get_setup_common(source, types.CONFIG_DB_SETUP_TYPE) : strings.DEFAULT); 
+		if (strings.is_ok(type) && !type.equals(_cur_type)) _cur_type = type;
+		
+		return type;
 	}
 
 	public static HashMap<String, db_field> get_source_fields(String source_)
@@ -563,8 +600,6 @@ public abstract class db
 
 	public static String sanitise_string(String source_, String input_) { return get_valid_instance(source_).sanitise_string(input_); }
 
-	public static String check_type(String input_) { return types.check_type(input_, types.get_subtypes(types.DB_QUERY), types.ACTION_ADD, types.DB_QUERY); }
-
 	public static String get_current_encryption_id() { return get_encryption_id(get_current_source()); }
 
 	public static String get_encryption_id(String source_) { return types.remove_type(get_type(source_), TYPE); }
@@ -578,6 +613,8 @@ public abstract class db
 	public static boolean is_ok() { return is_ok(get_current_source()); }
 
 	public static boolean is_ok(String source_) { return get_valid_instance(source_).is_ok(); }
+
+	public static String check_query_type(String input_) { return types.check_type(input_, types.get_subtypes(types.DB_QUERY), types.ACTION_ADD, types.DB_QUERY); }
 
 	static String[] populate_all_queries_data() { return new String[] { QUERY_SELECT, QUERY_SELECT_COUNT, QUERY_TABLE_EXISTS }; }
 
@@ -678,7 +715,7 @@ public abstract class db
 		String source = check_source(source_);
 		parent_db instance = get_instance((strings.is_ok(source) ? source : get_current_source()));
 
-		return (instance != null ? instance : get_instance_ini(get_type(source)));
+		return (instance != null ? instance : get_instance_ini(get_valid_type(source)));
 	}
 
 	static String get_select_count_col(String source_) { return get_valid_instance(source_).get_select_count_col(); }

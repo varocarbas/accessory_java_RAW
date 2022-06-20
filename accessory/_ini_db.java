@@ -34,34 +34,34 @@ class _ini_db extends parent_ini_db
 
 	private HashMap<String, Object[]> add_source_tests(String db_, HashMap<String, Object[]> sources_)
 	{
-		String source = types.CONFIG_TESTS_DB_SOURCE;
+		String source = tests.SOURCE;
 		boolean default_fields = true;
 
 		HashMap<String, db_field> info = new HashMap<String, db_field>();
 
-		info.put(types.CONFIG_TESTS_DB_FIELD_INT, new db_field(data.INT));
-		info.put(types.CONFIG_TESTS_DB_FIELD_STRING, new db_field(data.STRING));
-		info.put(types.CONFIG_TESTS_DB_FIELD_DECIMAL, new db_field(data.DECIMAL, 15, 3));
-		info.put(types.CONFIG_TESTS_DB_FIELD_BOOLEAN, new db_field(data.BOOLEAN));
+		info.put(tests.FIELD_INT, new db_field(data.INT));
+		info.put(tests.FIELD_STRING, new db_field(data.STRING));
+		info.put(tests.FIELD_DECIMAL, new db_field(data.DECIMAL, 15, 3));
+		info.put(tests.FIELD_BOOLEAN, new db_field(data.BOOLEAN));
 
 		return add_source(source, null, db_, info, default_fields, sources_);		
 	}
 
 	private HashMap<String, Object[]> add_source_credentials(String db_, HashMap<String, Object[]> sources_)
 	{
-		String source = types.CONFIG_CREDENTIALS_DB_SOURCE;
+		String source = credentials.SOURCE;
 		boolean default_fields = true;
 
 		HashMap<String, db_field> info = new HashMap<String, db_field>();
 
 		db_field field_string = new db_field(data.STRING);
 
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_ID, new db_field(field_string));
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_ID_ENC, new db_field(field_string));
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_USER, new db_field(field_string));
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_USERNAME, new db_field(field_string));
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD, new db_field(field_string));
-		info.put(types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC, new db_field(data.BOOLEAN));
+		info.put(credentials.FIELD_ID, new db_field(field_string));
+		info.put(credentials.FIELD_ID_ENC, new db_field(field_string));
+		info.put(credentials.FIELD_USER, new db_field(field_string));
+		info.put(credentials.FIELD_USERNAME, new db_field(field_string));
+		info.put(credentials.FIELD_PASSWORD, new db_field(field_string));
+		info.put(credentials.FIELD_IS_ENC, new db_field(data.BOOLEAN));
 
 		return add_source(source, null, db_, info, default_fields, sources_);		
 	}
