@@ -81,11 +81,11 @@ public abstract class strings extends parent_static
 
 	public static String get_end(String input_, int start_) { return substring(input_, start_, 0); }
 
-	public static String truncate(String input_, int length_)
+	public static String truncate(String input_, int max_length_)
 	{
-		int length2 = get_length(input_);
+		int length = get_length(input_);
 				
-		return ((length_ < 1 || length2 <= length_) ? input_ : substring(input_, 0, length_));
+		return ((max_length_ < 1 || length <= max_length_) ? input_ : substring(input_, 0, max_length_));
 	}
 	
 	public static String substring(String input_, int start_, int length_)
