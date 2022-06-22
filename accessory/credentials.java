@@ -13,7 +13,13 @@ public abstract class credentials extends parent_static
 	public static final String FIELD_PASSWORD = types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD;
 	public static final String FIELD_IS_ENC = types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC;
 
-	public static final String WHERE = types.CONFIG_CREDENTIALS_WHERE;
+	public static final String CONFIG_WHERE = types.CONFIG_CREDENTIALS_WHERE;
+	public static final String CONFIG_FILE_EXTENSION = types.CONFIG_CREDENTIALS_FILE_EXTENSION;
+	public static final String CONFIG_FILE_USERNAME = types.CONFIG_CREDENTIALS_FILE_USERNAME;
+	public static final String CONFIG_FILE_PASSWORD = types.CONFIG_CREDENTIALS_FILE_PASSWORD;
+	public static final String CONFIG_FILE_ENCRYPTED = types.CONFIG_CREDENTIALS_FILE_ENCRYPTED;
+	
+	public static final String WHERE = CONFIG_WHERE;
 	public static final String WHERE_FILE = types.CONFIG_CREDENTIALS_WHERE_FILE;
 	public static final String WHERE_DB = types.CONFIG_CREDENTIALS_WHERE_DB;
 	public static final String ID = _keys.ID;

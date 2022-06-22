@@ -5,8 +5,11 @@ import java.util.HashMap;
 
 public abstract class logs extends parent_static
 {	
-	public static final String SCREEN = types.CONFIG_LOGS_OUT_SCREEN;
-	public static final String FILE = types.CONFIG_LOGS_OUT_FILE;
+	public static final String CONFIG_OUT_SCREEN = types.CONFIG_LOGS_OUT_SCREEN;
+	public static final String CONFIG_OUT_FILE = types.CONFIG_LOGS_OUT_FILE;
+
+	public static final String SCREEN = CONFIG_OUT_SCREEN;
+	public static final String FILE = CONFIG_OUT_FILE;
 	public static final String OUT_SCREEN = SCREEN;
 	public static final String OUT_FILE = FILE;
 

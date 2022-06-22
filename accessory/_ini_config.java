@@ -33,11 +33,11 @@ class _ini_config extends parent_ini_config
 		String type = types.CONFIG_CREDENTIALS;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
-		vals.put(credentials.WHERE, credentials.DEFAULT_WHERE);
-		vals.put(types.CONFIG_CREDENTIALS_FILE_EXTENSION, credentials.DEFAULT_FILE_EXTENSION);
-		vals.put(types.CONFIG_CREDENTIALS_FILE_USERNAME, credentials.DEFAULT_FILE_USERNAME);
-		vals.put(types.CONFIG_CREDENTIALS_FILE_PASSWORD, credentials.DEFAULT_FILE_PASSWORD);
-		vals.put(types.CONFIG_CREDENTIALS_FILE_ENCRYPTED, credentials.DEFAULT_FILE_ENCRYPTED);
+		vals.put(credentials.CONFIG_WHERE, credentials.DEFAULT_WHERE);
+		vals.put(credentials.CONFIG_FILE_EXTENSION, credentials.DEFAULT_FILE_EXTENSION);
+		vals.put(credentials.CONFIG_FILE_USERNAME, credentials.DEFAULT_FILE_USERNAME);
+		vals.put(credentials.CONFIG_FILE_PASSWORD, credentials.DEFAULT_FILE_PASSWORD);
+		vals.put(credentials.CONFIG_FILE_ENCRYPTED, credentials.DEFAULT_FILE_ENCRYPTED);
 
 		return populate(type, null, vals);
 	}
@@ -47,9 +47,9 @@ class _ini_config extends parent_ini_config
 		String type = types.CONFIG_CRYPTO;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
-		vals.put(types.CONFIG_CRYPTO_FILE_CIPHER, crypto.DEFAULT_FILE_CIPHER);
-		vals.put(types.CONFIG_CRYPTO_FILE_KEY, crypto.DEFAULT_FILE_KEY);
-		vals.put(types.CONFIG_CRYPTO_FILE_EXTENSION, crypto.DEFAULT_FILE_EXTENSION);
+		vals.put(crypto.CONFIG_FILE_CIPHER, crypto.DEFAULT_FILE_CIPHER);
+		vals.put(crypto.CONFIG_FILE_KEY, crypto.DEFAULT_FILE_KEY);
+		vals.put(crypto.CONFIG_FILE_EXTENSION, crypto.DEFAULT_FILE_EXTENSION);
 
 		return populate(type, null, vals);
 	}
@@ -59,8 +59,8 @@ class _ini_config extends parent_ini_config
 		String type = types.CONFIG_LOGS;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
-		vals.put(logs.OUT_SCREEN, logs.DEFAULT_OUT_SCREEN);
-		vals.put(logs.OUT_FILE, logs.DEFAULT_OUT_FILE);
+		vals.put(logs.CONFIG_OUT_SCREEN, logs.DEFAULT_OUT_SCREEN);
+		vals.put(logs.CONFIG_OUT_FILE, logs.DEFAULT_OUT_FILE);
 
 		return populate(type, null, vals);
 	}	
@@ -70,7 +70,7 @@ class _ini_config extends parent_ini_config
 		String type = types.CONFIG_NUMBERS;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
-		vals.put(numbers.PERC_REF_LARGER, numbers.DEFAULT_PERC_REF_LARGER);
+		vals.put(numbers.CONFIG_PERC_REF_LARGER, numbers.DEFAULT_PERC_REF_LARGER);
 
 		return populate(type, null, vals);
 	}

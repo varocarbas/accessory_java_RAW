@@ -6,7 +6,9 @@ import java.util.Random;
 
 public abstract class numbers extends parent_static 
 {
-	public static final String PERC_REF_LARGER = types.CONFIG_NUMBERS_PERC_REF_LARGER;
+	public static final String CONFIG_PERC_REF_LARGER = types.CONFIG_NUMBERS_PERC_REF_LARGER;
+
+	public static final String PERC_REF_LARGER = CONFIG_PERC_REF_LARGER;
 	
 	public static final double MIN_DECIMAL = -1 * Double.MAX_VALUE; //!!!
 	public static final long MIN_LONG = Long.MIN_VALUE;

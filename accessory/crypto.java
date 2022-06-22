@@ -14,6 +14,10 @@ public class crypto extends parent
 	public static final String KEY = "key";
 	public static final String IV = "iv";
 
+	public static final String CONFIG_FILE_CIPHER = types.CONFIG_CRYPTO_FILE_CIPHER;
+	public static final String CONFIG_FILE_KEY = types.CONFIG_CRYPTO_FILE_KEY;
+	public static final String CONFIG_FILE_EXTENSION = types.CONFIG_CRYPTO_FILE_EXTENSION;
+
 	public static final String ERROR_KEY = types.ERROR_CRYPTO_KEY;
 	public static final String ERROR_CIPHER = types.ERROR_CRYPTO_CIPHER;
 	public static final String ERROR_ENCRYPT = types.ERROR_CRYPTO_ENCRYPT;
