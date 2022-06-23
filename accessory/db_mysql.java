@@ -71,6 +71,27 @@ class db_mysql extends parent_db
 
 		return db_sql.execute_query(source_, query_, db.query_returns_data(type), cols);
 	}
+
+	public boolean table_exists(String table_name_)
+	{
+		if (!strings.is_ok(table_name_)) return false;
+		
+		return arrays.is_ok(db_sql.execute_query(null, get_query_table_exists(table_name_), true, null));
+	}
+
+	public void drop_table(String table_name_)
+	{
+		if (!strings.is_ok(table_name_)) return;
+		
+		db_sql.execute_query(null, get_query_drop_table(table_name_), false, null);
+	}
+
+	public void create_table(String table_name_, HashMap<String, db_field> cols_)
+	{
+		if (!strings.is_ok(table_name_) || !arrays.is_ok(cols_)) return;
+		
+		db_sql.execute_query(null, get_query_create_table(table_name_, cols_), false, null);
+	}
 	
 	public String sanitise_string(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 
@@ -319,80 +340,93 @@ class db_mysql extends parent_db
 		}
 		else if (type_.equals(db.QUERY_TABLE_EXISTS))
 		{
-			query = "SHOW TABLES LIKE " + get_value(table);			
+			query = get_query_table_exists(table);			
+		
 			is_ok = true;
 		}
 		else if (type_.equals(db.QUERY_TABLE_CREATE))
 		{
-			query = "";
-
-			for (Entry<String, db_field> item: cols_info_.entrySet())
-			{
-				String col = item.getKey();
-				db_field field = item.getValue();
-				String type = field.get_type();
-
-				String type2 = data_type_to_string(field);
-				if (!strings.is_ok(col) || !strings.is_ok(type2)) continue;
-
-				if (!query.equals("")) query += ", ";
-				String item2 = get_variable(col) + " " + type2 + " NOT NULL";
-
-				String[] further = create_table_check_further(field.get_further());					
-				String def_val = strings.DEFAULT;
-
-				if (type.equals(data.TIMESTAMP)) def_val = "current_timestamp";
-				else if (!arrays.value_exists(further, db_field.AUTO_INCREMENT))
-				{
-					def_val = db.input_to_string(source_, field.get_default(), type, true);	
-
-					if (!strings.is_ok(def_val))
-					{
-						if (data.is_number(type) || data.is_boolean(type)) def_val = "0";
-						else if (data.is_string(type)) def_val = " ";						
-					}						
-					if (strings.is_ok(def_val, true)) def_val = get_variable_value(def_val, false);
-				}
-				if (strings.is_ok(def_val)) item2 += " DEFAULT " + def_val;
-
-				String further2 = create_table_further_to_query(further);
-				if (strings.is_ok(further2)) item2 += " " + further2;
-
-				query += item2;
-			}
-
-			if (!query.equals("")) 
-			{
-				query = "CREATE TABLE " + get_variable(table) + " (" + query + ")";	
-				is_ok = true;
-			}
-			else is_ok = false;	
+			query = get_query_create_table(table, cols_info_);
+			
+			is_ok = strings.is_ok(query);
 		}
 		else if (type_.equals(db.QUERY_TABLE_DROP))
 		{
-			query = "DROP TABLE " + get_variable(table);			
+			query = get_query_drop_table(table);	
+			
 			is_ok = true;
 		}
 		else if (type_.equals(db.QUERY_TABLE_TRUNCATE))
 		{
-			query = "TRUNCATE TABLE " + get_variable(table);			
+			query = "TRUNCATE TABLE " + get_variable(table);	
+			
 			is_ok = true;
 		}
 		else if (type_.equals(db.QUERY_SELECT_COUNT))
 		{
 			query = "SELECT " + get_select_count_col() + " FROM " + get_variable(table);			
+			
 			is_ok = true;
 		}
 
 		if (!is_ok)
 		{
 			db.manage_error(source_, db.ERROR_QUERY, null, null, query);
+			
 			query = strings.DEFAULT;
 		}
 
 		return query;
 	}
 
+	private String get_query_table_exists(String table_) { return ("SHOW TABLES LIKE " + get_value(table_)); }
+
+	private String get_query_drop_table(String table_) { return ("DROP TABLE " + get_variable(table_)); }
+
+	private String get_query_create_table(String table_, HashMap<String, db_field> cols_info_)
+	{
+		String query = "";
+
+		for (Entry<String, db_field> item: cols_info_.entrySet())
+		{
+			String col = item.getKey();
+			db_field field = item.getValue();
+			String type = field.get_type();
+
+			String type2 = data_type_to_string(field);
+			if (!strings.is_ok(col) || !strings.is_ok(type2)) continue;
+
+			if (!query.equals("")) query += ", ";
+			String item2 = get_variable(col) + " " + type2 + " NOT NULL";
+
+			String[] further = create_table_check_further(field.get_further());					
+			String def_val = strings.DEFAULT;
+
+			if (type.equals(data.TIMESTAMP)) def_val = "current_timestamp";
+			else if (!arrays.value_exists(further, db_field.AUTO_INCREMENT))
+			{
+				def_val = db.input_to_string(null, field.get_default(), type, true);	
+
+				if (!strings.is_ok(def_val))
+				{
+					if (data.is_number(type) || data.is_boolean(type)) def_val = "0";
+					else if (data.is_string(type)) def_val = " ";						
+				}						
+				if (strings.is_ok(def_val, true)) def_val = get_variable_value(def_val, false);
+			}
+			if (strings.is_ok(def_val)) item2 += " DEFAULT " + def_val;
+
+			String further2 = create_table_further_to_query(further);
+			if (strings.is_ok(further2)) item2 += " " + further2;
+
+			query += item2;
+		}
+
+		if (!query.equals("")) query = "CREATE TABLE " + get_variable(table_) + " (" + query + ")";
+
+		return query;
+	}
+	
 	private String[] create_table_check_further(String[] further_)
 	{
 		ArrayList<String> output = new ArrayList<String>();

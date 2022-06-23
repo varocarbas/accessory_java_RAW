@@ -255,7 +255,7 @@ public abstract class db
 
 	public static void create_table(String source_, boolean drop_it_) { create_table(source_, get_source_fields(source_), drop_it_); }
 
-	public static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_) { db_queries.create_table(source_, fields_, drop_it_); }
+	public static void create_table_like(String table_name_, String source_origin_, boolean drop_it_) { db_queries.create_table_like(table_name_, source_origin_, drop_it_); }
 
 	public static void drop_table(String source_) { db_queries.drop_table(source_); }
 
@@ -719,6 +719,8 @@ public abstract class db
 	}
 
 	static String get_select_count_col(String source_) { return get_valid_instance(source_).get_select_count_col(); }
+
+	private static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_) { db_queries.create_table(source_, fields_, drop_it_); }
 
 	private static boolean credentials_in_memory(String source_) { return config.get_boolean(get_setup(source_), CREDENTIALS_MEMORY); }
 	

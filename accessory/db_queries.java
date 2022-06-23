@@ -68,6 +68,47 @@ abstract class db_queries
 			else return;		
 		}
 
+		create_table_internal(source, get_cols(source_, fields_));
+	}
+
+	public static void create_table_like(String table_name_, String source_origin_, boolean drop_it_) 
+	{ 
+		String source = db.check_source_error(source_origin_);
+		if (!strings.is_ok(source) || !strings.is_ok(table_name_)) return;
+		
+		String cur_source = db._cur_source;
+		db._cur_source = source;
+		
+		parent_db instance = db.get_valid_instance(source);
+		
+		if (instance.table_exists(table_name_))
+		{
+			if (drop_it_) instance.drop_table(table_name_);
+			else 
+			{
+				db._cur_source = cur_source;
+				
+				return;	
+			}
+		}
+		
+		instance.create_table(table_name_, get_cols(source, db.get_source_fields(source)));
+		
+		db._cur_source = cur_source;
+	}
+
+	public static void drop_table(String source_) { drop_table_internal(source_); }
+
+	public static void truncate_table(String source_) { truncate_table_internal(source_); }
+	
+	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_) { return db.get_valid_instance(source_).execute_query(source_, query_); }
+
+	static Object select_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_) { return select_one_some_common(source_, field_, wheres_cols_, max_rows_, orders_cols_, what_, false); }
+
+	static Object select_one_common(String source_, String field_, String wheres_cols_, String orders_cols_, String what_) { return select_one_some_common(source_, field_, wheres_cols_, 1, orders_cols_, what_, true); }
+
+	private static HashMap<String, db_field> get_cols(String source_, HashMap<String, db_field> fields_)
+	{
 		HashMap<String, db_field> cols = new HashMap<String, db_field>();
 
 		if (arrays.is_ok(fields_))
@@ -75,26 +116,16 @@ abstract class db_queries
 			for (Entry<String, db_field> item: fields_.entrySet())
 			{
 				String field = item.getKey();
-				String col = db.get_col(source, field);
+				String col = db.get_col(source_, field);
 				if (!strings.is_ok(col)) continue;
 
 				cols.put(col, new db_field(item.getValue()));
 			}
 		}
 
-		create_table_internal(source, cols);
+		return cols;
 	}
-
-	public static void drop_table(String source_) { drop_table_internal(source_); }
-
-	public static void truncate_table(String source_) { truncate_table_internal(source_); }
-
-	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_) { return db.get_valid_instance(source_).execute_query(source_, query_); }
-
-	static Object select_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_) { return select_one_some_common(source_, field_, wheres_cols_, max_rows_, orders_cols_, what_, false); }
-
-	static Object select_one_common(String source_, String field_, String wheres_cols_, String orders_cols_, String what_) { return select_one_some_common(source_, field_, wheres_cols_, 1, orders_cols_, what_, true); }
-
+	
 	@SuppressWarnings("unchecked")
 	private static Object select_one_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_, boolean is_one_)
 	{

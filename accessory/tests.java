@@ -95,6 +95,19 @@ public class tests extends parent_tests
 
 		db._cur_source = source;
 
+		name = "create_table_like";
+		
+		String table_name = "tests2";
+
+		args = new ArrayList<Object>();
+		args.add(table_name);
+		args.add(source);
+		args.add(true);
+
+		is_ok = run_method(class0, name, new Class<?>[] { String.class, String.class, boolean.class }, args, target);
+		outputs.put(name, is_ok);
+		if (!is_ok) return outputs;
+		
 		name = "insert";
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();

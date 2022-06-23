@@ -17,6 +17,9 @@ public abstract class parent_db
 	public abstract String get_value(String input_);
 	public abstract String get_variable(String input_);
 	public abstract String get_select_count_col();
+	public abstract boolean table_exists(String table_name_);
+	public abstract void drop_table(String table_name_);
+	public abstract void create_table(String table_name_, HashMap<String, db_field> cols_);
 	
 	protected abstract Connection connect_internal(String source_, Properties properties);
 	
