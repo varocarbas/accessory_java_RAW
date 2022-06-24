@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public abstract class db 
+public abstract class db extends parent_static
 {
 	public static final String NAME = types.CONFIG_DB_NAME;
 	public static final String HOST = types.CONFIG_DB_SETUP_HOST;
@@ -255,7 +255,9 @@ public abstract class db
 
 	public static void create_table(String source_, boolean drop_it_) { create_table(source_, get_source_fields(source_), drop_it_); }
 
-	public static void create_table_like(String table_name_, String source_origin_, boolean drop_it_) { db_queries.create_table_like(table_name_, source_origin_, drop_it_); }
+	public static void __create_table_like(String table_name_, String source_like_, boolean drop_it_) { db_queries.__create_table_like(table_name_, source_like_, drop_it_); }
+
+	public static void __backup_table(String source_, String backup_name_) { db_queries.__backup_table(source_, backup_name_); }
 
 	public static void drop_table(String source_) { db_queries.drop_table(source_); }
 
@@ -431,6 +433,13 @@ public abstract class db
 	public static String get_db(String source_) { return (String)get_setup_common(get_valid_source(source_), types.CONFIG_DB); }
 
 	public static String get_current_setup() { return get_setup(get_current_source()); }
+
+	public static String get_valid_setup(String source_) 
+	{ 
+		String output = get_setup(source_);
+		
+		return (strings.is_ok(output) ? output : DEFAULT_SETUP);
+	}
 
 	public static String get_setup(String source_) { return (String)get_setup_common(get_valid_source(source_), types.CONFIG_DB_SETUP); }
 
@@ -635,7 +644,7 @@ public abstract class db
 		HashMap<String, Object> info = new HashMap<String, Object>();
 		if (strings.is_ok(query_)) info.put("query", query_);
 		
-		String setup = get_setup(source_);
+		String setup = get_valid_setup(source_);
 		info.put(HOST, get_host(setup));
 		info.put(NAME, get_db_name(get_db(source_)));
 		info.put(USER, config.get(setup, types.CONFIG_DB_SETUP_CREDENTIALS_USER));
@@ -692,7 +701,7 @@ public abstract class db
 	{
 		if (arrays.is_ok(_credentials) && credentials_in_memory(source_)) return _credentials;
 			
-		String setup = get_setup(source_);
+		String setup = get_valid_setup(source_);
 
 		String user = (String)config.get(setup, USER);
 		String username = (String)config.get(setup, USERNAME);
@@ -722,7 +731,7 @@ public abstract class db
 
 	private static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_) { db_queries.create_table(source_, fields_, drop_it_); }
 
-	private static boolean credentials_in_memory(String source_) { return config.get_boolean(get_setup(source_), CREDENTIALS_MEMORY); }
+	private static boolean credentials_in_memory(String source_) { return config.get_boolean(get_valid_setup(source_), CREDENTIALS_MEMORY); }
 	
 	private static String[] get_all_queries_data() { return _alls.DB_QUERIES_DATA; }
 

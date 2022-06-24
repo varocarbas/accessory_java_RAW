@@ -119,7 +119,7 @@ abstract class db_sql
 
 		String username = (String)arrays.get_value(credentials, accessory.credentials.USERNAME);
 		String password = (String)arrays.get_value(credentials, accessory.credentials.PASSWORD);
-		String max_pool = db.get_max_pool(db.get_setup(source_));
+		String max_pool = db.get_max_pool(db.get_valid_setup(source_));
 
 		String type = null;
 		String message = ""; 

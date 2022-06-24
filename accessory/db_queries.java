@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-abstract class db_queries
+abstract class db_queries extends parent_static
 {	
 	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_) { return select_one(source_, fields_, db_where.to_string(wheres_), db_order.to_string(orders_)); }
 
@@ -70,31 +70,47 @@ abstract class db_queries
 
 		create_table_internal(source, get_cols(source_, fields_));
 	}
-
-	public static void create_table_like(String table_name_, String source_origin_, boolean drop_it_) 
+	
+	public static void __create_table_like(String table_name_, String source_like_, boolean drop_it_) 
 	{ 
-		String source = db.check_source_error(source_origin_);
+		String source = db.check_source_error(source_like_);
 		if (!strings.is_ok(source) || !strings.is_ok(table_name_)) return;
+		
+		__lock();
 		
 		String cur_source = db._cur_source;
 		db._cur_source = source;
 		
 		parent_db instance = db.get_valid_instance(source);
 		
-		if (instance.table_exists(table_name_))
-		{
-			if (drop_it_) instance.drop_table(table_name_);
-			else 
-			{
-				db._cur_source = cur_source;
-				
-				return;	
-			}
-		}
-		
-		instance.create_table(table_name_, get_cols(source, db.get_source_fields(source)));
+		create_table_like_internal(table_name_, source, instance, drop_it_); 
 		
 		db._cur_source = cur_source;
+		
+		__unlock();
+	}
+	public static void __backup_table(String source_, String backup_name_) 
+	{ 
+		String source = db.check_source_error(source_);
+		if (!strings.is_ok(source)) return;
+		
+		String table_source = db.get_table(source);
+		String table_backup = (strings.is_ok(backup_name_) ? backup_name_ : (table_source + "_backup"));
+		
+		__lock();
+		
+		String cur_source = db._cur_source;
+		db._cur_source = source;
+		
+		parent_db instance = db.get_valid_instance(source);
+		
+		create_table_like_internal(table_backup, table_source, instance, true); 
+
+		instance.backup_table(table_source, table_backup);
+		
+		db._cur_source = cur_source;
+		
+		__unlock();
 	}
 
 	public static void drop_table(String source_) { drop_table_internal(source_); }
@@ -106,6 +122,18 @@ abstract class db_queries
 	static Object select_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_) { return select_one_some_common(source_, field_, wheres_cols_, max_rows_, orders_cols_, what_, false); }
 
 	static Object select_one_common(String source_, String field_, String wheres_cols_, String orders_cols_, String what_) { return select_one_some_common(source_, field_, wheres_cols_, 1, orders_cols_, what_, true); }
+
+	private static void create_table_like_internal(String table_name_, String source_, parent_db instance_, boolean drop_it_) 
+	{
+		if (instance_.table_exists(table_name_))
+		{
+			if (drop_it_) instance_.drop_table(table_name_);
+			else return;
+		}
+		
+		if (db.table_exists(source_)) instance_.create_table_like(table_name_, db.get_table(source_));
+		else instance_.create_table(table_name_, get_cols(source_, db.get_source_fields(source_)));		
+	}
 
 	private static HashMap<String, db_field> get_cols(String source_, HashMap<String, db_field> fields_)
 	{

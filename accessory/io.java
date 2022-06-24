@@ -91,12 +91,12 @@ public abstract class io extends parent_static
 					if (ignore_first_) continue;
 				}
 				
-				String[] temp = strings.split(separator_, line, normalise_);
-				if (arrays.get_size(temp) != tot) continue;
+				String[] vals = strings.split(separator_, line);
+				if (!arrays.is_ok(vals)) continue;
 				
 				HashMap<String, String> item = new HashMap<String, String>();
-
-				for (int i = 0; i < tot; i++) { item.put(cols_[i], temp[i].trim()); }
+				
+				for (int i = 0; i < tot; i++) { item.put(cols_[i], vals[i].trim()); }
 
 				output.add(item);
 			}
@@ -131,17 +131,15 @@ public abstract class io extends parent_static
 		try (FileWriter writer = new FileWriter(path_, false)) 
 		{
 			for (HashMap<String, String> item: vals_)
-			{
-				String line = "";
-				
+			{				
 				if (is_first) 
 				{
-					if (cols_to_first_) line = arrays.to_string(arrays.get_keys_hashmap(item), separator_);
+					if (cols_to_first_) line_to_file(path_, arrays.to_string(arrays.get_keys_hashmap(item), separator_), false, writer);
+					
 					is_first = false;
 				}
-				else line = arrays.to_string(item, separator_, null, null);
 				
-				line_to_file(path_, line, false, writer);
+				line_to_file(path_, arrays.to_string(arrays.get_values_hashmap(item), separator_), false, writer);
 			}
 		} 
 		catch (Exception e) { manage_error_io(ERROR_WRITE, e, path_); }

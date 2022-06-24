@@ -20,7 +20,9 @@ public abstract class parent_db
 	public abstract boolean table_exists(String table_name_);
 	public abstract void drop_table(String table_name_);
 	public abstract void create_table(String table_name_, HashMap<String, db_field> cols_);
-	
+	public abstract void create_table_like(String table_name_, String table_like_name_);
+	public abstract void backup_table(String table_source_, String table_backup_);
+
 	protected abstract Connection connect_internal(String source_, Properties properties);
 	
 	private boolean _is_ok = false;

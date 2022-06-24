@@ -92,6 +92,20 @@ class db_mysql extends parent_db
 		
 		db_sql.execute_query(null, get_query_create_table(table_name_, cols_), false, null);
 	}
+
+	public void create_table_like(String table_name_, String table_like_name_)
+	{
+		if (!strings.is_ok(table_name_) || !strings.is_ok(table_like_name_)) return;
+
+		db_sql.execute_query(null, get_query_create_table_like(table_name_, table_like_name_), false, null);
+	}
+	
+	public void backup_table(String table_source_, String table_backup_)
+	{
+		if (!strings.is_ok(table_source_) || !strings.is_ok(table_backup_)) return;
+
+		db_sql.execute_query(null, get_query_backup_table(table_source_, table_backup_), false, null);
+	}
 	
 	public String sanitise_string(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 
@@ -208,7 +222,7 @@ class db_mysql extends parent_db
 
 	private String get_connect_url(String source_)
 	{   
-		String host = db.get_host(db.get_setup(source_));
+		String host = db.get_host(db.get_valid_setup(source_));
 		String name = db.get_db_name(db.get_db(source_));
 
 		String message = ""; 
@@ -382,6 +396,10 @@ class db_mysql extends parent_db
 	private String get_query_table_exists(String table_) { return ("SHOW TABLES LIKE " + get_value(table_)); }
 
 	private String get_query_drop_table(String table_) { return ("DROP TABLE " + get_variable(table_)); }
+
+	private String get_query_create_table_like(String table_, String table_like_) { return ("CREATE TABLE " + get_variable(table_) + " LIKE " + get_variable(table_like_)); }
+
+	private String get_query_backup_table(String table_source_, String table_backup_) { return ("INSERT INTO " + get_variable(table_backup_) + " SELECT * FROM " + get_variable(table_source_)); }
 
 	private String get_query_create_table(String table_, HashMap<String, db_field> cols_info_)
 	{

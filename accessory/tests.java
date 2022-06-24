@@ -95,7 +95,7 @@ public class tests extends parent_tests
 
 		db._cur_source = source;
 
-		name = "create_table_like";
+		name = "__create_table_like";
 		
 		String table_name = "tests2";
 
@@ -106,7 +106,17 @@ public class tests extends parent_tests
 
 		is_ok = run_method(class0, name, new Class<?>[] { String.class, String.class, boolean.class }, args, target);
 		outputs.put(name, is_ok);
-		if (!is_ok) return outputs;
+
+		name = "__backup_table";
+
+		table_name = null; 
+		
+		args = new ArrayList<Object>();
+		args.add(source);
+		args.add(table_name);
+
+		is_ok = run_method(class0, name, new Class<?>[] { String.class, String.class }, args, target);
+		outputs.put(name, is_ok);
 		
 		name = "insert";
 
