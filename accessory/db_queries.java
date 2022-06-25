@@ -19,6 +19,8 @@ abstract class db_queries extends parent_static
 
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, String where_cols_, int max_rows_, String order_cols_) { return select_internal(source_, get_cols(source_, fields_), where_cols_, max_rows_, order_cols_); }
 
+	public static ArrayList<HashMap<String, String>> select_quick(String source_, String[] cols_, String where_cols_, int max_rows_, String order_cols_) { return select_quick_internal(source_, cols_, where_cols_, max_rows_, order_cols_); }
+
 	public static int select_count(String source_) 
 	{ 
 		ArrayList<HashMap<String, String>> output = select_count_internal(source_);
@@ -251,7 +253,9 @@ abstract class db_queries extends parent_static
 	
 	private static Object select_one_some_common_output(String input_, String what_) { return db.output_to_object(input_, what_); }
 	
-	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_outputs(source_, execute_type(source_, db.QUERY_SELECT, cols_, null, where_, max_rows_, order_, null)); }
+	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_outputs(source_, select_quick_internal(source_, cols_, where_, max_rows_, order_)); }
+
+	private static ArrayList<HashMap<String, String>> select_quick_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return execute_type(source_, db.QUERY_SELECT, cols_, null, where_, max_rows_, order_, null); }
 
 	private static ArrayList<HashMap<String, String>> select_count_internal(String source_) { return execute_type(source_, db.QUERY_SELECT_COUNT, null, null, null, 0, null, null); }
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public abstract class db extends parent_static
+public abstract class db
 {
 	public static final String NAME = types.CONFIG_DB_NAME;
 	public static final String HOST = types.CONFIG_DB_SETUP_HOST;
@@ -224,6 +224,9 @@ public abstract class db extends parent_static
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select(source_, fields_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
 
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, String where_cols_, int max_rows_, String order_cols_) { return db_queries.select(source_, fields_, where_cols_, max_rows_, order_cols_); }
+	
+	//Use this method carefully! No data checks or field/col conversions are performed.
+	public static ArrayList<HashMap<String, String>> select_quick(String source_, String[] cols_, String where_cols_, int max_rows_, String order_cols_) { return db_queries.select_quick(source_, cols_, where_cols_, max_rows_, order_cols_); }
 
 	public static int select_count(String source_) { return db_queries.select_count(source_); }
 

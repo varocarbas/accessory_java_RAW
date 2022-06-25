@@ -66,6 +66,7 @@ public class tests extends parent_tests
 		return outputs;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static HashMap<String, Boolean> run_db()
 	{			
 		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>();
@@ -120,17 +121,7 @@ public class tests extends parent_tests
 		
 		name = "insert";
 
-		HashMap<String, Object> vals = new HashMap<String, Object>();
-
-		int max = 123456;
-		vals.put(FIELD_INT, numbers.get_random_int(-1 * max, max));
-
-		String val_string = strings.get_random(strings.SIZE_SMALL);
-		vals.put(FIELD_STRING, val_string);
-
-		double max2 = 123456789.123;
-		vals.put(FIELD_DECIMAL, numbers.get_random_decimal(-1 * max2, max2));		
-		vals.put(FIELD_BOOLEAN, generic.get_random_boolean());
+		HashMap<String, Object> vals = (HashMap<String, Object>)get_vals(source, false);
 
 		args = new ArrayList<Object>();
 		args.add(source);
@@ -139,16 +130,30 @@ public class tests extends parent_tests
 		is_ok = run_method(class0, name, new Class<?>[] { String.class, HashMap.class }, args, target);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
+		
+		name = "insert_quick";
 
+		HashMap<String, String> vals_quick = (HashMap<String, String>)get_vals(source, true);
+
+		args = new ArrayList<Object>();
+		args.add(source);
+		args.add(vals_quick);
+
+		is_ok = run_method(class0, name, new Class<?>[] { String.class, HashMap.class }, args, target);
+		outputs.put(name, is_ok);
+		
 		name = "update";
 
-		int val = numbers.get_random_int(-1 * max, max);
+		int val = (int)vals.get(FIELD_INT) + 20;
 
 		vals.put(FIELD_INT, val);		
 
-		db_where where = new db_where(FIELD_STRING, val_string);
+		db_where where = new db_where(FIELD_STRING, vals.get(FIELD_STRING));
 		db_where[] wheres = new db_where[] { where };
 
+		args = new ArrayList<Object>();
+		args.add(source);
+		args.add(vals);
 		args.add(wheres);
 
 		is_ok = run_method(class0, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, target);
@@ -196,7 +201,7 @@ public class tests extends parent_tests
 		is_ok = run_method(class0, name, new Class<?>[] { String.class, db_where[].class }, args, target);
 		outputs.put(name, is_ok);
 
-		val = numbers.get_random_int(-1 * max, max);
+		val -= 5;
 		vals.put(FIELD_INT, val);
 
 		//insert_update (insert).
@@ -204,7 +209,7 @@ public class tests extends parent_tests
 
 		outputs = run_db_select_int(class0, source, wheres, val, outputs);
 
-		val = numbers.get_random_int(-1 * max, max);
+		val += 15;
 		vals.put(FIELD_INT, val);
 
 		//insert_update (update).
@@ -224,6 +229,32 @@ public class tests extends parent_tests
 		args.add(true);
 
 		return run_method(db.class, "create_table", new Class<?>[] { String.class, boolean.class }, args, null);		
+	}
+
+	private static Object get_vals(String source_, boolean is_quick_)
+	{
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+		HashMap<String, String> vals_quick = new HashMap<String, String>();
+
+		int max = 123456;
+		double max2 = 123456789.123;
+		
+		String[] fields = new String[] { FIELD_INT, FIELD_DECIMAL, FIELD_STRING, FIELD_BOOLEAN };
+		
+		for (String field: fields)
+		{
+			Object val = null;
+			
+			if (field.equals(FIELD_INT)) val = numbers.get_random_int(-1 * max, max);
+			else if (field.equals(FIELD_DECIMAL)) val = numbers.get_random_decimal(-1 * max2, max2);
+			else if (field.equals(FIELD_STRING)) val = strings.get_random(strings.SIZE_SMALL);
+			else if (field.equals(FIELD_BOOLEAN)) val = generic.get_random_boolean();
+			
+			if (is_quick_) vals_quick.put(db.get_col(source_, field), db.adapt_input(source_, field, val));
+			else vals.put(field, val);
+		}
+				
+		return (is_quick_ ? vals_quick : vals);
 	}
 	
 	private static HashMap<String, Boolean> run_db_select_int(Class<?> class0_, String source_, db_where[] wheres_, int target_, HashMap<String, Boolean> outputs_)
