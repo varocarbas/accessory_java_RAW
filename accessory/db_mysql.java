@@ -423,7 +423,7 @@ class db_mysql extends parent_db
 			if (type.equals(data.TIMESTAMP)) def_val = "current_timestamp";
 			else if (!arrays.value_exists(further, db_field.AUTO_INCREMENT))
 			{
-				def_val = db.input_to_string(null, field.get_default(), type, true);	
+				def_val = db.adapt_input(null, field.get_default(), type, true);	
 
 				if (!strings.is_ok(def_val))
 				{

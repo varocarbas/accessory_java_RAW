@@ -296,8 +296,6 @@ public class crypto extends parent
 
 	private void manage_error(String type_, Exception e_)
 	{	
-		manage_error();
-
 		HashMap<String, Object> items = new HashMap<String, Object>();
 		items.put(_keys.TYPE, type_);
 		items.put("in", _in);
@@ -306,6 +304,8 @@ public class crypto extends parent
 		items.put("algo_key", _algo_key);
 		items.put("algo_cipher", _algo_cipher);
 
+		manage_error();
+		
 		errors.manage(items);
 	}
 

@@ -555,12 +555,12 @@ public abstract class db
 
 		String source = check_source(source_);
 
-		return (strings.is_ok(source) ? input_to_string(source, val_, field_.get_type(), false) : null); 
+		return (strings.is_ok(source) ? adapt_input(source, val_, field_.get_type(), false) : null); 
 	}
 
-	public static <x> String input_to_string(x val_, String data_type_) { return input_to_string(get_current_source(), val_, data_type_, true); }
+	public static <x> String adapt_input(x val_, String data_type_) { return adapt_input(get_valid_source(get_current_source()), val_, data_type_, true); }
 
-	public static <x> String input_to_string(String source_, x val_, String data_type_, boolean check_)
+	public static <x> String adapt_input(String source_, x val_, String data_type_, boolean check_)
 	{
 		String output = strings.DEFAULT;
 		if (val_ == null) return output;
@@ -578,6 +578,16 @@ public abstract class db
 		return output;
 	}
 
+	public static <x> String adapt_input(x val_) 
+	{ 
+		Object val = (generic.is_boolean(val_) ? generic.boolean_to_int((boolean)val_) : val_);
+		
+		String output = strings.to_string(val);
+		output = sanitise_string_default(output);
+		
+		return output; 
+	}
+	
 	public static Object adapt_output(String source_, String field_, String val_) { return adapt_output(source_, get_field(source_, field_), val_); }
 
 	public static Object adapt_output(String source_, db_field field_, String val_) 
@@ -611,7 +621,7 @@ public abstract class db
 	public static String sanitise_string(String input_) { return sanitise_string(get_current_source(), input_); }
 
 	public static String sanitise_string(String source_, String input_) { return get_valid_instance(source_).sanitise_string(input_); }
-
+	
 	public static String get_current_encryption_id() { return get_encryption_id(get_current_source()); }
 
 	public static String get_encryption_id(String source_) { return types.remove_type(get_type(source_), TYPE); }
@@ -801,4 +811,6 @@ public abstract class db
 
 		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field_, val_, fields);
 	}
+	
+	private static String sanitise_string_default(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 }
