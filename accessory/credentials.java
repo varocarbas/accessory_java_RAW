@@ -41,6 +41,38 @@ public abstract class credentials extends parent_static
 
 	public static String get_path(String id_, String user_, boolean is_encrypted_) { return get_path(id_, user_, is_encrypted_, null); }
 	
+	public static String encrypt_string(String id_, String user_, String plain_) { return encrypt_decrypt_string(id_, user_, plain_, true); }
+	
+	public static String decrypt_string(String id_, String user_, String encrypted_) { return encrypt_decrypt_string(id_, user_, encrypted_, false); }
+	
+	public static boolean encrypt_string_to_file(String id_, String user_, String plain_) 
+	{ 
+		HashMap<String, String> id_user = get_id_user(id_, user_);
+		
+		String id = id_user.get(ID);
+		String user = id_user.get(USER);
+		
+		String encrypted = encrypt_string(id, user, plain_);
+		if (!strings.is_ok(encrypted)) return false;
+
+		io.line_to_file(get_path(id, user, true), encrypted, false);
+		
+		return io.is_ok();
+	}
+	
+	public static String get_string_from_file(String id_, String user_, boolean is_encrypted_) 
+	{ 
+		HashMap<String, String> id_user = get_id_user(id_, user_);
+		
+		String id = id_user.get(ID);
+		String user = id_user.get(USER);
+		
+		String string = io.file_to_string(get_path(id, user, is_encrypted_), true);
+		if (!io.is_ok() || !strings.is_ok(string)) return strings.DEFAULT;
+
+		return (is_encrypted_ ? decrypt_string(id, user, string) : string);
+	}
+	
 	public static HashMap<String, String> get_username_password_file(String id_, String user_, boolean is_encrypted_) { return get_username_password(id_, user_, is_encrypted_, WHERE_FILE); }
 
 	public static HashMap<String, String> get_username_password_db(String id_, String user_, boolean is_encrypted_) { return get_username_password(id_, user_, is_encrypted_, WHERE_DB); }
@@ -59,7 +91,7 @@ public abstract class credentials extends parent_static
 
 		if (is_encrypted_)
 		{
-			String id2 = get_encryption_id(id, user);
+			String id2 = get_encryption_id(id_user);
 
 			username = crypto.decrypt(username, id2);
 			password = crypto.decrypt(password, id2);
@@ -101,6 +133,16 @@ public abstract class credentials extends parent_static
 	public static String get_file_full(String id_) { return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension()); }
 
 	public static String get_encryption_id(String id_, String user_) { return (strings.are_ok(new String[] { id_, user_ }) ? (id_ + SEPARATOR + user_) : strings.DEFAULT); }
+	
+	private static String encrypt_decrypt_string(String id_, String user_, String input_, boolean is_encrypt_) 
+	{
+		String id = get_encryption_id(get_id_user(id_, user_));
+		if (!strings.is_ok(id) || !strings.is_ok(input_)) return strings.DEFAULT;
+		
+		return (is_encrypt_ ? crypto.encrypt(input_, id) : crypto.decrypt(input_, id));
+	}
+
+	private static String get_encryption_id(HashMap<String, String> id_user_) { return (arrays.keys_exist(id_user_, new String[] { ID, USER}) ? get_encryption_id(id_user_.get(ID), id_user_.get(USER)) : strings.DEFAULT) ; }
 
 	private static boolean encrypt_username_password_internal(String id_, String user_, String username_, String password_, String where_)
 	{
@@ -205,9 +247,9 @@ public abstract class credentials extends parent_static
 
 	private static String get_path(String id_, String user_, boolean is_encrypted_, String further_)
 	{
-		String file = id_ + SEPARATOR + user_ + SEPARATOR;
+		String file = id_ + SEPARATOR + user_;
 
-		if (strings.is_ok(further_)) file += further_;
+		if (strings.is_ok(further_)) file += SEPARATOR + further_;
 		if (is_encrypted_) file += SEPARATOR + config.get_credentials(types.CONFIG_CREDENTIALS_FILE_ENCRYPTED); 
 
 		return paths.build(new String[] { paths.get_dir(paths.DIR_CREDENTIALS), get_file_full(file) }, true);

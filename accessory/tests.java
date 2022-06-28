@@ -146,10 +146,13 @@ public class tests extends parent_tests
 
 		int val = (int)vals.get(FIELD_INT) + 20;
 
-		vals.put(FIELD_INT, val);		
-
+		vals.put(FIELD_INT, val);
+		
 		db_where where = new db_where(FIELD_STRING, vals.get(FIELD_STRING));
 		db_where[] wheres = new db_where[] { where };
+
+		db_where where_quick = new db_where(source, db.get_col(source, FIELD_STRING), db_where.OPERAND_EQUAL, vals.get(FIELD_STRING), db_where.DEFAULT_LITERAL, db_where.DEFAULT_LINK, true);
+		db_where[] wheres_quick = new db_where[] { where_quick };
 
 		args = new ArrayList<Object>();
 		args.add(source);
@@ -159,13 +162,33 @@ public class tests extends parent_tests
 		is_ok = run_method(class0, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, target);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
+		
+		name = "update_quick";
 
+		HashMap<String, String> temp = get_val_quick(source, FIELD_INT, val, vals_quick);
+		
+		String col = db.get_col(source, FIELD_INT);
+		
+		vals_quick = new HashMap<String, String>();
+		vals_quick.put(col, temp.get(col));
+		
+		args = new ArrayList<Object>();
+		args.add(source);
+		args.add(vals_quick);
+		args.add(db_where.to_string(wheres_quick));
+
+		is_ok = run_method(class0, name, new Class<?>[] { String.class, HashMap.class, String.class }, args, target);
+		outputs.put(name, is_ok);
+		if (!is_ok) return outputs;
+		
 		outputs = run_db_select_int(class0, source, wheres, val, outputs);
 
+		outputs = run_db_selects(class0, source, wheres, wheres_quick, outputs);
+		
 		name = "execute_query";
 
 		String field = FIELD_INT;
-		String col = db.get_col(source, field);
+		col = db.get_col(source, field);
 
 		String table = db.get_variable_table(source);
 
@@ -230,7 +253,7 @@ public class tests extends parent_tests
 
 		return run_method(db.class, "create_table", new Class<?>[] { String.class, boolean.class }, args, null);		
 	}
-
+	
 	private static Object get_vals(String source_, boolean is_quick_)
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>();
@@ -250,11 +273,88 @@ public class tests extends parent_tests
 			else if (field.equals(FIELD_STRING)) val = strings.get_random(strings.SIZE_SMALL);
 			else if (field.equals(FIELD_BOOLEAN)) val = generic.get_random_boolean();
 			
-			if (is_quick_) vals_quick.put(db.get_col(source_, field), db.adapt_input(source_, field, val));
+			if (is_quick_) vals_quick = get_val_quick(source_, field, val, vals_quick);
 			else vals.put(field, val);
 		}
 				
 		return (is_quick_ ? vals_quick : vals);
+	}
+
+	private static HashMap<String, String> get_val_quick(String source_, String field_, Object val_, HashMap<String, String> all_)
+	{
+		HashMap<String, String> all = new HashMap<String, String>(all_);
+		
+		all.put(db.get_col(source_, field_), db.adapt_input(source_, field_, val_));
+		
+		return all;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static HashMap<String, Boolean> run_db_selects(Class<?> class0_, String source_, db_where[] wheres_, db_where[] wheres_quick_, HashMap<String, Boolean> outputs_)
+	{	
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>(outputs_);		
+		
+		int max_rows = 0;
+		String order = null;
+		
+		ArrayList<Object> args0 = new ArrayList<Object>();
+		args0.add(source_);
+		args0.add(null);
+		args0.add(null);
+		args0.add(max_rows);
+		args0.add(order);
+		
+		String[] names = new String[] { "select", "select_quick" };
+		
+		Object target = null;		
+		
+		String field = FIELD_INT;
+		String col = db.get_col(source_, field);
+		
+		for (String name: names)
+		{
+			String[] fields_cols = null;
+			db_where[] wheres = null;
+		
+			if (name.equals("select"))
+			{
+				fields_cols = new String[] { field };
+				wheres = (db_where[])arrays.get_new(wheres_);
+			}
+			else
+			{
+				fields_cols = new String[] { col };
+				wheres = (db_where[])arrays.get_new(wheres_quick_);	
+			}
+			
+			ArrayList<Object> args = new ArrayList<Object>(args0);
+			args.set(1, fields_cols);
+			args.set(2, db_where.to_string(wheres));
+
+			boolean is_ok = run_method(class0_, name, new Class<?>[] { String.class, String[].class, String.class, int.class, String.class }, args, target);
+			if (!is_ok) break;
+
+			if (target == null) 
+			{
+				if (arrays.get_size(_temp_output) > 0)
+				{
+					HashMap<String, String> temp = ((ArrayList<HashMap<String, String>>)_temp_output).get(0);
+					
+					HashMap<String, String> temp2 = new HashMap<String, String>();
+					temp2.put(col, temp.get(field));
+					
+					ArrayList<HashMap<String, String>> temp3 = new ArrayList<HashMap<String, String>>();
+					temp3.add(temp2);
+
+					target = temp3;
+				}	
+			}
+			else is_ok = arrays.are_equal(target, _temp_output);
+				
+			outputs.put(name, is_ok);
+		}
+
+		return outputs;
 	}
 	
 	private static HashMap<String, Boolean> run_db_select_int(Class<?> class0_, String source_, db_where[] wheres_, int target_, HashMap<String, Boolean> outputs_)

@@ -12,13 +12,13 @@ public class db_order extends parent
 	public static final boolean DEFAULT_IS_QUICK = false;
 	
 	private String _source = strings.DEFAULT;
-	private String _field_col_condition = strings.DEFAULT; //When _is_field_col is true, it is a field when _is_quick is false and a col otherwise. When _is_field_col is false, it is always something else other than a field/col.
+	private String _field_col_else = strings.DEFAULT; //When _is_field_col is true, it is a field when _is_quick is false and a col otherwise. When _is_field_col is false, it is always something else other than a field/col.
 	private String _order = DEFAULT_ORDER;
-	private boolean _is_field_col = DEFAULT_IS_FIELD_COL; //When it is true, _field_col_condition is a field/col, otherwise it is something else, like a condition.
+	private boolean _is_field_col = DEFAULT_IS_FIELD_COL; //When it is true, _field_col_else is a field/col, otherwise it is something else, like a condition.
 	private boolean _is_quick = DEFAULT_IS_QUICK; //It is equivalent to the db "_quick" methods, where all the fields are assumed to be cols and no value checks are performed.
 
 	private String _temp_source = strings.DEFAULT;
-	private String _temp_field_col_condition = strings.DEFAULT;
+	private String _temp_field_col_else = strings.DEFAULT;
 	private String _temp_order = strings.DEFAULT;
 
 	public static boolean are_equal(db_order order1_, db_order order2_) { return are_equal_common(order1_, order2_); }
@@ -51,26 +51,26 @@ public class db_order extends parent
 
 	public db_order(db_order input_) { instantiate(input_); }
 
-	public db_order(String field_col_condition_, String order_) { instantiate(db._cur_source, field_col_condition_, order_, DEFAULT_IS_FIELD_COL, DEFAULT_IS_QUICK); }
+	public db_order(String field_col_else_, String order_) { instantiate(db._cur_source, field_col_else_, order_, DEFAULT_IS_FIELD_COL, DEFAULT_IS_QUICK); }
 
-	public db_order(String source_, String field_col_condition_, String order_) { instantiate(source_, field_col_condition_, order_, DEFAULT_IS_FIELD_COL, DEFAULT_IS_QUICK); }
+	public db_order(String source_, String field_col_else_, String order_) { instantiate(source_, field_col_else_, order_, DEFAULT_IS_FIELD_COL, DEFAULT_IS_QUICK); }
 
-	public db_order(String field_col_condition_, String order_, boolean is_field_col_) { instantiate(db._cur_source, field_col_condition_, order_, is_field_col_, DEFAULT_IS_QUICK); }
+	public db_order(String field_col_else_, String order_, boolean is_field_col_) { instantiate(db._cur_source, field_col_else_, order_, is_field_col_, DEFAULT_IS_QUICK); }
 
-	public db_order(String source_, String field_col_condition_, String order_, boolean is_field_col_) { instantiate(source_, field_col_condition_, order_, is_field_col_, DEFAULT_IS_QUICK); }
+	public db_order(String source_, String field_col_else_, String order_, boolean is_field_col_) { instantiate(source_, field_col_else_, order_, is_field_col_, DEFAULT_IS_QUICK); }
 
-	public db_order(String source_, String field_col_condition_, String order_, boolean is_field_col_, boolean _is_quick_) { instantiate(source_, field_col_condition_, order_, is_field_col_, _is_quick); }
+	public db_order(String source_, String field_col_else_, String order_, boolean is_field_col_, boolean _is_quick_) { instantiate(source_, field_col_else_, order_, is_field_col_, _is_quick); }
 
 	public String toString()
 	{	
-		if (!is_ok(_source, _field_col_condition, _order, _is_field_col, _is_quick)) return strings.DEFAULT;
+		if (!is_ok(_source, _field_col_else, _order, _is_field_col, _is_quick)) return strings.DEFAULT;
 
-		String field_condition = strings.DEFAULT;
+		String field_col_else = strings.DEFAULT;
 		
-		if (_is_field_col) field_condition = db.get_variable(_temp_source, (_is_quick ? _temp_field_col_condition : db.get_col(_temp_source, _temp_field_col_condition)));
-		else field_condition = _temp_field_col_condition;
+		if (_is_field_col) field_col_else = db.get_variable(_temp_source, (_is_quick ? _temp_field_col_else : db.get_col(_temp_source, _temp_field_col_else)));
+		else field_col_else = _temp_field_col_else;
 
-		String output = field_condition + " " + order_to_string(_order);
+		String output = field_col_else + " " + order_to_string(_order);
 
 		return output;
 	}
@@ -81,12 +81,12 @@ public class db_order extends parent
 
 		return 
 		(
-			db.sources_are_equal(_temp_source, order2_._source) && generic.are_equal(_temp_field_col_condition, order2_._field_col_condition) && 
+			db.sources_are_equal(_temp_source, order2_._source) && generic.are_equal(_temp_field_col_else, order2_._field_col_else) && 
 			generic.are_equal(_temp_order, order2_._order) && (_is_field_col == order2_._is_field_col) && (_is_quick == order2_._is_quick) 
 		);		
 	}
 
-	public boolean is_ok() { return is_ok(_source, _field_col_condition, _order, _is_field_col, _is_quick); }
+	public boolean is_ok() { return is_ok(_source, _field_col_else, _order, _is_field_col, _is_quick); }
 
 	private static db_order[] get_orders_desc_asc(String source_, String[] fields_, String order_)
 	{
@@ -106,30 +106,30 @@ public class db_order extends parent
 		instantiate_common();
 		if (input_ == null || !input_.is_ok()) return;
 
-		populate(input_._temp_source, input_._temp_field_col_condition, input_._temp_order, input_._is_field_col, input_._is_quick);
+		populate(input_._temp_source, input_._temp_field_col_else, input_._temp_order, input_._is_field_col, input_._is_quick);
 	}
 
-	private void instantiate(String source_, String field_col_condition_, String order_, boolean is_field_col_, boolean is_quick_)
+	private void instantiate(String source_, String field_col_else_, String order_, boolean is_field_col_, boolean is_quick_)
 	{
 		instantiate_common();
-		if (!is_ok(source_, field_col_condition_, order_, is_field_col_, is_quick_)) return;
+		if (!is_ok(source_, field_col_else_, order_, is_field_col_, is_quick_)) return;
 
-		populate(_temp_source, _temp_field_col_condition, _temp_order, is_field_col_, is_quick_);
+		populate(_temp_source, _temp_field_col_else, _temp_order, is_field_col_, is_quick_);
 	}
 
-	private boolean is_ok(String source_, String field_col_condition_, String order_, boolean is_field_col_, boolean is_quick_)
+	private boolean is_ok(String source_, String field_col_else_, String order_, boolean is_field_col_, boolean is_quick_)
 	{
 		_temp_source = db.check_source(source_);
-		_temp_field_col_condition = ((is_field_col_ && is_quick_) ? db.check_field(_temp_source, field_col_condition_) : field_col_condition_);
+		_temp_field_col_else = ((is_field_col_ && is_quick_) ? db.check_field(_temp_source, field_col_else_) : field_col_else_);
 		_temp_order = types.check_type(order_, types.DB_ORDER);
 
-		return (strings.are_ok(new String[] { _temp_source, _temp_field_col_condition, _temp_order }));
+		return (strings.are_ok(new String[] { _temp_source, _temp_field_col_else, _temp_order }));
 	}
 
-	private void populate(String source_, String field_col_condition_, String order_, boolean is_field_col_, boolean is_quick_)
+	private void populate(String source_, String field_col_else_, String order_, boolean is_field_col_, boolean is_quick_)
 	{
 		_source = source_;
-		_field_col_condition = field_col_condition_;
+		_field_col_else = field_col_else_;
 		_order = order_;
 		_is_field_col = is_field_col_;
 		_is_quick = is_quick_;

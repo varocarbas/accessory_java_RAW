@@ -266,7 +266,7 @@ public abstract class db
 
 	public static void truncate_table(String source_) { db_queries.truncate_table(source_); }
 
-	public static ArrayList<HashMap<String, String>> execute_query(String query_) { return execute_query(get_current_source(), query_); }
+	public static ArrayList<HashMap<String, String>> execute_query(String query_) { return execute_query(get_valid_source(), query_); }
 
 	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_) { return db_queries.execute_query(get_valid_source(source_), query_); }
 
@@ -558,7 +558,7 @@ public abstract class db
 		return (strings.is_ok(source) ? adapt_input(source, val_, field_.get_type(), false) : null); 
 	}
 
-	public static <x> String adapt_input(x val_, String data_type_) { return adapt_input(get_valid_source(get_current_source()), val_, data_type_, true); }
+	public static <x> String adapt_input(x val_, String data_type_) { return adapt_input(get_valid_source(), val_, data_type_, true); }
 
 	public static <x> String adapt_input(String source_, x val_, String data_type_, boolean check_)
 	{
@@ -596,12 +596,12 @@ public abstract class db
 
 		String source = check_source(source_);
 
-		return (strings.is_ok(source) ? output_to_object(source, val_, field_.get_type(), false) : null); 
+		return (strings.is_ok(source) ? adapt_output(source, val_, field_.get_type(), false) : null); 
 	}
 
-	public static Object output_to_object(String val_, String data_type_) { return output_to_object(get_current_source(), val_, data_type_, true); }
+	public static Object adapt_output(String val_, String data_type_) { return adapt_output(get_current_source(), val_, data_type_, true); }
 
-	public static Object output_to_object(String source_, String val_, String data_type_, boolean check_)
+	public static Object adapt_output(String source_, String val_, String data_type_, boolean check_)
 	{
 		Object output = null;
 		if (!strings.is_ok(val_)) return output;
@@ -752,6 +752,8 @@ public abstract class db
 
 	private static boolean update_vals(String type_, HashMap<String, Object> vals_) { return manage_error((arrays.is_ok(vals_) ? config.update(type_, vals_) : null)); }
 
+	private static String get_valid_source() { return get_valid_source(get_current_source()); }
+	
 	private static String get_valid_source(String source_) 
 	{ 
 		String source = check_source(source_);

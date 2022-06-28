@@ -251,7 +251,7 @@ abstract class db_queries extends parent_static
 		return output;
 	}
 	
-	private static Object select_one_some_common_output(String input_, String what_) { return db.output_to_object(input_, what_); }
+	private static Object select_one_some_common_output(String input_, String what_) { return db.adapt_output(input_, what_); }
 	
 	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_outputs(source_, select_quick_internal(source_, cols_, where_, max_rows_, order_)); }
 

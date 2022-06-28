@@ -3,7 +3,7 @@
 Library containing a set of miscellaneous resources accessorily used by most of my Java code. 
 
 Required external dependencies:
-- MySQL Java connector (v. 8.0.21).
+- MySQL Java connector (v. 8.0.21 or above).
 
 Tested with OpenJDK 11.0.15.
 
