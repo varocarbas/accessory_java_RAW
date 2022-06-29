@@ -1,6 +1,6 @@
 package accessory;
 
-public class _keys 
+public abstract class _keys 
 {
 	public static final String TYPE = get_key(types.WHAT_TYPE);
 	public static final String KEY = get_key(types.WHAT_KEY);

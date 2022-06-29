@@ -16,8 +16,6 @@ public abstract class logs extends parent_static
 	public static final boolean DEFAULT_OUT_SCREEN = true;
 	public static final boolean DEFAULT_OUT_FILE = true;
 
-	public static String get_class_id() { return types.get_id(types.ID_LOGS); }
-
 	public static void update_activity(HashMap<String, String> inputs_, String id_) { update_file(arrays.to_string(inputs_, misc.SEPARATOR_ITEM, misc.SEPARATOR_KEYVAL, null), id_, false); }
 
 	public static void update(String message_, String id_, boolean is_error_)

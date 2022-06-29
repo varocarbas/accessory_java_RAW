@@ -45,9 +45,13 @@ public class db_order extends parent
 
 	public static String order_to_string(String order_) { return val_to_string_common(order_, types.DB_ORDER, DEFAULT_ORDER); }
 
-	public static db_order[] get_orders_desc(String source_, String[] fields_) { return get_orders_desc_asc(source_, fields_, ORDER_DESC); }
+	public static db_order[] get_orders_desc(String source_, String[] fields_) { return get_orders_desc_asc(source_, fields_, ORDER_DESC, false); }
 
-	public static db_order[] get_orders_asc(String source_, String[] fields_) { return get_orders_desc_asc(source_, fields_, ORDER_ASC); }
+	public static db_order[] get_orders_desc_quick(String source_, String[] cols_) { return get_orders_desc_asc(source_, cols_, ORDER_DESC, true); }
+	
+	public static db_order[] get_orders_asc(String source_, String[] fields_) { return get_orders_desc_asc(source_, fields_, ORDER_ASC, false); }
+	
+	public static db_order[] get_orders_asc_quick(String source_, String[] cols_) { return get_orders_desc_asc(source_, cols_, ORDER_ASC, true); }
 
 	public db_order(db_order input_) { instantiate(input_); }
 
@@ -88,15 +92,15 @@ public class db_order extends parent
 
 	public boolean is_ok() { return is_ok(_source, _field_col_else, _order, _is_field_col, _is_quick); }
 
-	private static db_order[] get_orders_desc_asc(String source_, String[] fields_, String order_)
+	private static db_order[] get_orders_desc_asc(String source_, String[] fields_cols_, String order_, boolean is_quick_)
 	{
 		String source = db.check_source(source_);
 		String order = check_order(order_);
-		if (!strings.is_ok(source) || !strings.is_ok(order) || !arrays.is_ok(fields_)) return null;
+		if (!strings.is_ok(source) || !strings.is_ok(order) || !arrays.is_ok(fields_cols_)) return null;
 
 		ArrayList<db_order> output = new ArrayList<db_order>();
 
-		for (String field: fields_) { output.add(new db_order(source, field, order)); }
+		for (String field_col: fields_cols_) { output.add(new db_order(source, field_col, order, DEFAULT_IS_FIELD_COL, is_quick_)); }
 
 		return arrays.to_array(output);
 	}

@@ -6,11 +6,11 @@ import java.util.Map.Entry;
 
 abstract class db_queries extends parent_static
 {	
-	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_) { return select_one(source_, fields_, db_where.to_string(wheres_), db_order.to_string(orders_)); }
+	public static HashMap<String, String> select_one(String source_, String[] fields_cols_, db_where[] wheres_, db_order[] orders_, boolean is_quick_) { return select_one(source_, fields_cols_, db_where.to_string(wheres_), db_order.to_string(orders_), is_quick_); }
 
-	public static HashMap<String, String> select_one(String source_, String[] fields_, String wheres_cols_, String orders_cols_)
+	public static HashMap<String, String> select_one(String source_, String[] fields_cols_, String wheres_cols_, String orders_cols_, boolean is_quick_)
 	{
-		ArrayList<HashMap<String, String>> temp = select(source_, fields_, wheres_cols_, 1, orders_cols_);
+		ArrayList<HashMap<String, String>> temp = (is_quick_ ? select_quick(source_, fields_cols_, wheres_cols_, 1, orders_cols_) : select(source_, fields_cols_, wheres_cols_, 1, orders_cols_));
 
 		return (arrays.is_ok(temp) ? temp.get(0) : null);
 	}
@@ -121,9 +121,9 @@ abstract class db_queries extends parent_static
 	
 	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_) { return db.get_valid_instance(source_).execute_query(source_, query_); }
 
-	static Object select_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_) { return select_one_some_common(source_, field_, wheres_cols_, max_rows_, orders_cols_, what_, false); }
+	static Object select_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_, boolean is_quick_) { return select_one_some_common(source_, field_, wheres_cols_, max_rows_, orders_cols_, what_, false, is_quick_); }
 
-	static Object select_one_common(String source_, String field_, String wheres_cols_, String orders_cols_, String what_) { return select_one_some_common(source_, field_, wheres_cols_, 1, orders_cols_, what_, true); }
+	static Object select_one_common(String source_, String field_, String wheres_cols_, String orders_cols_, String what_, boolean is_quick_) { return select_one_some_common(source_, field_, wheres_cols_, 1, orders_cols_, what_, true, is_quick_); }
 
 	private static void create_table_like_internal(String table_name_, String source_, parent_db instance_, boolean drop_it_) 
 	{
@@ -157,7 +157,7 @@ abstract class db_queries extends parent_static
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static Object select_one_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_, boolean is_one_)
+	private static Object select_one_some_common(String source_, String field_col_, String wheres_cols_, int max_rows_, String orders_cols_, String what_, boolean is_one_, boolean is_quick_)
 	{
 		Object output = null;
 
@@ -170,7 +170,7 @@ abstract class db_queries extends parent_static
 			else if (data.is_boolean(what_)) output = _defaults.BOOLEAN;		
 		}
 
-		if (!strings.is_ok(field_)) 
+		if (!strings.is_ok(field_col_)) 
 		{
 			db.is_ok(source_, false);
 
@@ -179,17 +179,21 @@ abstract class db_queries extends parent_static
 
 		Object temp = null; 
 		
-		if (is_one_) temp = select_one(source_, new String[] { field_ }, wheres_cols_, orders_cols_);		
-		else temp = select(source_, new String[] { field_ }, wheres_cols_, max_rows_, orders_cols_);
+		if (is_one_) temp = select_one(source_, new String[] { field_col_ }, wheres_cols_, orders_cols_, is_quick_);		
+		else temp = (is_quick_ ? select_quick(source_, new String[] { field_col_ }, wheres_cols_, max_rows_, orders_cols_) : select(source_, new String[] { field_col_ }, wheres_cols_, max_rows_, orders_cols_));
 		
 		if (!arrays.is_ok(temp)) return output;
 		
 		if (is_one_) 
 		{
-			String val = ((HashMap<String, String>)temp).get(field_);
+			String val = ((HashMap<String, String>)temp).get(field_col_);
 			
 			if (data.is_string(what_)) output = val;
-			else output = select_one_some_common_output(val, what_);
+			else 
+			{
+				Object temp2 = select_one_some_common_output(source_, val, what_);
+				if (temp2 != null) output = temp2;
+			}
 		}
 		else
 		{
@@ -198,7 +202,7 @@ abstract class db_queries extends parent_static
 				ArrayList<HashMap<String, String>> temp2 = (ArrayList<HashMap<String, String>>)temp;
 				
 				ArrayList<String> output2 = new ArrayList<String>();
-				for (HashMap<String, String> item: temp2) { output2.add(item.get(field_)); }
+				for (HashMap<String, String> item: temp2) { output2.add(item.get(field_col_)); }
 				
 				output = output2;
 			}
@@ -210,7 +214,11 @@ abstract class db_queries extends parent_static
 					
 				for (HashMap<String, String> item: temp2) 
 				{ 
-					Object val = select_one_some_common_output(item.get(field_), what_);	
+					Object val = output;
+					
+					Object temp3 = select_one_some_common_output(source_, item.get(field_col_), what_);	
+					if (temp3 != null) val = temp3;
+					
 					output = select_one_some_common_array(val, what_, output); 
 				}				
 			}
@@ -251,8 +259,8 @@ abstract class db_queries extends parent_static
 		return output;
 	}
 	
-	private static Object select_one_some_common_output(String input_, String what_) { return db.adapt_output(input_, what_); }
-	
+	private static Object select_one_some_common_output(String source_, String input_, String what_) { return db.adapt_output(source_, input_, what_, false); }
+
 	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_outputs(source_, select_quick_internal(source_, cols_, where_, max_rows_, order_)); }
 
 	private static ArrayList<HashMap<String, String>> select_quick_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return execute_type(source_, db.QUERY_SELECT, cols_, null, where_, max_rows_, order_, null); }

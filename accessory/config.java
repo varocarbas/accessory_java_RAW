@@ -7,8 +7,6 @@ public abstract class config extends parent_static
 {
 	private static HashMap<String, HashMap<String, Object>> _info = new HashMap<String, HashMap<String, Object>>();
 
-	public static String get_class_id() { return types.get_id(types.ID_CONFIG); }
-
 	public static Object get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
 
 	public static boolean update_basic(String key_, String val_) { return update(types.CONFIG_BASIC, key_, val_); }

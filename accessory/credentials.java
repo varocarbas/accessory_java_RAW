@@ -37,8 +37,6 @@ public abstract class credentials extends parent_static
 	
 	private static final String SEPARATOR = misc.SEPARATOR_NAME;
 
-	public static String get_class_id() { return types.get_id(types.ID_CREDENTIALS); }
-
 	public static String get_path(String id_, String user_, boolean is_encrypted_) { return get_path(id_, user_, is_encrypted_, null); }
 	
 	public static String encrypt_string(String id_, String user_, String plain_) { return encrypt_decrypt_string(id_, user_, plain_, true); }

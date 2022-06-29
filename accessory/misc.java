@@ -16,8 +16,6 @@ public abstract class misc extends parent_static
 	public static final String SEPARATOR_KEYVAL = ": ";
 	public static final String SEPARATOR_ITEM = ", ";
 
-	public static String get_class_id() { return types.get_id(types.ID_MISC); }
-
 	public static void pause_loop() { pause_tiny(); }
 
 	public static void pause_tiny() { pause_milli(50); }

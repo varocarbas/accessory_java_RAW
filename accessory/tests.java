@@ -5,11 +5,11 @@ import java.util.HashMap;
 
 public class tests extends parent_tests 
 {
+	public static final String _ID = "tests";
+	
 	private static tests _instance = new tests();
 
 	public tests() { }
-
-	public static String get_class_id() { return types.get_id(types.ID_TESTS); }
 
 	public static HashMap<String, HashMap<String, Boolean>> run_all() { return _instance.run_all_internal(); }
 
@@ -181,7 +181,7 @@ public class tests extends parent_tests
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 		
-		outputs = run_db_select_int(class0, source, wheres, val, outputs);
+		outputs = run_db_select_ints(class0, source, wheres, wheres_quick, val, outputs, false);
 
 		outputs = run_db_selects(class0, source, wheres, wheres_quick, outputs);
 		
@@ -230,7 +230,7 @@ public class tests extends parent_tests
 		//insert_update (insert).
 		outputs = run_db_insert_update(class0, source, wheres, vals, outputs);
 
-		outputs = run_db_select_int(class0, source, wheres, val, outputs);
+		outputs = run_db_select_ints(class0, source, wheres, wheres_quick, val, outputs, false);
 
 		val += 15;
 		vals.put(FIELD_INT, val);
@@ -238,7 +238,7 @@ public class tests extends parent_tests
 		//insert_update (update).
 		outputs = run_db_insert_update(class0, source, wheres, vals, outputs);
 
-		outputs = run_db_select_int(class0, source, wheres, val, outputs);
+		outputs = run_db_select_ints(class0, source, wheres, wheres_quick, val, outputs, false);
 
 		update_screen(name0, false, 1);
 
@@ -332,6 +332,8 @@ public class tests extends parent_tests
 			args.set(2, db_where.to_string(wheres));
 
 			boolean is_ok = run_method(class0_, name, new Class<?>[] { String.class, String[].class, String.class, int.class, String.class }, args, target);
+			outputs.put(name, is_ok);
+			
 			if (!is_ok) break;
 
 			if (target == null) 
@@ -349,28 +351,51 @@ public class tests extends parent_tests
 					target = temp3;
 				}	
 			}
-			else is_ok = arrays.are_equal(target, _temp_output);
-				
-			outputs.put(name, is_ok);
+			else outputs.put(name, arrays.are_equal(target, _temp_output));
 		}
 
 		return outputs;
 	}
-	
-	private static HashMap<String, Boolean> run_db_select_int(Class<?> class0_, String source_, db_where[] wheres_, int target_, HashMap<String, Boolean> outputs_)
+
+	private static HashMap<String, Boolean> run_db_select_ints(Class<?> class0_, String source_, db_where[] wheres_, db_where[] wheres_quick_, int target_, HashMap<String, Boolean> outputs_, boolean just_one_)
 	{	
-		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>(outputs_);
+		HashMap<String, Boolean> outputs = new HashMap<String, Boolean>(outputs_);		
+		
+		ArrayList<Object> args0 = new ArrayList<Object>();
+		args0.add(source_);
+		args0.add(null);
+		args0.add(null);
+		args0.add(null);
 
-		String name = "select_one_int";
+		String[] names = new String[] { "select_one_int", "select_one_int_quick" };
+		
+		String field = FIELD_INT;
+		
+		for (String name: names)
+		{
+			String field_col = null;
+			db_where[] wheres = null;
+		
+			if (name.equals("select_one_int"))
+			{
+				field_col = field;
+				wheres = (db_where[])arrays.get_new(wheres_);
+			}
+			else
+			{
+				field_col = db.get_col(source_, field);
+				wheres = (db_where[])arrays.get_new(wheres_quick_);	
+			}
+			
+			ArrayList<Object> args = new ArrayList<Object>(args0);
+			args.set(1, field_col);
+			args.set(2, db_where.to_string(wheres));
 
-		ArrayList<Object> args = new ArrayList<Object>();
-		args.add(source_);
-		args.add(FIELD_INT);
-		args.add(wheres_);
-		args.add(null);
-
-		boolean is_ok = run_method(class0_, name, new Class<?>[] { String.class, String.class, db_where[].class, db_order[].class }, args, target_);
-		outputs.put(name, is_ok);
+			boolean is_ok = run_method(class0_, name, new Class<?>[] { String.class, String.class, String.class, String.class }, args, target_);
+			outputs.put(name, is_ok);
+			
+			if (!is_ok || just_one_) break;
+		}
 
 		return outputs;
 	}
@@ -510,7 +535,7 @@ public class tests extends parent_tests
 		String name0 = class0.getName();
 		update_screen(name0, true, 1);
 
-		String id = get_class_id();
+		String id = _ID;
 		String user = credentials.DEFAULT_USER;
 		String username = strings.get_random(strings.SIZE_SMALL);
 		String password = strings.get_random(strings.SIZE_SMALL);

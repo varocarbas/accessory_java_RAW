@@ -19,8 +19,6 @@ public abstract class io extends parent_static
 	public static final String ERROR_WRITE = types.ERROR_FILE_WRITE;
 	public static final String ERROR_READ = types.ERROR_FILE_READ;
 
-	public static String get_class_id() { return types.get_id(types.ID_IO); }
-
 	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{
 		method_start();

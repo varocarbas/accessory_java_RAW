@@ -12,8 +12,6 @@ public abstract class errors extends parent_static
 
 	private static boolean _triggered = false; 
 
-	public static String get_class_id() { return types.get_id(types.ID_ERRORS); }
-
 	public static boolean triggered() 
 	{
 		boolean output = _triggered;

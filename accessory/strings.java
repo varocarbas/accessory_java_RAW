@@ -21,8 +21,6 @@ public abstract class strings extends parent_static
 	public static final String DEFAULT = _defaults.STRINGS;
 	public static final int DEFAULT_SIZE = _defaults.STRINGS_SIZE;
 
-	public static String get_class_id() { return types.get_id(types.ID_STRINGS); }
-
 	public static boolean is_ok(String string_) { return is_ok(string_, false); }
 
 	public static boolean are_ok(String[] strings_)

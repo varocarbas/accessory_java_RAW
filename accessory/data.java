@@ -94,16 +94,16 @@ public class data extends parent
 	public static <x> boolean complies(x val_, data data_)
 	{
 		boolean is_ok = false;
-
+		
 		Class<?> type = generic.get_class(val_);
 		if (type == null || !is_ok(data_)) return is_ok;
 
 		Class<?> type2 = data_.get_class();
-		if (!type_complies(type, type2)) return is_ok;
+		if (!generic.is_string(type) && !type_complies(type, type2)) return is_ok;
 
 		if (generic.are_equal(type2, Boolean.class)) 
 		{
-			if (generic.are_equal(type, Boolean.class)) is_ok = true;
+			if (generic.is_boolean(type)) is_ok = true;
 			else if (generic.is_number(type)) 
 			{
 				double val = numbers.to_number(val_);

@@ -14,8 +14,6 @@ public abstract class arrays extends parent_static
 {
 	public static final int DEFAULT_SIZE = 5;
 
-	public static String get_class_id() { return types.get_id(types.ID_ARRAYS); }
-
 	public static Class<?>[] get_all_classes() { return _alls.ARRAYS_CLASSES; }
 
 	//All these classes require a special treatment. In some cases, they are assumed to be equivalent to their big counterparts.

@@ -15,8 +15,6 @@ public abstract class generic extends parent_static
 	public static final String ERROR_METHOD_GET = types.ERROR_GENERIC_METHOD_GET;
 	public static final String ERROR_METHOD_CALL = types.ERROR_GENERIC_METHOD_CALL;
 
-	public static String get_class_id() { return types.get_id(types.ID_GENERIC); }
-
 	public static boolean is_ok(double[] input_) { return is_ok(input_, false); }
 
 	public static boolean is_ok(long[] input_) { return is_ok(input_, false); }

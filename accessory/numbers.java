@@ -35,8 +35,6 @@ public abstract class numbers extends parent_static
 	
 	private static RoundingMode _round_mode = DEFAULT_ROUND_MODE;
 	private static int _round_decimals = DEFAULT_ROUND_DECIMALS;
-	
-	public static String get_class_id() { return types.get_id(types.ID_NUMBERS); }
 
 	public static final Class<?>[] get_all_classes() { return _alls.NUMBERS_CLASSES; }
 

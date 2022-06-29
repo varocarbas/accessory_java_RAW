@@ -220,24 +220,6 @@ public abstract class types extends parent_static
 	public static final String WHAT_MESSAGE = "what_message";
 	public static final String WHAT_PATH = "what_path";
 
-	public static final String ID = "id";
-	public static final String ID_ARRAYS = "id_arrays";
-	public static final String ID_CONFIG = "id_config";
-	public static final String ID_CREDENTIALS = "id_credentials";
-	public static final String ID_CRYPTO = "id_crypto";
-	public static final String ID_DATES = "id_dates";
-	public static final String ID_DB = "id_db";
-	public static final String ID_ERRORS = "id_errors";
-	public static final String ID_GENERIC = "id_generic";
-	public static final String ID_IO = "id_io";
-	public static final String ID_LOGS = "id_logs";
-	public static final String ID_MISC = "id_misc";
-	public static final String ID_NUMBERS = "id_numbers";
-	public static final String ID_PATHS = "id_paths";
-	public static final String ID_STRINGS = "id_strings";
-	public static final String ID_TESTS = "id_tests";
-	public static final String ID_TYPES = "id_types";
-
 	public static final String ERROR = "error";
 	public static final String ERROR_DEFAULT = "error_default";
 	public static final String ERROR_INI = "error_ini";
@@ -271,8 +253,6 @@ public abstract class types extends parent_static
 	public static final String ERROR_DATES = "error_dates";
 	public static final String ERROR_DATES_STRING = "error_dates_string";
 	//---------
-
-	public static String get_class_id() { return get_id(ID_TYPES); }	
 
 	public static String check_what(String what_) { return check_type(what_, WHAT); }
 
@@ -363,8 +343,6 @@ public abstract class types extends parent_static
 	}
 
 	public static boolean is_subtype_of(String subtype_, String type_) { return arrays.value_exists(get_subtypes(type_), subtype_); }
-
-	public static String get_id(String type_) { return check_type(type_, get_subtypes(ID), ACTION_REMOVE, ID); }
 
 	public static String[] get_subtypes(String[] types_) { return get_subtypes(types_, null); }
 
@@ -488,10 +466,6 @@ public abstract class types extends parent_static
 			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 
 			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER, WHAT_TYPE, WHAT_APP, 
 			WHAT_SERVER, WHAT_ID, WHAT_INSTANCE, WHAT_MESSAGE, WHAT_PATH,
-
-			ID,
-			ID_ARRAYS, ID_CONFIG, ID_CREDENTIALS, ID_CRYPTO, ID_DATES, ID_DB, ID_ERRORS, ID_GENERIC, ID_IO, 
-			ID_LOGS, ID_MISC, ID_NUMBERS, ID_PATHS, ID_STRINGS, ID_TESTS, ID_TYPES,
 
 			ERROR,
 			ERROR_DEFAULT,

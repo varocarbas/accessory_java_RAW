@@ -20,8 +20,6 @@ public abstract class paths extends parent_static
 	public static final String EXTENSION_INI = ".ini";
 	public static final String EXTENSION_LOG = ".log";
 
-	public static String get_class_id() { return types.get_id(types.ID_PATHS); }
-
 	public static boolean exists(String path_) { return (strings.is_ok(path_) && (new File(path_)).exists()); }
 
 	public static String build(String[] pieces_, boolean last_file_) { return build(arrays.to_arraylist(pieces_), last_file_, false); }

@@ -51,8 +51,6 @@ public abstract class dates extends parent_static
 
 	private static int _offset = DEFAULT_OFFSET;
 	
-	public static String get_class_id() { return types.get_id(types.ID_DATES); }
-
 	public static LocalDateTime get_now() { return get_now(_offset); }
 
 	public static LocalDateTime get_now(int offset_mins_) { return LocalDateTime.now().plusMinutes(check_offset(offset_mins_)); }

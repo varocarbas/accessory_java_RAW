@@ -2,7 +2,7 @@ package accessory;
 
 import java.util.HashMap;
 
-public class parent_static 
+public abstract class parent_static 
 {
 	protected static HashMap<String, Object> _temp = new HashMap<String, Object>();
 
