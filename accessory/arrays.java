@@ -548,7 +548,7 @@ public abstract class arrays extends parent_static
 				for (Entry<x, x> item: new2.entrySet())
 				{
 					x key = item.getKey();
-					if (output2.containsKey(key)) continue;
+					if (only_unique_ && output2.containsKey(key)) continue;
 
 					output2.put(key, item.getValue());
 				}
@@ -563,7 +563,7 @@ public abstract class arrays extends parent_static
 				for (Entry<x, y> item: new2.entrySet())
 				{
 					x key = item.getKey();
-					if (output2.containsKey(key)) continue;
+					if (only_unique_ && output2.containsKey(key)) continue;
 
 					output2.put(key, item.getValue());
 				}

@@ -48,15 +48,22 @@ public abstract class logs extends parent_static
 	{
 		String id = id_;
 		if (!strings.is_ok(id)) id = (String)config.get_basic(types.CONFIG_BASIC_NAME);
-
+		
+		update_file(message_, get_path(id, is_error_));
+	}
+	
+	public static void update_file(String message_, String path_)
+	{
 		String message = get_message(message_, dates.FORMAT_TIMESTAMP);
 		if (!strings.is_ok(message)) return;
 		
 		io.ignore_errors();
-		io.line_to_file(get_path(id, is_error_), message, true);
+		io.line_to_file(path_, message, true);
 	}
 
-	public static String get_path(String id_, boolean is_error_)
+	public static String get_path(String id_, boolean is_error_) { return get_path(id_, is_error_, false); }
+	
+	public static String get_path(String id_, boolean is_error_, boolean add_timestamp_)
 	{
 		ArrayList<String> pieces = new ArrayList<String>();
 
@@ -64,6 +71,8 @@ public abstract class logs extends parent_static
 		if (strings.is_ok(dir)) pieces.add(dir);
 
 		String file = id_ + paths.EXTENSION_LOG;
+		if (add_timestamp_) file = dates.add_now_string(file, dates.FORMAT_DATE, true);
+		
 		pieces.add(file);
 
 		return paths.build(arrays.to_array(pieces), true);

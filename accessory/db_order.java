@@ -63,7 +63,7 @@ public class db_order extends parent
 
 	public db_order(String source_, String field_col_else_, String order_, boolean is_field_col_) { instantiate(source_, field_col_else_, order_, is_field_col_, DEFAULT_IS_QUICK); }
 
-	public db_order(String source_, String field_col_else_, String order_, boolean is_field_col_, boolean _is_quick_) { instantiate(source_, field_col_else_, order_, is_field_col_, _is_quick); }
+	public db_order(String source_, String field_col_else_, String order_, boolean is_field_col_, boolean is_quick_) { instantiate(source_, field_col_else_, order_, is_field_col_, is_quick_); }
 
 	public String toString()
 	{	
@@ -124,7 +124,7 @@ public class db_order extends parent
 	private boolean is_ok(String source_, String field_col_else_, String order_, boolean is_field_col_, boolean is_quick_)
 	{
 		_temp_source = db.check_source(source_);
-		_temp_field_col_else = ((is_field_col_ && is_quick_) ? db.check_field(_temp_source, field_col_else_) : field_col_else_);
+		_temp_field_col_else = ((is_field_col_ && !is_quick_) ? db.check_field(_temp_source, field_col_else_) : field_col_else_);
 		_temp_order = types.check_type(order_, types.DB_ORDER);
 
 		return (strings.are_ok(new String[] { _temp_source, _temp_field_col_else, _temp_order }));

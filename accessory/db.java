@@ -688,7 +688,8 @@ public abstract class db
 		info.put(HOST, get_host(setup));
 		info.put(NAME, get_db_name(get_db(source_)));
 		info.put(USER, config.get(setup, types.CONFIG_DB_SETUP_CREDENTIALS_USER));
-
+		info.put(_keys.MESSAGE, message_);
+		
 		errors.manage(type_, e_, info);
 	}
 

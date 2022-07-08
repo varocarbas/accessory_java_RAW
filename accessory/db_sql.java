@@ -36,13 +36,13 @@ abstract class db_sql
 		}
 
 		if (what_.equals(db.QUERY_DELETE) || what_.equals(db.QUERY_UPDATE) || what_.equals(db.QUERY_SELECT)) items.put("where", strings.to_string(where_));
-		if (what_.equals(db.QUERY_INSERT) || what_.equals(db.QUERY_UPDATE)) items.put(_keys.VALUE, strings.to_string(vals_));
+		if (what_.equals(db.QUERY_INSERT) || what_.equals(db.QUERY_UPDATE)) items.put("values", strings.to_string(vals_));
 		if (what_.equals(db.QUERY_TABLE_CREATE)) items.put(_keys.INFO, strings.to_string(cols_info_));
 
 		String message = "Wrong " + types.remove_type(what_, types.DB_QUERY).toUpperCase() + " query" + misc.SEPARATOR_CONTENT;
 		String temp = strings.to_string(items);
 		if (strings.is_ok(temp)) message += temp;
-
+		
 		db.manage_error(source_, db.ERROR_QUERY, null, null, message);
 
 		return false;
