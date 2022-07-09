@@ -31,10 +31,8 @@ public class crypto extends parent
 	public static final String DEFAULT_FILE_EXTENSION = strings.DEFAULT;
 	public static final String DEFAULT_ALGORITHM_CIPHER = "AES/CTR/NoPadding";
 	public static final String DEFAULT_ALGORITHM_KEY = "AES";
-	public static final boolean DEFAULT_LOG_ENCRYPTION_INFO = true;	
+	public static final boolean DEFAULT_LOG_ENCRYPTION_INFO = false;	
 	
-	public static boolean _log_encryption_info = DEFAULT_LOG_ENCRYPTION_INFO;
-
 	public Cipher _cipher_enc = null; 
 	public Cipher _cipher_dec = null;
 	public String _algo_cipher = DEFAULT_ALGORITHM_CIPHER;
@@ -47,6 +45,8 @@ public class crypto extends parent
 	public SecretKey _key = null;
 	public byte[] _iv = null;
 
+	private static boolean _log_encryption_info = DEFAULT_LOG_ENCRYPTION_INFO;
+
 	private String _temp_algo_key = strings.DEFAULT; 
 	private String _temp_algo_cipher = strings.DEFAULT;
 	private boolean _is_ok = false;
@@ -54,6 +54,10 @@ public class crypto extends parent
 	public String toString() { return strings.DEFAULT; }
 	public boolean is_ok() { return _is_ok; }
 
+	public static boolean get_log_encryption_info() { return _log_encryption_info; }
+
+	public static boolean update_log_encryption_info(boolean log_encryption_info_) { return _log_encryption_info = log_encryption_info_; }
+	
 	public static String get_extension() { return (String)config.get_crypto(types.CONFIG_CRYPTO_FILE_EXTENSION); }
 
 	public static String get_file_full(String id_) { return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension()); }

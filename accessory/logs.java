@@ -22,14 +22,7 @@ public abstract class logs extends parent_static
 	{
 		if (!strings.is_ok(message_)) return;
 
-		if (parent_tests.is_running() || out_is_enabled(SCREEN)) update_screen(message_);
-
-		if (parent_tests.is_running())
-		{	
-			generic.to_screen("Only screen logs while tests are running.");
-
-			return;
-		}
+		if (out_is_enabled(SCREEN)) update_screen(message_);
 
 		if (out_is_enabled(FILE)) update_file(message_, id_, is_error_);
 	}
@@ -45,7 +38,7 @@ public abstract class logs extends parent_static
 	}
 
 	public static void update_file(String message_, String id_, boolean is_error_)
-	{
+	{		
 		String id = id_;
 		if (!strings.is_ok(id)) id = (String)config.get_basic(types.CONFIG_BASIC_NAME);
 		
@@ -54,6 +47,15 @@ public abstract class logs extends parent_static
 	
 	public static void update_file(String message_, String path_)
 	{
+		if (parent_tests.is_running())
+		{	
+			if (!out_is_enabled(SCREEN)) update_screen(message_);
+			
+			generic.to_screen("Only screen logs while tests are running.");
+
+			return;
+		}
+
 		String message = get_message(message_, dates.FORMAT_TIMESTAMP);
 		if (!strings.is_ok(message)) return;
 		
