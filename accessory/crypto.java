@@ -56,7 +56,7 @@ public class crypto extends parent
 
 	public static boolean get_log_encryption_info() { return _log_encryption_info; }
 
-	public static boolean update_log_encryption_info(boolean log_encryption_info_) { return _log_encryption_info = log_encryption_info_; }
+	public static void update_log_encryption_info(boolean log_encryption_info_) { _log_encryption_info = log_encryption_info_; }
 	
 	public static String get_extension() { return (String)config.get_crypto(types.CONFIG_CRYPTO_FILE_EXTENSION); }
 
@@ -82,15 +82,7 @@ public class crypto extends parent
 
 		try 
 		{
-			update_cipher_enc();
-
-			if (!arrays.is_ok(_iv)) 
-			{
-				_iv = _cipher_enc.getIV();
-				if (!iv_to_file(_iv)) return;
-
-				if (_log_encryption_info) log_encryption_info();
-			}
+			if (!update_cipher_enc()) return;
 
 			_out = Base64.getEncoder().encodeToString(_cipher_enc.doFinal(_in.getBytes()));
 		} 
@@ -260,29 +252,45 @@ public class crypto extends parent
 		return output;
 	}
 
-	private void update_cipher_enc()
+	private boolean update_cipher_enc()
 	{	
-		if (_cipher_enc != null) return;
+		boolean is_ok = true;
+		
+		if (_cipher_enc != null) return is_ok;
 
+		_key = null;
+		_iv = null;
+		
 		try
 		{	
 			_cipher_enc = Cipher.getInstance(_algo_cipher);
 
-			if (_key == null) 
+			_key = get_key();
+
+			if (_key == null || !key_to_file(_key)) 
 			{
-				_key = get_key();
+				manage_error();
 
-				if (!key_to_file(_key)) 
-				{
-					manage_error();
-
-					return;
-				}
+				is_ok = false;
 			}
-
-			_cipher_enc.init(Cipher.ENCRYPT_MODE, _key, new SecureRandom());	
+			else
+			{
+				_cipher_enc.init(Cipher.ENCRYPT_MODE, _key, new SecureRandom());	
+				
+				_iv = _cipher_enc.getIV();
+				
+				if (!iv_to_file(_iv)) is_ok = false;
+				else if (_log_encryption_info) log_encryption_info();
+			}
 		}
-		catch (Exception e) { manage_error(ERROR_ENCRYPT, e); }
+		catch (Exception e) 
+		{ 
+			manage_error(ERROR_ENCRYPT, e); 
+			
+			is_ok = false;
+		}
+		
+		return is_ok;
 	}
 
 	private void update_cipher_dec()

@@ -206,17 +206,13 @@ public class data extends parent
 		return classes;
 	}
 
-	static HashMap<Class<?>, Class<?>> populate_all_compatible()
+	static HashMap<Class<?>, Class<?>[]> populate_all_compatible()
 	{
-		HashMap<Class<?>, Class<?>> classes = new HashMap<Class<?>, Class<?>>();
+		HashMap<Class<?>, Class<?>[]> classes = new HashMap<Class<?>, Class<?>[]>();
 
-		classes.put(Double.class, Integer.class);
-		classes.put(Double.class, Long.class);
-		classes.put(Long.class, Integer.class);
-		classes.put(Boolean.class, Integer.class);
-		classes.put(Boolean.class, Long.class);
-		classes.put(Boolean.class, Double.class);
-		classes.put(Boolean.class, String.class);
+		classes.put(Double.class, new Class<?>[] { Integer.class, Long.class });
+		classes.put(Long.class, new Class<?>[] { Integer.class });
+		classes.put(Boolean.class, new Class<?>[] { Integer.class, Long.class, Double.class, String.class });
 
 		return classes;
 	}
@@ -295,9 +291,14 @@ public class data extends parent
 		if (input_ == null || target_ == null) return false;
 		if (generic.are_equal(input_, target_)) return true;
 
-		for (Entry<Class<?>, Class<?>> item: get_all_compatible().entrySet())
+		for (Entry<Class<?>, Class<?>[]> item: get_all_compatible().entrySet())
 		{
-			if (generic.are_equal(target_, item.getKey()) && generic.are_equal(input_, item.getValue())) return true;
+			if (!generic.are_equal(target_, item.getKey())) continue;
+
+			for (Class<?> class2: item.getValue())
+			{
+				if (generic.are_equal(input_, class2)) return true;
+			}
 		}
 
 		return false;
@@ -307,7 +308,7 @@ public class data extends parent
 
 	private static HashMap<String, Class<?>> get_all_classes() { return _alls.DATA_CLASSES; }
 
-	private static HashMap<Class<?>, Class<?>> get_all_compatible() { return _alls.DATA_COMPATIBLE; }
+	private static HashMap<Class<?>, Class<?>[]> get_all_compatible() { return _alls.DATA_COMPATIBLE; }
 
 	private void instantiate(data input_)
 	{
