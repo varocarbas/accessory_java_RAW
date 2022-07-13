@@ -17,7 +17,7 @@ public class db_where extends parent
 
 	public static final String DEFAULT_OPERAND = OPERAND_EQUAL;
 	public static final String DEFAULT_LINK = LINK_AND;
-	public static final boolean DEFAULT_LITERAL = true;
+	public static final boolean DEFAULT_IS_LITERAL = true;
 	public static final boolean DEFAULT_IS_QUICK = false;
 	
 	private String _source = strings.DEFAULT;
@@ -25,7 +25,7 @@ public class db_where extends parent
 	private String _operand = DEFAULT_OPERAND;
 	private Object _value = null; //It is checked and adapted to the given source/field, except when _is_quick is true.
 	private String _link = DEFAULT_LINK;
-	private boolean _is_literal = DEFAULT_LITERAL; //It defines _value as a literal (e.g., 5 -> '5') or as something else (e.g., col + 1 -> col + 1).
+	private boolean _is_literal = DEFAULT_IS_LITERAL; //It defines _value as a literal (e.g., 5 -> '5') or as something else (e.g., col + 1 -> col + 1).
 	private boolean _is_quick = DEFAULT_IS_QUICK; //It is equivalent to the db "_quick" methods, where all the fields are assumed to be cols and no value checks are performed.
 	
 	private String _temp_source = strings.DEFAULT;
@@ -97,13 +97,13 @@ public class db_where extends parent
 
 	public db_where(db_where input_) { instantiate(input_); }
 
-	public db_where(String field_col_, Object value_) { instantiate(db._cur_source, field_col_, DEFAULT_OPERAND, value_, DEFAULT_LITERAL, DEFAULT_LINK, DEFAULT_IS_QUICK); }	
+	public db_where(String field_col_, Object value_) { instantiate(db._cur_source, field_col_, DEFAULT_OPERAND, value_, DEFAULT_IS_LITERAL, DEFAULT_LINK, DEFAULT_IS_QUICK); }	
 
-	public db_where(String source_, String field_col_, Object value_) { instantiate(source_, field_col_, DEFAULT_OPERAND, value_, DEFAULT_LITERAL, DEFAULT_LINK, DEFAULT_IS_QUICK); }	
+	public db_where(String source_, String field_col_, Object value_) { instantiate(source_, field_col_, DEFAULT_OPERAND, value_, DEFAULT_IS_LITERAL, DEFAULT_LINK, DEFAULT_IS_QUICK); }	
 
-	public db_where(String source_, String field_col_, String operand_, Object value_) { instantiate(source_, field_col_, operand_, value_, DEFAULT_LITERAL, DEFAULT_LINK, DEFAULT_IS_QUICK); }
+	public db_where(String source_, String field_col_, String operand_, Object value_) { instantiate(source_, field_col_, operand_, value_, DEFAULT_IS_LITERAL, DEFAULT_LINK, DEFAULT_IS_QUICK); }
 
-	public db_where(String source_, String field_col_, String operand_, Object value_, String link_) { instantiate(source_, field_col_, operand_, value_, DEFAULT_LITERAL, link_, DEFAULT_IS_QUICK); }
+	public db_where(String source_, String field_col_, String operand_, Object value_, String link_) { instantiate(source_, field_col_, operand_, value_, DEFAULT_IS_LITERAL, link_, DEFAULT_IS_QUICK); }
 
 	public db_where(String source_, String field_col_, String operand_, Object value_, boolean is_literal_, String link_) { instantiate(source_, field_col_, operand_, value_, is_literal_, link_, DEFAULT_IS_QUICK); }
 

@@ -151,7 +151,7 @@ public class tests extends parent_tests
 		db_where where = new db_where(FIELD_STRING, vals.get(FIELD_STRING));
 		db_where[] wheres = new db_where[] { where };
 
-		db_where where_quick = new db_where(source, db.get_col(source, FIELD_STRING), db_where.OPERAND_EQUAL, vals.get(FIELD_STRING), db_where.DEFAULT_LITERAL, db_where.DEFAULT_LINK, true);
+		db_where where_quick = new db_where(source, db.get_col(source, FIELD_STRING), db_where.OPERAND_EQUAL, vals.get(FIELD_STRING), db_where.DEFAULT_IS_LITERAL, db_where.DEFAULT_LINK, true);
 		db_where[] wheres_quick = new db_where[] { where_quick };
 
 		args = new ArrayList<Object>();

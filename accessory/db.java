@@ -35,6 +35,8 @@ public abstract class db
 	public static final String QUERY_TABLE_DROP = types.DB_QUERY_TABLE_DROP;
 	public static final String QUERY_TABLE_TRUNCATE = types.DB_QUERY_TABLE_TRUNCATE;
 
+	public static final int MAX_ROWS_ALL = 0;
+	
 	public static final String ERROR_INFO = types.ERROR_DB_INFO;
 	public static final String ERROR_CREDENTIALS = types.ERROR_DB_CREDENTIALS;
 	public static final String ERROR_TYPE = types.ERROR_DB_TYPE;
@@ -43,7 +45,12 @@ public abstract class db
 	public static final String ERROR_SOURCE = types.ERROR_DB_SOURCE;
 	public static final String ERROR_FIELD = types.ERROR_DB_FIELD;
 	public static final String ERROR_VALS = types.ERROR_DB_VALS;
-	
+
+	public static final String[] DEFAULT_FIELDS_COLS = null;
+	public static final int DEFAULT_MAX_ROWS = MAX_ROWS_ALL;
+	public static final String DEFAULT_WHERE = strings.DEFAULT;
+	public static final String DEFAULT_ORDER = strings.DEFAULT;
+
 	public static final String DEFAULT_DB = types.CONFIG_DB_DEFAULT;
 	public static final String DEFAULT_DB_NAME = "accessory";
 	public static final String DEFAULT_SOURCE = types.CONFIG_TESTS_DB_SOURCE;
@@ -54,7 +61,7 @@ public abstract class db
 	public static final String DEFAULT_HOST = "localhost";
 	public static final String DEFAULT_CREDENTIALS_TYPE = types.remove_type(DEFAULT_TYPE, types.CONFIG_DB_SETUP_TYPE);
 	public static final boolean DEFAULT_CREDENTIALS_MEMORY = true;
-
+	
 	static String _cur_source = strings.DEFAULT; //Only updated by the user, as a way to keep using the same source without having to expressly provide it.
 	static String _cur_type = DEFAULT_TYPE; //Automatically updated every time a new DB type is used.
 	
@@ -142,11 +149,11 @@ public abstract class db
 		return update_vals(get_setup_from_db(db), setup_vals_);
 	}
 
-	public static boolean exists(String source_, db_where[] wheres_) { return arrays.is_ok(select_one(source_, null, wheres_, null)); }
+	public static boolean exists(String source_, db_where[] wheres_) { return arrays.is_ok(select_one(source_, DEFAULT_FIELDS_COLS, wheres_, null)); }
 
-	public static boolean exists(String source_, String where_cols_) { return arrays.is_ok(select_one(source_, null, where_cols_, null)); }
+	public static boolean exists(String source_, String where_cols_) { return arrays.is_ok(select_one(source_, DEFAULT_FIELDS_COLS, where_cols_, null)); }
 
-	public static String select_one_string(String source_, String field_) { return select_one_string(source_, field_, (String)null, null); }
+	public static String select_one_string(String source_, String field_) { return select_one_string(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
 	public static String select_one_string(String source_, String field_, db_where[] wheres_, db_order[] orders_) { return select_one_string(source_, field_, db_where.to_string(wheres_), db_order.to_string(orders_)); }
 
@@ -154,7 +161,7 @@ public abstract class db
 
 	public static String select_one_string_quick(String source_, String field_, String where_cols_, String order_cols_) { return (String)db_queries.select_one_common(source_, field_, where_cols_, order_cols_, data.STRING, true); }
 	
-	public static double select_one_decimal(String source_, String field_) { return select_one_decimal(source_, field_, (String)null, null); }
+	public static double select_one_decimal(String source_, String field_) { return select_one_decimal(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
 	public static double select_one_decimal(String source_, String field_, db_where[] wheres_, db_order[] orders_) { return select_one_decimal(source_, field_, db_where.to_string(wheres_), db_order.to_string(orders_)); }
 
@@ -162,7 +169,7 @@ public abstract class db
 
 	public static double select_one_decimal_quick(String source_, String field_, String wheres_cols_, String orders_cols_) { return (double)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.DECIMAL, true); }
 
-	public static long select_one_long(String source_, String field_) { return select_one_long(source_, field_, (String)null, null); }
+	public static long select_one_long(String source_, String field_) { return select_one_long(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
 	public static long select_one_long(String source_, String field_, db_where[] wheres_, db_order[] orders_) { return select_one_long(source_, field_, db_where.to_string(wheres_), db_order.to_string(orders_)); }
 
@@ -170,7 +177,7 @@ public abstract class db
 
 	public static long select_one_long_quick(String source_, String field_, String wheres_cols_, String orders_cols_) { return (long)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.LONG, true); }
 
-	public static int select_one_int(String source_, String field_) { return select_one_int(source_, field_, (String)null, null); }
+	public static int select_one_int(String source_, String field_) { return select_one_int(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
 	public static int select_one_int(String source_, String field_, db_where[] wheres_, db_order[] orders_) { return select_one_int(source_, field_, db_where.to_string(wheres_), db_order.to_string(orders_)); }
 
@@ -178,7 +185,7 @@ public abstract class db
 
 	public static int select_one_int_quick(String source_, String field_, String wheres_cols_, String orders_cols_) { return (int)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.INT, true); }
 
-	public static boolean select_one_boolean(String source_, String field_) { return select_one_boolean(source_, field_, (String)null, null); }
+	public static boolean select_one_boolean(String source_, String field_) { return select_one_boolean(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
 	public static boolean select_one_boolean(String source_, String field_, db_where[] wheres_, db_order[] orders_) { return select_one_boolean(source_, field_, db_where.to_string(wheres_), db_order.to_string(orders_)); }
 
@@ -192,7 +199,7 @@ public abstract class db
 
 	public static HashMap<String, String> select_one_quick(String source_, String[] cols_, String wheres_cols_, String orders_cols_) { return db_queries.select_one(source_, cols_, wheres_cols_, orders_cols_, true); }
 
-	public static ArrayList<String> select_some_strings(String source_, String field_) { return select_some_strings(source_, field_, (String)null, 0, null); }
+	public static ArrayList<String> select_some_strings(String source_, String field_) { return select_some_strings(source_, field_, DEFAULT_WHERE, DEFAULT_MAX_ROWS, DEFAULT_ORDER); }
 
 	public static ArrayList<String> select_some_strings(String source_, String field_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select_some_strings(source_, field_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
 
@@ -202,7 +209,7 @@ public abstract class db
 	@SuppressWarnings("unchecked")
 	public static ArrayList<String> select_some_strings_quick(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<String>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.STRING, true); }
 	
-	public static ArrayList<Double> select_some_decimals(String source_, String field_) { return select_some_decimals(source_, field_, (String)null, 0, null); }
+	public static ArrayList<Double> select_some_decimals(String source_, String field_) { return select_some_decimals(source_, field_, DEFAULT_WHERE, DEFAULT_MAX_ROWS, DEFAULT_ORDER); }
 
 	public static ArrayList<Double> select_some_decimals(String source_, String field_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select_some_decimals(source_, field_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
 
@@ -212,7 +219,7 @@ public abstract class db
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Double> select_some_decimals_quick(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Double>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.DECIMAL, true); }
 	
-	public static ArrayList<Long> select_some_longs(String source_, String field_) { return select_some_longs(source_, field_, (String)null, 0, null); }
+	public static ArrayList<Long> select_some_longs(String source_, String field_) { return select_some_longs(source_, field_, DEFAULT_WHERE, DEFAULT_MAX_ROWS, DEFAULT_ORDER); }
 
 	public static ArrayList<Long> select_some_longs(String source_, String field_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select_some_longs(source_, field_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
 
@@ -222,7 +229,7 @@ public abstract class db
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Long> select_some_longs_quick(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Long>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.LONG, true); }
 
-	public static ArrayList<Integer> select_some_ints(String source_, String field_) { return select_some_ints(source_, field_, (String)null, 0, null); }
+	public static ArrayList<Integer> select_some_ints(String source_, String field_) { return select_some_ints(source_, field_, DEFAULT_WHERE, DEFAULT_MAX_ROWS, DEFAULT_ORDER); }
 
 	public static ArrayList<Integer> select_some_ints(String source_, String field_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select_some_ints(source_, field_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
 
@@ -232,7 +239,7 @@ public abstract class db
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Integer> select_some_ints_quick(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Integer>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.INT, true); }
 
-	public static ArrayList<Boolean> select_some_booleans(String source_, String field_) { return select_some_booleans(source_, field_, (String)null, 0, null); }
+	public static ArrayList<Boolean> select_some_booleans(String source_, String field_) { return select_some_booleans(source_, field_, DEFAULT_WHERE, DEFAULT_MAX_ROWS, DEFAULT_ORDER); }
 
 	public static ArrayList<Boolean> select_some_booleans(String source_, String field_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select_some_booleans(source_, field_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
 
@@ -242,9 +249,9 @@ public abstract class db
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Boolean> select_some_booleans_quick(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Boolean>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.BOOLEAN, true); }
 
-	public static ArrayList<HashMap<String, String>> select(String source_, db_where[] wheres_) { return select(source_, null, wheres_, 0, null); }
+	public static ArrayList<HashMap<String, String>> select(String source_, db_where[] wheres_) { return select(source_, DEFAULT_FIELDS_COLS, wheres_, DEFAULT_MAX_ROWS, null); }
 
-	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_) { return select(source_, fields_, wheres_, 0, null); }
+	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_) { return select(source_, fields_, wheres_, DEFAULT_MAX_ROWS, null); }
 
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] fields_, db_where[] wheres_, int max_rows_, db_order[] orders_) { return select(source_, fields_, db_where.to_string(wheres_), max_rows_, db_order.to_string(orders_)); }
 
