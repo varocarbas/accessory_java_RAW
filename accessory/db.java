@@ -684,6 +684,10 @@ public abstract class db
 
 	static String get_db_name(String db_) { return (String)config.get(db_, NAME); }
 
+	static void manage_error(String source_, String message_) { manage_error(source_, ERROR_INFO, message_); }
+
+	static void manage_error(String source_, String type_, String message_) { manage_error(source_, type_, null, null, message_); }
+	
 	static void manage_error(String source_, String type_, String query_, Exception e_, String message_)
 	{
 		is_ok(source_, false);

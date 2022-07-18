@@ -18,16 +18,19 @@ public class db_field extends parent
 	public static final int MIN_DECIMALS = size.MIN_DECIMALS;
 
 	public static final String WRONG_TYPE = strings.DEFAULT;
-	public static final long WRONG_SIZE = numbers.DEFAULT_LONG;
+	public static final long WRONG_SIZE = 0l;
 	public static final int WRONG_DECIMALS = size.WRONG_DECIMALS;
-
+	public static final Object WRONG_DEFAULT = null;
+	
 	public static final String DEFAULT_TYPE = data.STRING;
+	public static final long DEFAULT_SIZE = WRONG_SIZE;
 	public static final int DEFAULT_DECIMALS = numbers.DEFAULT_DECIMALS;
-
+	public static final Object DEFAULT_DEFAULT = WRONG_DEFAULT;
+	
 	private String _type = WRONG_TYPE; //It is a data type. The specific DB type is automatically determined from that type and the size right before interacting with the DB.
 	private long _size = WRONG_SIZE;
 	private int _decimals = WRONG_DECIMALS;
-	private Object _default = null;
+	private Object _default = WRONG_DEFAULT;
 	private String[] _further = null;
 
 	private String _temp_type = strings.DEFAULT;
@@ -119,15 +122,15 @@ public class db_field extends parent
 
 	public db_field(db_field input_) { instantiate(input_); }
 
-	public db_field(String type_) { instantiate(type_, WRONG_SIZE, DEFAULT_DECIMALS, null, null); }
+	public db_field(String type_) { instantiate(type_, DEFAULT_SIZE, DEFAULT_DECIMALS, null, null); }
 
-	public db_field(String type_, String[] further_) { instantiate(type_, WRONG_SIZE, DEFAULT_DECIMALS, null, further_); }
+	public db_field(String type_, String[] further_) { instantiate(type_, DEFAULT_SIZE, DEFAULT_DECIMALS, null, further_); }
 
-	public db_field(String type_, long size_, String[] further_) { instantiate(type_, size_, DEFAULT_DECIMALS, null, further_); }
+	public db_field(String type_, long size_, String[] further_) { instantiate(type_, size_, DEFAULT_DECIMALS, DEFAULT_DEFAULT, further_); }
 
-	public db_field(String type_, long size_) { instantiate(type_, size_, 0, null, null); }
+	public db_field(String type_, long size_) { instantiate(type_, size_, DEFAULT_DECIMALS, DEFAULT_DEFAULT, null); }
 
-	public db_field(String type_, long size_, int decimals_) { instantiate(type_, size_, decimals_, null, null); }
+	public db_field(String type_, long size_, int decimals_) { instantiate(type_, size_, decimals_, DEFAULT_DEFAULT, null); }
 
 	public db_field(String type_, long size_, int decimals_, Object default_, String[] further_) { instantiate(type_, size_, decimals_, default_, further_); }
 
@@ -143,24 +146,19 @@ public class db_field extends parent
 
 	public String toString()
 	{
-		String output = "";
-
-		String type = data.check_type(_type);
-		if (strings.is_ok(type)) output = type.toString();		
-		if (!output.equals("")) output += misc.SEPARATOR_ITEM;
+		String output = strings.to_string(data.check_type(_type));		
 
 		String size = strings.to_string(_size);
 		if (_decimals > 0) size += ", " + _decimals;
+
+		if (strings.is_ok(output)) output += misc.SEPARATOR_ITEM;
 		output += "(" + size + ")";
 
-		if (generic.is_ok(_further)) 
-		{
-			output += misc.SEPARATOR_ITEM;
-			output += arrays.to_string(_further, null);
-		} 
-		if (!strings.is_ok(output)) return strings.DEFAULT;
+		if (!generic.are_equal(_default, WRONG_DEFAULT)) output += misc.SEPARATOR_ITEM + strings.to_string(_default);
+		
+		if (_further != null) output += misc.SEPARATOR_ITEM + arrays.to_string(_further, null);
 
-		return (misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE);
+		return (strings.is_ok(output) ? (misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE) : strings.DEFAULT);
 	}
 
 	public boolean equals(db_field field2_)
@@ -180,7 +178,7 @@ public class db_field extends parent
 
 	public static String[] get_all_types_no_size() { return _alls.DB_FIELD_TYPES_NO_SIZE; }
 
-	static String[] populate_all_types_no_size() { return new String[] { data.TIMESTAMP, data.BOOLEAN, data.TINYINT }; }
+	static String[] populate_all_types_no_size() { return new String[] { data.TIMESTAMP, data.BOOLEAN, data.TINYINT, data.INT, data.LONG }; }
 
 	private void instantiate(db_field input_)
 	{

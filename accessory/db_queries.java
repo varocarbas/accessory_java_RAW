@@ -76,7 +76,14 @@ abstract class db_queries extends parent_static
 	public static void __create_table_like(String table_name_, String source_like_, boolean drop_it_) 
 	{ 
 		String source = db.check_source_error(source_like_);
-		if (!strings.is_ok(source) || !strings.is_ok(table_name_)) return;
+		if (!strings.is_ok(source)) return;
+		
+		if (!strings.is_ok(table_name_))
+		{
+			db.manage_error(source, "Wrong table name");
+			
+			return;
+		}
 		
 		__lock();
 		
@@ -91,6 +98,7 @@ abstract class db_queries extends parent_static
 		
 		__unlock();
 	}
+	
 	public static void __backup_table(String source_, String backup_name_) 
 	{ 
 		String source = db.check_source_error(source_);
@@ -118,7 +126,7 @@ abstract class db_queries extends parent_static
 	public static void drop_table(String source_) { drop_table_internal(source_); }
 
 	public static void truncate_table(String source_) { truncate_table_internal(source_); }
-	
+
 	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_) { return db.get_valid_instance(source_).execute_query(source_, query_); }
 
 	static Object select_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_, boolean is_quick_) { return select_one_some_common(source_, field_, wheres_cols_, max_rows_, orders_cols_, what_, false, is_quick_); }

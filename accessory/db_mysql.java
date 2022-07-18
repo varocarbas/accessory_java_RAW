@@ -106,7 +106,7 @@ class db_mysql extends parent_db
 
 		db_sql.execute_query(null, get_query_backup_table(table_source_, table_backup_), false, null);
 	}
-	
+
 	public String sanitise_string(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 
 	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
@@ -400,7 +400,7 @@ class db_mysql extends parent_db
 	private String get_query_create_table_like(String table_, String table_like_) { return ("CREATE TABLE " + get_variable(table_) + " LIKE " + get_variable(table_like_)); }
 
 	private String get_query_backup_table(String table_source_, String table_backup_) { return ("INSERT INTO " + get_variable(table_backup_) + " SELECT * FROM " + get_variable(table_source_)); }
-
+	
 	private String get_query_create_table(String table_, HashMap<String, db_field> cols_info_)
 	{
 		String query = "";
