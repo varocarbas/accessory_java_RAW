@@ -237,6 +237,39 @@ public abstract class dates extends parent_static
 
 	public static int get_length(String format_) { return get_pattern(check_format(format_, false)).length(); }
 
+	public static HashMap<String, Integer> get_seconds_minutes(int secs_) { return get_seconds_minutes_hours(secs_, SECONDS, MINUTES); }
+
+	public static HashMap<String, Integer> get_minutes_hours(int mins_) { return get_seconds_minutes_hours(mins_, MINUTES, HOURS); }
+
+	public static String seconds_to_time(int secs_) { return seconds_to_time(secs_, false); }
+	
+	public static String seconds_to_time(int secs_, boolean no_hours_) 
+	{ 		
+		HashMap<String, Integer> temp = get_seconds_minutes(secs_);
+		if (!arrays.is_ok(temp)) return strings.DEFAULT;
+		
+		int secs = temp.get(SECONDS);
+		int mins = temp.get(MINUTES);
+		int hours = 0;
+
+		String output = "";
+		
+		if (!no_hours_)
+		{
+			temp = get_minutes_hours(mins);
+			
+			mins = temp.get(MINUTES);
+			hours = temp.get(HOURS);
+			
+			output = String.format("%02d", hours) + ":";
+		}
+		
+		output += String.format("%02d", mins) + ":";
+		output += String.format("%02d", secs);
+		
+		return output; 
+	}
+
 	public static int time_to_seconds(String time_) { return time_to_seconds(time_, false); }
 	
 	public static int time_to_seconds(String time_, boolean no_hours_)
@@ -325,6 +358,27 @@ public abstract class dates extends parent_static
 	public static LocalDate get_random_date() { return get_now_date().plusDays((long)numbers.get_random_int(-1 * DEFAULT_SIZE_DAYS, DEFAULT_SIZE_DAYS)); }
 
 	public static LocalTime get_random_time() { return get_now_time().plusHours((long)numbers.get_random_int(-1 * DEFAULT_SIZE_HOURS, DEFAULT_SIZE_HOURS)); }
+	
+	private static HashMap<String, Integer> get_seconds_minutes_hours(int val1_, String key1_, String key2_) 
+	{ 
+		if (val1_ < 0) return null;
+		
+		HashMap<String, Integer> output = new HashMap<String, Integer>();
+
+		int val1 = val1_;
+		int val2 = 0;
+		
+		if (val1 >= 60)
+		{
+			val2 = val1 / 60;
+			val1 -= (60 * val2);
+		}
+		
+		output.put(key1_, val1);
+		output.put(key2_, val2);
+	
+		return output;
+	}
 
 	private static int check_offset(int offset_) { return (Math.abs(offset_) > MAX_OFFSET ? DEFAULT_OFFSET : offset_); }
 
