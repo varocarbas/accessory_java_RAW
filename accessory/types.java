@@ -43,6 +43,7 @@ public abstract class types extends parent_static
 	public static final String CONFIG_BASIC_DIR_LOGS_ERRORS = "config_basic_dir_logs_errors";
 	public static final String CONFIG_BASIC_DIR_LOGS_ACTIVITY = "config_basic_dir_logs_activity";
 	public static final String CONFIG_BASIC_DIR_CRYPTO = "config_basic_dir_crypto";
+	public static final String CONFIG_BASIC_DIR_SOUNDS = "config_basic_dir_sounds";
 
 	//--- CONFIG_DB variables deal with the generic, common configuration of DBs. Specific CONFIG constants
 	//have to be added to manage each DB's specific information like, for example, sources and fields.
@@ -384,7 +385,7 @@ public abstract class types extends parent_static
 			CONFIG_BASIC_NAME, 
 			CONFIG_BASIC_DIR,
 			CONFIG_BASIC_DIR_APP, CONFIG_BASIC_DIR_INI,CONFIG_BASIC_DIR_CREDENTIALS, 
-			CONFIG_BASIC_DIR_CRYPTO,
+			CONFIG_BASIC_DIR_CRYPTO, CONFIG_BASIC_DIR_SOUNDS,
 			CONFIG_BASIC_DIR_LOGS,
 			CONFIG_BASIC_DIR_LOGS_ERRORS, CONFIG_BASIC_DIR_LOGS_ACTIVITY,
 			CONFIG_CREDENTIALS, 

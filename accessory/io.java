@@ -12,10 +12,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 import java.util.Scanner;
 
 public abstract class io extends parent_static 
 {
+	public static final int MAX_SECS_SOUND_SHORT = 5;
+	
 	public static final String ERROR_WRITE = types.ERROR_FILE_WRITE;
 	public static final String ERROR_READ = types.ERROR_FILE_READ;
 
@@ -283,7 +289,38 @@ public abstract class io extends parent_static
 
 		return output;
 	}
+	
+	public static boolean play_sound_short(String file_, boolean app_is_exiting_)
+	{
+		_is_ok = false;
+		
+		if (strings.contains_end(paths.EXTENSION_WAV, file_, true)) play_sound_short_wav(file_, app_is_exiting_);
+		
+		return _is_ok;
+	}
+	
+	private static boolean play_sound_short_wav(String file_, boolean app_is_exiting_)
+	{
+		_is_ok = false;
+		
+		try 
+		{	
+			String path = (strings.is_ok(file_) ? paths.build(new String[] { paths.get_dir(paths.DIR_SOUNDS), file_ }, true) : strings.DEFAULT);
+			if (!strings.is_ok(path) || !paths.exists(path)) return _is_ok;
+					
+	        Clip clip = AudioSystem.getClip();
 
+	        clip.open(AudioSystem.getAudioInputStream(new File(path)));
+
+	        clip.start();
+	        
+	        if (app_is_exiting_) misc.pause_secs(MAX_SECS_SOUND_SHORT);
+		} 
+		catch (Exception e) { _is_ok = false; }
+		
+		return _is_ok;
+	}
+	
 	private static void line_to_file(String path_, String line_, boolean append_, FileWriter writer_)
 	{
 		method_start();

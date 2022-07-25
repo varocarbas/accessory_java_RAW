@@ -74,6 +74,10 @@ public abstract class numbers extends parent_static
 
 	public static boolean is_ok(Object input_) { return generic.is_number(input_); }
 
+	public static boolean are_equivalent(double val1_, double val2_) { return are_equivalent(val1_, val2_, _round_decimals); }
+	
+	public static boolean are_equivalent(double val1_, double val2_, int round_decimals_) { return (round(val1_, round_decimals_) == round(val2_, round_decimals_)); }
+
 	public static double to_number(Object input_)
 	{
 		double output = 0.0;
@@ -216,7 +220,10 @@ public abstract class numbers extends parent_static
 		return output;
 	}
 
-	public static double round(double val_) { return round(val_, _round_decimals, _round_mode); }
+
+	public static double round(double val_) { return round(val_, _round_decimals); }
+
+	public static double round(double val_, int decimals_) { return round(val_, decimals_, _round_mode); }
 	
 	static final Class<?>[] populate_all_classes() { return new Class<?>[] { Integer.class, int.class, Long.class, long.class, Double.class, double.class }; }	
 

@@ -14,20 +14,22 @@ public abstract class paths extends parent_static
 	public static final String DIR_LOGS_ACTIVITY = types.CONFIG_BASIC_DIR_LOGS_ACTIVITY;
 	public static final String DIR_CREDENTIALS = types.CONFIG_BASIC_DIR_CREDENTIALS;
 	public static final String DIR_CRYPTO = types.CONFIG_BASIC_DIR_CRYPTO;
-
+	public static final String DIR_SOUNDS = types.CONFIG_BASIC_DIR_SOUNDS;
+			
 	public static final String EXTENSION_TEXT = ".txt";
 	public static final String EXTENSION_JAR = ".jar";
 	public static final String EXTENSION_INI = ".ini";
 	public static final String EXTENSION_LOG = ".log";
-
+	public static final String EXTENSION_WAV = ".wav";
+	
 	public static boolean exists(String path_) { return (strings.is_ok(path_) && (new File(path_)).exists()); }
 
-	public static String build(String[] pieces_, boolean last_file_) { return build(arrays.to_arraylist(pieces_), last_file_, false); }
+	public static String build(String[] pieces_, boolean last_is_file_) { return build(arrays.to_arraylist(pieces_), last_is_file_, false); }
 	
-	public static String build(ArrayList<String> pieces_, boolean last_file_, boolean add_home_always_)
+	public static String build(ArrayList<String> pieces_, boolean last_is_file_, boolean add_home_always_)
 	{
 		ArrayList<String> pieces = arrays.get_new(pieces_);
-		if (add_home_always_ || (last_file_ && !arrays.is_ok(pieces))) pieces.add(0, get_dir_home());
+		if (add_home_always_ || (last_is_file_ && !arrays.is_ok(pieces))) pieces.add(0, get_dir_home());
 		
 		if (!arrays.is_ok(pieces)) return strings.DEFAULT;
 
@@ -41,12 +43,12 @@ public abstract class paths extends parent_static
 			if (!strings.is_ok(piece)) continue;
 
 			tot++;
-			if (!last_file_ || i != last_i) piece = normalise_dir(piece);	
+			if (!last_is_file_ || i != last_i) piece = normalise_dir(piece);	
 			path += piece;	
 		}
 		if (tot < 1) return strings.DEFAULT;
 
-		if (!last_file_) path = normalise_dir(path);
+		if (!last_is_file_) path = normalise_dir(path);
 
 		return path;
 	}

@@ -3,12 +3,13 @@ package accessory;
 import java.util.HashMap;
 
 public abstract class parent_static 
-{
+{	
+	static boolean _is_ok = true;
+
 	protected static HashMap<String, Object> _temp = new HashMap<String, Object>();
 
 	private static final long MAX_LOCK_ELAPSED = 1;
-	
-	private static boolean _is_ok = true;
+
 	private static boolean _ignore_errors = false;
 	private static boolean _ignore_errors_persistent = false;
 	private static boolean _error_triggered = false;

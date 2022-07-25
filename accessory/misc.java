@@ -31,4 +31,8 @@ public abstract class misc extends parent_static
 		try { Thread.sleep(milli_); } 
 		catch (Exception e) { }		
 	}
+	
+	public static boolean play_alarm(String file_) { return play_alarm(file_, false); }
+	
+	public static boolean play_alarm(String file_, boolean is_exiting_) { return io.play_sound_short(file_, is_exiting_); }
 }
