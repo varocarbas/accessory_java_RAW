@@ -290,16 +290,16 @@ public abstract class io extends parent_static
 		return output;
 	}
 	
-	public static boolean play_sound_short(String file_, boolean app_is_exiting_)
+	public static boolean play_sound_short(String file_)
 	{
 		_is_ok = false;
 		
-		if (strings.contains_end(paths.EXTENSION_WAV, file_, true)) play_sound_short_wav(file_, app_is_exiting_);
+		if (strings.contains_end(paths.EXTENSION_WAV, file_, true)) play_sound_short_wav(file_);
 		
 		return _is_ok;
 	}
 	
-	private static boolean play_sound_short_wav(String file_, boolean app_is_exiting_)
+	private static boolean play_sound_short_wav(String file_)
 	{
 		_is_ok = false;
 		
@@ -314,7 +314,7 @@ public abstract class io extends parent_static
 
 	        clip.start();
 	        
-	        if (app_is_exiting_) misc.pause_secs(MAX_SECS_SOUND_SHORT);
+	        misc.pause_secs(MAX_SECS_SOUND_SHORT);
 		} 
 		catch (Exception e) { _is_ok = false; }
 		

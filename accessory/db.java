@@ -46,6 +46,13 @@ public abstract class db
 	public static final String ERROR_FIELD = types.ERROR_DB_FIELD;
 	public static final String ERROR_VALS = types.ERROR_DB_VALS;
 
+	public static final String WRONG_STRING = strings.DEFAULT;
+	public static final double WRONG_DECIMAL = numbers.MIN_DECIMAL;
+	public static final long WRONG_LONG = numbers.MIN_LONG;
+	public static final int WRONG_INT = numbers.MIN_INT;
+	public static final int WRONG_TINYINT = WRONG_INT;
+	public static final boolean WRONG_BOOLEAN = false;
+	
 	public static final String[] DEFAULT_FIELDS_COLS = null;
 	public static final int DEFAULT_MAX_ROWS = MAX_ROWS_ALL;
 	public static final String DEFAULT_WHERE = strings.DEFAULT;
@@ -151,7 +158,9 @@ public abstract class db
 
 	public static boolean exists(String source_, db_where[] wheres_) { return arrays.is_ok(select_one(source_, DEFAULT_FIELDS_COLS, wheres_, null)); }
 
-	public static boolean exists(String source_, String where_cols_) { return arrays.is_ok(select_one(source_, DEFAULT_FIELDS_COLS, where_cols_, null)); }
+	public static boolean exists(String source_, String where_cols_) { return arrays.is_ok(select_one(source_, DEFAULT_FIELDS_COLS, where_cols_, DEFAULT_ORDER)); }
+
+	public static boolean exists_id(String source_, String where_cols_) { return arrays.is_ok(select_one(source_, new String[] { FIELD_ID }, where_cols_, DEFAULT_ORDER)); }
 
 	public static String select_one_string(String source_, String field_) { return select_one_string(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
@@ -565,13 +574,18 @@ public abstract class db
 		String val2 = adapt_input(source_, (db_field)arrays.get_value(fields_, field_), val_);
 		if (val2 == null) 
 		{
-			errors.update_temp("wrong field", strings.to_string(field_) + " (" + strings.to_string(val_) + ")");
+			errors.update_temp("wrong value", strings.to_string(field_) + " (" + strings.to_string(val_) + ")");
 			
 			return null;
 		}
 
 		String col = get_col(source_, field_);
-		if (!strings.is_ok(col)) return null;
+		if (!strings.is_ok(col)) 
+		{
+			errors.update_temp("wrong field", strings.to_string(field_) + " isn't one of the " + strings.to_string(source_) + " fields");
+			
+			return null;
+		}
 
 		HashMap<String, String> output = new HashMap<String, String>(sofar_);
 		output.put(col, val2);
@@ -666,6 +680,12 @@ public abstract class db
 
 	public static String get_current_db_name() { return get_db_name(get_current_db()); }
 
+	public static String get_db_name(String db_) { return (String)config.get(db_, NAME); }
+	
+	public static boolean change_db_name_from_source(String source_, String name_) { return change_db_name(get_db(source_), name_); }
+
+	public static boolean change_db_name(String db_, String name_) { return update_db(db_, name_); }
+	
 	public static boolean is_ok() { return is_ok(get_current_source()); }
 
 	public static boolean is_ok(String source_) { return get_valid_instance(source_).is_ok(); }
@@ -681,8 +701,6 @@ public abstract class db
 	static String get_host(String setup_) { return (String)config.get(setup_, HOST); }
 
 	static String get_max_pool(String setup_) { return (String)config.get(setup_, MAX_POOL); }
-
-	static String get_db_name(String db_) { return (String)config.get(db_, NAME); }
 
 	static void manage_error(String source_, String message_) { manage_error(source_, ERROR_INFO, message_); }
 

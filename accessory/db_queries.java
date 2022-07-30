@@ -163,7 +163,7 @@ abstract class db_queries extends parent_static
 
 		return cols;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private static Object select_one_some_common(String source_, String field_col_, String wheres_cols_, int max_rows_, String orders_cols_, String what_, boolean is_one_, boolean is_quick_)
 	{
@@ -171,11 +171,12 @@ abstract class db_queries extends parent_static
 
 		if (is_one_)
 		{
-			if (data.is_string(what_)) output = strings.DEFAULT;
-			else if (what_.equals(data.DECIMAL)) output = numbers.DEFAULT_DECIMAL;
-			else if (what_.equals(data.LONG)) output = numbers.DEFAULT_LONG;
-			else if (what_.equals(data.INT) || what_.equals(data.TINYINT)) output = numbers.DEFAULT_INT;
-			else if (data.is_boolean(what_)) output = _defaults.BOOLEAN;		
+			if (data.is_string(what_)) output = db.WRONG_STRING;
+			else if (what_.equals(data.DECIMAL)) output = db.WRONG_DECIMAL;
+			else if (what_.equals(data.LONG)) output = db.WRONG_LONG;
+			else if (what_.equals(data.INT)) output = db.WRONG_INT;
+			else if (what_.equals(data.TINYINT)) output = db.WRONG_TINYINT;
+			else if (data.is_boolean(what_)) output = db.WRONG_BOOLEAN;		
 		}
 
 		if (!strings.is_ok(field_col_)) 

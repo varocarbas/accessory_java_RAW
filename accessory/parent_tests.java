@@ -14,32 +14,44 @@ public abstract class parent_tests
 	public static final String FIELD_BOOLEAN = types.CONFIG_TESTS_DB_FIELD_BOOLEAN;
 
 	public static final String ERROR_RUN = types.ERROR_TEST_RUN;
+
+	public static final boolean DEFAULT_REPORT_ALL_ERRORS = true;
+	public static final boolean DEFAULT_TEST_DB = true;
+	public static final boolean DEFAULT_DROP_DB_TABLES = true;
 	
-	public static boolean _report_all_errors = true;
-	public static boolean _test_db = true;
-	public static Object _temp_output = null;
+	protected boolean _report_all_errors = DEFAULT_REPORT_ALL_ERRORS;
+	protected boolean _test_db = DEFAULT_TEST_DB;
+	protected boolean _drop_db_tables = DEFAULT_DROP_DB_TABLES;
+	protected Object _temp_output = null;
 	
 	private static boolean _is_running = false;
 	private static int _overload = 0;
 	
 	public static boolean is_running() { return _is_running; }
-	
-	static { _ini.start(); }
+		
+	public boolean create_table(String source_)
+	{
+		ArrayList<Object> args = new ArrayList<Object>();
+		args.add(source_);
+		args.add(_drop_db_tables);
+
+		return run_method(db.class, "create_table", new Class<?>[] { String.class, boolean.class }, args, null);		
+	}
 	
 	protected abstract HashMap<String, HashMap<String, Boolean>> run_all_internal();
 	
-	protected static HashMap<String, Boolean> run_methods(Class<?> class_, String[] names_) { return run(class_, null, null, null, null, names_); }
+	protected HashMap<String, Boolean> run_methods(Class<?> class_, String[] names_) { return run(class_, null, null, null, null, names_); }
 
-	protected static HashMap<String, Boolean> run(Class<?> class_) { return run(class_, null, null, null); }
+	protected HashMap<String, Boolean> run(Class<?> class_) { return run(class_, null, null, null); }
 	
-	protected static HashMap<String, Boolean> run(Class<?> class_, String[] names_skip_) { return run(class_, null, null, names_skip_); }
+	protected HashMap<String, Boolean> run(Class<?> class_, String[] names_skip_) { return run(class_, null, null, names_skip_); }
 
-	protected static HashMap<String, Boolean> run(Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] names_skip_) { return run(class_, null, args_, targets_, names_skip_); }
+	protected HashMap<String, Boolean> run(Class<?> class_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] names_skip_) { return run(class_, null, args_, targets_, names_skip_); }
 	
-	protected static HashMap<String, Boolean> run(Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] names_skip_) { return run(class_, methods_, args_, targets_, names_skip_, null); }
+	protected HashMap<String, Boolean> run(Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] names_skip_) { return run(class_, methods_, args_, targets_, names_skip_, null); }
 	
 	@SuppressWarnings("unchecked")
-	private static HashMap<String, Boolean> run(Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] names_skip_, String[] names_all_)
+	private HashMap<String, Boolean> run(Class<?> class_, Method[] methods_, HashMap<String, ArrayList<ArrayList<Object>>> args_, HashMap<String, Object[]> targets_, String[] names_skip_, String[] names_all_)
 	{
 		HashMap<String, Boolean> run_outs = new HashMap<String, Boolean>();
 		
@@ -103,7 +115,7 @@ public abstract class parent_tests
 		return run_outs;
 	}
 	
-	protected static boolean run_method(Class<?> class_, String method_name_, Class<?>[] params_, ArrayList<Object> args_, Object target_)
+	protected boolean run_method(Class<?> class_, String method_name_, Class<?>[] params_, ArrayList<Object> args_, Object target_)
 	{
 		ArrayList<ArrayList<Object>> args = null;
 		
@@ -119,7 +131,7 @@ public abstract class parent_tests
 		return run_method(class_, generic.get_method(class_, method_name_, params_), method_name_, args, targets);
 	}
 	
-	protected static boolean run_method(Class<?> class_, Method method_, String method_name_, ArrayList<ArrayList<Object>> args_, Object[] targets_)
+	protected boolean run_method(Class<?> class_, Method method_, String method_name_, ArrayList<ArrayList<Object>> args_, Object[] targets_)
 	{
 		boolean is_ok = false;
 
