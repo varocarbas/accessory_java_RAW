@@ -21,9 +21,9 @@ abstract class db_queries extends parent_static
 
 	public static ArrayList<HashMap<String, String>> select_quick(String source_, String[] cols_, String where_cols_, int max_rows_, String order_cols_) { return select_quick_internal(source_, cols_, where_cols_, max_rows_, order_cols_); }
 
-	public static int select_count(String source_) 
+	public static int select_count(String source_, String where_cols_) 
 	{ 
-		ArrayList<HashMap<String, String>> output = select_count_internal(source_);
+		ArrayList<HashMap<String, String>> output = select_count_internal(source_, where_cols_);
 
 		return (arrays.is_ok(output) ? strings.to_number_int((String)arrays.get_value(output.get(0), db.get_select_count_col(source_))) : 0); 
 	}
@@ -274,7 +274,7 @@ abstract class db_queries extends parent_static
 
 	private static ArrayList<HashMap<String, String>> select_quick_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return execute_type(source_, db.QUERY_SELECT, cols_, null, where_, max_rows_, order_, null); }
 
-	private static ArrayList<HashMap<String, String>> select_count_internal(String source_) { return execute_type(source_, db.QUERY_SELECT_COUNT, db.DEFAULT_FIELDS_COLS, null, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
+	private static ArrayList<HashMap<String, String>> select_count_internal(String source_, String where_) { return execute_type(source_, db.QUERY_SELECT_COUNT, db.DEFAULT_FIELDS_COLS, null, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 
 	private static void insert_internal(String source_, HashMap<String, String> vals_) { execute_type(source_, db.QUERY_INSERT, db.DEFAULT_FIELDS_COLS, vals_, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 

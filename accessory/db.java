@@ -269,7 +269,9 @@ public abstract class db
 	//Use this method carefully! No data checks or field/col conversions are performed.
 	public static ArrayList<HashMap<String, String>> select_quick(String source_, String[] cols_, String where_cols_, int max_rows_, String order_cols_) { return db_queries.select_quick(source_, cols_, where_cols_, max_rows_, order_cols_); }
 
-	public static int select_count(String source_) { return db_queries.select_count(source_); }
+	public static int select_count(String source_) { return select_count(source_, DEFAULT_WHERE); }
+
+	public static int select_count(String source_, String where_cols_) { return db_queries.select_count(source_, where_cols_); }
 
 	public static <x> void insert_update(String source_, HashMap<String, x> vals_raw_, db_where[] where_) { insert_update(source_, vals_raw_, db_where.to_string(where_)); }
 
@@ -526,6 +528,8 @@ public abstract class db
 		return (String)config.get(get_db(source), source);
 	}
 	
+	public static boolean change_db_name_queries(String source_, String name_) { return update_db(get_db(source_), name_); }
+	
 	public static boolean change_table_name_queries(String source_, String name_)
 	{	
 		String source = check_source(source_); 
@@ -681,10 +685,6 @@ public abstract class db
 	public static String get_current_db_name() { return get_db_name(get_current_db()); }
 
 	public static String get_db_name(String db_) { return (String)config.get(db_, NAME); }
-	
-	public static boolean change_db_name_from_source(String source_, String name_) { return change_db_name(get_db(source_), name_); }
-
-	public static boolean change_db_name(String db_, String name_) { return update_db(db_, name_); }
 	
 	public static boolean is_ok() { return is_ok(get_current_source()); }
 
