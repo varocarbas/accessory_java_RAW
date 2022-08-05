@@ -33,6 +33,8 @@ public abstract class dates extends parent_static
 	
 	public static final int MAX_OFFSET = 27 * 60;
 	
+	public static final long ELAPSED_START = 0;
+	
 	public static final String ERROR_STRING = types.ERROR_DATES_STRING;
 	
 	public static final String DEFAULT_FORMAT = FORMAT_DATE_TIME;
@@ -197,13 +199,13 @@ public abstract class dates extends parent_static
 	
 	public static long start_elapsed() { return get_elapsed(); }
 	
-	public static long get_elapsed() { return get_elapsed(0); }
+	public static long get_elapsed() { return get_elapsed(ELAPSED_START); }
 	
 	public static long get_elapsed(long start_)
 	{
 		long current = System.currentTimeMillis();
 
-		return (start_ <= 0 ? current : ((current - start_) / 1000));
+		return (start_ <= ELAPSED_START ? current : ((current - start_) / 1000));
 	}
 
 	public static String get_pattern(String format_)

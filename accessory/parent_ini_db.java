@@ -229,8 +229,8 @@ public abstract class parent_ini_db
 	{
 		HashMap<String, Object[]> default_fields = new HashMap<String, Object[]>();
 
-		default_fields = add_field(types.CONFIG_DB_DEFAULT_FIELD_ID, "_id", new db_field(data.INT, new String[] { db_field.KEY_PRIMARY, db_field.AUTO_INCREMENT }), new HashMap<String, Object[]>());
-		default_fields = add_field(types.CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, "_timestamp", new db_field(data.TIMESTAMP, new String[] { db_field.TIMESTAMP }), default_fields);
+		default_fields = add_field(db.FIELD_ID, "_id", new db_field(data.INT, new String[] { db_field.KEY_PRIMARY, db_field.AUTO_INCREMENT }), new HashMap<String, Object[]>());
+		default_fields = add_field(db.FIELD_TIMESTAMP, "_timestamp", new db_field(data.TIMESTAMP, new String[] { db_field.TIMESTAMP }), default_fields);
 
 		return default_fields;
 	}

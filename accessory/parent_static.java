@@ -14,13 +14,12 @@ public abstract class parent_static
 	private static boolean _ignore_errors_persistent = false;
 	private static boolean _error_triggered = false;
 
-	private static volatile long _lock_elapsed = 0;
 	private static volatile boolean _locked = false;
 	private static volatile boolean _locked2 = false;
-	
+
 	public static void __lock()
 	{			
-		_lock_elapsed = dates.start_elapsed();
+		long elapsed = dates.start_elapsed();
 		
 		boolean locked2 = false;
 		
@@ -28,8 +27,7 @@ public abstract class parent_static
 		{
 			if (!locked2)
 			{
-				if (_locked2 && !lock_timeout()) continue;
-				else
+				if (!_locked2 || (dates.get_elapsed(elapsed) >= MAX_LOCK_ELAPSED))
 				{
 					_locked2 = true;
 					locked2 = true;
@@ -37,7 +35,7 @@ public abstract class parent_static
 			}
 			else
 			{
-				if (!_locked || lock_timeout())
+				if (!_locked || (dates.get_elapsed(elapsed) >= MAX_LOCK_ELAPSED))
 				{
 					_locked = true;
 					_locked2 = false;
@@ -117,6 +115,4 @@ public abstract class parent_static
 		}
 		else _is_ok = true;
 	}
-	
-	private static boolean lock_timeout() { return (dates.get_elapsed(_lock_elapsed) >= MAX_LOCK_ELAPSED); }
 }
