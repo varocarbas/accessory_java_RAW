@@ -19,10 +19,10 @@ public abstract class dates extends parent_static
 	public static final String FORMAT_DATE_TIME = types.DATES_FORMAT_DATE_TIME;
 	public static final String FORMAT_TIMESTAMP = types.DATES_FORMAT_TIMESTAMP;
 
-	public static final String SECONDS = types.DATES_UNIT_SECONDS;
-	public static final String MINUTES = types.DATES_UNIT_MINUTES;
-	public static final String HOURS = types.DATES_UNIT_HOURS;
-	public static final String DAYS = types.DATES_UNIT_DAYS;
+	public static final String UNIT_SECONDS = types.DATES_UNIT_SECONDS;
+	public static final String UNIT_MINUTES = types.DATES_UNIT_MINUTES;
+	public static final String UNIT_HOURS = types.DATES_UNIT_HOURS;
+	public static final String UNIT_DAYS = types.DATES_UNIT_DAYS;
 
 	public static final String TZ_MADRID = "Europe/Madrid";
 	public static final String TZ_LONDON = "Europe/London";
@@ -42,11 +42,11 @@ public abstract class dates extends parent_static
 	public static final String DEFAULT_FORMAT_DATE = FORMAT_DATE;
 	public static final String DEFAULT_FORMAT_TIME = FORMAT_TIME;
 	public static final String DEFAULT_FORMAT_TIMESTAMP = FORMAT_TIMESTAMP;
-	public static final String DEFAULT_UNIT = SECONDS;
-	public static final String DEFAULT_UNIT_DATE_TIME = DAYS;
-	public static final String DEFAULT_UNIT_DATE = DAYS;
-	public static final String DEFAULT_UNIT_TIME = SECONDS;
-	public static final String DEFAULT_UNIT_TIMESTAMP = MINUTES;
+	public static final String DEFAULT_UNIT = UNIT_SECONDS;
+	public static final String DEFAULT_UNIT_DATE_TIME = UNIT_DAYS;
+	public static final String DEFAULT_UNIT_DATE = UNIT_DAYS;
+	public static final String DEFAULT_UNIT_TIME = UNIT_SECONDS;
+	public static final String DEFAULT_UNIT_TIMESTAMP = UNIT_MINUTES;
 	public static final int DEFAULT_SIZE_DAYS = 50;
 	public static final int DEFAULT_SIZE_HOURS = 10;
 	public static final int DEFAULT_OFFSET = 0;
@@ -134,10 +134,10 @@ public abstract class dates extends parent_static
 		LocalDateTime output = LocalDateTime.from(input_);
 		if (increase_ == 0) return output;
 
-		if (unit_.equals(SECONDS)) output = output.plusSeconds(increase_);
-		else if (unit_.equals(MINUTES)) output = output.plusMinutes(increase_);
-		else if (unit_.equals(HOURS)) output = output.plusHours(increase_);
-		else if (unit_.equals(DAYS)) output = output.plusDays(increase_);
+		if (unit_.equals(UNIT_SECONDS)) output = output.plusSeconds(increase_);
+		else if (unit_.equals(UNIT_MINUTES)) output = output.plusMinutes(increase_);
+		else if (unit_.equals(UNIT_HOURS)) output = output.plusHours(increase_);
+		else if (unit_.equals(UNIT_DAYS)) output = output.plusDays(increase_);
 
 		return output;
 	}
@@ -152,11 +152,11 @@ public abstract class dates extends parent_static
 
 	public static boolean target_met(LocalTime start_, String unit_, long target_) { return (get_diff(start_, get_now_time(), unit_) >= target_); }
 
-	public static boolean passed(LocalDateTime input_) { return (get_diff(input_, get_now(), SECONDS) > 0); }
+	public static boolean passed(LocalDateTime input_) { return (get_diff(input_, get_now(), UNIT_SECONDS) > 0); }
 
-	public static boolean passed(LocalDate input_) { return (get_diff(input_, get_now_date(), DAYS) > 0); }
+	public static boolean passed(LocalDate input_) { return (get_diff(input_, get_now_date(), UNIT_DAYS) > 0); }
 
-	public static boolean passed(LocalTime input_) { return (get_diff(input_, get_now_time(), SECONDS) > 0); }
+	public static boolean passed(LocalTime input_) { return (get_diff(input_, get_now_time(), UNIT_SECONDS) > 0); }
 
 	public static long get_diff(String start_, String end_) { return get_diff(start_, end_, DEFAULT_UNIT); }
 
@@ -239,9 +239,9 @@ public abstract class dates extends parent_static
 
 	public static int get_length(String format_) { return get_pattern(check_format(format_, false)).length(); }
 
-	public static HashMap<String, Integer> get_seconds_minutes(int secs_) { return get_seconds_minutes_hours(secs_, SECONDS, MINUTES); }
+	public static HashMap<String, Integer> get_seconds_minutes(int secs_) { return get_seconds_minutes_hours(secs_, UNIT_SECONDS, UNIT_MINUTES); }
 
-	public static HashMap<String, Integer> get_minutes_hours(int mins_) { return get_seconds_minutes_hours(mins_, MINUTES, HOURS); }
+	public static HashMap<String, Integer> get_minutes_hours(int mins_) { return get_seconds_minutes_hours(mins_, UNIT_MINUTES, UNIT_HOURS); }
 
 	public static String seconds_to_time(int secs_) { return seconds_to_time(secs_, false); }
 	
@@ -250,8 +250,8 @@ public abstract class dates extends parent_static
 		HashMap<String, Integer> temp = get_seconds_minutes(secs_);
 		if (!arrays.is_ok(temp)) return strings.DEFAULT;
 		
-		int secs = temp.get(SECONDS);
-		int mins = temp.get(MINUTES);
+		int secs = temp.get(UNIT_SECONDS);
+		int mins = temp.get(UNIT_MINUTES);
 		int hours = 0;
 
 		String output = "";
@@ -260,8 +260,8 @@ public abstract class dates extends parent_static
 		{
 			temp = get_minutes_hours(mins);
 			
-			mins = temp.get(MINUTES);
-			hours = temp.get(HOURS);
+			mins = temp.get(UNIT_MINUTES);
+			hours = temp.get(UNIT_HOURS);
 			
 			output = String.format("%02d", hours) + ":";
 		}
@@ -296,6 +296,13 @@ public abstract class dates extends parent_static
 		return output;
 	}
 
+	public static boolean is_today(String input_, String format_) 
+	{
+		LocalDateTime date_time = from_string(input_, format_);
+		
+		return (date_time == null ? false : LocalDate.now().compareTo(date_time.toLocalDate()) == 0);
+	}
+	
 	public static LocalDateTime from_string(String input_, String format_) 
 	{ 
 		LocalDateTime output = null;
@@ -408,10 +415,10 @@ public abstract class dates extends parent_static
 		String unit = (strings.is_ok(unit_) ? unit_ : DEFAULT_UNIT);
 		TimeUnit unit2 = (is_millis ? TimeUnit.MILLISECONDS : TimeUnit.SECONDS);
 
-		if (unit.equals(SECONDS)) output = unit2.toSeconds(output);
-		else if (unit.equals(MINUTES)) output = unit2.toMinutes(output);
-		else if (unit.equals(HOURS)) output = unit2.toHours(output);
-		else if (unit.equals(DAYS)) output = unit2.toDays(output);
+		if (unit.equals(UNIT_SECONDS)) output = unit2.toSeconds(output);
+		else if (unit.equals(UNIT_MINUTES)) output = unit2.toMinutes(output);
+		else if (unit.equals(UNIT_HOURS)) output = unit2.toHours(output);
+		else if (unit.equals(UNIT_DAYS)) output = unit2.toDays(output);
 		else output = 0;
 
 		return output;
