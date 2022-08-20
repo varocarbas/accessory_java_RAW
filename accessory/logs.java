@@ -37,12 +37,14 @@ public abstract class logs extends parent_static
 		System.out.println(message);
 	}
 
-	public static void update_file(String message_, String id_, boolean is_error_)
+	public static void update_file(String message_, String id_, boolean is_error_) { update_file(message_, id_, is_error_, false); }
+	
+	public static void update_file(String message_, String id_, boolean is_error_, boolean add_timestamp_path_)
 	{		
 		String id = id_;
 		if (!strings.is_ok(id)) id = (String)config.get_basic(types.CONFIG_BASIC_NAME);
 		
-		update_file(message_, get_path(id, is_error_));
+		update_file(message_, get_path(id, is_error_, add_timestamp_path_));
 	}
 	
 	public static void update_file(String message_, String path_)

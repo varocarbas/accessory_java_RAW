@@ -350,93 +350,93 @@ public abstract class arrays extends parent_static
 		return output;	
 	}
 
-	public static <x> boolean __key_exists_async(double[] input_, x key_) { return __key_exists_async(to_big(input_), key_); }
+	public static <x> boolean __key_exists_sync(double[] input_, x key_) { return __key_exists_sync(to_big(input_), key_); }
 
-	public static <x> boolean __key_exists_async(long[] input_, x key_) { return __key_exists_async(to_big(input_), key_); }
+	public static <x> boolean __key_exists_sync(long[] input_, x key_) { return __key_exists_sync(to_big(input_), key_); }
 
-	public static <x> boolean __key_exists_async(int[] input_, x key_) { return __key_exists_async(to_big(input_), key_); }
+	public static <x> boolean __key_exists_sync(int[] input_, x key_) { return __key_exists_sync(to_big(input_), key_); }
 
-	public static <x> boolean __key_exists_async(boolean[] input_, x key_) { return __key_exists_async(to_big(input_), key_); }
+	public static <x> boolean __key_exists_sync(boolean[] input_, x key_) { return __key_exists_sync(to_big(input_), key_); }
 
-	public static <x> boolean __key_exists_async(byte[] input_, x key_) { return __key_exists_async(to_big(input_), key_); }
+	public static <x> boolean __key_exists_sync(byte[] input_, x key_) { return __key_exists_sync(to_big(input_), key_); }
 
-	public static <x> boolean __key_exists_async(char[] input_, x key_) { return __key_exists_async(to_big(input_), key_); }
+	public static <x> boolean __key_exists_sync(char[] input_, x key_) { return __key_exists_sync(to_big(input_), key_); }
 
-	public static boolean __key_exists_async(Object input_, Object key_) { return (boolean)__key_value_get_exists_async(input_, key_, true, false); }
+	public static boolean __key_exists_sync(Object input_, Object key_) { return (boolean)__key_value_get_exists_sync(input_, key_, true, false); }
 
-	public static <x> boolean __value_exists_async(double[] input_, x value_) { return __value_exists_async(to_big(input_), value_); }
+	public static <x> boolean __value_exists_sync(double[] input_, x value_) { return __value_exists_sync(to_big(input_), value_); }
 
-	public static <x> boolean __value_exists_async(long[] input_, x value_) { return __value_exists_async(to_big(input_), value_); }
+	public static <x> boolean __value_exists_sync(long[] input_, x value_) { return __value_exists_sync(to_big(input_), value_); }
 
-	public static <x> boolean __value_exists_async(int[] input_, x value_) { return __value_exists_async(to_big(input_), value_); }
+	public static <x> boolean __value_exists_sync(int[] input_, x value_) { return __value_exists_sync(to_big(input_), value_); }
 
-	public static <x> boolean __value_exists_async(boolean[] input_, x value_) { return __value_exists_async(to_big(input_), value_); }
+	public static <x> boolean __value_exists_sync(boolean[] input_, x value_) { return __value_exists_sync(to_big(input_), value_); }
 
-	public static <x> boolean __value_exists_async(byte[] input_, x value_) { return __value_exists_async(to_big(input_), value_); }
+	public static <x> boolean __value_exists_sync(byte[] input_, x value_) { return __value_exists_sync(to_big(input_), value_); }
 
-	public static <x> boolean __value_exists_async(char[] input_, x value_) { return __value_exists_async(to_big(input_), value_); }
+	public static <x> boolean __value_exists_sync(char[] input_, x value_) { return __value_exists_sync(to_big(input_), value_); }
 
-	public static boolean __value_exists_async(Object input_, Object value_) { return (boolean)__key_value_get_exists_async(input_, value_, false, false); }
+	public static boolean __value_exists_sync(Object input_, Object value_) { return (boolean)__key_value_get_exists_sync(input_, value_, false, false); }
 
-	public static <x> Object __get_key_async(double[] input_, x value_) { return __get_key_async(to_big(input_), value_); }
+	public static <x> Object __get_key_sync(double[] input_, x value_) { return __get_key_sync(to_big(input_), value_); }
 
-	public static <x> Object __get_key_async(long[] input_, x value_) { return __get_key_async(to_big(input_), value_); }
+	public static <x> Object __get_key_sync(long[] input_, x value_) { return __get_key_sync(to_big(input_), value_); }
 
-	public static <x> Object __get_key_async(int[] input_, x value_) { return __get_key_async(to_big(input_), value_); }
+	public static <x> Object __get_key_sync(int[] input_, x value_) { return __get_key_sync(to_big(input_), value_); }
 
-	public static <x> Object __get_key_async(boolean[] input_, x value_) { return __get_key_async(to_big(input_), value_); }
+	public static <x> Object __get_key_sync(boolean[] input_, x value_) { return __get_key_sync(to_big(input_), value_); }
 
-	public static <x> Object __get_key_async(byte[] input_, x value_) { return __get_key_async(to_big(input_), value_); }
+	public static <x> Object __get_key_sync(byte[] input_, x value_) { return __get_key_sync(to_big(input_), value_); }
 
-	public static <x> Object __get_key_async(char[] input_, x value_) { return __get_key_async(to_big(input_), value_); }
+	public static <x> Object __get_key_sync(char[] input_, x value_) { return __get_key_sync(to_big(input_), value_); }
 
-	public static Object __get_key_async(Object input_, Object value_) { return __key_value_get_exists_async(input_, value_, false, true); }
+	public static Object __get_key_sync(Object input_, Object value_) { return __key_value_get_exists_sync(input_, value_, false, true); }
 
-	public static <x> Object __get_value_async(double[] input_, x key_) { return __get_value_async(to_big(input_), key_); }
+	public static <x> Object __get_value_sync(double[] input_, x key_) { return __get_value_sync(to_big(input_), key_); }
 
-	public static <x> Object __get_value_async(long[] input_, x key_) { return __get_value_async(to_big(input_), key_); }
+	public static <x> Object __get_value_sync(long[] input_, x key_) { return __get_value_sync(to_big(input_), key_); }
 
-	public static <x> Object __get_value_async(int[] input_, x key_) { return __get_value_async(to_big(input_), key_); }
+	public static <x> Object __get_value_sync(int[] input_, x key_) { return __get_value_sync(to_big(input_), key_); }
 
-	public static <x> Object __get_value_async(boolean[] input_, x key_) { return __get_value_async(to_big(input_), key_); }
+	public static <x> Object __get_value_sync(boolean[] input_, x key_) { return __get_value_sync(to_big(input_), key_); }
 
-	public static <x> Object __get_value_async(byte[] input_, x key_) { return __get_value_async(to_big(input_), key_); }
+	public static <x> Object __get_value_sync(byte[] input_, x key_) { return __get_value_sync(to_big(input_), key_); }
 
-	public static <x> Object __get_value_async(char[] input_, x key_) { return __get_value_async(to_big(input_), key_); }
+	public static <x> Object __get_value_sync(char[] input_, x key_) { return __get_value_sync(to_big(input_), key_); }
 
-	public static Object __get_value_async(Object input_, Object key_) { return __key_value_get_exists_async(input_, key_, true, true); }
+	public static Object __get_value_sync(Object input_, Object key_) { return __key_value_get_exists_sync(input_, key_, true, true); }
 
-	public static <x> double[] __remove_key_async(double[] input_, x key_) { return to_small((Double[])__remove_key_async(to_big(input_), key_)); }
+	public static <x> double[] __remove_key_sync(double[] input_, x key_) { return to_small((Double[])__remove_key_sync(to_big(input_), key_)); }
 
-	public static <x> long[] __remove_key_async(long[] input_, x key_) { return to_small((Long[])__remove_key_async(to_big(input_), key_)); }
+	public static <x> long[] __remove_key_sync(long[] input_, x key_) { return to_small((Long[])__remove_key_sync(to_big(input_), key_)); }
 
-	public static <x> int[] __remove_key_async(int[] input_, x key_) { return to_small((Integer[])__remove_key_async(to_big(input_), key_)); }
+	public static <x> int[] __remove_key_sync(int[] input_, x key_) { return to_small((Integer[])__remove_key_sync(to_big(input_), key_)); }
 
-	public static <x> boolean[] __remove_key_async(boolean[] input_, x key_) { return to_small((Boolean[])__remove_key_async(to_big(input_), key_)); }
+	public static <x> boolean[] __remove_key_sync(boolean[] input_, x key_) { return to_small((Boolean[])__remove_key_sync(to_big(input_), key_)); }
 
-	public static <x> byte[] __remove_key_async(byte[] input_, x key_) { return to_small((Byte[])__remove_key_async(to_big(input_), key_)); }
+	public static <x> byte[] __remove_key_sync(byte[] input_, x key_) { return to_small((Byte[])__remove_key_sync(to_big(input_), key_)); }
 
-	public static <x> char[] __remove_key_async(char[] input_, x key_) { return to_small((Character[])__remove_key_async(to_big(input_), key_)); }
+	public static <x> char[] __remove_key_sync(char[] input_, x key_) { return to_small((Character[])__remove_key_sync(to_big(input_), key_)); }
 
-	public static Object __remove_key_async(Object input_, Object key_) { return __remove_key_async(input_, key_, false); }
+	public static Object __remove_key_sync(Object input_, Object key_) { return __remove_key_sync(input_, key_, false); }
 
-	public static Object __remove_key_async(Object input_, Object key_, boolean normalise_) { return __remove_key_value_async(input_, key_, normalise_, true); }
+	public static Object __remove_key_sync(Object input_, Object key_, boolean normalise_) { return __remove_key_value_sync(input_, key_, normalise_, true); }
 
-	public static <x> double[] __remove_value_async(double[] input_, x value_, boolean normalise_) { return to_small((Double[])__remove_value_async(to_big(input_), value_)); }
+	public static <x> double[] __remove_value_sync(double[] input_, x value_, boolean normalise_) { return to_small((Double[])__remove_value_sync(to_big(input_), value_)); }
 
-	public static <x> long[] __remove_value_async(long[] input_, x value_, boolean normalise_) { return to_small((Long[])__remove_value_async(to_big(input_), value_)); }
+	public static <x> long[] __remove_value_sync(long[] input_, x value_, boolean normalise_) { return to_small((Long[])__remove_value_sync(to_big(input_), value_)); }
 
-	public static <x> int[] __remove_value_async(int[] input_, x value_, boolean normalise_) { return to_small((Integer[])__remove_value_async(to_big(input_), value_)); }
+	public static <x> int[] __remove_value_sync(int[] input_, x value_, boolean normalise_) { return to_small((Integer[])__remove_value_sync(to_big(input_), value_)); }
 
-	public static <x> boolean[] __remove_value_async(boolean[] input_, x value_, boolean normalise_) { return to_small((Boolean[])__remove_value_async(to_big(input_), value_)); }
+	public static <x> boolean[] __remove_value_sync(boolean[] input_, x value_, boolean normalise_) { return to_small((Boolean[])__remove_value_sync(to_big(input_), value_)); }
 
-	public static <x> byte[] __remove_value_async(byte[] input_, x value_) { return to_small((Byte[])__remove_value_async(to_big(input_), value_)); }
+	public static <x> byte[] __remove_value_sync(byte[] input_, x value_) { return to_small((Byte[])__remove_value_sync(to_big(input_), value_)); }
 
-	public static <x> char[] __remove_value_async(char[] input_, x value_) { return to_small((Character[])__remove_value_async(to_big(input_), value_)); }
+	public static <x> char[] __remove_value_sync(char[] input_, x value_) { return to_small((Character[])__remove_value_sync(to_big(input_), value_)); }
 
-	public static Object __remove_value_async(Object input_, Object value_) { return __remove_value_async(input_, value_, false); }
+	public static Object __remove_value_sync(Object input_, Object value_) { return __remove_value_sync(input_, value_, false); }
 
-	public static Object __remove_value_async(Object input_, Object value_, boolean normalise_) { return __remove_key_value_async(input_, value_, normalise_, false); }
+	public static Object __remove_value_sync(Object input_, Object value_, boolean normalise_) { return __remove_key_value_sync(input_, value_, normalise_, false); }
 
 	public static ArrayList<Double> add(ArrayList<Double> main_, double[] new_) { return (ArrayList<Double>)add(main_, to_big(new_)); }
 
@@ -1276,7 +1276,7 @@ public abstract class arrays extends parent_static
 
 	private static <x> ArrayList<x> get_new_arraylist(ArrayList<x> input_) { return (!is_ok(input_) ? new ArrayList<x>() : new ArrayList<x>(input_)); }
 
-	private static Object __key_value_get_exists_async(Object input_, Object key_val_, boolean is_key_, boolean is_get_) 
+	private static Object __key_value_get_exists_sync(Object input_, Object key_val_, boolean is_key_, boolean is_get_) 
 	{
 		__lock();
 		
@@ -1299,7 +1299,7 @@ public abstract class arrays extends parent_static
 		return output;
 	}
 
-	private static Object __remove_key_value_async(Object input_, Object key_val_, boolean normalise_, boolean is_key_) 
+	private static Object __remove_key_value_sync(Object input_, Object key_val_, boolean normalise_, boolean is_key_) 
 	{				
 		__lock();
 

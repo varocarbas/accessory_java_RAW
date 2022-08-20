@@ -280,6 +280,13 @@ public abstract class db
 		if (exists(source_, where_cols_)) update(source_, vals_raw_, where_cols_);
 		else insert(source_, vals_raw_);
 	}
+	
+	//Use this method carefully! No data checks or field/col conversions are performed.
+	public static void insert_update_quick(String source_, HashMap<String, String> vals_, String where_cols_) 
+	{ 
+		if (exists(source_, where_cols_)) update_quick(source_, vals_, where_cols_);
+		else insert_quick(source_, vals_);
+	}
 
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_) { db_queries.insert(source_, vals_raw_); }
 	
