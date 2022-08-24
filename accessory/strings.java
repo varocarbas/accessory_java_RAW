@@ -372,17 +372,17 @@ public abstract class strings extends parent_static
 		return output;
 	}
 
-	public static String remove(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, types.ACTION_REMOVE); }
+	public static String remove(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, null, types.ACTION_REMOVE); }
 
-	public static String remove(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, types.ACTION_REMOVE); }
+	public static String remove(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, types.ACTION_REMOVE); }
 
-	public static String escape(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, types.ACTION_ESCAPE); }
+	public static String escape(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, null, types.ACTION_ESCAPE); }
 
-	public static String escape(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, types.ACTION_ESCAPE); }
+	public static String escape(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, types.ACTION_ESCAPE); }
 
-	public static String replace(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, types.ACTION_REPLACE); }
+	public static String replace(String needle_, String haystack_, String replacement_) { return remove_escape_replace(needle_, haystack_, replacement_, types.ACTION_REPLACE); }
 
-	public static String replace(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, types.ACTION_REPLACE); }
+	public static String replace(String[] needles_, String haystack_, String replacement_) { return remove_escape_replace_many(needles_, haystack_, replacement_, types.ACTION_REPLACE); }
 
 	static boolean is_ok(String string_, boolean minimal_) { return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0)); }
 
@@ -400,7 +400,7 @@ public abstract class strings extends parent_static
 
 	private static char[] get_all_exps() { return _alls.STRINGS_EXPS; }
 
-	private static String remove_escape_replace_many(String[] needles_, String haystack_, String action_)
+	private static String remove_escape_replace_many(String[] needles_, String haystack_, String replacement_, String action_)
 	{
 		if (!is_ok(haystack_, true)) return DEFAULT;
 
@@ -411,25 +411,31 @@ public abstract class strings extends parent_static
 		{ 
 			if (!is_ok(needle, true)) continue;
 
-			output = remove_escape_replace(needle, output, action_);
+			output = remove_escape_replace(needle, output, replacement_, action_);
 		}
 
 		return output;
 	}
 
-	private static String remove_escape_replace(String needle_, String haystack_, String action_)
+	private static String remove_escape_replace(String needle_, String haystack_, String replacement_, String action_)
 	{
 		if (!is_ok(haystack_, true)) return DEFAULT;
 		if (!is_ok(needle_, true)) return haystack_;
 
-		String replacement = null;		
-		if (action_.equals(types.ACTION_REMOVE)) replacement = "";
-		else if (action_.equals(types.ACTION_ESCAPE)) replacement = "\\" + needle_;
-		else if (action_.equals(types.ACTION_REPLACE)) replacement = needle_;
-
-		return haystack_.replace(needle_, replacement);
+		return haystack_.replace(needle_, get_replacement(needle_, replacement_, action_));
 	}
 
+	private static String get_replacement(String needle_, String replacement_, String action_)
+	{
+		String replacement = replacement_;	
+		
+		if (action_.equals(types.ACTION_REMOVE)) replacement = "";
+		else if (action_.equals(types.ACTION_ESCAPE)) replacement = "\\" + needle_;
+	
+		return replacement;
+	}
+	
+	
 	private static HashMap<Boolean, String[]> get_all_booleans() { return _alls.STRINGS_BOOLEANS; }
 
 	private static String normalise(String string_, boolean minimal_)

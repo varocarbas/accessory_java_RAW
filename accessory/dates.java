@@ -368,6 +368,21 @@ public abstract class dates extends parent_static
 
 	public static LocalTime get_random_time() { return get_now_time().plusHours((long)numbers.get_random_int(-1 * DEFAULT_SIZE_HOURS, DEFAULT_SIZE_HOURS)); }
 	
+	public static String get_default(String format_)
+	{
+		String output = strings.DEFAULT;
+	
+		String pattern = dates.get_pattern(format_);
+		if (!strings.is_ok(pattern)) return output;
+		
+		output = strings.replace(new String[] { "yyyy" }, pattern, "2001");
+		output = strings.replace(new String[] { "yy", "MM", "dd" }, output, "01");
+		output = strings.replace(new String[] { "M", "d" }, output, "1");
+		output = strings.replace(new String[] { "H", "m", "s" }, output, "0");
+
+		return output;
+	}
+	
 	private static HashMap<String, Integer> get_seconds_minutes_hours(int val1_, String key1_, String key2_) 
 	{ 
 		if (val1_ < 0) return null;

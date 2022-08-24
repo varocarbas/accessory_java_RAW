@@ -28,12 +28,14 @@ public abstract class parent_tests
 	private static int _overload = 0;
 	
 	public static boolean is_running() { return _is_running; }
-		
-	public boolean create_table(String source_)
+
+	public boolean create_table(String source_) { return create_table(source_, _drop_db_tables); }
+
+	public boolean create_table(String source_, boolean drop_it_)
 	{
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add(source_);
-		args.add(_drop_db_tables);
+		args.add(drop_it_);
 
 		return run_method(db.class, "create_table", new Class<?>[] { String.class, boolean.class }, args, null);		
 	}
