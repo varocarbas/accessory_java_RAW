@@ -75,7 +75,7 @@ public abstract class logs extends parent_static
 		if (strings.is_ok(dir)) pieces.add(dir);
 
 		String file = id_ + paths.EXTENSION_LOG;
-		if (add_timestamp_) file = dates.add_now_string(file, dates.FORMAT_DATE, true);
+		if (add_timestamp_) file = dates.add_now_to_string(file, dates.FORMAT_DATE, true);
 		
 		pieces.add(file);
 
@@ -87,7 +87,7 @@ public abstract class logs extends parent_static
 		String message = message_;
 		if (!strings.is_ok(message)) return strings.DEFAULT;
 		
-		return (strings.is_ok(format_) ? dates.add_now_string(message, format_, false) : message); 
+		return (strings.is_ok(format_) ? dates.add_now_to_string(message, format_, false) : message); 
 	}
 	
 	private static boolean out_is_enabled(String type_) { return config.get_logs_boolean(type_); }

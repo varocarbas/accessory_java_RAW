@@ -2,6 +2,7 @@ package accessory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -199,6 +200,35 @@ class db_mysql extends parent_db
 
 	public String get_select_count_col() { return "COUNT(*)"; }
 
+	public void backup_db_to_file(String any_source_) { backup_restore_db(any_source_, true); }
+	
+	public void restore_db_from_file(String any_source_) { backup_restore_db(any_source_, false); }
+
+	public String get_db_backup_path(String any_source_)
+	{
+		String db_name = db.get_db_name(db.get_db(any_source_));
+		if (!strings.is_ok(db_name)) return strings.DEFAULT;
+		
+		String file = dates.add_timestamp(db_name, true) + db_sql.get_backup_file_extension();
+		
+		return paths.build(new String[] { paths.get_dir(paths.DIR_BACKUPS_DBS), file }, true);
+	}
+	
+	public String get_db_restore_path(String any_source_)
+	{
+		String output = strings.DEFAULT;
+		
+		String db_name = db.get_db_name(db.get_db(any_source_));
+		if (!strings.is_ok(db_name)) return output;
+		
+		String dir = paths.get_dir(paths.DIR_BACKUPS_DBS);
+		HashMap<String, LocalDateTime> all = paths.get_timestamps(dir, new String[] { db_name, db_sql.get_backup_file_extension() });
+		
+		LocalDateTime date = dates.get_newest(arrays.to_array(arrays.get_values_hashmap(all)));
+		
+		return ((date != null) ? paths.build(new String[] { dir, (String)arrays.get_key(all, date) }, true) : output);		
+	}
+	
 	protected Connection connect_internal(String source_, Properties properties_) 
 	{
 		Connection conn = null;
@@ -219,6 +249,64 @@ class db_mysql extends parent_db
 
 		return conn;
 	} 
+	
+	private void backup_restore_db(String any_source_, boolean is_backup_)
+	{
+		String type_error = null;
+		String path = null;
+
+		String app = null;
+		String pipe = null;
+		
+		if (is_backup_)
+		{
+			type_error = db.ERROR_BACKUP;
+			path = get_db_backup_path(any_source_);
+
+			app = "mysqldump";
+			pipe = ">";
+		}
+		else
+		{
+			type_error = db.ERROR_RESTORE;
+			path = get_db_restore_path(any_source_);	
+		
+			app = "mysql";
+			pipe = "<";
+		}
+				
+		String db_name = db.get_db_name(db.get_db(any_source_));
+	
+		HashMap<String, Object> error_info = new HashMap<String, Object>();
+
+		error_info.put("db_name", strings.to_string(db_name));
+		error_info.put("path", strings.to_string(path));
+		
+		if (!strings.is_ok(path)) 
+		{
+			db.manage_error(any_source_, type_error, error_info);
+			
+			return;
+		}
+		
+		HashMap<String, String> credentials = db.get_credentials(any_source_);
+		String username = (String)arrays.get_value(credentials, accessory.credentials.USERNAME);
+		String password = (String)arrays.get_value(credentials, accessory.credentials.PASSWORD);
+
+		error_info.put("username", strings.to_string(username));
+		error_info.put("password", strings.to_string(password));
+
+		if (!arrays.is_ok(credentials) || !strings.is_ok(username))
+		{
+			db.manage_error(any_source_, type_error, error_info);
+			
+			return;
+		}
+		
+		String command = app + " -u '" + username + "' -p'" + password + "' '" + db_name + "' " + pipe + " '" + path + "'";			
+		
+		is_ok(misc.execute_bash(command, true));
+	}
 
 	private String get_connect_url(String source_)
 	{   

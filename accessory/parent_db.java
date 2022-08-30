@@ -22,7 +22,11 @@ public abstract class parent_db
 	public abstract void create_table(String table_name_, HashMap<String, db_field> cols_);
 	public abstract void create_table_like(String table_name_, String table_like_name_);
 	public abstract void backup_table(String table_source_, String table_backup_);
-
+	public abstract void backup_db_to_file(String any_source_);
+	public abstract void restore_db_from_file(String any_source_);
+	public abstract String get_db_backup_path(String any_source_);
+	public abstract String get_db_restore_path(String any_source_);
+	
 	protected abstract Connection connect_internal(String source_, Properties properties);
 	
 	private boolean _is_ok = false;

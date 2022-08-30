@@ -1,12 +1,15 @@
 package accessory;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class paths extends parent_static 
 {
 	public static final String HOME = get_dir_home();
 
+	public static final String DIR = types.CONFIG_BASIC_DIR;
 	public static final String DIR_APP = types.CONFIG_BASIC_DIR_APP;
 	public static final String DIR_INI = types.CONFIG_BASIC_DIR_INI;
 	public static final String DIR_LOGS = types.CONFIG_BASIC_DIR_LOGS;
@@ -15,12 +18,17 @@ public abstract class paths extends parent_static
 	public static final String DIR_CREDENTIALS = types.CONFIG_BASIC_DIR_CREDENTIALS;
 	public static final String DIR_CRYPTO = types.CONFIG_BASIC_DIR_CRYPTO;
 	public static final String DIR_SOUNDS = types.CONFIG_BASIC_DIR_SOUNDS;
-			
+	public static final String DIR_BACKUPS = types.CONFIG_BASIC_DIR_BACKUPS;
+	public static final String DIR_BACKUPS_DBS = types.CONFIG_BASIC_DIR_BACKUPS_DBS;
+	public static final String DIR_BACKUPS_FILES = types.CONFIG_BASIC_DIR_BACKUPS_FILES;
+	public static final String DIR_INFO = types.CONFIG_BASIC_DIR_INFO;
+	
 	public static final String EXTENSION_TEXT = ".txt";
 	public static final String EXTENSION_JAR = ".jar";
 	public static final String EXTENSION_INI = ".ini";
 	public static final String EXTENSION_LOG = ".log";
 	public static final String EXTENSION_WAV = ".wav";
+	public static final String EXTENSION_SQL = ".sql";
 	
 	public static boolean exists(String path_) { return (strings.is_ok(path_) && (new File(path_)).exists()); }
 
@@ -97,22 +105,77 @@ public abstract class paths extends parent_static
 
 	public static String get_dir_home() { return normalise_dir(System.getProperty("user.home")); }	
 
+	public static ArrayList<String> get_all_files(String dir_)
+	{
+		ArrayList<String> output = new ArrayList<String>();
+		if (!strings.is_ok(dir_)) return output;
+		
+		File[] all = new File(dir_).listFiles();
+		if (all == null || all.length == 0) return output;
+		
+		for (File item: all) 
+		{ 
+			if (item.isFile()) output.add(item.getName()); 
+		}
+		
+		return output;
+	}
+	
+	public static HashMap<String, LocalDateTime> get_timestamps(String dir_, String[] keywords_)
+	{
+		HashMap<String, LocalDateTime> output = new HashMap<String, LocalDateTime>();
+		
+		ArrayList<String> files = get_all_files(dir_);
+		if (!arrays.is_ok(files)) return output;
+		
+		boolean check_keywords = arrays.is_ok(keywords_);
+		
+		for (String file: files)
+		{
+			if (check_keywords)
+			{
+				boolean skip = false;
+				
+				for (String keyword: keywords_)
+				{
+					if (!strings.contains(keyword, file, true))
+					{
+						skip = true;
+						
+						break;
+					}
+				}
+				
+				if (skip) continue;
+			}
+
+			output.put(file, dates.get_timestamp(file, true));
+		}
+		
+		return output;
+	}
+	
 	static String get_default_dir(String type_)
 	{
-		String type = types.check_type(type_, types.CONFIG_BASIC_DIR);
+		String type = types.check_type(type_, DIR);
 
 		if (!strings.is_ok(type)) return strings.DEFAULT;
-		else if (strings.are_equal(type, types.CONFIG_BASIC_DIR_APP)) return get_dir_app_default();
+		else if (strings.are_equal(type, DIR_APP)) return get_dir_app_default();
 
 		ArrayList<String> parts = new ArrayList<String>();
 		parts.add(get_dir_home());
 
-		if (types.is_subtype_of(type, types.CONFIG_BASIC_DIR_LOGS))
+		if (types.is_subtype_of(type, DIR_LOGS))
 		{
-			parts.add(types.remove_type(types.CONFIG_BASIC_DIR_LOGS, types.CONFIG_BASIC_DIR));
-			parts.add(types.remove_type(type, types.CONFIG_BASIC_DIR_LOGS));
+			parts.add(types.remove_type(DIR_LOGS, DIR));
+			parts.add(types.remove_type(type, DIR_LOGS));
 		}
-		else parts.add(types.remove_type(type, types.CONFIG_BASIC_DIR)); 
+		else if (types.is_subtype_of(type, DIR_BACKUPS))
+		{
+			parts.add(types.remove_type(DIR_BACKUPS, DIR));
+			parts.add(types.remove_type(type, DIR_BACKUPS));
+		}
+		else parts.add(types.remove_type(type, DIR)); 
 
 		return build(arrays.to_array(parts), false);
 	}
@@ -121,7 +184,7 @@ public abstract class paths extends parent_static
 	{
 		String output = strings.DEFAULT;
 
-		String type = types.check_type(type_, types.CONFIG_BASIC_DIR);
+		String type = types.check_type(type_, DIR);
 		if (!strings.is_ok(type)) return output;
 
 		if (is_get_) output = (String)config.get_basic(type);

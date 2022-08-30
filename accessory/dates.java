@@ -55,13 +55,13 @@ public abstract class dates extends parent_static
 	
 	public static LocalDateTime get_now() { return get_now(_offset); }
 
-	public static LocalDateTime get_now(int offset_mins_) { return LocalDateTime.now().plusMinutes(check_offset(offset_mins_)); }
+	public static LocalDateTime get_now(int offset_) { return LocalDateTime.now().plusMinutes(check_offset(offset_)); }
 
-	public static LocalDate get_now_date() { return LocalDate.now(); }
+	public static LocalDate get_now_date() { return to_date(LocalDateTime.now().plusMinutes(check_offset(_offset))); }
 
 	public static LocalTime get_now_time() { return get_now_time(_offset); }
 
-	public static LocalTime get_now_time(int offset_mins_) { return LocalTime.now().plusMinutes(check_offset(offset_mins_)); }
+	public static LocalTime get_now_time(int offset_) { return LocalTime.now().plusMinutes(check_offset(offset_)); }
 	
 	public static int get_offset() { return _offset; }
 
@@ -70,7 +70,11 @@ public abstract class dates extends parent_static
 	public static void update_offset(int offset_) { _offset = check_offset(offset_); }
 
 	public static void update_offset(String tz_other_) { get_offset(null, tz_other_, true); }
-	
+
+	public static int get_offset(String tz_other_) { return get_offset(null, tz_other_, false); } 
+
+	public static int get_offset(String tz_other_, boolean update_global_) { return get_offset(null, tz_other_, update_global_); } 
+
 	public static int get_offset(String tz_current_, String tz_other_, boolean update_global_) 
 	{ 
 		ZoneId current = (strings.is_ok(tz_current_) ? get_timezone(tz_current_) : get_current_timezone());
@@ -105,7 +109,7 @@ public abstract class dates extends parent_static
 
 	public static String get_now_string() { return get_now_string(DEFAULT_FORMAT); }
 
-	public static String get_now_string(String format_) { return get_now_string(format_, 0); }
+	public static String get_now_string(String format_) { return get_now_string(format_, _offset); }
 
 	public static String get_now_string(String format_, int offset_) { return get_formatter(format_).format(get_now(offset_)); }
 
@@ -176,26 +180,40 @@ public abstract class dates extends parent_static
 
 	public static long get_diff(LocalTime start_, LocalTime end_, String unit_) { return get_diff_internal(start_, end_, unit_, FORMAT_TIME); }
 
-	public static String add_timestamp(String input_, Boolean is_name_) { return add_now_string(input_, DEFAULT_FORMAT_TIMESTAMP, is_name_); }	
-
-	public static String add_now_string(String input_, String format_, Boolean is_name_)
+	public static String add_timestamp(String input_, Boolean is_name_) { return add_now_to_string(input_, DEFAULT_FORMAT_TIMESTAMP, is_name_); }	
+	
+	public static String add_now_to_string(String input_, String format_, boolean is_name_)
 	{
 		String output = strings.DEFAULT;
 		if (!strings.is_ok(input_)) return output;
 
-		String sep = misc.SEPARATOR_CONTENT;
-		output = get_now_string(format_);
+		String sep = add_get_now_separator(is_name_);
 
-		if (is_name_)
-		{
-			sep = misc.SEPARATOR_NAME;
-			output = output.replaceAll(" ", sep);
-		}
+		output = get_now_string(format_);
+		if (is_name_) output = output.replaceAll(" ", sep);
 
 		output += sep + input_;
 
 		return output;			
 	}
+	
+	public static LocalDateTime get_timestamp(String input_, boolean is_name_) { return get_now_from_string(input_, DEFAULT_FORMAT_TIMESTAMP, is_name_); }
+	
+	public static LocalDateTime get_now_from_string(String input_, String format_, boolean is_name_) 
+	{ 
+		LocalDateTime output = null;
+		
+		String temp = strings.substring_before(input_, get_length(format_)); 
+		if (!strings.is_ok(temp)) return output;
+
+		if (is_name_) temp = temp.replaceAll(add_get_now_separator(true), " ");
+
+		return from_string(temp, format_, false, true);
+	}	
+
+	public static LocalDateTime get_newest(LocalDateTime[] all_) { return get_newest_oldest(all_, true); }
+
+	public static LocalDateTime get_oldest(LocalDateTime[] all_) { return get_newest_oldest(all_, false); }
 	
 	public static long start_elapsed() { return get_elapsed(); }
 	
@@ -302,31 +320,18 @@ public abstract class dates extends parent_static
 		
 		return (date_time == null ? false : LocalDate.now().compareTo(date_time.toLocalDate()) == 0);
 	}
-	
-	public static LocalDateTime from_string(String input_, String format_) 
-	{ 
-		LocalDateTime output = null;
-		if (!strings.is_ok(input_)) return output;
 
-		DateTimeFormatter formatter = get_formatter(format_); 
+	public static LocalTime time_from_string(String input_) { return time_from_string(input_, false); }
 
-		try
-		{
-			if (is_date_time(format_)) output = LocalDateTime.parse(input_, formatter);
-			else if (is_date(format_)) output = from_date(LocalDate.parse(input_, formatter));
-			else if (is_time(format_)) output = from_time(LocalTime.parse(input_, formatter));
-		}
-		catch (Exception e) 
-		{ 
-			HashMap<String, Object> info = new HashMap<String, Object>();
-			info.put("input", input_);
-			info.put("format", format_);
+	public static LocalTime time_from_string(String input_, boolean apply_offset_) { return to_time(from_string(input_, DEFAULT_FORMAT_TIME, apply_offset_)); }
 
-			manage_error(ERROR_STRING, e, info);
-		}
+	public static LocalDate date_from_string(String input_) { return date_from_string(input_, false); }
 
-		return output;
-	}
+	public static LocalDate date_from_string(String input_, boolean apply_offset_) { return to_date(from_string(input_, DEFAULT_FORMAT_DATE, apply_offset_)); }
+
+	public static LocalDateTime from_string(String input_, String format_) { return from_string(input_, format_, false); }
+
+	public static LocalDateTime from_string(String input_, String format_, boolean apply_offset_) { return from_string(input_, format_, apply_offset_, false); }
 
 	public static LocalDateTime from_date(LocalDate input_) 
 	{ 
@@ -383,6 +388,55 @@ public abstract class dates extends parent_static
 		return output;
 	}
 	
+	private static LocalDateTime from_string(String input_, String format_, boolean apply_offset_, boolean ignore_errors_) 
+	{ 
+		LocalDateTime output = null;
+		if (!strings.is_ok(input_)) return output;
+
+		DateTimeFormatter formatter = get_formatter(format_); 
+
+		try
+		{
+			if (is_date_time(format_)) output = LocalDateTime.parse(input_, formatter);
+			else if (is_date(format_)) output = from_date(LocalDate.parse(input_, formatter));
+			else if (is_time(format_)) output = from_time(LocalTime.parse(input_, formatter));
+		}
+		catch (Exception e) 
+		{ 
+			if (!ignore_errors_)
+			{
+				HashMap<String, Object> info = new HashMap<String, Object>();
+				info.put("input", input_);
+				info.put("format", format_);
+
+				manage_error(ERROR_STRING, e, info);				
+			}
+			
+			return null;
+		}
+
+		if (apply_offset_) output = output.plusMinutes(check_offset(_offset));
+				
+		return output;
+	}
+
+	private static String add_get_now_separator(boolean is_name_) { return (is_name_ ? misc.SEPARATOR_NAME : misc.SEPARATOR_CONTENT); }
+
+	private static LocalDateTime get_newest_oldest(LocalDateTime[] all_, boolean is_newest_)
+	{
+		LocalDateTime output = null;
+		if (!arrays.is_ok(all_)) return output;
+		
+		for (LocalDateTime item: all_)
+		{
+			if (item == null) continue;
+			
+			if (output == null || (is_newest_ && item.isAfter(output)) || !is_newest_ && item.isBefore(output)) output = item;
+		}
+		
+		return output;
+	}
+
 	private static HashMap<String, Integer> get_seconds_minutes_hours(int val1_, String key1_, String key2_) 
 	{ 
 		if (val1_ < 0) return null;

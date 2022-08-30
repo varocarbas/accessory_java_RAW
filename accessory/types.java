@@ -44,7 +44,11 @@ public abstract class types extends parent_static
 	public static final String CONFIG_BASIC_DIR_LOGS_ACTIVITY = "config_basic_dir_logs_activity";
 	public static final String CONFIG_BASIC_DIR_CRYPTO = "config_basic_dir_crypto";
 	public static final String CONFIG_BASIC_DIR_SOUNDS = "config_basic_dir_sounds";
-
+	public static final String CONFIG_BASIC_DIR_BACKUPS = "config_basic_dir_backups";
+	public static final String CONFIG_BASIC_DIR_BACKUPS_DBS = "config_basic_dir_backups_dbs";
+	public static final String CONFIG_BASIC_DIR_BACKUPS_FILES = "config_basic_dir_backups_files";
+	public static final String CONFIG_BASIC_DIR_INFO = "config_basic_dir_info";
+	
 	//--- CONFIG_DB variables deal with the generic, common configuration of DBs. Specific CONFIG constants
 	//have to be added to manage each DB's specific information like, for example, sources and fields.
 
@@ -236,6 +240,8 @@ public abstract class types extends parent_static
 	public static final String ERROR_DB_SOURCE = "error_db_source";
 	public static final String ERROR_DB_FIELD = "error_db_field";
 	public static final String ERROR_DB_VALS = "error_db_vals";
+	public static final String ERROR_DB_BACKUP = "error_db_backup";
+	public static final String ERROR_DB_RESTORE = "error_db_restore";
 	public static final String ERROR_FILE = "error_file";
 	public static final String ERROR_FILE_WRITE = "error_file_write";
 	public static final String ERROR_FILE_READ = "error_file_read";
@@ -253,6 +259,8 @@ public abstract class types extends parent_static
 	public static final String ERROR_CRYPTO_DECRYPT = "error_crypto_decrypt";
 	public static final String ERROR_DATES = "error_dates";
 	public static final String ERROR_DATES_STRING = "error_dates_string";
+	public static final String ERROR_MISC = "error_misc";
+	public static final String ERROR_MISC_EXECUTE = "error_misc_execute";
 	//---------
 
 	public static String check_what(String what_) { return check_type(what_, WHAT); }
@@ -388,6 +396,9 @@ public abstract class types extends parent_static
 			CONFIG_BASIC_DIR_CRYPTO, CONFIG_BASIC_DIR_SOUNDS,
 			CONFIG_BASIC_DIR_LOGS,
 			CONFIG_BASIC_DIR_LOGS_ERRORS, CONFIG_BASIC_DIR_LOGS_ACTIVITY,
+			CONFIG_BASIC_DIR_BACKUPS,
+			CONFIG_BASIC_DIR_BACKUPS_DBS, CONFIG_BASIC_DIR_BACKUPS_FILES,
+			CONFIG_BASIC_DIR_INFO,
 			CONFIG_CREDENTIALS, 
 			CONFIG_CREDENTIALS_WHERE, 
 			CONFIG_CREDENTIALS_WHERE_FILE, CONFIG_CREDENTIALS_WHERE_DB,
@@ -476,7 +487,7 @@ public abstract class types extends parent_static
 			ERROR_INI_DB_DBS, ERROR_INI_DB_SOURCE,
 			ERROR_DB,
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,
-			ERROR_DB_SOURCE, ERROR_DB_FIELD, ERROR_DB_VALS,
+			ERROR_DB_SOURCE, ERROR_DB_FIELD, ERROR_DB_VALS, ERROR_DB_BACKUP, ERROR_DB_RESTORE,
 			ERROR_FILE,
 			ERROR_FILE_WRITE, ERROR_FILE_READ,
 			ERROR_STRING,
@@ -490,7 +501,10 @@ public abstract class types extends parent_static
 			ERROR_CRYPTO_KEY, ERROR_CRYPTO_CIPHER, ERROR_CRYPTO_ENCRYPT, ERROR_CRYPTO_DECRYPT,
 
 			ERROR_DATES, 
-			ERROR_DATES_STRING
+			ERROR_DATES_STRING,
+			
+			ERROR_MISC,
+			ERROR_MISC_EXECUTE
 		};
 	}
 }

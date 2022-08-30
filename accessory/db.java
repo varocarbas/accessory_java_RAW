@@ -45,7 +45,9 @@ public abstract class db
 	public static final String ERROR_SOURCE = types.ERROR_DB_SOURCE;
 	public static final String ERROR_FIELD = types.ERROR_DB_FIELD;
 	public static final String ERROR_VALS = types.ERROR_DB_VALS;
-
+	public static final String ERROR_BACKUP = types.ERROR_DB_BACKUP;
+	public static final String ERROR_RESTORE = types.ERROR_DB_RESTORE;
+	
 	public static final String WRONG_STRING = strings.DEFAULT;
 	public static final double WRONG_DECIMAL = numbers.MIN_DECIMAL;
 	public static final long WRONG_LONG = numbers.MIN_LONG;
@@ -280,11 +282,24 @@ public abstract class db
 		if (exists(source_, where_cols_)) update(source_, vals_raw_, where_cols_);
 		else insert(source_, vals_raw_);
 	}
+
+	public static <x> void insert_update_id(String source_, HashMap<String, x> vals_raw_, String where_cols_) 
+	{ 
+		if (exists_id(source_, where_cols_)) update(source_, vals_raw_, where_cols_);
+		else insert(source_, vals_raw_);
+	}
 	
 	//Use this method carefully! No data checks or field/col conversions are performed.
 	public static void insert_update_quick(String source_, HashMap<String, String> vals_, String where_cols_) 
 	{ 
 		if (exists(source_, where_cols_)) update_quick(source_, vals_, where_cols_);
+		else insert_quick(source_, vals_);
+	}
+	
+	//Use this method carefully! No data checks or field/col conversions are performed.
+	public static void insert_update_id_quick(String source_, HashMap<String, String> vals_, String where_cols_) 
+	{ 
+		if (exists_id(source_, where_cols_)) update_quick(source_, vals_, where_cols_);
 		else insert_quick(source_, vals_);
 	}
 
@@ -319,6 +334,14 @@ public abstract class db
 	public static ArrayList<HashMap<String, String>> execute_query(String query_) { return execute_query(get_valid_source(), query_); }
 
 	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_) { return db_queries.execute_query(get_valid_source(source_), query_); }
+
+	public static void backup_db_to_file(String any_source_) { get_valid_instance(any_source_).backup_db_to_file(any_source_); }
+
+	public static void recover_db_from_file(String any_source_) { get_valid_instance(any_source_).restore_db_from_file(any_source_); }
+
+	public static String get_db_backup_path(String any_source_) { return get_valid_instance(any_source_).get_db_backup_path(any_source_); }
+
+	public static String get_db_restore_path(String any_source_) { return get_valid_instance(any_source_).get_db_restore_path(any_source_); }
 
 	public static String get_variable_table(String source_)
 	{
@@ -712,21 +735,28 @@ public abstract class db
 	static void manage_error(String source_, String message_) { manage_error(source_, ERROR_INFO, message_); }
 
 	static void manage_error(String source_, String type_, String message_) { manage_error(source_, type_, null, null, message_); }
-	
+
 	static void manage_error(String source_, String type_, String query_, Exception e_, String message_)
 	{
-		is_ok(source_, false);
-
 		HashMap<String, Object> info = new HashMap<String, Object>();
-		if (strings.is_ok(query_)) info.put("query", query_);
 		
+		if (strings.is_ok(query_)) info.put("query", query_);
 		String setup = get_valid_setup(source_);
 		info.put(HOST, get_host(setup));
 		info.put(NAME, get_db_name(get_db(source_)));
-		info.put(USER, config.get(setup, types.CONFIG_DB_SETUP_CREDENTIALS_USER));
+		info.put(USER, config.get(setup, CREDENTIALS_USER));
 		info.put(_keys.MESSAGE, message_);
-		
-		errors.manage(type_, e_, info);
+	
+		manage_error(source_, type_, e_, info);		
+	}
+
+	static void manage_error(String source_, String type_, HashMap<String, Object> info_) { manage_error(source_, type_, null, info_); }
+	
+	static void manage_error(String source_, String type_, Exception e_, HashMap<String, Object> info_)
+	{
+		is_ok(source_, false);
+
+		errors.manage(type_, e_, info_);
 	}
 
 	static boolean query_returns_data(String type_)

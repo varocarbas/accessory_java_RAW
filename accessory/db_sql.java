@@ -48,7 +48,7 @@ abstract class db_sql
 		return false;
 	}
 
-	static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_)
+	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_)
 	{
 		db.is_ok(source_, false);
 
@@ -103,6 +103,8 @@ abstract class db_sql
 		return output;
 	}
 
+	public static String get_backup_file_extension() { return paths.EXTENSION_SQL; }
+	
 	private static Connection connect(String source_) 
 	{
 		Properties properties = get_properties(source_);

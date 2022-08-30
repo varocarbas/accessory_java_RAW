@@ -495,11 +495,11 @@ public class tests extends parent_tests
 
 	public static HashMap<String, Boolean> run_dates() 
 	{ 
-		String[] skip = new String[] { "get_diff", "from_string", "update", "update_timestamp" };
+		String[] skip = new String[] { "get_diff", "from_string", "time_from_string", "date_from_string", "update", "update_timestamp" };
 
 		return _instance.run(dates.class, skip); 
 	}
-
+	
 	public static HashMap<String, Boolean> run_generic()
 	{
 		String[] skip = new String[] { "get_method", "call_static_method" };
