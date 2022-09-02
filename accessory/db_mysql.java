@@ -252,6 +252,8 @@ class db_mysql extends parent_db
 	
 	private void backup_restore_db(String any_source_, boolean is_backup_)
 	{
+		is_ok(false);
+		
 		String type_error = null;
 		String path = null;
 
@@ -305,7 +307,10 @@ class db_mysql extends parent_db
 		
 		String command = app + " -u '" + username + "' -p'" + password + "' '" + db_name + "' " + pipe + " '" + path + "'";			
 		
-		is_ok(misc.execute_bash(command, true));
+		boolean is_ok = false;		
+		if (!_basic.IS_WINDOWS) is_ok = misc.execute_bash(command, true);
+		
+		is_ok(is_ok);
 	}
 
 	private String get_connect_url(String source_)

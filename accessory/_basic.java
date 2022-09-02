@@ -13,13 +13,15 @@ class _basic extends parent_ini_first
 	public _basic() { }
 	public static void populate() { _instance.populate_internal_common(); }
 
+	public static boolean IS_WINDOWS = false;
 	public static String DIR_SEPARATOR = null;
-
+	
 	protected void populate_internal() 
 	{ 
 		if (_populated) return;
 
-		DIR_SEPARATOR = (System.getProperty("os.name").contains("Windows") ? "\\" : "/");
+		IS_WINDOWS = System.getProperty("os.name").contains("Windows");
+		DIR_SEPARATOR = (IS_WINDOWS ? "\\" : "/");
 
 		_populated = true;
 	} 
