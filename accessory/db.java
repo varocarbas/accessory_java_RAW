@@ -170,7 +170,8 @@ public abstract class db
 
 	public static String select_one_string(String source_, String field_, String where_cols_, String order_cols_) { return (String)db_queries.select_one_common(source_, field_, where_cols_, order_cols_, data.STRING, false); }
 
-	public static String select_one_string_quick(String source_, String field_, String where_cols_, String order_cols_) { return (String)db_queries.select_one_common(source_, field_, where_cols_, order_cols_, data.STRING, true); }
+	//Use this method carefully! No data checks or field/col conversions are performed.
+	public static String select_one_string_quick(String source_, String col_, String where_cols_, String order_cols_) { return (String)db_queries.select_one_common(source_, col_, where_cols_, order_cols_, data.STRING, true); }
 	
 	public static double select_one_decimal(String source_, String field_) { return select_one_decimal(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
@@ -178,7 +179,8 @@ public abstract class db
 
 	public static double select_one_decimal(String source_, String field_, String wheres_cols_, String orders_cols_) { return (double)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.DECIMAL, false); }
 
-	public static double select_one_decimal_quick(String source_, String field_, String wheres_cols_, String orders_cols_) { return (double)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.DECIMAL, true); }
+	//Use this method carefully! No data checks or field/col conversions are performed.
+	public static double select_one_decimal_quick(String source_, String col_, String wheres_cols_, String orders_cols_) { return (double)db_queries.select_one_common(source_, col_, wheres_cols_, orders_cols_, data.DECIMAL, true); }
 
 	public static long select_one_long(String source_, String field_) { return select_one_long(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
@@ -186,7 +188,8 @@ public abstract class db
 
 	public static long select_one_long(String source_, String field_, String wheres_cols_, String orders_cols_) { return (long)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.LONG, false); }
 
-	public static long select_one_long_quick(String source_, String field_, String wheres_cols_, String orders_cols_) { return (long)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.LONG, true); }
+	//Use this method carefully! No data checks or field/col conversions are performed.
+	public static long select_one_long_quick(String source_, String col_, String wheres_cols_, String orders_cols_) { return (long)db_queries.select_one_common(source_, col_, wheres_cols_, orders_cols_, data.LONG, true); }
 
 	public static int select_one_int(String source_, String field_) { return select_one_int(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
@@ -194,7 +197,8 @@ public abstract class db
 
 	public static int select_one_int(String source_, String field_, String wheres_cols_, String orders_cols_) { return (int)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.INT, false); }
 
-	public static int select_one_int_quick(String source_, String field_, String wheres_cols_, String orders_cols_) { return (int)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.INT, true); }
+	//Use this method carefully! No data checks or field/col conversions are performed.
+	public static int select_one_int_quick(String source_, String col_, String wheres_cols_, String orders_cols_) { return (int)db_queries.select_one_common(source_, col_, wheres_cols_, orders_cols_, data.INT, true); }
 
 	public static boolean select_one_boolean(String source_, String field_) { return select_one_boolean(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
@@ -202,12 +206,14 @@ public abstract class db
 
 	public static boolean select_one_boolean(String source_, String field_, String wheres_cols_, String orders_cols_) { return (boolean)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.BOOLEAN, false); }
 
-	public static boolean select_one_boolean_quick(String source_, String field_, String wheres_cols_, String orders_cols_) { return (boolean)db_queries.select_one_common(source_, field_, wheres_cols_, orders_cols_, data.BOOLEAN, true); }
+	//Use this method carefully! No data checks or field/col conversions are performed.
+	public static boolean select_one_boolean_quick(String source_, String col_, String wheres_cols_, String orders_cols_) { return (boolean)db_queries.select_one_common(source_, col_, wheres_cols_, orders_cols_, data.BOOLEAN, true); }
 
 	public static HashMap<String, String> select_one(String source_, String[] fields_, db_where[] wheres_, db_order[] orders_) { return db_queries.select_one(source_, fields_, wheres_, orders_, false); }
 
 	public static HashMap<String, String> select_one(String source_, String[] fields_, String wheres_cols_, String orders_cols_) { return db_queries.select_one(source_, fields_, wheres_cols_, orders_cols_, false); }
 
+	//Use this method carefully! No data checks or field/col conversions are performed.
 	public static HashMap<String, String> select_one_quick(String source_, String[] cols_, String wheres_cols_, String orders_cols_) { return db_queries.select_one(source_, cols_, wheres_cols_, orders_cols_, true); }
 
 	public static ArrayList<String> select_some_strings(String source_, String field_) { return select_some_strings(source_, field_, DEFAULT_WHERE, DEFAULT_MAX_ROWS, DEFAULT_ORDER); }
@@ -217,8 +223,9 @@ public abstract class db
 	@SuppressWarnings("unchecked")
 	public static ArrayList<String> select_some_strings(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<String>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.STRING, false); }
 
+	//Use this method carefully! No data checks or field/col conversions are performed.
 	@SuppressWarnings("unchecked")
-	public static ArrayList<String> select_some_strings_quick(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<String>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.STRING, true); }
+	public static ArrayList<String> select_some_strings_quick(String source_, String col_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<String>)db_queries.select_some_common(source_, col_, where_cols_, max_rows_, order_cols_, data.STRING, true); }
 	
 	public static ArrayList<Double> select_some_decimals(String source_, String field_) { return select_some_decimals(source_, field_, DEFAULT_WHERE, DEFAULT_MAX_ROWS, DEFAULT_ORDER); }
 
@@ -227,8 +234,9 @@ public abstract class db
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Double> select_some_decimals(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Double>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.DECIMAL, false); }
 
+	//Use this method carefully! No data checks or field/col conversions are performed.
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Double> select_some_decimals_quick(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Double>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.DECIMAL, true); }
+	public static ArrayList<Double> select_some_decimals_quick(String source_, String col_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Double>)db_queries.select_some_common(source_, col_, where_cols_, max_rows_, order_cols_, data.DECIMAL, true); }
 	
 	public static ArrayList<Long> select_some_longs(String source_, String field_) { return select_some_longs(source_, field_, DEFAULT_WHERE, DEFAULT_MAX_ROWS, DEFAULT_ORDER); }
 
@@ -237,8 +245,9 @@ public abstract class db
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Long> select_some_longs(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Long>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.LONG, false); }
 
+	//Use this method carefully! No data checks or field/col conversions are performed.
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Long> select_some_longs_quick(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Long>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.LONG, true); }
+	public static ArrayList<Long> select_some_longs_quick(String source_, String col_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Long>)db_queries.select_some_common(source_, col_, where_cols_, max_rows_, order_cols_, data.LONG, true); }
 
 	public static ArrayList<Integer> select_some_ints(String source_, String field_) { return select_some_ints(source_, field_, DEFAULT_WHERE, DEFAULT_MAX_ROWS, DEFAULT_ORDER); }
 
@@ -247,8 +256,9 @@ public abstract class db
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Integer> select_some_ints(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Integer>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.INT, false); }
 
+	//Use this method carefully! No data checks or field/col conversions are performed.
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Integer> select_some_ints_quick(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Integer>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.INT, true); }
+	public static ArrayList<Integer> select_some_ints_quick(String source_, String col_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Integer>)db_queries.select_some_common(source_, col_, where_cols_, max_rows_, order_cols_, data.INT, true); }
 
 	public static ArrayList<Boolean> select_some_booleans(String source_, String field_) { return select_some_booleans(source_, field_, DEFAULT_WHERE, DEFAULT_MAX_ROWS, DEFAULT_ORDER); }
 
@@ -257,8 +267,9 @@ public abstract class db
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Boolean> select_some_booleans(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Boolean>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.BOOLEAN, false); }
 
+	//Use this method carefully! No data checks or field/col conversions are performed.
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Boolean> select_some_booleans_quick(String source_, String field_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Boolean>)db_queries.select_some_common(source_, field_, where_cols_, max_rows_, order_cols_, data.BOOLEAN, true); }
+	public static ArrayList<Boolean> select_some_booleans_quick(String source_, String col_, String where_cols_, int max_rows_, String order_cols_) { return (ArrayList<Boolean>)db_queries.select_some_common(source_, col_, where_cols_, max_rows_, order_cols_, data.BOOLEAN, true); }
 
 	public static ArrayList<HashMap<String, String>> select(String source_, db_where[] wheres_) { return select(source_, DEFAULT_FIELDS_COLS, wheres_, DEFAULT_MAX_ROWS, null); }
 
@@ -691,13 +702,7 @@ public abstract class db
 		String type = data.check_type(data_type_);
 		if (!strings.is_ok(type) || (check_ && !db_field.complies(source, val_, type))) return output;
 		
-		if (type.equals(data.DECIMAL)) output = numbers.to_decimal(val_);
-		else if (type.equals(data.LONG)) output = numbers.to_long(val_);
-		else if (type.equals(data.INT) || type.equals(data.TINYINT)) output = numbers.to_int(val_);
-		else if (data.is_boolean(type)) output = strings.to_boolean(val_);
-		else output = val_;
-
-		return output;
+		return adapt_output_internal(val_, type);
 	}
 
 	public static String sanitise_string(String input_) { return sanitise_string(get_current_source(), input_); }
@@ -836,6 +841,19 @@ public abstract class db
 
 	static String get_select_count_col(String source_) { return get_valid_instance(source_).get_select_count_col(); }
 
+	static Object adapt_output_internal(String val_, String type_)
+	{
+		Object output = null;
+		
+		if (type_.equals(data.DECIMAL)) output = numbers.to_decimal(val_);
+		else if (type_.equals(data.LONG)) output = numbers.to_long(val_);
+		else if (type_.equals(data.INT) || type_.equals(data.TINYINT)) output = numbers.to_int(val_);
+		else if (data.is_boolean(type_)) output = strings.to_boolean(val_);
+		else output = val_;
+
+		return output;
+	}
+	
 	private static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_) { db_queries.create_table(source_, fields_, drop_it_); }
 
 	private static boolean credentials_in_memory(String source_) { return config.get_boolean(get_valid_setup(source_), CREDENTIALS_MEMORY); }

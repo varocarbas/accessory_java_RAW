@@ -242,6 +242,7 @@ public abstract class types extends parent_static
 	public static final String ERROR_DB_VALS = "error_db_vals";
 	public static final String ERROR_DB_BACKUP = "error_db_backup";
 	public static final String ERROR_DB_RESTORE = "error_db_restore";
+	public static final String ERROR_DB_QUICKER = "error_db_quicker";
 	public static final String ERROR_FILE = "error_file";
 	public static final String ERROR_FILE_WRITE = "error_file_write";
 	public static final String ERROR_FILE_READ = "error_file_read";
@@ -487,7 +488,8 @@ public abstract class types extends parent_static
 			ERROR_INI_DB_DBS, ERROR_INI_DB_SOURCE,
 			ERROR_DB,
 			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,
-			ERROR_DB_SOURCE, ERROR_DB_FIELD, ERROR_DB_VALS, ERROR_DB_BACKUP, ERROR_DB_RESTORE,
+			ERROR_DB_SOURCE, ERROR_DB_FIELD, ERROR_DB_VALS, ERROR_DB_BACKUP, ERROR_DB_RESTORE, 
+			ERROR_DB_QUICKER,
 			ERROR_FILE,
 			ERROR_FILE_WRITE, ERROR_FILE_READ,
 			ERROR_STRING,

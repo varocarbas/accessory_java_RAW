@@ -91,7 +91,7 @@ public abstract class parent_ini_db
 
 		populate_all_internal(dbs_setup);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	protected boolean populate_db(String db_, String name_, HashMap<String, Object[]> sources_, HashMap<String, Object> setup_vals_)
 	{
@@ -102,10 +102,14 @@ public abstract class parent_ini_db
 
 		config.update_ini(db, types.CONFIG_DB_NAME, (strings.is_ok(name_) ? name_ : get_db_name_default(db)));		
 		HashMap<String, Object> setup_vals = get_setup_vals(db, setup_vals_);
-
+		
+		String any_source = null;
+		
 		for (Entry<String, Object[]> item: sources_.entrySet())
 		{
 			String id = item.getKey();
+			if (any_source == null) any_source = id;
+			
 			Object[] temp = item.getValue();
 
 			if (!populate_source(id, (String)temp[0], (HashMap<String, Object[]>)temp[1], setup_vals))
@@ -120,6 +124,8 @@ public abstract class parent_ini_db
 			}
 		}
 
+		start_quicker(setup_vals, any_source);
+		
 		return is_ok;
 	}	
 
@@ -182,6 +188,11 @@ public abstract class parent_ini_db
 		if (!config.update_ini(db, source, table_)) return false;
 
 		return true;
+	}
+
+	private void start_quicker(HashMap<String, Object> setup_vals_, String any_source_)
+	{
+		if (setup_vals_.get(types.CONFIG_DB_SETUP_TYPE).equals(db_quicker_mysql.TYPE)) db_quicker_mysql.update_conn_info(any_source_);
 	}
 	
 	private void populate_all_internal(HashMap<String, Object> dbs_setup_) 

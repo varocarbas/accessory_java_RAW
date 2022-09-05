@@ -48,18 +48,22 @@ abstract class db_sql
 		return false;
 	}
 
-	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_)
+	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_) { return execute_query(source_, query_, return_data_, cols_, connect(source_)); }
+	
+	public static ArrayList<HashMap<String, String>> execute_query_static(String type_, String source_, String query_, boolean return_data_, String[] cols_, String username_, String password_, String db_name_, String host_, String max_pool_) { return execute_query(source_, query_, return_data_, cols_, connect_static(type_, source_, username_, password_, db_name_, host_, max_pool_)); }
+
+	public static String get_backup_file_extension() { return paths.EXTENSION_SQL; }
+
+	private static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_, Connection conn_)
 	{
 		db.is_ok(source_, false);
 
-		ArrayList<HashMap<String, String>> output = null;
-
-		Connection conn = connect(source_);
-		if (conn == null) return output;
-
+		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
+		if (conn_ == null) return output;
+		
 		try 
 		{
-			PreparedStatement statement = conn.prepareStatement(query_);
+			PreparedStatement statement = conn_.prepareStatement(query_);
 
 			if (!return_data_) 
 			{
@@ -70,14 +74,13 @@ abstract class db_sql
 				return output;
 			}
 
-			output = new ArrayList<HashMap<String, String>>();
 			try
 			{
 				ResultSet data = statement.executeQuery();
 
 				String[] cols = execute_query_get_cols(source_, data, cols_);
 				if (!arrays.is_ok(cols)) return output;
-
+				
 				while (data.next()) 
 				{
 					HashMap<String, String> row = new HashMap<String, String>();
@@ -98,40 +101,47 @@ abstract class db_sql
 			catch (Exception e) { db.manage_error(source_, db.ERROR_QUERY, query_, e, null); }
 		} 
 		catch (Exception e) { db.manage_error(source_, db.ERROR_QUERY, query_, e, null); } 
-		finally { disconnect(source_, conn); }
+		finally { disconnect(source_, conn_); }
 
 		return output;
 	}
-
-	public static String get_backup_file_extension() { return paths.EXTENSION_SQL; }
 	
 	private static Connection connect(String source_) 
 	{
 		Properties properties = get_properties(source_);
-		if (properties == null) return null;
 
-		return connect_type(source_, properties);
+		return (properties != null ? db.get_valid_instance(source_).connect(source_, properties) : null);
 	}
 
-	private static Connection connect_type(String source_, Properties properties) { return db.get_valid_instance(source_).connect(source_, properties); }
+	private static Connection connect_static(String type_, String source_, String username_, String password_, String db_name_, String host_, String max_pool_) 
+	{
+		Properties properties = get_properties_static(source_, username_, password_, max_pool_);
+
+		return (properties != null ? parent_db.connect_static(type_, source_, properties, db_name_, host_) : null);
+	}
 
 	private static Properties get_properties(String source_) 
-	{	
+	{
 		HashMap<String, String> credentials = db.get_credentials(source_);
 
 		String username = (String)arrays.get_value(credentials, accessory.credentials.USERNAME);
 		String password = (String)arrays.get_value(credentials, accessory.credentials.PASSWORD);
 		String max_pool = db.get_max_pool(db.get_valid_setup(source_));
 
+		return get_properties_static(source_, username, password, max_pool);
+	}
+
+	private static Properties get_properties_static(String source_, String username_, String password_, String max_pool_) 
+	{	
 		String type = null;
 		String message = ""; 
 
-		if (!strings.is_ok(username) || !strings.is_ok(password))
+		if (!strings.is_ok(username_) || !strings.is_ok(password_))
 		{
 			type = db.ERROR_CREDENTIALS;
 			message = "credentials";
 		}
-		else if (!strings.is_int(max_pool))
+		else if (!strings.is_int(max_pool_))
 		{
 			type = db.ERROR_INFO;
 			message = "MaxPooledStatements";
@@ -146,9 +156,9 @@ abstract class db_sql
 		}
 
 		Properties properties = new Properties();	
-		properties.setProperty("user", username);
-		properties.setProperty("password", password);
-		properties.setProperty("MaxPooledStatements", max_pool);
+		properties.setProperty("user", username_);
+		properties.setProperty("password", password_);
+		properties.setProperty("MaxPooledStatements", max_pool_);
 
 		return properties;
 	}
@@ -169,13 +179,23 @@ abstract class db_sql
 	{
 		if (arrays.is_ok(cols_)) return cols_;
 
-		ArrayList<String> cols = new ArrayList<String>();
-
+		String[] cols = null;
+		
 		try 
 		{
 			ResultSetMetaData info = data_.getMetaData();
-
-			for (int i = 1; i <= info.getColumnCount(); i++) { cols.add(info.getColumnName(i)); }
+			
+			int tot = info.getColumnCount();			
+			cols = new String[tot];
+			
+			int max_i = tot;
+			int i2 = -1;
+			
+			for (int i = 1; i <= max_i; i++) 
+			{
+				i2++;
+				cols[i2] = info.getColumnName(i); 
+			}
 		} 
 		catch (Exception e) 
 		{
@@ -184,6 +204,6 @@ abstract class db_sql
 			db.manage_error(source_, db.ERROR_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns");
 		}
 
-		return arrays.to_array(cols);
+		return cols;
 	}
 }

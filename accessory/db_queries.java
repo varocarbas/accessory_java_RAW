@@ -129,9 +129,9 @@ abstract class db_queries extends parent_static
 
 	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_) { return db.get_valid_instance(source_).execute_query(source_, query_); }
 
-	static Object select_some_common(String source_, String field_, String wheres_cols_, int max_rows_, String orders_cols_, String what_, boolean is_quick_) { return select_one_some_common(source_, field_, wheres_cols_, max_rows_, orders_cols_, what_, false, is_quick_); }
+	static Object select_some_common(String source_, String field_col_, String wheres_cols_, int max_rows_, String orders_cols_, String what_, boolean is_quick_) { return select_one_some_common(source_, field_col_, wheres_cols_, max_rows_, orders_cols_, what_, false, is_quick_); }
 
-	static Object select_one_common(String source_, String field_, String wheres_cols_, String orders_cols_, String what_, boolean is_quick_) { return select_one_some_common(source_, field_, wheres_cols_, 1, orders_cols_, what_, true, is_quick_); }
+	static Object select_one_common(String source_, String field_col_, String wheres_cols_, String orders_cols_, String what_, boolean is_quick_) { return select_one_some_common(source_, field_col_, wheres_cols_, 1, orders_cols_, what_, true, is_quick_); }
 
 	private static void create_table_like_internal(String table_name_, String source_, parent_db instance_, boolean drop_it_) 
 	{
