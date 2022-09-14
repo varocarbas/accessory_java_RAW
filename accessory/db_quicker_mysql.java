@@ -11,7 +11,7 @@ public abstract class db_quicker_mysql
 	public static final String ERROR = types.ERROR_DB_QUICKER;
 	
 	private static String _username = strings.DEFAULT;
-	private static String _password = strings.DEFAULT;
+	private static String _password = null;
 	private static String _db_name = db.DEFAULT_DB_NAME;
 	private static String _host = db.DEFAULT_HOST;
 	private static String _max_pool = db.DEFAULT_MAX_POOL;
