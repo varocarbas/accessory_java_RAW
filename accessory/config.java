@@ -9,27 +9,27 @@ public abstract class config extends parent_static
 
 	public static Object get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
 
-	public static boolean update_basic(String key_, String val_) { return update(types.CONFIG_BASIC, key_, val_); }
+	public static boolean update_basic(String key_, Object val_) { return update(types.CONFIG_BASIC, key_, val_); }
 
 	public static Object get_credentials(String key_) { return get(types.CONFIG_CREDENTIALS, key_); }
 
-	public static boolean update_credentials(String key_, String val_) { return update(types.CONFIG_CREDENTIALS, key_, val_); }
+	public static boolean update_credentials(String key_, Object val_) { return update(types.CONFIG_CREDENTIALS, key_, val_); }
 
 	public static Object get_crypto(String key_) { return get(types.CONFIG_CRYPTO, key_); }
 
-	public static boolean update_crypto(String key_, String val_) { return update(types.CONFIG_CRYPTO, key_, val_); }
+	public static boolean update_crypto(String key_, Object val_) { return update(types.CONFIG_CRYPTO, key_, val_); }
 
 	public static Object get_logs(String key_) { return get(types.CONFIG_LOGS, key_); }
 
 	public static boolean get_logs_boolean(String key_) { return get_boolean(types.CONFIG_LOGS, key_); }
 
-	public static boolean update_logs(String key_, String val_) { return update(types.CONFIG_LOGS, key_, val_); }
+	public static boolean update_logs(String key_, Object val_) { return update(types.CONFIG_LOGS, key_, val_); }
 
 	public static Object get_numbers(String key_) { return get(types.CONFIG_NUMBERS, key_); }
 
 	public static boolean get_numbers_boolean(String key_) { return get_boolean(types.CONFIG_NUMBERS, key_); }
 
-	public static boolean update_numbers(String key_, String val_) { return update(types.CONFIG_NUMBERS, key_, val_); }
+	public static boolean update_numbers(String key_, Object val_) { return update(types.CONFIG_NUMBERS, key_, val_); }
 
 	public static boolean update(String type_, String key_, Object val_) { return update_matches(type_, key_, val_, true, false); }
 

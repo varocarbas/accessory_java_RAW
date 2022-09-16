@@ -61,7 +61,8 @@ class _ini_config extends parent_ini_config
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		vals.put(logs.CONFIG_OUT_SCREEN, logs.DEFAULT_OUT_SCREEN);
 		vals.put(logs.CONFIG_OUT_FILE, logs.DEFAULT_OUT_FILE);
-
+		vals.put(logs.CONFIG_ERRORS_TIMESTAMP, logs.DEFAULT_ERRORS_TIMESTAMP);
+		
 		return populate(type, null, vals);
 	}	
 

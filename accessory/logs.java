@@ -7,7 +7,8 @@ public abstract class logs extends parent_static
 {	
 	public static final String CONFIG_OUT_SCREEN = types.CONFIG_LOGS_OUT_SCREEN;
 	public static final String CONFIG_OUT_FILE = types.CONFIG_LOGS_OUT_FILE;
-
+	public static final String CONFIG_ERRORS_TIMESTAMP = types.CONFIG_LOGS_ERRORS_TIMESTAMP;
+	
 	public static final String SCREEN = CONFIG_OUT_SCREEN;
 	public static final String FILE = CONFIG_OUT_FILE;
 	public static final String OUT_SCREEN = SCREEN;
@@ -15,6 +16,19 @@ public abstract class logs extends parent_static
 
 	public static final boolean DEFAULT_OUT_SCREEN = true;
 	public static final boolean DEFAULT_OUT_FILE = true;
+	public static final boolean DEFAULT_ERRORS_TIMESTAMP = false;
+
+	public static boolean out_screen(boolean out_screen_) { return config.update_logs(CONFIG_OUT_SCREEN, out_screen_); }
+
+	public static boolean out_screen() { return config.get_logs_boolean(CONFIG_OUT_SCREEN); }
+
+	public static boolean out_file(boolean out_file_) { return config.update_logs(CONFIG_OUT_FILE, out_file_); }
+
+	public static boolean out_file() { return config.get_logs_boolean(CONFIG_OUT_FILE); }
+
+	public static boolean errors_timestamp(boolean errors_timestamp_) { return config.update_logs(CONFIG_ERRORS_TIMESTAMP, errors_timestamp_); }
+
+	public static boolean errors_timestamp() { return config.get_logs_boolean(CONFIG_ERRORS_TIMESTAMP); }
 
 	public static void update_activity(HashMap<String, String> inputs_, String id_) { update_file(arrays.to_string(inputs_, misc.SEPARATOR_ITEM, misc.SEPARATOR_KEYVAL, null), id_, false); }
 
@@ -37,7 +51,7 @@ public abstract class logs extends parent_static
 		System.out.println(message);
 	}
 
-	public static void update_file(String message_, String id_, boolean is_error_) { update_file(message_, id_, is_error_, false); }
+	public static void update_file(String message_, String id_, boolean is_error_) { update_file(message_, id_, is_error_, errors_timestamp()); }
 	
 	public static void update_file(String message_, String id_, boolean is_error_, boolean add_timestamp_path_)
 	{		

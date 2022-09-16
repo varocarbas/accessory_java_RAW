@@ -119,7 +119,9 @@ public abstract class types extends parent_static
 	public static final String CONFIG_LOGS_OUT = "config_logs_out";
 	public static final String CONFIG_LOGS_OUT_SCREEN = "config_logs_out_screen";
 	public static final String CONFIG_LOGS_OUT_FILE = "config_logs_out_file";
-
+	public static final String CONFIG_LOGS_ERRORS = "config_logs_errors";
+	public static final String CONFIG_LOGS_ERRORS_TIMESTAMP = "config_logs_errors_timestamp";
+	
 	public static final String CONFIG_NUMBERS = "config_numbers";
 	public static final String CONFIG_NUMBERS_PERC_REF_LARGER = "config_numbers_perc_ref_larger";
 	//------
@@ -417,6 +419,8 @@ public abstract class types extends parent_static
 			CONFIG_LOGS,
 			CONFIG_LOGS_OUT,
 			CONFIG_LOGS_OUT_SCREEN, CONFIG_LOGS_OUT_FILE,
+			CONFIG_LOGS_ERRORS,
+			CONFIG_LOGS_ERRORS_TIMESTAMP,
 			CONFIG_DB,
 			CONFIG_DB_NAME,
 			CONFIG_DB_SETUP,
