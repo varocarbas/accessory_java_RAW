@@ -382,6 +382,7 @@ class db_mysql extends parent_db
 		else if (type_.equals(db.QUERY_SELECT_COUNT))
 		{
 			query = "SELECT " + get_select_count_col_static() + " FROM " + get_variable_static(table);			
+			if (strings.is_ok(where_)) query += " WHERE " + where_;
 			
 			is_ok = true;
 		}

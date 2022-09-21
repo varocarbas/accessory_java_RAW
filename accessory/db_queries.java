@@ -25,7 +25,7 @@ abstract class db_queries extends parent_static
 	{ 
 		ArrayList<HashMap<String, String>> output = select_count_internal(source_, where_cols_);
 
-		return (arrays.is_ok(output) ? strings.to_number_int((String)arrays.get_value(output.get(0), db.get_select_count_col(source_))) : 0); 
+		return ((output != null && output.size() > 0) ? Integer.parseInt(output.get(0).get(db.get_select_count_col(source_))) : 0); 
 	}
 
 	public static <x> void insert(String source_, HashMap<String, x> vals_raw_)

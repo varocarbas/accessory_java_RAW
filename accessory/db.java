@@ -158,11 +158,9 @@ public abstract class db
 		return update_vals(get_setup_from_db(db), setup_vals_);
 	}
 
-	public static boolean exists(String source_, db_where[] wheres_) { return arrays.is_ok(select_one(source_, DEFAULT_FIELDS_COLS, wheres_, null)); }
+	public static boolean exists(String source_, db_where[] wheres_) { return (select_count(source_, db_where.to_string(wheres_)) > 0); }
 
-	public static boolean exists(String source_, String where_cols_) { return arrays.is_ok(select_one(source_, DEFAULT_FIELDS_COLS, where_cols_, DEFAULT_ORDER)); }
-
-	public static boolean exists_id(String source_, String where_cols_) { return arrays.is_ok(select_one(source_, new String[] { FIELD_ID }, where_cols_, DEFAULT_ORDER)); }
+	public static boolean exists(String source_, String where_cols_) { return (select_count(source_, where_cols_) > 0); }
 
 	public static String select_one_string(String source_, String field_) { return select_one_string(source_, field_, DEFAULT_WHERE, DEFAULT_ORDER); }
 
@@ -296,7 +294,7 @@ public abstract class db
 
 	public static <x> void insert_update_id(String source_, HashMap<String, x> vals_raw_, String where_cols_) 
 	{ 
-		if (exists_id(source_, where_cols_)) update(source_, vals_raw_, where_cols_);
+		if (exists(source_, where_cols_)) update(source_, vals_raw_, where_cols_);
 		else insert(source_, vals_raw_);
 	}
 	
@@ -310,7 +308,7 @@ public abstract class db
 	//Use this method carefully! No data checks or field/col conversions are performed.
 	public static void insert_update_id_quick(String source_, HashMap<String, String> vals_, String where_cols_) 
 	{ 
-		if (exists_id(source_, where_cols_)) update_quick(source_, vals_, where_cols_);
+		if (exists(source_, where_cols_)) update_quick(source_, vals_, where_cols_);
 		else insert_quick(source_, vals_);
 	}
 

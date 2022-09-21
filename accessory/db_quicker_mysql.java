@@ -15,11 +15,14 @@ public abstract class db_quicker_mysql
 	private static String _db_name = db.DEFAULT_DB_NAME;
 	private static String _host = db.DEFAULT_HOST;
 	private static String _max_pool = db.DEFAULT_MAX_POOL;
+	private static String _count_col = null;
 	
 	public static boolean conn_info_is_ok() { return (strings.is_ok(_username) && _password != null && strings.is_ok(_db_name) && strings.is_ok(_host) && strings.is_int(_max_pool)); }
 	
 	public static void update_conn_info(String source_)
 	{
+		_count_col = db.get_select_count_col(source_);
+		
 		HashMap<String, String> credentials = db.get_credentials(source_);
 
 		String username = (String)arrays.get_value(credentials, accessory.credentials.USERNAME);
@@ -47,17 +50,18 @@ public abstract class db_quicker_mysql
 		if (strings.is_int(max_pool_)) _max_pool = max_pool_;
 	}
 	
-	public static boolean exists(String source_, String any_col_, String where_cols_) 
+	public static boolean exists(String source_, String where_cols_) 
 	{
 		boolean output = false;
 		
-		try { output = arrays.is_ok(select_one(source_, new String[] { any_col_ }, where_cols_, db.DEFAULT_ORDER)); }
+		try { output = (select_count(source_, where_cols_) > 0); }
 		catch (Exception e) 
 		{ 
+			output = false;
+			
 			HashMap<String, Object> info = new HashMap<String, Object>();
 	
 			info.put("source", strings.to_string(source_));
-			info.put("any_col", strings.to_string(any_col_));
 			info.put("where_cols", strings.to_string(where_cols_));
 			
 			db.manage_error(source_, ERROR, e, info); 
@@ -396,11 +400,38 @@ public abstract class db_quicker_mysql
 		return output; 
 	}
 
+	public static int select_count(String source_, String where_cols_) 
+	{	
+		int output = 0;
+
+		try 
+		{ 
+			if (_count_col == null) _count_col = db.get_select_count_col(source_);
+			
+			ArrayList<HashMap<String, String>> temp = db_mysql.execute_static(source_, db.QUERY_SELECT_COUNT, db.DEFAULT_FIELDS_COLS, null, where_cols_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null, TYPE); 
+
+			if (temp != null && temp.size() > 0) output = Integer.parseInt(temp.get(0).get(_count_col));
+		}		
+		catch (Exception e) 
+		{
+			output = 0;
+			
+			HashMap<String, Object> info = new HashMap<String, Object>();
+			
+			info.put("source", strings.to_string(source_));
+			info.put("where_cols", strings.to_string(where_cols_));
+			
+			db.manage_error(source_, ERROR, e, info); 
+		}
+		
+		return output; 
+	}
+
 	public static void insert_update(String source_, String any_col_, HashMap<String, String> vals_, String where_cols_) 
 	{	
 		try
 		{
-			if (exists(source_, any_col_, where_cols_)) update(source_, vals_, where_cols_);
+			if (exists(source_, where_cols_)) update(source_, vals_, where_cols_);
 			else insert(source_, vals_);
 		}
 		catch (Exception e) 
