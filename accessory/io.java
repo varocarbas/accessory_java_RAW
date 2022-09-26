@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -47,29 +48,9 @@ public abstract class io extends parent_static
 		method_end();	
 	}
 
-	public static String[] file_to_array(String path_)
-	{
-		method_start();
+	public static String[] file_to_array(String path_) { return file_web_to_array(path_, true); }
 
-		if (!paths.exists(path_)) return null;
-
-		ArrayList<String> lines = new ArrayList<>();
-
-		try (Scanner scanner = new Scanner(new FileReader(path_))) 
-		{
-			while (scanner.hasNext()) { lines.add(scanner.nextLine().trim()); }
-		} 
-		catch (Exception e) 
-		{ 
-			lines = null;
-
-			manage_error_io(ERROR_READ, e, path_);
-		}
-
-		method_end();
-
-		return (arrays.is_ok(lines) ? arrays.to_array(lines) : null);
-	}
+	public static String[] web_to_array(String url_) { return file_web_to_array(url_, false); }
 
 	public static ArrayList<HashMap<String, String>> file_to_hashmap(String path_, String[] cols_, String separator_, boolean normalise_, boolean ignore_first_)
 	{
@@ -299,6 +280,48 @@ public abstract class io extends parent_static
 		return _is_ok;
 	}
 	
+	private static String[] file_web_to_array(String path_url_, boolean is_file_)
+	{
+		method_start();
+
+		ArrayList<String> lines = null;
+		
+		try
+		{			
+			if (!strings.is_ok(path_url_)) return null;
+
+			Scanner scanner = null;
+
+			if (is_file_)
+			{
+				if (paths.exists(path_url_)) scanner = new Scanner(new FileReader(path_url_));
+			}
+			else
+			{
+				URL url = new URL(path_url_);
+				
+				scanner = new Scanner(url.openStream());
+			}			
+			if (scanner == null) return null;
+
+			lines = new ArrayList<>();
+						
+			while (scanner.hasNext()) { lines.add(scanner.nextLine().trim()); }
+
+			scanner.close();				
+		} 
+		catch (Exception e) 
+		{ 
+			lines = null;
+
+			manage_error_io(ERROR_READ, e, path_url_);
+		}
+
+		method_end();
+
+		return (arrays.is_ok(lines) ? arrays.to_array(lines) : null);
+	}
+
 	private static boolean play_sound_short_wav(String file_)
 	{
 		_is_ok = false;
