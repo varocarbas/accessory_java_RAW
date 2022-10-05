@@ -1,5 +1,6 @@
 package accessory;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -62,7 +63,18 @@ public abstract class dates extends parent_static
 	public static LocalTime get_now_time() { return get_now_time(_offset); }
 
 	public static LocalTime get_now_time(int offset_) { return LocalTime.now().plusMinutes(check_offset(offset_)); }
+
+	public static boolean is_weekend() { return is_weekend(get_now_date()); }
 	
+	public static boolean is_weekend(LocalDate date_) 
+	{
+		if (date_ == null) return false;
+		
+		DayOfWeek day = date_.getDayOfWeek();
+		
+		return ((day == DayOfWeek.SATURDAY) || (day == DayOfWeek.SUNDAY)); 
+	}
+
 	public static int get_offset() { return _offset; }
 
 	public static void update_offset() { update_offset(DEFAULT_OFFSET); }

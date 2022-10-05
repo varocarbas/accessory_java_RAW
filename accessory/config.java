@@ -9,6 +9,8 @@ public abstract class config extends parent_static
 
 	public static Object get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
 
+	public static boolean get_basic_boolean(String key_) { return get_boolean(types.CONFIG_BASIC, key_); }
+
 	public static boolean update_basic(String key_, Object val_) { return update(types.CONFIG_BASIC, key_, val_); }
 
 	public static Object get_credentials(String key_) { return get(types.CONFIG_CREDENTIALS, key_); }
