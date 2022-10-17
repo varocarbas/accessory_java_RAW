@@ -98,12 +98,14 @@ public abstract class strings extends parent_static
 
 	public static String[] split(String needle_, String haystack_) { return split(needle_, haystack_, false); }
 
-	public static String[] split(String needle_, String haystack_, boolean normalise_) { return split(needle_, haystack_, normalise_, false); }
+	public static String[] split(String needle_, String haystack_, boolean normalise_in_) { return split(needle_, haystack_, normalise_in_); }
 
-	public static String[] split(String needle_, String haystack_, boolean normalise_, boolean only_first_)
+	public static String[] split(String needle_, String haystack_, boolean normalise_in_, boolean only_first_) { return split(needle_, haystack_, normalise_in_, false, only_first_); }
+
+	public static String[] split(String needle_, String haystack_, boolean normalise_in_, boolean normalise_out_, boolean only_first_)
 	{
 		int length = get_length(needle_);
-		if (length < 0 || !is_ok(haystack_, true) || !contains(needle_, haystack_, normalise_)) return null; 
+		if (length < 0 || !is_ok(haystack_, true) || !contains(needle_, haystack_, normalise_in_)) return null; 
 
 		ArrayList<String> output = new ArrayList<String>(); 
 
@@ -111,24 +113,31 @@ public abstract class strings extends parent_static
 
 		while (true)
 		{
-			int temp = index_of(needle_, haystack_, i, normalise_);
+			int temp = index_of(needle_, haystack_, i, normalise_in_);
 			if (temp < 0) 
 			{
 				if (i == 0) return null;
 				else
 				{
-					output.add(substring_after(haystack_, i - 1));
+					String out = substring_after(haystack_, i - 1);
+					if (normalise_out_) out = normalise(out);					
+					output.add(out);
 
 					return arrays.to_array(output);					
 				}
 			}
 
-			output.add(substring_between(haystack_, i, temp, true));
+			String out = substring_between(haystack_, i, temp, true);
+			if (normalise_out_) out = normalise(out);			
+			output.add(out);
+			
 			i = temp + length;
 
 			if (only_first_)
 			{
-				output.add(substring_after(haystack_, i - 1));
+				out = substring_after(haystack_, i - 1);
+				if (normalise_out_) out = normalise(out);
+				output.add(out);
 
 				return arrays.to_array(output);	
 			}						
