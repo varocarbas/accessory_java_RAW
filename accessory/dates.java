@@ -58,13 +58,17 @@ public abstract class dates extends parent_static
 
 	public static LocalDateTime get_now(int offset_) { return LocalDateTime.now().plusMinutes(check_offset(offset_)); }
 
-	public static LocalDate get_now_date() { return to_date(LocalDateTime.now().plusMinutes(check_offset(_offset))); }
+	public static LocalDate get_now_date() { return get_now_date(_offset); }
+
+	public static LocalDate get_now_date(int offset_) { return to_date(LocalDateTime.now().plusMinutes(check_offset(offset_))); }
 
 	public static LocalTime get_now_time() { return get_now_time(_offset); }
 
 	public static LocalTime get_now_time(int offset_) { return LocalTime.now().plusMinutes(check_offset(offset_)); }
 
-	public static boolean is_weekend() { return is_weekend(get_now_date()); }
+	public static boolean is_weekend() { return is_weekend(_offset); }
+
+	public static boolean is_weekend(int offset_) { return is_weekend(get_now_date(offset_)); }
 	
 	public static boolean is_weekend(LocalDate date_) 
 	{
@@ -168,11 +172,17 @@ public abstract class dates extends parent_static
 
 	public static boolean target_met(LocalTime start_, String unit_, long target_) { return (get_diff(start_, get_now_time(), unit_) >= target_); }
 
-	public static boolean passed(LocalDateTime input_) { return (get_diff(input_, get_now(), UNIT_SECONDS) > 0); }
+	public static boolean passed(LocalDateTime input_) { return passed(input_, false); }
 
-	public static boolean passed(LocalDate input_) { return (get_diff(input_, get_now_date(), UNIT_DAYS) > 0); }
+	public static boolean passed(LocalDateTime input_, boolean apply_offset_) { return (get_diff(input_, get_now((apply_offset_ ? _offset : DEFAULT_OFFSET)), UNIT_SECONDS) > 0); }
 
-	public static boolean passed(LocalTime input_) { return (get_diff(input_, get_now_time(), UNIT_SECONDS) > 0); }
+	public static boolean passed(LocalDate input_) { return passed(input_, false); }
+
+	public static boolean passed(LocalDate input_, boolean apply_offset_) { return (get_diff(input_, get_now_date((apply_offset_ ? _offset : DEFAULT_OFFSET)), UNIT_DAYS) > 0); }
+
+	public static boolean passed(LocalTime input_) { return passed(input_, false); }
+
+	public static boolean passed(LocalTime input_, boolean apply_offset_) { return (get_diff(input_, get_now_time((apply_offset_ ? _offset : DEFAULT_OFFSET)), UNIT_SECONDS) > 0); }
 
 	public static long get_diff(String start_, String end_) { return get_diff(start_, end_, DEFAULT_UNIT); }
 

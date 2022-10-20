@@ -98,7 +98,7 @@ public abstract class strings extends parent_static
 
 	public static String[] split(String needle_, String haystack_) { return split(needle_, haystack_, false); }
 
-	public static String[] split(String needle_, String haystack_, boolean normalise_in_) { return split(needle_, haystack_, normalise_in_); }
+	public static String[] split(String needle_, String haystack_, boolean normalise_in_) { return split(needle_, haystack_, normalise_in_, false); }
 
 	public static String[] split(String needle_, String haystack_, boolean normalise_in_, boolean only_first_) { return split(needle_, haystack_, normalise_in_, false, only_first_); }
 
