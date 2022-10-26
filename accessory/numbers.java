@@ -260,7 +260,7 @@ public abstract class numbers extends parent_static
 		if (mode == null) mode = DEFAULT_ROUND_MODE;
 		
 		int decimals = decimals_;
-		if (decimals < 0 || decimals > MAX_DECIMALS) decimals = DEFAULT_DECIMALS;
+		if (decimals < 0 || decimals > MAX_DECIMALS) decimals = DEFAULT_ROUND_DECIMALS;
 	
 		return (new BigDecimal(val_)).setScale(decimals, mode_).doubleValue();
 	}
