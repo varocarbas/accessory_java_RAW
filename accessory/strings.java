@@ -430,10 +430,40 @@ public abstract class strings extends parent_static
 	{
 		if (!is_ok(haystack_, true)) return DEFAULT;
 		if (!is_ok(needle_, true)) return haystack_;
+		
+		String replacement = get_replacement(needle_, replacement_, action_);
 
-		return haystack_.replace(needle_, get_replacement(needle_, replacement_, action_));
+		return ((action_.equals(types.ACTION_ESCAPE) && haystack_.contains(replacement)) ? remove_escape_replace_escaped(needle_, haystack_, replacement) : remove_escape_replace_default(needle_, haystack_, replacement));
 	}
 
+	private static String remove_escape_replace_default(String needle_, String haystack_, String replacement_) { return haystack_.replace(needle_, replacement_); }
+	
+	private static String remove_escape_replace_escaped(String needle_, String haystack_, String replacement_)
+	{
+		String output = "";
+
+		char[] chars = haystack_.toCharArray();				
+		int last_i = chars.length - 1;	
+		
+		int i = 0;
+		
+		while (true)
+		{
+			int i2 = haystack_.indexOf(needle_, i);
+			if (i2 < 0) break;
+			
+			String temp = substring_between(haystack_, i, i2, false);
+			if (i2 > 0 && chars[i2 - 1] != '\\') temp = remove_escape_replace_default(needle_, temp, replacement_);
+
+			output += temp;
+			
+			i = i2 + 1;
+			if (i > last_i) break;
+		}
+		
+		return output;
+	}
+	
 	private static String get_replacement(String needle_, String replacement_, String action_)
 	{
 		String replacement = replacement_;	
@@ -443,8 +473,7 @@ public abstract class strings extends parent_static
 	
 		return replacement;
 	}
-	
-	
+		
 	private static HashMap<Boolean, String[]> get_all_booleans() { return _alls.STRINGS_BOOLEANS; }
 
 	private static String normalise(String string_, boolean minimal_)

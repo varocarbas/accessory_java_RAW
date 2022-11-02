@@ -56,15 +56,15 @@ public abstract class dates extends parent_static
 	
 	public static LocalDateTime get_now() { return get_now(_offset); }
 
-	public static LocalDateTime get_now(int offset_) { return LocalDateTime.now().plusMinutes(check_offset(offset_)); }
+	public static LocalDateTime get_now(int offset_) { return add_offset(LocalDateTime.now(), offset_); }
 
 	public static LocalDate get_now_date() { return get_now_date(_offset); }
 
-	public static LocalDate get_now_date(int offset_) { return to_date(LocalDateTime.now().plusMinutes(check_offset(offset_))); }
+	public static LocalDate get_now_date(int offset_) { return add_offset(LocalDate.now(), offset_); }
 
 	public static LocalTime get_now_time() { return get_now_time(_offset); }
 
-	public static LocalTime get_now_time(int offset_) { return LocalTime.now().plusMinutes(check_offset(offset_)); }
+	public static LocalTime get_now_time(int offset_) { return add_offset(LocalTime.now(), offset_); }
 
 	public static boolean is_weekend() { return is_weekend(_offset); }
 
@@ -108,6 +108,12 @@ public abstract class dates extends parent_static
 		return offset;
 	}
 
+	public static LocalDateTime add_offset(LocalDateTime input_, int offset_) { return (input_ == null ? null : input_.plusMinutes(check_offset(offset_)));	}
+
+	public static LocalTime add_offset(LocalTime input_, int offset_) { return (input_ == null ? null : input_.plusMinutes(check_offset(offset_)));	}
+
+	public static LocalDate add_offset(LocalDate input_, int offset_) { return (input_ == null ? null : to_date(add_offset(from_date(input_), offset_)));	}
+	
 	public static ZoneId get_current_timezone() { return ZoneId.systemDefault(); }
 	
 	public static ZoneId get_timezone(String tz_)
@@ -345,11 +351,15 @@ public abstract class dates extends parent_static
 
 	public static LocalTime time_from_string(String input_) { return time_from_string(input_, false); }
 
-	public static LocalTime time_from_string(String input_, boolean apply_offset_) { return to_time(from_string(input_, DEFAULT_FORMAT_TIME, apply_offset_)); }
+	public static LocalTime time_from_string(String input_, boolean apply_offset_) { return time_from_string(input_, DEFAULT_FORMAT_TIME, apply_offset_); }
+
+	public static LocalTime time_from_string(String input_, String format_, boolean apply_offset_) { return to_time(from_string(input_, format_, apply_offset_)); }
 
 	public static LocalDate date_from_string(String input_) { return date_from_string(input_, false); }
 
-	public static LocalDate date_from_string(String input_, boolean apply_offset_) { return to_date(from_string(input_, DEFAULT_FORMAT_DATE, apply_offset_)); }
+	public static LocalDate date_from_string(String input_, boolean apply_offset_) { return date_from_string(input_, DEFAULT_FORMAT_DATE, apply_offset_); }
+
+	public static LocalDate date_from_string(String input_, String format_, boolean apply_offset_) { return to_date(from_string(input_, format_, apply_offset_)); }
 
 	public static LocalDateTime from_string(String input_, String format_) { return from_string(input_, format_, false); }
 
@@ -437,7 +447,7 @@ public abstract class dates extends parent_static
 			return null;
 		}
 
-		if (apply_offset_) output = output.plusMinutes(check_offset(_offset));
+		if (apply_offset_) output = add_offset(output, _offset);
 				
 		return output;
 	}
