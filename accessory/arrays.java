@@ -602,35 +602,35 @@ public abstract class arrays extends parent_static
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <x> x[] to_array(Object input_)
+	public static <x> x[] to_array(ArrayList<x> input_)
 	{
 		x[] output = null;
-		if (!generic.are_equal(generic.get_class(input_), ArrayList.class)) return output;
 
-		ArrayList<x> input = (ArrayList<x>)input_;
-		Class<?> type = get_class_items(input);
+		int size = arrays.get_size(input_);
+		if (size == 0) return output;
+		
+		Class<?> type = get_class_items(input_);
 		if (type == null) return output;
 
-		int size = input.size();
-		if (generic.are_equal(type, String.class)) output = (x[])input.toArray(new String[size]);
-		else if (generic.are_equal(type, Integer.class)) output = (x[])input.toArray(new Integer[size]);
-		else if (generic.are_equal(type, Long.class)) output = (x[])input.toArray(new Long[size]);
-		else if (generic.are_equal(type, Double.class)) output = (x[])input.toArray(new Double[size]);
-		else if (generic.are_equal(type, Boolean.class)) output = (x[])input.toArray(new Boolean[size]);
-		else if (generic.are_equal(type, Byte.class)) output = (x[])input.toArray(new Byte[size]);
-		else if (generic.are_equal(type, Character.class)) output = (x[])input.toArray(new Character[size]);
-		else if (generic.are_equal(type, Class.class)) output = (x[])input.toArray(new Class<?>[size]);
-		else if (generic.are_equal(type, Method.class)) output = (x[])input.toArray(new Method[size]);
-		else if (generic.are_equal(type, Exception.class)) output = (x[])input.toArray(new Exception[size]);
-		else if (generic.are_equal(type, LocalDateTime.class)) output = (x[])input.toArray(new LocalDateTime[size]);
-		else if (generic.are_equal(type, LocalDate.class)) output = (x[])input.toArray(new LocalDate[size]);
-		else if (generic.are_equal(type, LocalTime.class)) output = (x[])input.toArray(new LocalTime[size]);
-		else if (generic.are_equal(type, size.class)) output = (x[])input.toArray(new size[size]);
-		else if (generic.are_equal(type, data.class)) output = (x[])input.toArray(new data[size]);
-		else if (generic.are_equal(type, db_field.class)) output = (x[])input.toArray(new db_field[size]);
-		else if (generic.are_equal(type, db_where.class)) output = (x[])input.toArray(new db_where[size]);
-		else if (generic.are_equal(type, db_order.class)) output = (x[])input.toArray(new db_order[size]);
-		else if (generic.are_equal(type, Object.class)) output = (x[])input.toArray(new Object[size]);
+		if (generic.are_equal(type, String.class)) output = (x[])input_.toArray(new String[size]);
+		else if (generic.are_equal(type, Integer.class)) output = (x[])input_.toArray(new Integer[size]);
+		else if (generic.are_equal(type, Long.class)) output = (x[])input_.toArray(new Long[size]);
+		else if (generic.are_equal(type, Double.class)) output = (x[])input_.toArray(new Double[size]);
+		else if (generic.are_equal(type, Boolean.class)) output = (x[])input_.toArray(new Boolean[size]);
+		else if (generic.are_equal(type, Byte.class)) output = (x[])input_.toArray(new Byte[size]);
+		else if (generic.are_equal(type, Character.class)) output = (x[])input_.toArray(new Character[size]);
+		else if (generic.are_equal(type, Class.class)) output = (x[])input_.toArray(new Class<?>[size]);
+		else if (generic.are_equal(type, Method.class)) output = (x[])input_.toArray(new Method[size]);
+		else if (generic.are_equal(type, Exception.class)) output = (x[])input_.toArray(new Exception[size]);
+		else if (generic.are_equal(type, LocalDateTime.class)) output = (x[])input_.toArray(new LocalDateTime[size]);
+		else if (generic.are_equal(type, LocalDate.class)) output = (x[])input_.toArray(new LocalDate[size]);
+		else if (generic.are_equal(type, LocalTime.class)) output = (x[])input_.toArray(new LocalTime[size]);
+		else if (generic.are_equal(type, size.class)) output = (x[])input_.toArray(new size[size]);
+		else if (generic.are_equal(type, data.class)) output = (x[])input_.toArray(new data[size]);
+		else if (generic.are_equal(type, db_field.class)) output = (x[])input_.toArray(new db_field[size]);
+		else if (generic.are_equal(type, db_where.class)) output = (x[])input_.toArray(new db_where[size]);
+		else if (generic.are_equal(type, db_order.class)) output = (x[])input_.toArray(new db_order[size]);
+		else if (generic.are_equal(type, Object.class)) output = (x[])input_.toArray(new Object[size]);
 
 		return output;
 	}
