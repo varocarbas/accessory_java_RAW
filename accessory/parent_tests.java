@@ -6,13 +6,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public abstract class parent_tests 
-{		
-	public static final String SOURCE = types.CONFIG_TESTS_DB_SOURCE;
-	public static final String FIELD_DECIMAL = types.CONFIG_TESTS_DB_FIELD_DECIMAL;
-	public static final String FIELD_INT = types.CONFIG_TESTS_DB_FIELD_INT;
-	public static final String FIELD_STRING = types.CONFIG_TESTS_DB_FIELD_STRING;
-	public static final String FIELD_BOOLEAN = types.CONFIG_TESTS_DB_FIELD_BOOLEAN;
-
+{	
 	public static final String ERROR_RUN = types.ERROR_TEST_RUN;
 
 	public static final boolean DEFAULT_REPORT_ALL_ERRORS = true;

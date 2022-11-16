@@ -33,9 +33,11 @@ public class _alls extends parent_ini_first
 	public static HashMap<String, Class<?>> DATA_CLASSES = null;
 	public static HashMap<Class<?>, Class<?>[]> DATA_COMPATIBLE = null;
 
+	public static String[] DB_SOURCES = null;
+	public static String[] DB_QUERIES_DATA = null;
+
 	public static HashMap<String, String[]> DB_WHERE_OPERANDS = null;
 	public static HashMap<String, String[]> DB_WHERE_LINKS = null;
-	public static String[] DB_QUERIES_DATA = null;
 
 	public static String[] DB_FIELD_TYPES_NO_SIZE = null;
 
@@ -71,12 +73,13 @@ public class _alls extends parent_ini_first
 		DATA_CLASSES = data.populate_all_classes();
 		DATA_COMPATIBLE = data.populate_all_compatible();
 
+		DB_SOURCES = db_common.populate_all_sources();
+		DB_QUERIES_DATA = db.populate_all_queries_data();
+
 		DB_WHERE_OPERANDS = db_where.populate_all_operands();
 		DB_WHERE_LINKS = db_where.populate_all_links();
 
 		DB_FIELD_TYPES_NO_SIZE = db_field.populate_all_types_no_size();
-
-		DB_QUERIES_DATA = db.populate_all_queries_data();
 
 		CONFIG_NOT_UPDATE = config.populate_all_not_update();
 	} 

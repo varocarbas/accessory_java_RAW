@@ -108,6 +108,12 @@ public abstract class types extends parent_static
 	public static final String CONFIG_TESTS_DB_FIELD_STRING = "config_tests_db_field_string";
 	public static final String CONFIG_TESTS_DB_FIELD_DECIMAL = "config_tests_db_field_decimal";
 	public static final String CONFIG_TESTS_DB_FIELD_BOOLEAN = "config_tests_db_field_boolean";
+	
+	public static final String CONFIG_INFO_DB_SOURCE = "config_info_db_source";
+	public static final String CONFIG_INFO_DB_FIELD = "config_info_db_field";
+	public static final String CONFIG_INFO_DB_FIELD_KEY = "config_info_db_field_key";
+	public static final String CONFIG_INFO_DB_FIELD_VALUE = "config_info_db_field_value";
+	public static final String CONFIG_INFO_DB_FIELD_IS_ENC = "config_info_db_field_is_enc";
 
 	public static final String CONFIG_CRYPTO = "config_crypto";
 	public static final String CONFIG_CRYPTO_FILE = "config_crypto_file";
@@ -127,6 +133,8 @@ public abstract class types extends parent_static
 	//------
 
 	public static final String DB = "db";
+	public static final String DB_QUICKER = "db_quicker";
+	public static final String DB_QUICKER_MYSQL = "db_quicker_mysql";
 	public static final String DB_WHERE = "db_where";
 	public static final String DB_WHERE_OPERAND = "db_where_operand";
 	public static final String DB_WHERE_OPERAND_EQUAL = "db_where_operand_equal";
@@ -402,6 +410,7 @@ public abstract class types extends parent_static
 			CONFIG_BASIC_DIR_BACKUPS,
 			CONFIG_BASIC_DIR_BACKUPS_DBS, CONFIG_BASIC_DIR_BACKUPS_FILES,
 			CONFIG_BASIC_DIR_INFO,
+
 			CONFIG_CREDENTIALS, 
 			CONFIG_CREDENTIALS_WHERE, 
 			CONFIG_CREDENTIALS_WHERE_FILE, CONFIG_CREDENTIALS_WHERE_DB,
@@ -413,14 +422,21 @@ public abstract class types extends parent_static
 			CONFIG_CREDENTIALS_DB_FIELD,
 			CONFIG_CREDENTIALS_DB_FIELD_ID, CONFIG_CREDENTIALS_DB_FIELD_ID_ENC, CONFIG_CREDENTIALS_DB_FIELD_USER, 
 			CONFIG_CREDENTIALS_DB_FIELD_USERNAME, CONFIG_CREDENTIALS_DB_FIELD_PASSWORD, CONFIG_CREDENTIALS_DB_FIELD_IS_ENC,
+			
+			CONFIG_INFO_DB_SOURCE,
+			CONFIG_INFO_DB_FIELD,
+			CONFIG_INFO_DB_FIELD_KEY, CONFIG_INFO_DB_FIELD_VALUE, CONFIG_INFO_DB_FIELD_IS_ENC,
+			
 			CONFIG_CRYPTO,
 			CONFIG_CRYPTO_FILE, 
 			CONFIG_CRYPTO_FILE_CIPHER, CONFIG_CRYPTO_FILE_KEY, CONFIG_CRYPTO_FILE_EXTENSION,
+			
 			CONFIG_LOGS,
 			CONFIG_LOGS_OUT,
 			CONFIG_LOGS_OUT_SCREEN, CONFIG_LOGS_OUT_FILE,
 			CONFIG_LOGS_ERRORS,
 			CONFIG_LOGS_ERRORS_TIMESTAMP,
+			
 			CONFIG_DB,
 			CONFIG_DB_NAME,
 			CONFIG_DB_SETUP,
@@ -445,6 +461,8 @@ public abstract class types extends parent_static
 			CONFIG_NUMBERS_PERC_REF_LARGER,
 			
 			DB,
+			DB_QUICKER,
+			DB_QUICKER_MYSQL,
 			DB_WHERE,
 			DB_WHERE_OPERAND,
 			DB_WHERE_OPERAND_EQUAL, DB_WHERE_OPERAND_NOT_EQUAL, DB_WHERE_OPERAND_GREATER,

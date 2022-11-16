@@ -92,11 +92,11 @@ public class tests extends parent_tests
 
 		update_screen(name0, true, 1);
 
-		String source = types.CONFIG_TESTS_DB_SOURCE;
+		String source = db_tests.SOURCE;
 
 		String name = "create_table";
 
-		String[] sources = new String[] { source, credentials.SOURCE };
+		String[] sources = new String[] { source, db_credentials.SOURCE, db_info.SOURCE };
 
 		for (String source2: sources)
 		{
@@ -156,14 +156,14 @@ public class tests extends parent_tests
 		
 		name = "update";
 
-		int val = (int)vals.get(FIELD_INT) + 20;
+		int val = (int)vals.get(db_tests.INT) + 20;
 
-		vals.put(FIELD_INT, val);
+		vals.put(db_tests.INT, val);
 		
-		db_where where = new db_where(FIELD_STRING, vals.get(FIELD_STRING));
+		db_where where = new db_where(db_tests.STRING, vals.get(db_tests.STRING));
 		db_where[] wheres = new db_where[] { where };
 
-		db_where where_quick = new db_where(source, db.get_col(source, FIELD_STRING), db_where.OPERAND_EQUAL, vals.get(FIELD_STRING), db_where.DEFAULT_IS_LITERAL, db_where.DEFAULT_LINK, true);
+		db_where where_quick = new db_where(source, db.get_col(source, db_tests.STRING), db_where.OPERAND_EQUAL, vals.get(db_tests.STRING), db_where.DEFAULT_IS_LITERAL, db_where.DEFAULT_LINK, true);
 		db_where[] wheres_quick = new db_where[] { where_quick };
 
 		args = new ArrayList<Object>();
@@ -177,9 +177,9 @@ public class tests extends parent_tests
 		
 		name = "update_quick";
 
-		HashMap<String, String> temp = get_val_quick(source, FIELD_INT, val, vals_quick);
+		HashMap<String, String> temp = get_val_quick(source, db_tests.INT, val, vals_quick);
 		
-		String col = db.get_col(source, FIELD_INT);
+		String col = db.get_col(source, db_tests.INT);
 		
 		vals_quick = new HashMap<String, String>();
 		vals_quick.put(col, temp.get(col));
@@ -199,7 +199,7 @@ public class tests extends parent_tests
 		
 		name = "execute_query";
 
-		String field = FIELD_INT;
+		String field = db_tests.INT;
 		col = db.get_col(source, field);
 
 		String table = db.get_variable_table(source);
@@ -237,7 +237,7 @@ public class tests extends parent_tests
 		outputs.put(name, is_ok);
 
 		val -= 5;
-		vals.put(FIELD_INT, val);
+		vals.put(db_tests.INT, val);
 
 		//insert_update (insert).
 		outputs = run_db_insert_update(class0, source, wheres, vals, outputs);
@@ -245,7 +245,7 @@ public class tests extends parent_tests
 		outputs = run_db_select_ints(class0, source, wheres, wheres_quick, val, outputs, false);
 
 		val += 15;
-		vals.put(FIELD_INT, val);
+		vals.put(db_tests.INT, val);
 
 		//insert_update (update).
 		outputs = run_db_insert_update(class0, source, wheres, vals, outputs);
@@ -265,16 +265,16 @@ public class tests extends parent_tests
 		int max = 123456;
 		double max2 = 123456789.123;
 		
-		String[] fields = new String[] { FIELD_INT, FIELD_DECIMAL, FIELD_STRING, FIELD_BOOLEAN };
+		String[] fields = new String[] { db_tests.INT, db_tests.DECIMAL, db_tests.STRING, db_tests.BOOLEAN };
 		
 		for (String field: fields)
 		{
 			Object val = null;
 			
-			if (field.equals(FIELD_INT)) val = numbers.get_random_int(-1 * max, max);
-			else if (field.equals(FIELD_DECIMAL)) val = numbers.get_random_decimal(-1 * max2, max2);
-			else if (field.equals(FIELD_STRING)) val = strings.get_random(strings.SIZE_SMALL);
-			else if (field.equals(FIELD_BOOLEAN)) val = generic.get_random_boolean();
+			if (field.equals(db_tests.INT)) val = numbers.get_random_int(-1 * max, max);
+			else if (field.equals(db_tests.DECIMAL)) val = numbers.get_random_decimal(-1 * max2, max2);
+			else if (field.equals(db_tests.STRING)) val = strings.get_random(strings.SIZE_SMALL);
+			else if (field.equals(db_tests.BOOLEAN)) val = generic.get_random_boolean();
 			
 			if (is_quick_) vals_quick = get_val_quick(source_, field, val, vals_quick);
 			else vals.put(field, val);
@@ -311,7 +311,7 @@ public class tests extends parent_tests
 		
 		Object target = null;		
 		
-		String field = FIELD_INT;
+		String field = db_tests.INT;
 		String col = db.get_col(source_, field);
 		
 		for (String name: names)
@@ -372,7 +372,7 @@ public class tests extends parent_tests
 
 		String[] names = new String[] { "select_one_int", "select_one_int_quick" };
 		
-		String field = FIELD_INT;
+		String field = db_tests.INT;
 		
 		for (String name: names)
 		{

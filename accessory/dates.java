@@ -99,7 +99,7 @@ public abstract class dates extends parent_static
 		ZoneId other = get_timezone(tz_other_);
 		if (other == null) return DEFAULT_OFFSET;
 		
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = get_now(DEFAULT_OFFSET);
 		
 		int offset = (int)Duration.between(now.atZone(other), now.atZone(current)).toMinutes();
 		offset = check_offset(offset);
@@ -325,9 +325,10 @@ public abstract class dates extends parent_static
 		int output = 0;
 
 		String[] temp = strings.split(":", time_);
-		int size = arrays.get_size(temp);
-		if (size < 2 || size > 3) return output;
 
+		int size = arrays.get_size(temp);
+		if (size < 2 || size > 3 || strings.to_number_int(temp[0]) > 99) return output;
+		
 		int i2 = 3;
 		if (no_hours_) i2--;
 		
@@ -346,7 +347,7 @@ public abstract class dates extends parent_static
 	{
 		LocalDateTime date_time = from_string(input_, format_);
 		
-		return (date_time == null ? false : LocalDate.now().compareTo(date_time.toLocalDate()) == 0);
+		return (date_time == null ? false : get_now_date(DEFAULT_OFFSET).compareTo(date_time.toLocalDate()) == 0);
 	}
 
 	public static LocalTime time_from_string(String input_) { return time_from_string(input_, false); }
@@ -369,7 +370,7 @@ public abstract class dates extends parent_static
 	{ 
 		if (input_ == null) return null;
 
-		LocalDateTime now = get_now();
+		LocalDateTime now = dates.get_now(DEFAULT_OFFSET);
 
 		return LocalDateTime.of(input_.getYear(), input_.getMonth(), input_.getDayOfMonth(), now.getHour(), now.getMinute(), now.getSecond(), now.getNano());
 	}

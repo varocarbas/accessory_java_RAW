@@ -26,6 +26,7 @@ class _ini_db extends parent_ini_db
 		HashMap<String, Object[]> sources = new HashMap<String, Object[]>();
 		sources = add_source_tests(db, sources);
 		sources = add_source_credentials(db, sources);
+		sources = add_source_info(db, sources);
 
 		boolean is_ok = populate_db(db, name, sources, setup_vals);
 
@@ -34,35 +35,47 @@ class _ini_db extends parent_ini_db
 
 	private HashMap<String, Object[]> add_source_tests(String db_, HashMap<String, Object[]> sources_)
 	{
-		String source = tests.SOURCE;
+		String source = db_tests.SOURCE;
 		boolean default_fields = true;
 
 		HashMap<String, db_field> info = new HashMap<String, db_field>();
 
-		info.put(tests.FIELD_INT, new db_field(data.INT));
-		info.put(tests.FIELD_STRING, new db_field(data.STRING));
-		info.put(tests.FIELD_DECIMAL, new db_field(data.DECIMAL, 15, 3));
-		info.put(tests.FIELD_BOOLEAN, new db_field(data.BOOLEAN));
+		info.put(db_tests.INT, new db_field(data.INT));
+		info.put(db_tests.STRING, new db_field(data.STRING));
+		info.put(db_tests.DECIMAL, db_common.get_field_decimal(15));
+		info.put(db_tests.BOOLEAN, db_common.get_field_boolean(true));
 
 		return add_source(source, null, db_, info, default_fields, sources_);		
 	}
 
 	private HashMap<String, Object[]> add_source_credentials(String db_, HashMap<String, Object[]> sources_)
 	{
-		String source = credentials.SOURCE;
+		String source = db_credentials.SOURCE;
 		boolean default_fields = true;
 
 		HashMap<String, db_field> info = new HashMap<String, db_field>();
 
-		db_field field_string = new db_field(data.STRING);
+		info.put(db_credentials.ID, db_common.get_field_string(true));
+		info.put(db_credentials.ID_ENC, db_common.get_field_string(true));
+		info.put(db_credentials.USER, db_common.get_field_string());
+		info.put(db_credentials.USERNAME, db_common.get_field_string());
+		info.put(db_credentials.PASSWORD, db_common.get_field_string());
+		info.put(db_credentials.IS_ENC, db_common.get_field_is_enc());
 
-		info.put(credentials.FIELD_ID, new db_field(field_string));
-		info.put(credentials.FIELD_ID_ENC, new db_field(field_string));
-		info.put(credentials.FIELD_USER, new db_field(field_string));
-		info.put(credentials.FIELD_USERNAME, new db_field(field_string));
-		info.put(credentials.FIELD_PASSWORD, new db_field(field_string));
-		info.put(credentials.FIELD_IS_ENC, new db_field(data.BOOLEAN));
+		return add_source(source, null, db_, info, default_fields, sources_);		
+	}
 
+	private HashMap<String, Object[]> add_source_info(String db_, HashMap<String, Object[]> sources_)
+	{
+		String source = db_info.SOURCE;
+		boolean default_fields = true;
+
+		HashMap<String, db_field> info = new HashMap<String, db_field>();
+
+		info.put(db_info.KEY, db_common.get_field_string(db_common.MAX_SIZE_KEY, true));
+		info.put(db_info.VALUE, db_common.get_field_string(db_common.MAX_SIZE_VALUE));
+		info.put(db_credentials.IS_ENC, db_common.get_field_is_enc());
+		
 		return add_source(source, null, db_, info, default_fields, sources_);		
 	}
 }

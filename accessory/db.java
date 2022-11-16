@@ -559,6 +559,16 @@ public abstract class db
 	}
 
 	public static String get_col(String source_, String field_) { return (String)config.get(get_db(source_), field_); }
+	
+	public static HashMap<String, String> get_cols(String source_, String[] fields_)
+	{
+		HashMap<String, String> output = new HashMap<String, String>();
+		if (!arrays.is_ok(fields_)) return output;
+		
+		for (String field: fields_) { output.put(field, get_col(source_, field)); }
+		
+		return output;
+	}
 
 	public static String get_table(String source_)
 	{

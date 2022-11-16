@@ -85,7 +85,6 @@ public abstract class parent_ini
 	private void populate_all_internal_accessory() 
 	{
 		_basic.populate();
-		_starts.populate();
 		_alls.populate();
 		_keys.populate();
 		_defaults.populate();
@@ -93,11 +92,13 @@ public abstract class parent_ini
 		_ini_config.populate();
 	
 		_ini_db.populate(_dbs_setup);
+		
+		_starts.populate();
 	}
 
 	private void populate_all_internal_other_all(String package_) 
 	{
-		String[] classes = new String[] { "_basic", "_starts", "_alls", "_defaults", "_keys", "_ini_config", "_ini_db" };
+		String[] classes = new String[] { "_basic", "_alls", "_defaults", "_keys", "_ini_config", "_ini_db", "_starts" };
 
 		for (String class0: classes) { populate_all_internal_other_class(package_, class0); }
 
