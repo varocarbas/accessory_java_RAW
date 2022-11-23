@@ -1,6 +1,6 @@
 package accessory;
 
-public abstract class parent_ini_first
+public abstract class parent_first
 {
 	protected boolean _populated = false;
 			

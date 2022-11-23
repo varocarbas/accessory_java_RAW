@@ -3,7 +3,7 @@ package accessory;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public abstract class db_credentials 
+public abstract class db_credentials
 {
 	public static final String SOURCE = types.CONFIG_CREDENTIALS_DB_SOURCE;
 
@@ -13,7 +13,8 @@ public abstract class db_credentials
 	public static final String USERNAME = types.CONFIG_CREDENTIALS_DB_FIELD_USERNAME;
 	public static final String PASSWORD = types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD;
 	public static final String IS_ENC = types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC;
-
+	
+	private static String[] _fields = null;
 	private static HashMap<String, String> _cols = null;
 	
 	private static boolean _is_quick = db_common.DEFAULT_IS_QUICK;
@@ -24,11 +25,33 @@ public abstract class db_credentials
 	
 	public static String get_field_col(String field_) { return (_is_quick ? get_col(field_) : field_); }
 
-	public static String get_col(String field_) { return (_cols.containsKey(field_) ? _cols.get(field_) : strings.DEFAULT); }
+	public static String get_col(String field_) 
+	{ 
+		get_cols();
+		
+		return (_cols.containsKey(field_) ? _cols.get(field_) : strings.DEFAULT); 
+	}
 
-	public static String[] get_fields() { return new String[] { ID, ID_ENC, USER, USERNAME, PASSWORD, IS_ENC }; }
+	public static String[] get_fields() 
+	{
+		if (_fields == null) _fields = new String[] { ID, ID_ENC, USER, USERNAME, PASSWORD, IS_ENC };
+		
+		return _fields; 
+	}
 
-	static void start() { _cols = db.get_cols(SOURCE, get_fields()); }
+	public static HashMap<String, String> get_cols() 
+	{ 
+		if (_cols == null) _cols = db.get_cols(SOURCE, get_fields());
+			
+		return _cols; 
+	} 
+
+	static void start() 
+	{ 
+		get_fields();
+		
+		get_cols();
+	}
 	
 	static boolean update_info(String id_, String user_, HashMap<String, String> vals_)
 	{

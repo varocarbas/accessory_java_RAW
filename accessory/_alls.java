@@ -7,7 +7,7 @@ import java.util.HashMap;
 //- All the values will be assigned in the main method below by calling the corresponding local methods in other classes.
 //- All these constants will be accessed directly here, via the corresponding local methods (i.e., no local copies).
 
-public class _alls extends parent_ini_first
+public class _alls extends parent_first
 {
 	private static _alls _instance = new _alls(); 
 

@@ -6,7 +6,7 @@ package accessory;
 //- All the values will be assigned in the main method below. 
 //- All these constants will be accessed directly here, via the corresponding local methods (i.e., no local copies).
 
-class _basic extends parent_ini_first 
+class _basic extends parent_first 
 {
 	private static _basic _instance = new _basic(); 
 

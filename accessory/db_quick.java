@@ -3,11 +3,12 @@ package accessory;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+//Use the methods in this class very carefully! Low-to-no checks are performed.
 public abstract class db_quick 
 {
 	private static ArrayList<String> _sources_quicker_mysql = new ArrayList<String>();
 	
-	public static void add_sources(String[] sources_)
+	public static void add_sources_quicker(String[] sources_)
 	{
 		if (!arrays.is_ok(sources_)) return;
 		
@@ -33,8 +34,8 @@ public abstract class db_quick
 	{
 		boolean output = db.WRONG_BOOLEAN;
 		
-		if (_sources_quicker_mysql.contains(source_)) db_quicker_mysql.exists(source_, where_cols_);
-		else db.exists(source_, where_cols_);
+		if (_sources_quicker_mysql.contains(source_)) output = db_quicker_mysql.exists(source_, where_cols_);
+		else output = db.exists(source_, where_cols_);
 		
 		return output; 
 	}
@@ -187,5 +188,5 @@ public abstract class db_quick
 		else db.update_quick(source_, vals_, where_cols_);		
 	}
 	
-	static void start() { add_sources(db_common.get_all_sources()); }
+	static void start() { add_sources_quicker(db_common.get_all_sources()); }
 }

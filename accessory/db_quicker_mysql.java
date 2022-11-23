@@ -53,7 +53,7 @@ public abstract class db_quicker_mysql
 	public static boolean exists(String source_, String where_cols_) 
 	{
 		boolean output = false;
-		
+
 		try { output = (select_count(source_, where_cols_) > 0); }
 		catch (Exception e) 
 		{ 
@@ -73,7 +73,7 @@ public abstract class db_quicker_mysql
 	public static String select_one_string(String source_, String col_, String where_cols_, String order_cols_) 
 	{ 
 		String output = db.WRONG_STRING;
-		
+
 		try
 		{	
 			Object temp = get_val(col_, select_one(source_, new String[] { col_ }, where_cols_, order_cols_), data.STRING);
