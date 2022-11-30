@@ -389,6 +389,10 @@ public abstract class strings extends parent_static
 
 	public static String escape(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, types.ACTION_ESCAPE); }
 
+	public static String unescape(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, null, types.ACTION_UNESCAPE); }
+
+	public static String unescape(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, types.ACTION_UNESCAPE); }
+
 	public static String replace(String needle_, String haystack_, String replacement_) { return remove_escape_replace(needle_, haystack_, replacement_, types.ACTION_REPLACE); }
 
 	public static String replace(String[] needles_, String haystack_, String replacement_) { return remove_escape_replace_many(needles_, haystack_, replacement_, types.ACTION_REPLACE); }
@@ -431,6 +435,8 @@ public abstract class strings extends parent_static
 		if (!is_ok(haystack_, true)) return DEFAULT;
 		if (!is_ok(needle_, true)) return haystack_;
 		
+		if (action_.equals(types.ACTION_UNESCAPE)) return unescape_internal(needle_, haystack_);
+		
 		String replacement = get_replacement(needle_, replacement_, action_);
 
 		return ((action_.equals(types.ACTION_ESCAPE) && haystack_.contains(replacement)) ? remove_escape_replace_escaped(needle_, haystack_, replacement) : remove_escape_replace_default(needle_, haystack_, replacement));
@@ -443,17 +449,23 @@ public abstract class strings extends parent_static
 		String output = "";
 
 		char[] chars = haystack_.toCharArray();				
-		int last_i = chars.length - 1;	
 		
+		int last_i = chars.length - 1;	
 		int i = 0;
 		
 		while (true)
 		{
 			int i2 = haystack_.indexOf(needle_, i);
-			if (i2 < 0) break;
+			
+			if (i2 < 0) 
+			{
+				output += strings.substring_after(haystack_, i - 1);
+				
+				break;
+			}
 			
 			String temp = substring_between(haystack_, i, i2, false);
-			if (i2 > 0 && chars[i2 - 1] != '\\') temp = remove_escape_replace_default(needle_, temp, replacement_);
+			if (i2 == 0 || chars[i2 - 1] != '\\') temp = remove_escape_replace_default(needle_, temp, replacement_);
 
 			output += temp;
 			
@@ -462,6 +474,54 @@ public abstract class strings extends parent_static
 		}
 		
 		return output;
+	}
+	
+	private static String unescape_internal(String needle_, String haystack_)
+	{
+		ArrayList<Character> chars = arrays.to_arraylist(haystack_.toCharArray());				
+		int last_i = chars.size() - 1;	
+
+		char[] chars2 = needle_.toCharArray();				
+		int length2 = chars2.length;
+		
+		char escape = '\\';
+		int i = 0;
+
+		while (true)
+		{
+			i = arrays.index_of(chars, escape, i, arrays.WRONG_I);
+			if (i == arrays.WRONG_I) break;
+			
+			boolean found = true;
+			
+			for (int i2 = 0; i2 < length2; i2++)
+			{
+				int i3 = i2 + i;
+				
+				if (i3 > last_i || chars.get(i3) != chars2[i2]) 
+				{
+					found = false;
+					
+					break;
+				}
+			}
+			
+			if (found && i > 0)
+			{
+				if ((chars.get(i - 1) == escape) && (i == 1 || chars.get(i - 2) != escape))
+				{
+					chars.remove(i - 1);
+					
+					i--;
+					last_i--;
+				}
+			}
+					
+			i++;
+			if (i > last_i) break;
+		}
+		
+		return (new String(arrays.to_small(arrays.to_array(chars))));
 	}
 	
 	private static String get_replacement(String needle_, String replacement_, String action_)

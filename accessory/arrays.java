@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 
 public abstract class arrays extends parent_static 
 {
+	public static final int WRONG_I = -1;
+
 	public static final int DEFAULT_SIZE = 5;
 
 	public static Class<?>[] get_all_classes() { return _alls.ARRAYS_CLASSES; }
@@ -692,6 +694,22 @@ public abstract class arrays extends parent_static
 
 	public static <x> ArrayList<x> to_arraylist(x[] input_) { return (is_ok(input_) ? new ArrayList<x>(Arrays.asList(input_)) : new ArrayList<x>()); }	
 
+	public static <x> int index_of(double[] array_, double target_, int start_i_, int last_i_) { return index_of_internal(to_big(array_), target_, start_i_, last_i_); }
+
+	public static <x> int index_of(long[] array_, long target_, int start_i_, int last_i_) { return index_of_internal(to_big(array_), target_, start_i_, last_i_); }
+
+	public static <x> int index_of(int[] array_, int target_, int start_i_, int last_i_) { return index_of_internal(to_big(array_), target_, start_i_, last_i_); }
+
+	public static <x> int index_of(boolean[] array_, boolean target_, int start_i_, int last_i_) { return index_of_internal(to_big(array_), target_, start_i_, last_i_); }
+
+	public static <x> int index_of(byte[] array_, byte target_, int start_i_, int last_i_) { return index_of_internal(to_big(array_), target_, start_i_, last_i_); }
+
+	public static <x> int index_of(char[] array_, char target_, int start_i_, int last_i_) { return index_of_internal(to_big(array_), target_, start_i_, last_i_); }
+
+	public static <x> int index_of(x[] array_, x target_, int start_i_, int last_i_) { return index_of_internal(array_, target_, start_i_, last_i_); }
+	
+	public static <x> int index_of(ArrayList<x> array_, x target_, int start_i_, int last_i_) { return index_of_internal(array_, target_, start_i_, last_i_); }
+	
 	public static double[] get_range(double[] input_, int start_i, int size_) { return (double[])to_small((Double[])get_range((Double[])to_big(input_), start_i, size_)); }
 
 	public static long[] get_range(long[] input_, int start_i, int size_) { return (long[])to_small((Long[])get_range((Long[])to_big(input_), start_i, size_)); }
@@ -1515,6 +1533,32 @@ public abstract class arrays extends parent_static
 
 		return output;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private static <x> int index_of_internal(Object array_, x target_, int start_i_, int last_i_)
+	{
+		int output = WRONG_I;
+
+		Class<?> type = generic.get_class(array_);
+
+		boolean is_arraylist = generic.are_equal(type, ArrayList.class);
+
+		int last_i0 = (is_arraylist ? ((ArrayList<x>)array_).size() : ((x[])array_).length) - 1;
+		
+		int last_i = ((last_i_ > WRONG_I && last_i_ < last_i0) ? last_i_ : last_i0);
+		int start_i = (start_i_ > WRONG_I ? start_i_ : 0);
+		
+		if (start_i > last_i) return output;
+		
+		for (int i = start_i; i <= last_i; i++)
+		{
+			Object val = (is_arraylist ? ((ArrayList<x>)array_).get(i) : ((x[])array_)[i]);
+
+			if (generic.are_equal(target_, val)) return i;
+		}
+
+		return output;
+	}
 
 	private static <x> Object key_value_get_exists(double[] array_, x target_, boolean is_key_, boolean get_) { return key_value_get_exists(to_big(array_), target_, is_key_, get_); }
 
@@ -1558,16 +1602,13 @@ public abstract class arrays extends parent_static
 		}
 		else 
 		{
-			Class<?> type22 = generic.get_class(target_);
-			if (!generic.are_equal(type2, type22)) return output;
-
 			boolean is_arraylist = (generic.are_equal(type, ArrayList.class));
 
 			for (int i = 0; i < (is_arraylist ? ((ArrayList<x>)array_).size() : ((x[])array_).length); i++)
 			{
 				Object key = i;
 				Object val = (is_arraylist ? ((ArrayList<x>)array_).get(i) : ((x[])array_)[i]);
-
+				
 				Object target2 = (is_key_ ? key : val);
 				if (generic.are_equal(target_, target2)) return key_value_get_exists_return(key, val, is_key_, is_get_, true);
 			}

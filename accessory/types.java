@@ -206,6 +206,7 @@ public abstract class types extends parent_static
 	public static final String ACTION_ADD = "action_add";
 	public static final String ACTION_REMOVE = "action_remove";
 	public static final String ACTION_ESCAPE = "action_escape";
+	public static final String ACTION_UNESCAPE = "action_unescape";
 	public static final String ACTION_REPLACE = "action_replace";
 	public static final String ACTION_ENCRYPT = "action_encrypt";
 	public static final String ACTION_DECRYPT = "action_decrypt";
@@ -495,7 +496,7 @@ public abstract class types extends parent_static
 			DATES_UNIT_SECONDS, DATES_UNIT_MINUTES, DATES_UNIT_HOURS, DATES_UNIT_DAYS,
 			
 			ACTION,
-			ACTION_ADD, ACTION_REMOVE, ACTION_ESCAPE, ACTION_REPLACE, ACTION_ENCRYPT, ACTION_DECRYPT, 
+			ACTION_ADD, ACTION_REMOVE, ACTION_ESCAPE, ACTION_UNESCAPE, ACTION_REPLACE, ACTION_ENCRYPT, ACTION_DECRYPT, 
 			ACTION_START, ACTION_STOP,
 
 			WHAT,
