@@ -270,7 +270,7 @@ abstract class db_queries extends parent_static
 	
 	private static Object select_one_some_common_output(String source_, String input_, String what_) { return db.adapt_output(source_, input_, what_, false); }
 
-	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_outputs(source_, select_quick_internal(source_, cols_, where_, max_rows_, order_)); }
+	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_string_outputs(source_, select_quick_internal(source_, cols_, where_, max_rows_, order_)); }
 
 	private static ArrayList<HashMap<String, String>> select_quick_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return execute_type(source_, db.QUERY_SELECT, cols_, null, where_, max_rows_, order_, null); }
 
@@ -311,7 +311,7 @@ abstract class db_queries extends parent_static
 		return cols;
 	}
 
-	private static ArrayList<HashMap<String, String>> adapt_outputs(String source_, ArrayList<HashMap<String, String>> outputs_)
+	private static ArrayList<HashMap<String, String>> adapt_string_outputs(String source_, ArrayList<HashMap<String, String>> outputs_)
 	{
 		ArrayList<HashMap<String, String>> outputs = new ArrayList<HashMap<String, String>>();
 

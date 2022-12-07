@@ -12,7 +12,8 @@ public abstract class db_tests
 	public static final String BOOLEAN = types.CONFIG_TESTS_DB_FIELD_BOOLEAN;
 
 	private static String[] _fields = null;
-	private static HashMap<String, String> _cols = null;
+	private static String[] _cols = null;
+	private static HashMap<String, String> _fields_cols = null;
 	
 	private static boolean _is_quick = db_common.DEFAULT_IS_QUICK;
 	
@@ -24,9 +25,9 @@ public abstract class db_tests
 
 	public static String get_col(String field_) 
 	{ 
-		get_cols();
+		get_fields_cols();
 		
-		return (_cols.containsKey(field_) ? _cols.get(field_) : strings.DEFAULT); 
+		return (_fields_cols.containsKey(field_) ? _fields_cols.get(field_) : strings.DEFAULT); 
 	}
 
 	public static String[] get_fields() 
@@ -36,17 +37,19 @@ public abstract class db_tests
 		return _fields; 
 	}
 
-	public static HashMap<String, String> get_cols() 
+	public static String[] get_cols() 
+	{
+		if (_cols == null) get_fields_cols();
+		
+		return db.get_cols(_fields_cols); 
+	}
+
+	public static HashMap<String, String> get_fields_cols() 
 	{ 
-		if (_cols == null) _cols = db.get_cols(SOURCE, get_fields());
+		if (_fields_cols == null) _fields_cols = db.get_fields_cols(SOURCE, get_fields());
 			
-		return _cols; 
+		return _fields_cols; 
 	} 
 
-	static void start() 
-	{ 
-		get_fields();
-		
-		get_cols();
-	}
+	static void start() { get_fields_cols(); }
 }

@@ -109,6 +109,7 @@ public abstract class types extends parent_static
 	public static final String CONFIG_TESTS_DB_FIELD_DECIMAL = "config_tests_db_field_decimal";
 	public static final String CONFIG_TESTS_DB_FIELD_BOOLEAN = "config_tests_db_field_boolean";
 	
+	public static final String CONFIG_INFO_DB = "config_info_db";
 	public static final String CONFIG_INFO_DB_SOURCE = "config_info_db_source";
 	public static final String CONFIG_INFO_DB_FIELD = "config_info_db_field";
 	public static final String CONFIG_INFO_DB_FIELD_KEY = "config_info_db_field_key";
@@ -116,11 +117,24 @@ public abstract class types extends parent_static
 	public static final String CONFIG_INFO_DB_FIELD_IS_ENC = "config_info_db_field_is_enc";
 
 	public static final String CONFIG_CRYPTO = "config_crypto";
-	public static final String CONFIG_CRYPTO_FILE = "config_crypto_file";
-	public static final String CONFIG_CRYPTO_FILE_CIPHER = "config_crypto_file_cipher";
-	public static final String CONFIG_CRYPTO_FILE_KEY = "config_crypto_file_key";
-	public static final String CONFIG_CRYPTO_FILE_EXTENSION = "config_crypto_file_extension";
-
+	public static final String CONFIG_CRYPTO_ALGO = "config_crypto_algo";
+	public static final String CONFIG_CRYPTO_ALGO_CIPHER = "config_crypto_algo_cipher";
+	public static final String CONFIG_CRYPTO_ALGO_KEY = "config_crypto_algo_key";
+	public static final String CONFIG_CRYPTO_STORAGE = "config_crypto_storage";
+	public static final String CONFIG_CRYPTO_STORAGE_FILES = "config_crypto_storage_files";
+	public static final String CONFIG_CRYPTO_STORAGE_DB = "config_crypto_storage_db";
+	public static final String CONFIG_CRYPTO_FILES = "config_crypto_files";
+	public static final String CONFIG_CRYPTO_FILES_EXTENSION = "config_crypto_files_extension";
+	public static final String CONFIG_CRYPTO_DB = "config_crypto_db";
+	public static final String CONFIG_CRYPTO_DB_SOURCE = "config_crypto_db_source";
+	public static final String CONFIG_CRYPTO_DB_FIELD = "config_crypto_db_field";
+	public static final String CONFIG_CRYPTO_DB_FIELD_ALGO = "config_crypto_db_field_algo";
+	public static final String CONFIG_CRYPTO_DB_FIELD_IV = "config_crypto_db_field_iv";
+	public static final String CONFIG_CRYPTO_DB_FIELD_KEY = "config_crypto_db_field_key";
+	public static final String CONFIG_CRYPTO_DB_FIELD_ID = "config_crypto_db_field_id";
+	public static final String CONFIG_CRYPTO_LOG = "config_crypto_log";
+	public static final String CONFIG_CRYPTO_LOG_INFO = "config_crypto_log_info";
+	
 	public static final String CONFIG_LOGS = "config_logs";
 	public static final String CONFIG_LOGS_OUT = "config_logs_out";
 	public static final String CONFIG_LOGS_OUT_SCREEN = "config_logs_out_screen";
@@ -175,7 +189,7 @@ public abstract class types extends parent_static
 	public static final String DB_MYSQL_DATA_BIGINT = "db_mysql_data_bigint";
 	public static final String DB_MYSQL_DATA_DECIMAL = "db_mysql_data_decimal";
 	public static final String DB_MYSQL_DATA_TIMESTAMP = "db_mysql_data_timestamp";
-
+	
 	public static final String DATA = "data";
 	public static final String DATA_STRING_SMALL = "data_string_small";
 	public static final String DATA_STRING_BIG = "data_string_big";
@@ -235,6 +249,8 @@ public abstract class types extends parent_static
 	public static final String WHAT_INSTANCE = "what_instance";
 	public static final String WHAT_MESSAGE = "what_message";
 	public static final String WHAT_PATH = "what_path";
+	public static final String WHAT_IV = "what_iv";
+	public static final String WHAT_ALGO = "what_algo";
 
 	public static final String ERROR = "error";
 	public static final String ERROR_DEFAULT = "error_default";
@@ -257,6 +273,7 @@ public abstract class types extends parent_static
 	public static final String ERROR_FILE = "error_file";
 	public static final String ERROR_FILE_WRITE = "error_file_write";
 	public static final String ERROR_FILE_READ = "error_file_read";
+	public static final String ERROR_FILE_DELETE = "error_file_delete";
 	public static final String ERROR_STRING = "error_string";
 	public static final String ERROR_GENERIC = "error_generic";
 	public static final String ERROR_GENERIC_METHOD = "error_generic_method";	
@@ -265,8 +282,19 @@ public abstract class types extends parent_static
 	public static final String ERROR_TEST = "error_test";
 	public static final String ERROR_TEST_RUN = "error_test_run";
 	public static final String ERROR_CRYPTO = "error_crypto";
+	public static final String ERROR_CRYPTO_ALGO = "error_crypto_algo";
+	public static final String ERROR_CRYPTO_ALGO_CIPHER = "error_crypto_algo_cipher";
+	public static final String ERROR_CRYPTO_ALGO_KEY = "error_crypto_algo_key";
 	public static final String ERROR_CRYPTO_KEY = "error_crypto_key";
-	public static final String ERROR_CRYPTO_CIPHER = "error_crypto_cipher";
+	public static final String ERROR_CRYPTO_IV = "error_crypto_iv";
+	public static final String ERROR_CRYPTO_STORE = "error_crypto_store";
+	public static final String ERROR_CRYPTO_STORE_ALGO_CIPHER = "error_crypto_store_algo_cipher";
+	public static final String ERROR_CRYPTO_STORE_KEY = "error_crypto_store_key";
+	public static final String ERROR_CRYPTO_STORE_IV = "error_crypto_store_iv";
+	public static final String ERROR_CRYPTO_RETRIEVE = "error_crypto_retrieve";
+	public static final String ERROR_CRYPTO_RETRIEVE_ALGO_CIPHER = "error_crypto_retrieve_algo_cipher";
+	public static final String ERROR_CRYPTO_RETRIEVE_KEY = "error_crypto_retrieve_key";
+	public static final String ERROR_CRYPTO_RETRIEVE_IV = "error_crypto_retrieve_iv";
 	public static final String ERROR_CRYPTO_ENCRYPT = "error_crypto_encrypt";
 	public static final String ERROR_CRYPTO_DECRYPT = "error_crypto_decrypt";
 	public static final String ERROR_DATES = "error_dates";
@@ -302,14 +330,15 @@ public abstract class types extends parent_static
 	}
 
 	public static String check_type(String type_) { return check_type(type_, (String)null); }
-
+	
 	public static String check_type(String type_, String root_) 
 	{ 
+		String output = strings.DEFAULT;
 		if (strings.are_equivalent(type_, root_)) return strings.normalise(type_);
 		
 		String[] types = get_subtypes(root_);
 		
-		return (arrays.is_ok(types) ? check_type(type_, types) : strings.DEFAULT); 
+		return (arrays.is_ok(types) ? check_type(type_, types) : output); 
 	}
 
 	public static String check_type(String type_, String[] types_) { return check_type(type_, types_, null, null); }
@@ -424,13 +453,25 @@ public abstract class types extends parent_static
 			CONFIG_CREDENTIALS_DB_FIELD_ID, CONFIG_CREDENTIALS_DB_FIELD_ID_ENC, CONFIG_CREDENTIALS_DB_FIELD_USER, 
 			CONFIG_CREDENTIALS_DB_FIELD_USERNAME, CONFIG_CREDENTIALS_DB_FIELD_PASSWORD, CONFIG_CREDENTIALS_DB_FIELD_IS_ENC,
 			
-			CONFIG_INFO_DB_SOURCE,
+			CONFIG_INFO_DB,
+			CONFIG_INFO_DB_SOURCE, 
 			CONFIG_INFO_DB_FIELD,
 			CONFIG_INFO_DB_FIELD_KEY, CONFIG_INFO_DB_FIELD_VALUE, CONFIG_INFO_DB_FIELD_IS_ENC,
 			
 			CONFIG_CRYPTO,
-			CONFIG_CRYPTO_FILE, 
-			CONFIG_CRYPTO_FILE_CIPHER, CONFIG_CRYPTO_FILE_KEY, CONFIG_CRYPTO_FILE_EXTENSION,
+			CONFIG_CRYPTO_ALGO,
+			CONFIG_CRYPTO_ALGO_CIPHER, CONFIG_CRYPTO_ALGO_KEY,
+			CONFIG_CRYPTO_STORAGE,
+			CONFIG_CRYPTO_STORAGE_FILES, CONFIG_CRYPTO_STORAGE_DB,
+			CONFIG_CRYPTO_FILES, 
+			CONFIG_CRYPTO_FILES_EXTENSION,
+			CONFIG_CRYPTO_DB,
+			CONFIG_CRYPTO_DB_SOURCE,
+			CONFIG_CRYPTO_DB_FIELD,
+			CONFIG_CRYPTO_DB_FIELD_ID, CONFIG_CRYPTO_DB_FIELD_ALGO, CONFIG_CRYPTO_DB_FIELD_IV, 
+			CONFIG_CRYPTO_DB_FIELD_KEY,
+			CONFIG_CRYPTO_LOG,
+			CONFIG_CRYPTO_LOG_INFO,			
 			
 			CONFIG_LOGS,
 			CONFIG_LOGS_OUT,
@@ -502,8 +543,8 @@ public abstract class types extends parent_static
 			WHAT,
 			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 
 			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER, WHAT_TYPE, WHAT_APP, 
-			WHAT_SERVER, WHAT_ID, WHAT_INSTANCE, WHAT_MESSAGE, WHAT_PATH,
-
+			WHAT_SERVER, WHAT_ID, WHAT_INSTANCE, WHAT_MESSAGE, WHAT_PATH, WHAT_IV, WHAT_ALGO,
+			
 			ERROR,
 			ERROR_DEFAULT,
 			ERROR_INI,
@@ -514,7 +555,7 @@ public abstract class types extends parent_static
 			ERROR_DB_SOURCE, ERROR_DB_FIELD, ERROR_DB_VALS, ERROR_DB_BACKUP, ERROR_DB_RESTORE, 
 			ERROR_DB_QUICKER,
 			ERROR_FILE,
-			ERROR_FILE_WRITE, ERROR_FILE_READ,
+			ERROR_FILE_WRITE, ERROR_FILE_READ, ERROR_FILE_DELETE,
 			ERROR_STRING,
 			ERROR_GENERIC,
 			ERROR_GENERIC_METHOD,
@@ -523,7 +564,15 @@ public abstract class types extends parent_static
 			ERROR_TEST_RUN,
 
 			ERROR_CRYPTO,
-			ERROR_CRYPTO_KEY, ERROR_CRYPTO_CIPHER, ERROR_CRYPTO_ENCRYPT, ERROR_CRYPTO_DECRYPT,
+			ERROR_CRYPTO_ALGO,
+			ERROR_CRYPTO_ALGO_CIPHER, ERROR_CRYPTO_ALGO_KEY,
+			ERROR_CRYPTO_KEY,
+			ERROR_CRYPTO_IV,
+			ERROR_CRYPTO_STORE,
+			ERROR_CRYPTO_STORE_ALGO_CIPHER, ERROR_CRYPTO_STORE_KEY, ERROR_CRYPTO_STORE_IV,
+			ERROR_CRYPTO_RETRIEVE,
+			ERROR_CRYPTO_RETRIEVE_ALGO_CIPHER, ERROR_CRYPTO_RETRIEVE_KEY, ERROR_CRYPTO_RETRIEVE_IV,
+			ERROR_CRYPTO_ENCRYPT, ERROR_CRYPTO_DECRYPT,
 
 			ERROR_DATES, 
 			ERROR_DATES_STRING,

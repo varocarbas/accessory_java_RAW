@@ -50,6 +50,33 @@ public abstract class db_quicker_mysql
 		if (strings.is_int(max_pool_)) _max_pool = max_pool_;
 	}
 	
+	public static boolean change_db_name_queries(String source_, String name_) 
+	{ 
+		boolean output = db.change_db_name_queries(source_, name_); 
+
+		if (output) update_conn_info(source_);
+		
+		return output;
+	}
+	
+	public static boolean change_table_name_queries(String source_, String name_)
+	{	
+		boolean output = db.change_table_name_queries(source_, name_); 
+
+		if (output) update_conn_info(source_);
+		
+		return output;
+	}
+	
+	public static boolean change_col_name_queries(String source_, String field_, String name_)
+	{	
+		boolean output = db.change_col_name_queries(source_, field_, name_); 
+
+		if (output) update_conn_info(source_);
+		
+		return output;
+	}
+	
 	public static boolean exists(String source_, String where_cols_) 
 	{
 		boolean output = false;

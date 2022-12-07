@@ -1,8 +1,8 @@
 package accessory;
 
 import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -13,55 +13,91 @@ public class crypto extends parent
 {
 	public static final String _ID = "crypto";
 	
-	public static final String KEY = "key";
-	public static final String IV = "iv";
+	public static final String WHAT_KEY = _keys.KEY;
+	public static final String WHAT_IV = "iv";
+	public static final String WHAT_ALGO = "algo";
+	public static final String WHAT_ALGO_CIPHER = WHAT_ALGO;
 
-	public static final String CONFIG_FILE_CIPHER = types.CONFIG_CRYPTO_FILE_CIPHER;
-	public static final String CONFIG_FILE_KEY = types.CONFIG_CRYPTO_FILE_KEY;
-	public static final String CONFIG_FILE_EXTENSION = types.CONFIG_CRYPTO_FILE_EXTENSION;
+	public static final String CONFIG_ALGO_CIPHER = types.CONFIG_CRYPTO_ALGO_CIPHER;
+	public static final String CONFIG_ALGO_KEY = types.CONFIG_CRYPTO_ALGO_KEY;
+	public static final String CONFIG_STORAGE = types.CONFIG_CRYPTO_STORAGE;
+	public static final String CONFIG_STORAGE_FILES = types.CONFIG_CRYPTO_STORAGE_FILES;
+	public static final String CONFIG_STORAGE_DB = types.CONFIG_CRYPTO_STORAGE_DB;
+	public static final String CONFIG_FILES_EXTENSION = types.CONFIG_CRYPTO_FILES_EXTENSION;
+	public static final String CONFIG_LOG_INFO = types.CONFIG_CRYPTO_LOG_INFO;
 
+	public static final String ERROR_ALGO_CIPHER = types.ERROR_CRYPTO_ALGO_CIPHER;
+	public static final String ERROR_ALGO_KEY = types.ERROR_CRYPTO_ALGO_KEY;
 	public static final String ERROR_KEY = types.ERROR_CRYPTO_KEY;
-	public static final String ERROR_CIPHER = types.ERROR_CRYPTO_CIPHER;
+	public static final String ERROR_IV = types.ERROR_CRYPTO_IV;
+	public static final String ERROR_STORE = types.ERROR_CRYPTO_STORE;
+	public static final String ERROR_STORE_ALGO_CIPHER = types.ERROR_CRYPTO_STORE_ALGO_CIPHER;
+	public static final String ERROR_STORE_KEY = types.ERROR_CRYPTO_STORE_KEY;
+	public static final String ERROR_STORE_IV = types.ERROR_CRYPTO_STORE_IV;
+	public static final String ERROR_RETRIEVE = types.ERROR_CRYPTO_RETRIEVE;
+	public static final String ERROR_RETRIEVE_ALGO_CIPHER = types.ERROR_CRYPTO_RETRIEVE_ALGO_CIPHER;
+	public static final String ERROR_RETRIEVE_KEY = types.ERROR_CRYPTO_RETRIEVE_KEY;
+	public static final String ERROR_RETRIEVE_IV = types.ERROR_CRYPTO_RETRIEVE_IV;
 	public static final String ERROR_ENCRYPT = types.ERROR_CRYPTO_ENCRYPT;
 	public static final String ERROR_DECRYPT = types.ERROR_CRYPTO_DECRYPT;
 	
-	public static final String DEFAULT_ID = "crypto";
-	public static final String DEFAULT_FILE_CIPHER = "cipher";
-	public static final String DEFAULT_FILE_KEY = "key";
-	public static final String DEFAULT_FILE_EXTENSION = strings.DEFAULT;
-	public static final String DEFAULT_ALGORITHM_CIPHER = "AES/CTR/NoPadding";
-	public static final String DEFAULT_ALGORITHM_KEY = "AES";
-	public static final boolean DEFAULT_LOG_ENCRYPTION_INFO = false;	
+	public static final String DEFAULT_ID = _ID;
+	public static final String DEFAULT_STORAGE = CONFIG_STORAGE_FILES;
+	public static final String DEFAULT_ALGO_CIPHER = "AES/CTR/NoPadding";
+	public static final String DEFAULT_ALGO_KEY = "AES";
+	public static final String DEFAULT_FILES_EXTENSION = strings.DEFAULT;
+	public static final boolean DEFAULT_LOG_INFO = false;	
 	
-	public Cipher _cipher_enc = null; 
-	public Cipher _cipher_dec = null;
-	public String _algo_cipher = DEFAULT_ALGORITHM_CIPHER;
-	public String _path_iv = strings.DEFAULT;
-	public String _algo_key = DEFAULT_ALGORITHM_KEY;
-	public String _path_key = strings.DEFAULT;
-	public String _in = strings.DEFAULT;
-	public String _out = strings.DEFAULT;
-	public String _path = strings.DEFAULT;
-	public SecretKey _key = null;
-	public byte[] _iv = null;
-
-	private static boolean _log_encryption_info = DEFAULT_LOG_ENCRYPTION_INFO;
-
-	private String _temp_algo_key = strings.DEFAULT; 
-	private String _temp_algo_cipher = strings.DEFAULT;
 	private boolean _is_ok = false;
+	private String _id = strings.DEFAULT;
+	private String _in = strings.DEFAULT;
+	private String _out = strings.DEFAULT;
+	private Cipher _cipher_enc = null; 
+	private Cipher _cipher_dec = null;
+	private String _algo_cipher = null;
+	private String _algo_key = DEFAULT_ALGO_KEY;
+	private SecretKey _key = null;
+	private byte[] _iv = null;
 
 	public String toString() { return strings.DEFAULT; }
 	public boolean is_ok() { return _is_ok; }
 
-	public static boolean get_log_encryption_info() { return _log_encryption_info; }
+	public static boolean update_algo_cipher(String algo_cipher_) { return (strings.is_ok(algo_cipher_) ? config.update_crypto(CONFIG_ALGO_CIPHER, algo_cipher_) : false); }
 
-	public static void update_log_encryption_info(boolean log_encryption_info_) { _log_encryption_info = log_encryption_info_; }
+	public static String get_algo_cipher() { return (String)config.get_crypto(CONFIG_ALGO_CIPHER); }
+
+	public static String get_algo_cipher_or_default() 
+	{
+		String output = get_algo_cipher();
 	
-	public static String get_extension() { return (String)config.get_crypto(types.CONFIG_CRYPTO_FILE_EXTENSION); }
+		return (strings.is_ok(output) ? output : DEFAULT_ALGO_CIPHER);
+	}
 
-	public static String get_file_full(String id_) { return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension()); }
+	public static boolean update_algo_key(String algo_key_) { return (strings.is_ok(algo_key_) ? config.update_crypto(CONFIG_ALGO_KEY, algo_key_) : false); }
 
+	public static String get_algo_key() { return (String)config.get_crypto(CONFIG_ALGO_KEY); }
+
+	public static String get_algo_key_or_default() 
+	{
+		String output = get_algo_key();
+	
+		return (strings.is_ok(output) ? output : DEFAULT_ALGO_KEY);
+	}
+	
+	public static void store_in_files() { config.update_crypto(CONFIG_STORAGE, CONFIG_STORAGE_FILES); }
+
+	public static void store_in_db() { config.update_crypto(CONFIG_STORAGE, CONFIG_STORAGE_DB); }
+
+	public static boolean stored_in_files() { return strings.are_equal(types.check_type((String)config.get_crypto(CONFIG_STORAGE), CONFIG_STORAGE), CONFIG_STORAGE_FILES); }
+
+	public static boolean update_files_extension(String files_extension_) { return (strings.is_ok(files_extension_) ? config.update_crypto(CONFIG_FILES_EXTENSION, files_extension_) : false); }
+
+	public static String get_files_extension() { return (String)config.get_crypto(CONFIG_FILES_EXTENSION); }
+
+	public static void update_log_info(boolean log_info_) { config.update_crypto(CONFIG_LOG_INFO, log_info_); }
+
+	public static boolean get_log_info() { return config.get_crypto_boolean(CONFIG_LOG_INFO); }
+	
 	public static String[] encrypt_file(String path_, String id_) { return encrypt_decrypt_file(path_, id_, true); }
 
 	public static String[] decrypt_file(String path_, String id_) { return encrypt_decrypt_file(path_, id_, false); }
@@ -70,60 +106,60 @@ public class crypto extends parent
 
 	public static String[] decrypt(String[] inputs_, String id_) { return encrypt_decrypt(inputs_, id_, false); }
 
+	public static HashMap<String, String> encrypt(HashMap<String, String> inputs_, String id_, boolean keys_too_) { return encrypt_decrypt(inputs_, id_, keys_too_, true); }
+
+	public static HashMap<String, String> decrypt(HashMap<String, String> inputs_, String id_, boolean keys_too_) { return encrypt_decrypt(inputs_, id_, keys_too_, false); }
+	
 	public static String encrypt(String input_, String id_) { return encrypt_decrypt(input_, id_, true); }
 
 	public static String decrypt(String input_, String id_) { return encrypt_decrypt(input_, id_, false); }
 
-	public crypto(String in_, String path_key_, String path_iv_, String algo_key_, String algo_cipher_, SecretKey key_, byte[] iv_) { instantiate(in_, path_key_, path_iv_, algo_key_, algo_cipher_, key_, iv_); }
-
 	public void encrypt()
 	{
-		if (!is_ok_enc()) return;
-
 		try 
 		{
-			if (!update_cipher_enc()) return;
+			if (!encrypt_internal()) return;
 
-			_out = Base64.getEncoder().encodeToString(_cipher_enc.doFinal(_in.getBytes()));
+			_out = strings.from_bytes(_cipher_enc.doFinal(_in.getBytes()));
+		
+			_is_ok = true;
 		} 
-		catch (Exception e) 
-		{ 
-			manage_error(ERROR_ENCRYPT, e); 
-
-			return;
-		}
-
-		_is_ok = true;
+		catch (Exception e) { manage_error(ERROR_ENCRYPT, e); }
 	}
 
 	public void decrypt()
 	{
-		if (!is_ok_dec()) return;
-
 		try 
 		{
-			update_cipher_dec();
+			if (!decrypt_internal()) return;
 
-			_out = new String(_cipher_dec.doFinal(Base64.getDecoder().decode(_in)));
+			byte[] temp = strings.to_bytes(_in);
+			if (temp == null) return;
+			
+			_out = new String(_cipher_dec.doFinal(temp));
+
+			_is_ok = true;
 		} 
-		catch (Exception e) 
-		{ 
-			manage_error(ERROR_DECRYPT, e); 
-
-			return;
-		}
-
-		_is_ok = true;
+		catch (Exception e) { manage_error(ERROR_DECRYPT, e); }
 	}
+
+	static String[] populate_all_whats() { return new String[] { WHAT_ALGO_CIPHER, WHAT_KEY, WHAT_IV }; }
+
+	private static String[] get_all_whats() { return _alls.CRYPTO_WHATS; }
+	
+	private crypto(String in_, String id_) { instantiate(in_, id_); }
 
 	private void log_encryption_info()
 	{
 		HashMap<String, String> info = new HashMap<String, String>();
 
 		info.put("algo_cipher", _algo_cipher);
-		info.put("path_iv", _path_iv);
 		info.put("algo_key", _algo_key);
-		info.put("path_key", _path_key);
+		
+		if (stored_in_files())
+		{
+			for (String what: get_all_whats()) { info.put("path_" + what, get_path(_id, what)); }
+		}
 
 		logs.update_activity(info, _ID);
 	}
@@ -136,9 +172,8 @@ public class crypto extends parent
 		if (size < 1) return null;
 
 		String[] output = new String[size];
-		HashMap<String, String> paths = get_default_paths(id_);
 
-		crypto instance = new crypto(inputs_[0], paths.get(KEY), paths.get(IV), null, null, null, null);
+		crypto instance = new crypto(inputs_[0], id_);
 		if (!instance.is_ok()) return null;
 
 		int last_i = size - 1;
@@ -160,11 +195,49 @@ public class crypto extends parent
 		return output;
 	}
 
+	private static HashMap<String, String> encrypt_decrypt(HashMap<String, String> inputs_, String id_, boolean keys_too_, boolean is_encrypt_)
+	{
+		if (!arrays.is_ok(inputs_)) return null;
+
+		HashMap<String, String> outputs = new HashMap<String, String>();
+
+		crypto instance = null;
+
+		int start_i = (keys_too_ ? 0 : 1);
+		
+		for (Entry<String, String> input: inputs_.entrySet())
+		{	
+			String[] temp = new String[2];
+			
+			for (int i = start_i; i < 2; i++)
+			{
+				String val = (i == 0 ? input.getKey() : input.getValue());
+				
+				if (instance == null) 
+				{
+					instance = new crypto(val, id_);					
+					if (!instance.is_ok()) return null;
+				}
+				else instance._in = val;
+				
+				if (is_encrypt_) instance.encrypt();
+				else instance.decrypt();
+
+				if (!instance.is_ok()) return null;
+
+				temp[i] = instance._out;
+			}
+			
+			outputs.put((keys_too_ ? temp[0] : input.getKey()), temp[1]);
+		}
+
+		return outputs;
+	}
+
 	private static String encrypt_decrypt(String input_, String id_, boolean is_encrypt_)
 	{
-		HashMap<String, String> paths = get_default_paths(id_);
-
-		crypto instance = new crypto(input_, paths.get(KEY), paths.get(IV), null, null, null, null);
+		crypto instance = new crypto(input_, id_);
+		
 		if (instance.is_ok()) 
 		{
 			if (is_encrypt_) instance.encrypt();
@@ -172,68 +245,6 @@ public class crypto extends parent
 		}
 
 		return (instance.is_ok() ? instance._out : strings.DEFAULT);	
-	}
-
-	private static HashMap<String, String> get_default_paths(String id_)
-	{
-		HashMap<String, String> output = new HashMap<String, String>();
-
-		for (String what: new String[] { KEY, IV }) { output.put(what, get_default_path(id_, what)); }
-
-		return output;
-	}
-
-	private static String get_default_path(String id_, String what_) { return paths.build(new String[] { paths.get_dir(paths.DIR_CRYPTO), get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID) + misc.SEPARATOR_NAME + what_) }, true); }
-
-	private SecretKey key_from_file()
-	{
-		SecretKey output = null;
-		Object temp = io.file_to_object(_path_key);
-
-		if (temp != null && io.is_ok()) 
-		{
-			try { output = (SecretKey)temp;	}
-			catch (Exception e) 
-			{ 
-				manage_error(ERROR_KEY, e);
-
-				output = null;
-			}
-		}
-		else manage_error();
-
-		return output;
-	}
-
-	private byte[] iv_from_file()
-	{
-		byte[] output = null;
-		byte[] temp = io.file_to_bytes(_path_iv);
-
-		if (arrays.is_ok(temp) && io.is_ok()) output = arrays.get_new(temp);
-		else manage_error();
-
-		return output;
-	}
-
-	private boolean key_to_file(SecretKey key_)
-	{
-		io.object_to_file(_path_key, key_);
-
-		boolean is_ok = io.is_ok();
-		if (!is_ok) manage_error();
-
-		return is_ok;
-	}
-
-	private boolean iv_to_file(byte[] iv_)
-	{
-		io.bytes_to_file(_path_iv, iv_);
-
-		boolean is_ok = io.is_ok();
-		if (!is_ok) manage_error();
-
-		return is_ok;
 	}
 
 	private SecretKey get_key()
@@ -244,7 +255,7 @@ public class crypto extends parent
 		{
 			KeyGenerator keyGen = KeyGenerator.getInstance(_algo_key);
 			keyGen.init(new SecureRandom());
-
+			
 			output = keyGen.generateKey();	
 		}
 		catch (Exception e) { manage_error(ERROR_KEY, e); }
@@ -252,70 +263,273 @@ public class crypto extends parent
 		return output;
 	}
 
+	private boolean encrypt_internal() { return (start_enc_dec(true) && update_cipher_enc()); }
+
 	private boolean update_cipher_enc()
 	{	
-		boolean is_ok = true;
-		
-		if (_cipher_enc != null) return is_ok;
+		if (_cipher_enc != null) return true;
 
+		boolean is_ok = false;
+		
 		_key = null;
 		_iv = null;
 		
 		try
 		{	
-			_cipher_enc = Cipher.getInstance(_algo_cipher);
-
 			_key = get_key();
 
-			if (_key == null || !key_to_file(_key)) 
+			if (_key == null) 
 			{
-				manage_error();
+				manage_error(ERROR_KEY);
 
-				is_ok = false;
+				return is_ok;
 			}
-			else
-			{
-				_cipher_enc.init(Cipher.ENCRYPT_MODE, _key, new SecureRandom());	
-				
-				_iv = _cipher_enc.getIV();
-				
-				if (!iv_to_file(_iv)) is_ok = false;
-				else if (_log_encryption_info) log_encryption_info();
-			}
-		}
-		catch (Exception e) 
-		{ 
-			manage_error(ERROR_ENCRYPT, e); 
+
+			_cipher_enc = Cipher.getInstance(_algo_cipher);
 			
-			is_ok = false;
+			_cipher_enc.init(Cipher.ENCRYPT_MODE, _key, new SecureRandom());	
+			
+			_iv = _cipher_enc.getIV();
+			
+			if (!arrays.is_ok(_iv)) 
+			{
+				manage_error(ERROR_IV);
+
+				return is_ok;
+			}
+			
+			if (store()) 
+			{
+				is_ok = true;
+				
+				if (get_log_info()) log_encryption_info();				
+			}
 		}
+		catch (Exception e) { manage_error(ERROR_ENCRYPT, e); }
 		
 		return is_ok;
 	}
 
-	private void update_cipher_dec()
+	private boolean decrypt_internal() { return (start_enc_dec(false) && update_cipher_dec()); }
+
+	private boolean update_cipher_dec()
 	{	
-		if (_cipher_dec != null) return;
+		if (_cipher_dec != null) return true;
+
+		boolean is_ok = false;
 
 		try 
 		{
 			_cipher_dec = Cipher.getInstance(_algo_cipher);
 
 			_cipher_dec.init(Cipher.DECRYPT_MODE, _key, new IvParameterSpec(_iv));
+
+			is_ok = true;
 		} 
 		catch (Exception e) { manage_error(ERROR_DECRYPT, e); }
+		
+		return is_ok;
 	}
 
+	private boolean start_enc_dec(boolean is_enc_)
+	{
+		_is_ok = false;
+		
+		if (!is_ok_common(_in, _id, false)) return false;
+		
+		if (is_enc_)
+		{
+			_algo_cipher = get_algo_cipher_or_default();
+			if (!strings.is_ok(_algo_cipher)) return manage_error(ERROR_ALGO_CIPHER);
+
+			_algo_key = get_algo_key_or_default();		
+			if (!strings.is_ok(_algo_key)) return manage_error(ERROR_ALGO_KEY);
+		}
+		else 
+		{
+			HashMap<String, Object> items = retrieve();
+			if (items == null) return manage_error(ERROR_RETRIEVE);
+			
+			_algo_cipher = (String)items.get(WHAT_ALGO_CIPHER);
+			if (!strings.is_ok(_algo_cipher)) return manage_error(ERROR_RETRIEVE_ALGO_CIPHER);
+			
+			_key = (SecretKey)items.get(WHAT_KEY);
+			if (_key == null) return manage_error(ERROR_RETRIEVE_KEY);
+					
+			_iv = (byte[])items.get(WHAT_IV);
+			if (_iv == null) return manage_error(ERROR_RETRIEVE_IV);
+		}
+				
+		return true;
+	}
+	
+	private HashMap<String, Object> retrieve()
+	{
+		HashMap<String, Object> output = null;
+		
+		if (stored_in_files()) output = retrieve_from_files();
+		else 
+		{
+			output = db_crypto.get(_id);
+			
+			if (output == null) manage_error(ERROR_RETRIEVE);
+		}
+		
+		return output;
+	}
+	
+	private HashMap<String, Object> retrieve_from_files()
+	{
+		String algo = (String)retrieve_from_file(WHAT_ALGO_CIPHER);
+		if (!strings.is_ok(algo)) algo = DEFAULT_ALGO_CIPHER;
+
+		SecretKey key = (SecretKey)retrieve_from_file(WHAT_KEY);
+		byte[] iv = (byte[])retrieve_from_file(WHAT_IV);
+		
+		if (!strings.is_ok(algo) || key == null || iv == null) return null;
+
+		HashMap<String, Object> output = new HashMap<String, Object>();
+		
+		output.put(WHAT_ALGO_CIPHER, algo);
+		output.put(WHAT_KEY, key);
+		output.put(WHAT_IV, iv);				
+
+		return output;
+	}
+	
+	private Object retrieve_from_file(String what_)
+	{
+		Object output = null;
+
+		boolean is_ok = true;
+		
+		String path = get_path(_id, what_);
+		
+		if (what_.equals(WHAT_ALGO_CIPHER))
+		{
+			output = io.file_to_string(path, true);
+			
+			is_ok = true;
+		}
+		else if (what_.equals(WHAT_KEY))
+		{
+			Object temp = io.file_to_object(path);
+			
+			if (io.is_ok()) 
+			{
+				try 
+				{ 
+					output = (SecretKey)temp; 
+				
+					is_ok = true;
+				}
+				catch (Exception e) { }
+			}
+		}
+		else if (what_.equals(WHAT_IV))
+		{
+			output = io.file_to_bytes(path);
+			
+			is_ok = (io.is_ok() && arrays.is_ok(output));
+		}
+
+		if (!is_ok) 
+		{
+			output = null;
+			
+			manage_error(what_, false);
+		}
+		
+		return output;
+	}
+
+	private boolean store() 
+	{ 
+		boolean output = false;
+		
+		if (stored_in_files()) output = store_in_files_internal(); 
+		else
+		{
+			output = db_crypto.add(_id, _algo_cipher, _key, _iv);
+			
+			if (!output) manage_error(ERROR_STORE);
+		}
+	
+		if (!output) remove();
+		
+		return output;
+	}
+	
+	private boolean store_in_files_internal() 
+	{ 
+		for (String what: get_all_whats())
+		{
+			if (!store_in_file(what)) return false;
+		}
+		
+		return true;
+	}
+
+	private boolean store_in_file(String what_)
+	{
+		String path = get_path(_id, what_);
+		
+		if (what_.equals(WHAT_ALGO_CIPHER)) io.line_to_file(path, _algo_cipher, false);
+		else if (what_.equals(WHAT_KEY)) io.object_to_file(path, _key);
+		else if (what_.equals(WHAT_IV)) io.bytes_to_file(path, _iv);
+
+		boolean output = io.is_ok();
+		if (!output) manage_error(what_, true);
+
+		return output;
+	}
+
+	private void remove() 
+	{
+		if (stored_in_files())
+		{
+			for (String what: get_all_whats()) { io.delete_file(get_path(_id, what)); }
+		}
+		else db_crypto.delete(_id);
+	}
+	
+	private static String get_path(String id_, String what_) { return paths.build(new String[] { paths.get_dir(paths.DIR_CRYPTO), paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID) + misc.SEPARATOR_NAME + what_, get_files_extension()) }, true); }
+	
+	private boolean manage_error(String what_, boolean store_)
+	{
+		String type = null;
+		
+		if (what_.equals(WHAT_ALGO_CIPHER)) type = (store_ ? ERROR_STORE_ALGO_CIPHER : ERROR_RETRIEVE_ALGO_CIPHER);
+		else if (what_.equals(WHAT_KEY)) type = (store_ ? ERROR_STORE_KEY : ERROR_RETRIEVE_KEY);
+		else if (what_.equals(WHAT_IV)) type = (store_ ? ERROR_STORE_IV : ERROR_RETRIEVE_IV);
+		
+		return manage_error(type);
+	}
+	
+	private boolean manage_error(String type_) 
+	{ 
+		manage_error(type_, null); 
+	
+		return false;
+	}
+	
 	private void manage_error(String type_, Exception e_)
 	{	
-		HashMap<String, Object> items = new HashMap<String, Object>();
-		items.put(_keys.TYPE, type_);
+		HashMap<String, Object> items = new HashMap<String, Object>();		
+		
+		items.put(errors.TYPE, type_);
+		if (e_ != null) items.put(errors.MESSAGE, strings.to_string(e_));
+		
+		items.put("id", _id);
 		items.put("in", _in);
-		items.put("path_key", _path_key);
-		items.put("path_iv", _path_iv);
 		items.put("algo_key", _algo_key);
 		items.put("algo_cipher", _algo_cipher);
 
+		if (stored_in_files())
+		{
+			for (String what: get_all_whats()) { items.put("path_" + what, get_path(_id, what)); }
+		}
+		
 		manage_error();
 		
 		errors.manage(items);
@@ -327,80 +541,43 @@ public class crypto extends parent
 
 		_cipher_enc = null;
 		_cipher_dec = null;
+		_id = strings.DEFAULT;
 		_in = strings.DEFAULT;
 		_out = strings.DEFAULT;
-		_path_key = strings.DEFAULT;
-		_path_iv = strings.DEFAULT;
 		_key = null;
 		_iv = null;
 	}
 
-	private void instantiate(String in_, String path_key_, String path_iv_, String algo_key_, String algo_cipher_, SecretKey key_, byte[] iv_)
+	private void instantiate(String in_, String id_)
 	{
 		instantiate_common();
-		if (!is_ok(in_, path_key_, path_iv_, algo_key_, algo_cipher_, key_, iv_)) return;
-
-		populate(in_, path_key_, path_iv_, _temp_algo_key, _temp_algo_cipher, key_, iv_);
+		
+		if (!is_ok_common(in_, id_, true)) return;
+		
+		populate(in_, id_);
 	}
 
-	private boolean is_ok(String in_, String path_key_, String path_iv_, String algo_key_, String algo_cipher_, SecretKey key_, byte[] iv_)
-	{
-		if (!is_ok_common(in_, path_key_, path_iv_, algo_key_, algo_cipher_, true)) return false;
-
-		_temp_algo_key = (strings.is_ok(algo_key_) ? algo_key_ : DEFAULT_ALGORITHM_KEY);
-		_temp_algo_cipher = (strings.is_ok(algo_cipher_) ? algo_cipher_ : DEFAULT_ALGORITHM_CIPHER);
-
-		return true;
-	}
-
-	private boolean is_ok_common(String in_, String path_key_, String path_iv_, String algo_key_, String algo_cipher_, boolean is_start_)
-	{
-		boolean is_ok = (in_ != null && strings.is_ok(path_key_) && strings.is_ok(path_iv_));
-
-		if (is_ok && !is_start_) is_ok = (strings.is_ok(algo_key_) && strings.is_ok(algo_cipher_));
-
+	private boolean is_ok_common(String in_, String id_, boolean is_start_) 
+	{ 
+		_is_ok = false;
+		
+		boolean is_ok = (in_ != null); 
+	
+		if (!is_start_)
+		{
+			if (!strings.is_ok(id_)) _id = DEFAULT_ID;
+			
+			if (!strings.is_ok(_id)) is_ok = false;
+		}
+		
 		return is_ok;
 	}
-
-	private boolean is_ok_enc()
-	{
-		_is_ok = false;
-
-		return is_ok_common(_in, _path_key, _path_iv, _algo_key, _algo_cipher, false);
-	}
-
-	private boolean is_ok_dec()
-	{
-		_is_ok = false;
-
-		if (!is_ok_common(_in, _path_key, _path_iv, _algo_key, _algo_cipher, false)) return false;
-
-		if (_key == null) 
-		{
-			_key = key_from_file();
-			if (_key == null) return false;
-		}
-
-		if (!arrays.is_ok(_iv)) 
-		{
-			_iv = iv_from_file();
-			if (!arrays.is_ok(_iv)) return false;
-		}
-
-		return true;
-	}
-
-	private void populate(String in_, String path_key_, String path_iv_, String algo_key_, String algo_cipher_, SecretKey key_, byte[] iv_)
+	
+	private void populate(String in_, String id_)
 	{
 		_is_ok = true;
 
 		_in = in_;
-		_path_key = path_key_;
-		_path_iv = path_iv_;
-		_algo_key = algo_key_;
-		_algo_cipher = algo_cipher_;
-
-		if (key_ != null) _key = key_;
-		if (iv_ != null) _iv = arrays.get_new(iv_);
+		_id = id_;
 	}
 }

@@ -43,6 +43,8 @@ public class _alls extends parent_first
 
 	public static String[] CONFIG_NOT_UPDATE = null;
 
+	public static String[] CRYPTO_WHATS = null;
+	
 	//Method expected to be called from the corresponding _alls.populate_internal() to include
 	//all the additional types from the given app/library.
 	public static void populate_types(String[] all_add_) 
@@ -82,5 +84,7 @@ public class _alls extends parent_first
 		DB_FIELD_TYPES_NO_SIZE = db_field.populate_all_types_no_size();
 
 		CONFIG_NOT_UPDATE = config.populate_all_not_update();
+		
+		CRYPTO_WHATS = crypto.populate_all_whats();
 	} 
 }

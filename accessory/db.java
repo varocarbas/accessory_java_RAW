@@ -109,7 +109,17 @@ public abstract class db
 		return is_ok;
 	}
 
-	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  { return credentials.encrypt_username_password_file(get_type(source_), user_, username_, password_);  }
+	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  
+	{ 
+		boolean stored_in_files = crypto.stored_in_files();
+		if (!stored_in_files) crypto.store_in_files();
+		
+		boolean output = credentials.encrypt_username_password_file(get_type(source_), user_, username_, password_);  
+	
+		if (!stored_in_files) crypto.store_in_db();
+		
+		return output;
+	}
 
 	public static boolean update_db(String db_, String db_name_) 
 	{ 
@@ -560,7 +570,7 @@ public abstract class db
 
 	public static String get_col(String source_, String field_) { return (String)config.get(get_db(source_), field_); }
 	
-	public static HashMap<String, String> get_cols(String source_, String[] fields_)
+	public static HashMap<String, String> get_fields_cols(String source_, String[] fields_)
 	{
 		HashMap<String, String> output = new HashMap<String, String>();
 		if (!arrays.is_ok(fields_)) return output;
@@ -569,7 +579,9 @@ public abstract class db
 		
 		return output;
 	}
-
+	
+	public static String[] get_cols(HashMap<String, String> fields_cols_) { return (arrays.is_ok(fields_cols_) ? arrays.to_array(arrays.get_values_hashmap(fields_cols_)) : null); }
+	
 	public static String get_table(String source_)
 	{
 		String source = check_source(source_); 
@@ -734,6 +746,8 @@ public abstract class db
 	public static boolean is_ok(String source_) { return get_valid_instance(source_).is_ok(); }
 
 	public static String check_query_type(String input_) { return types.check_type(input_, types.get_subtypes(types.DB_QUERY), types.ACTION_ADD, types.DB_QUERY); }
+	
+	public static String sanitise_string_default(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 
 	static String[] populate_all_queries_data() { return new String[] { QUERY_SELECT, QUERY_SELECT_COUNT, QUERY_TABLE_EXISTS }; }
 
@@ -829,8 +843,17 @@ public abstract class db
 		boolean encrypted = config.get_boolean(setup, CREDENTIALS_ENCRYPTED);
 
 		HashMap<String, String> temp = new HashMap<String, String>();
+		
 		if (strings.is_ok(username) && password != null) temp = credentials.get_username_password(username, password);
-		else if (strings.is_ok(user)) temp = credentials.get_username_password(get_encryption_id(source_), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);					
+		else if (strings.is_ok(user)) 
+		{
+			boolean stored_in_files = crypto.stored_in_files();
+			if (!stored_in_files) crypto.store_in_files();
+			
+			temp = credentials.get_username_password(get_encryption_id(source_), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
+
+			if (!stored_in_files) crypto.store_in_db();
+		}
 		
 		if (!arrays.is_ok(temp)) return null;
 		
@@ -861,7 +884,7 @@ public abstract class db
 
 		return output;
 	}
-	
+
 	private static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_) { db_queries.create_table(source_, fields_, drop_it_); }
 
 	private static boolean credentials_in_memory(String source_) { return config.get_boolean(get_valid_setup(source_), CREDENTIALS_MEMORY); }
@@ -933,6 +956,4 @@ public abstract class db
 
 		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field_, val_, fields);
 	}
-	
-	private static String sanitise_string_default(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 }

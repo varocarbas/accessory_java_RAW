@@ -6,6 +6,9 @@ public abstract class errors extends parent_static
 {
 	public static boolean _exit = false;
 
+	public static final String TYPE = _keys.TYPE;
+	public static final String MESSAGE = _keys.MESSAGE;
+	
 	public static final String DEFAULT_TYPE = types.ERROR_DEFAULT;
 	public static final String DEFAULT_MESSAGE = DEFAULT_TYPE;
 	public static final String DEFAULT_SEPARATOR = misc.SEPARATOR_CONTENT;
@@ -25,7 +28,21 @@ public abstract class errors extends parent_static
 
 	public static void manage(String type_, Exception e_, String further_) { manage(get_message(type_, e_, further_)); }
 
-	public static void manage(HashMap<String, Object> info_) { manage(null, null, info_); }
+	public static void manage(HashMap<String, Object> info_) 
+	{ 
+		HashMap<String, Object> info = new HashMap<String, Object>(info_);
+		
+		String type = null;
+		
+		if (info != null && info.containsKey(TYPE))
+		{
+			type = (String)info.get(TYPE);
+			
+			info.remove(TYPE);
+		}
+		
+		manage(type, null, info); 
+	}
 
 	public static void manage(String type_, Exception e_, HashMap<String, Object> info_) { manage(get_message(type_, e_, get_message(info_))); }
 

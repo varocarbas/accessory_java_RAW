@@ -921,7 +921,7 @@ public abstract class arrays extends parent_static
 
 	public static String to_string(boolean[] input_, String separator_) { return to_string(to_big(input_), separator_); }
 
-	public static String to_string(byte[] input_, String separator_) { return to_string(to_big(input_), separator_); }
+	public static String to_string(byte[] input_, String separator_) { return strings.from_bytes(input_); }
 
 	public static String to_string(char[] input_, String separator_) { return to_string(to_big(input_), separator_); }
 
@@ -948,7 +948,8 @@ public abstract class arrays extends parent_static
 		String separator = (strings.is_ok(separator_) ? separator_ : misc.SEPARATOR_ITEM);
 		boolean first_time = true;
 
-		if (is_array)
+		if (generic.are_equal(type, Byte[].class)) output = strings.from_bytes((Byte[])input_);
+		else if (is_array)
 		{
 			for (x item: (x[])input_)
 			{
@@ -1539,17 +1540,15 @@ public abstract class arrays extends parent_static
 	{
 		int output = WRONG_I;
 
-		Class<?> type = generic.get_class(array_);
-
-		boolean is_arraylist = generic.are_equal(type, ArrayList.class);
-
-		int last_i0 = (is_arraylist ? ((ArrayList<x>)array_).size() : ((x[])array_).length) - 1;
-		
+		int last_i0 = get_size(array_) - 1;
+		if (last_i0 < 0) return output;
+					
 		int last_i = ((last_i_ > WRONG_I && last_i_ < last_i0) ? last_i_ : last_i0);
-		int start_i = (start_i_ > WRONG_I ? start_i_ : 0);
-		
+		int start_i = (start_i_ > WRONG_I ? start_i_ : 0);		
 		if (start_i > last_i) return output;
 		
+		boolean is_arraylist = generic.are_equal(generic.get_class(array_), ArrayList.class);
+
 		for (int i = start_i; i <= last_i; i++)
 		{
 			Object val = (is_arraylist ? ((ArrayList<x>)array_).get(i) : ((x[])array_)[i]);
@@ -1633,7 +1632,7 @@ public abstract class arrays extends parent_static
 		}
 		else
 		{
-			key = -1;
+			key = WRONG_I;
 			value = _defaults.get(get_class_items(array_));
 		}
 

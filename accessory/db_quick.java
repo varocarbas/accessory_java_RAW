@@ -7,7 +7,44 @@ import java.util.HashMap;
 public abstract class db_quick 
 {
 	private static ArrayList<String> _sources_quicker_mysql = new ArrayList<String>();
+		
+	public static void update_conn_info(String source_)
+	{
+		if (_sources_quicker_mysql.contains(source_)) db_quicker_mysql.update_conn_info(source_);
+	}
 	
+	public static void update_conn_info(String source_, String username_, String password_, String db_name_, String host_, String max_pool_)
+	{
+		if (_sources_quicker_mysql.contains(source_)) db_quicker_mysql.update_conn_info(username_, password_, db_name_, host_, max_pool_);
+	}
+	
+	public static boolean change_db_name_queries(String source_, String name_) 
+	{ 
+		boolean output = db.change_db_name_queries(source_, name_); 
+		
+		if (output) update_conn_info(source_);
+		
+		return output;
+	}
+	
+	public static boolean change_table_name_queries(String source_, String name_)
+	{	
+		boolean output = db.change_table_name_queries(source_, name_); 
+
+		if (output) update_conn_info(source_);
+		
+		return output;
+	}
+	
+	public static boolean change_col_name_queries(String source_, String field_, String name_)
+	{	
+		boolean output = db.change_col_name_queries(source_, field_, name_); 
+
+		if (output) update_conn_info(source_);
+		
+		return output;
+	}
+
 	public static void add_sources_quicker(String[] sources_)
 	{
 		if (!arrays.is_ok(sources_)) return;

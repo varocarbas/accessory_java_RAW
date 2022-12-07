@@ -44,6 +44,8 @@ public abstract class db_common
 	
 	public static db_field get_field_string(int size_, boolean is_unique_, String default_) { return new db_field(data.STRING, size_, db_field.WRONG_DECIMALS, (strings.is_ok(default_) ? default_ : db_field.WRONG_DEFAULT), (is_unique_ ? new String[] { db_field.KEY_UNIQUE } : null)); }
 	
+	public static db_field get_field_string_big() { return new db_field(data.STRING_BIG, 0, db_field.WRONG_DECIMALS, null, null); }
+
 	public static db_field get_field_is_enc() { return get_field_boolean(false); }
 	
 	public static db_field get_field_boolean(boolean default_) { return new db_field(data.BOOLEAN, db_field.DEFAULT_SIZE, db_field.WRONG_DECIMALS, default_, null); }
@@ -83,6 +85,8 @@ public abstract class db_common
 	public static double get_max_val(int max_) { return (max_ <= WRONG_MAX_SIZE ? WRONG_MAX_VAL : (Math.pow(10.0, ((double)max_ + 1.0)) - 1.0)); }
 	
 	public static int get_max_length(int max_) { return (max_ <= WRONG_MAX_SIZE ? WRONG_MAX_LENGTH : max_); }
+	
+	public static Object get_val(Object val_, boolean is_quick_) { return (is_quick_ ? db.adapt_input(val_) : val_); }
 	
 	public static String get_field_col(String source_, String field_, boolean is_quick_) { return (is_quick_ ? get_col(source_, field_) : field_); }
 

@@ -25,7 +25,8 @@ public abstract class io extends parent_static
 	
 	public static final String ERROR_WRITE = types.ERROR_FILE_WRITE;
 	public static final String ERROR_READ = types.ERROR_FILE_READ;
-
+	public static final String ERROR_DELETE = types.ERROR_FILE_DELETE;
+	
 	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{
 		method_start();
@@ -279,7 +280,29 @@ public abstract class io extends parent_static
 		
 		return _is_ok;
 	}
-	
+
+	public static boolean delete_file(String path_)
+	{
+		method_start();
+
+		boolean output = false;
+		
+		if (!paths.is_file(path_)) return output;
+		if (!paths.exists(path_)) return true;
+		
+		try 
+		{ 
+			(new File(path_)).delete();
+
+			output = true;
+		} 
+		catch (Exception e) { manage_error_io(ERROR_DELETE, e, path_); }
+
+		method_end();
+
+		return output;
+	}
+
 	private static String[] file_web_to_array(String path_url_, boolean is_file_)
 	{
 		method_start();

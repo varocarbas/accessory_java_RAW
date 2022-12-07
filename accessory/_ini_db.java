@@ -27,7 +27,8 @@ class _ini_db extends parent_ini_db
 		sources = add_source_tests(db, sources);
 		sources = add_source_credentials(db, sources);
 		sources = add_source_info(db, sources);
-
+		sources = add_source_crypto(db, sources);
+		
 		boolean is_ok = populate_db(db, name, sources, setup_vals);
 
 		return is_ok;
@@ -72,10 +73,25 @@ class _ini_db extends parent_ini_db
 
 		HashMap<String, db_field> info = new HashMap<String, db_field>();
 
-		info.put(db_info.KEY, db_common.get_field_string(db_common.MAX_SIZE_KEY, true));
-		info.put(db_info.VALUE, db_common.get_field_string(db_common.MAX_SIZE_VALUE));
-		info.put(db_credentials.IS_ENC, db_common.get_field_is_enc());
+		info.put(db_info.KEY, db_common.get_field_string(db_info.MAX_SIZE_KEY, true));
+		info.put(db_info.VALUE, db_common.get_field_string(db_info.MAX_SIZE_VALUE));
+		info.put(db_info.IS_ENC, db_common.get_field_is_enc());
 		
+		return add_source(source, null, db_, info, default_fields, sources_);		
+	}
+
+	private HashMap<String, Object[]> add_source_crypto(String db_, HashMap<String, Object[]> sources_)
+	{
+		String source = db_crypto.SOURCE;
+		boolean default_fields = true;
+
+		HashMap<String, db_field> info = new HashMap<String, db_field>();
+
+		info.put(db_crypto.ID, db_common.get_field_string(db_crypto.MAX_SIZE_ID, true));
+		info.put(db_crypto.ALGO, db_common.get_field_string(db_crypto.MAX_SIZE_ALGO));
+		info.put(db_crypto.IV, db_common.get_field_string(db_crypto.MAX_SIZE_IV));
+		info.put(db_crypto.KEY, db_common.get_field_string_big());
+
 		return add_source(source, null, db_, info, default_fields, sources_);		
 	}
 }

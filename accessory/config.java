@@ -19,6 +19,8 @@ public abstract class config extends parent_static
 
 	public static Object get_crypto(String key_) { return get(types.CONFIG_CRYPTO, key_); }
 
+	public static boolean get_crypto_boolean(String key_) { return get_boolean(types.CONFIG_CRYPTO, key_); }
+
 	public static boolean update_crypto(String key_, Object val_) { return update(types.CONFIG_CRYPTO, key_, val_); }
 
 	public static Object get_logs(String key_) { return get(types.CONFIG_LOGS, key_); }

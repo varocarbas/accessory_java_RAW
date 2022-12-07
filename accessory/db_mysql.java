@@ -524,7 +524,7 @@ class db_mysql extends parent_db
 			String def_val = strings.DEFAULT;
 
 			if (type.equals(data.TIMESTAMP)) def_val = "current_timestamp";
-			else if (!arrays.value_exists(further, db_field.AUTO_INCREMENT))
+			else if (!type.equals(data.STRING_BIG) && !arrays.value_exists(further, db_field.AUTO_INCREMENT))
 			{
 				def_val = db.adapt_input(null, field.get_default(), type, true);	
 
@@ -533,8 +533,10 @@ class db_mysql extends parent_db
 					if (data.is_number(type) || data.is_boolean(type)) def_val = "0";
 					else if (data.is_string(type)) def_val = " ";						
 				}						
+				
 				if (strings.is_ok(def_val, true)) def_val = get_variable_value_static(def_val, false);
 			}
+			
 			if (strings.is_ok(def_val)) item2 += " DEFAULT " + def_val;
 
 			String further2 = create_table_further_to_query(further);

@@ -31,6 +31,8 @@ public abstract class paths extends parent_static
 	public static final String EXTENSION_SQL = ".sql";
 	
 	public static boolean exists(String path_) { return (strings.is_ok(path_) && (new File(path_)).exists()); }
+	
+	public static boolean is_file(String path_) { return (strings.is_ok(path_) && (new File(path_)).isFile()); }
 
 	public static String build(String[] pieces_, boolean last_is_file_) { return build(arrays.to_arraylist(pieces_), last_is_file_, false); }
 	

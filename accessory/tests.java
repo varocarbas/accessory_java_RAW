@@ -96,7 +96,7 @@ public class tests extends parent_tests
 
 		String name = "create_table";
 
-		String[] sources = new String[] { source, db_credentials.SOURCE, db_info.SOURCE };
+		String[] sources = new String[] { source, db_credentials.SOURCE, db_info.SOURCE, db_crypto.SOURCE };
 
 		for (String source2: sources)
 		{
@@ -509,7 +509,7 @@ public class tests extends parent_tests
 
 	public static HashMap<String, Boolean> run_io()
 	{
-		String[] skip = new String[] { "array_to_file", "line_to_file", "object_to_file", "bytes_to_file", "ini_to_file", "hashmap_to_file", "empty_file", "web_to_array" };
+		String[] skip = new String[] { "array_to_file", "line_to_file", "object_to_file", "bytes_to_file", "ini_to_file", "hashmap_to_file", "empty_file", "web_to_array", "delete_file" };
 
 		return _instance.run(io.class, skip);
 	}

@@ -1,11 +1,16 @@
 package accessory;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -17,6 +22,8 @@ public abstract class strings extends parent_static
 	public static final int SIZE_SMALL = 10;
 	public static final int SIZE_REGULAR = 100;
 	public static final int SIZE_BIG = 500;
+
+	public static final int WRONG_I = -1;
 
 	public static final String DEFAULT = _defaults.STRINGS;
 	public static final int DEFAULT_SIZE = _defaults.STRINGS_SIZE;
@@ -63,7 +70,7 @@ public abstract class strings extends parent_static
 
 	public static boolean are_equivalent(String string1_, String string2_) { return are_equal(normalise(string1_), normalise(string2_)); }
 
-	public static boolean contains_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_) { return (index_of_outside(needle_, haystack_, normalise_, start_, end_) > -1); }
+	public static boolean contains_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_) { return (index_of_outside(needle_, haystack_, normalise_, start_, end_) > WRONG_I); }
 
 	public static boolean contains(String needle_, String haystack_, boolean normalise_) { return (index_of(needle_, haystack_, normalise_) >= 0); }
 
@@ -219,7 +226,7 @@ public abstract class strings extends parent_static
 
 	public static int index_of(String needle_, String haystack_, int start_, boolean normalise_)
 	{
-		if (!is_ok(needle_, true) || !is_ok(haystack_, true)) return -1;
+		if (!is_ok(needle_, true) || !is_ok(haystack_, true)) return WRONG_I;
 
 		String haystack = haystack_; 
 		String needle = needle_;
@@ -381,6 +388,54 @@ public abstract class strings extends parent_static
 		return output;
 	}
 
+	public static String from_bytes(Byte[] input_) { return from_bytes(arrays.to_small(input_)); }
+
+	public static String from_bytes(byte[] input_) { return (arrays.is_ok(input_) ? Base64.getEncoder().encodeToString(input_) : DEFAULT); }
+
+	public static byte[] to_bytes(String input_) 
+	{
+		byte[] output = null;
+		if (!strings.is_ok(input_)) return output;
+		
+		try { output = Base64.getDecoder().decode(input_); }
+		catch (Exception e) { output = null; }
+		
+		return output; 
+	}
+
+	public static String from_object(Object input_)
+	{
+		String output = strings.DEFAULT;
+		if (input_ == null) return output;
+
+		try (ByteArrayOutputStream array = new ByteArrayOutputStream()) 
+		{ 
+			try (ObjectOutputStream stream = new ObjectOutputStream(array))
+			{
+				stream.writeObject(input_); 
+				
+				output = strings.from_bytes(array.toByteArray());				
+			}
+			catch (Exception e) { output = DEFAULT; }		
+		} 
+		catch (Exception e) { output = DEFAULT; }
+	
+		return output;
+	}
+	
+	public static Object to_object(String input_)
+	{
+		Object output = null;
+		
+		byte[] bytes = to_bytes(input_);
+		if (bytes == null) return output;
+		
+		try (ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream(bytes))) { output = stream.readObject(); } 
+		catch (Exception e) { output = null; }
+	
+		return output;
+	}
+	
 	public static String remove(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, null, types.ACTION_REMOVE); }
 
 	public static String remove(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, types.ACTION_REMOVE); }
@@ -396,7 +451,7 @@ public abstract class strings extends parent_static
 	public static String replace(String needle_, String haystack_, String replacement_) { return remove_escape_replace(needle_, haystack_, replacement_, types.ACTION_REPLACE); }
 
 	public static String replace(String[] needles_, String haystack_, String replacement_) { return remove_escape_replace_many(needles_, haystack_, replacement_, types.ACTION_REPLACE); }
-
+	
 	static boolean is_ok(String string_, boolean minimal_) { return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0)); }
 
 	static HashMap<Boolean, String[]> populate_all_booleans()
@@ -435,53 +490,20 @@ public abstract class strings extends parent_static
 		if (!is_ok(haystack_, true)) return DEFAULT;
 		if (!is_ok(needle_, true)) return haystack_;
 		
-		if (action_.equals(types.ACTION_UNESCAPE)) return unescape_internal(needle_, haystack_);
-		
 		String replacement = get_replacement(needle_, replacement_, action_);
 
-		return ((action_.equals(types.ACTION_ESCAPE) && haystack_.contains(replacement)) ? remove_escape_replace_escaped(needle_, haystack_, replacement) : remove_escape_replace_default(needle_, haystack_, replacement));
+		return ((action_.equals(types.ACTION_UNESCAPE) || (action_.equals(types.ACTION_ESCAPE) && haystack_.contains(replacement))) ? unescape_escape_escaped(needle_, haystack_, action_) : remove_escape_replace(needle_, haystack_, replacement));
 	}
 
-	private static String remove_escape_replace_default(String needle_, String haystack_, String replacement_) { return haystack_.replace(needle_, replacement_); }
+	private static String remove_escape_replace(String needle_, String haystack_, String replacement_) { return haystack_.replace(needle_, replacement_); }
 	
-	private static String remove_escape_replace_escaped(String needle_, String haystack_, String replacement_)
-	{
-		String output = "";
-
-		char[] chars = haystack_.toCharArray();				
-		
-		int last_i = chars.length - 1;	
-		int i = 0;
-		
-		while (true)
-		{
-			int i2 = haystack_.indexOf(needle_, i);
-			
-			if (i2 < 0) 
-			{
-				output += strings.substring_after(haystack_, i - 1);
-				
-				break;
-			}
-			
-			String temp = substring_between(haystack_, i, i2, false);
-			if (i2 == 0 || chars[i2 - 1] != '\\') temp = remove_escape_replace_default(needle_, temp, replacement_);
-
-			output += temp;
-			
-			i = i2 + 1;
-			if (i > last_i) break;
-		}
-		
-		return output;
-	}
-	
-	private static String unescape_internal(String needle_, String haystack_)
+	private static String unescape_escape_escaped(String needle_, String haystack_, String action_)
 	{
 		ArrayList<Character> chars = arrays.to_arraylist(haystack_.toCharArray());				
 		int last_i = chars.size() - 1;	
 
 		char[] chars2 = needle_.toCharArray();				
+		char first2 = chars2[0];
 		int length2 = chars2.length;
 		
 		char escape = '\\';
@@ -489,12 +511,12 @@ public abstract class strings extends parent_static
 
 		while (true)
 		{
-			i = arrays.index_of(chars, escape, i, arrays.WRONG_I);
+			i = arrays.index_of(chars, first2, i, arrays.WRONG_I);
 			if (i == arrays.WRONG_I) break;
 			
 			boolean found = true;
 			
-			for (int i2 = 0; i2 < length2; i2++)
+			for (int i2 = 1; i2 < length2; i2++)
 			{
 				int i3 = i2 + i;
 				
@@ -506,18 +528,33 @@ public abstract class strings extends parent_static
 				}
 			}
 			
-			if (found && i > 0)
+			int add = 0;
+
+			if (found)
 			{
-				if ((chars.get(i - 1) == escape) && (i == 1 || chars.get(i - 2) != escape))
+				boolean escaped = (i > 0 && chars.get(i - 1) == escape);
+				
+				if (action_.equals(types.ACTION_ESCAPE))
 				{
-					chars.remove(i - 1);
-					
-					i--;
-					last_i--;
+					if (!escaped)
+					{
+						chars.add(i, escape);
+						add++;
+					}
 				}
+				else if (action_.equals(types.ACTION_UNESCAPE))
+				{
+					if (escaped && (i == 1 || chars.get(i - 2) != escape))
+					{
+						chars.remove(i - 1);
+						add--;
+					}	
+				}				
 			}
-					
-			i++;
+			
+			i = i + 1 + add;
+			last_i = last_i + add;
+			
 			if (i > last_i) break;
 		}
 		
@@ -669,7 +706,7 @@ public abstract class strings extends parent_static
 	private static String substring_before_after(String needle_, String haystack_, boolean normalise_, boolean is_before_)
 	{
 		int i = index_of(needle_, haystack_, normalise_);
-		if (i < 0) return DEFAULT;
+		if (i == WRONG_I) return DEFAULT;
 
 		if (!is_before_) i = i + needle_.length() - 1;
 		
@@ -678,7 +715,7 @@ public abstract class strings extends parent_static
 
 	private static String substring_before_after(String string_, int i_, boolean is_before_)
 	{
-		if (i_ < 0) return DEFAULT;
+		if (i_ <= WRONG_I) return DEFAULT;
 
 		int start = 0;
 		int length = i_;

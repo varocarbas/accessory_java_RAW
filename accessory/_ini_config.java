@@ -13,9 +13,13 @@ class _ini_config extends parent_ini_config
 	protected void populate_all_internal()
 	{
 		populate_generic_basic();
+		
 		populate_generic_credentials();
+		
 		populate_generic_crypto();
+		
 		populate_generic_logs();
+		
 		populate_generic_numbers();
 	}
 
@@ -32,7 +36,7 @@ class _ini_config extends parent_ini_config
 	{
 		String type = types.CONFIG_CREDENTIALS;
 
-		HashMap<String, Object> vals = new HashMap<String, Object>();
+		HashMap<String, Object> vals = new HashMap<String, Object>();		
 		vals.put(credentials.CONFIG_WHERE, credentials.DEFAULT_WHERE);
 		vals.put(credentials.CONFIG_FILE_EXTENSION, credentials.DEFAULT_FILE_EXTENSION);
 		vals.put(credentials.CONFIG_FILE_USERNAME, credentials.DEFAULT_FILE_USERNAME);
@@ -47,10 +51,12 @@ class _ini_config extends parent_ini_config
 		String type = types.CONFIG_CRYPTO;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
-		vals.put(crypto.CONFIG_FILE_CIPHER, crypto.DEFAULT_FILE_CIPHER);
-		vals.put(crypto.CONFIG_FILE_KEY, crypto.DEFAULT_FILE_KEY);
-		vals.put(crypto.CONFIG_FILE_EXTENSION, crypto.DEFAULT_FILE_EXTENSION);
-
+		vals.put(crypto.CONFIG_STORAGE, crypto.DEFAULT_STORAGE);
+		vals.put(crypto.CONFIG_ALGO_CIPHER, crypto.DEFAULT_ALGO_CIPHER);
+		vals.put(crypto.CONFIG_ALGO_KEY, crypto.DEFAULT_ALGO_KEY);
+		vals.put(crypto.CONFIG_FILES_EXTENSION, crypto.DEFAULT_FILES_EXTENSION);
+		vals.put(crypto.CONFIG_LOG_INFO, crypto.DEFAULT_LOG_INFO);
+		
 		return populate(type, null, vals);
 	}
 
