@@ -33,6 +33,8 @@ public abstract class db_crypto
 
 	public static boolean add(String id_, String algo_, SecretKey key_, byte[] iv_)
 	{
+		boolean output = false;
+		
 		String algo = db_common.adapt_string(algo_, MAX_SIZE_ALGO);
 		if (!strings.is_ok(algo)) algo = crypto.get_algo_cipher_or_default();
 		
@@ -45,13 +47,17 @@ public abstract class db_crypto
 		
 		if (_is_quick) 
 		{
+			String col_id = get_col(ID);
+			
 			HashMap<String, String> vals = new HashMap<String, String>();
-			vals.put(get_col(ID), id);
+			vals.put(col_id, id);
 			vals.put(get_col(ALGO), algo);
 			vals.put(get_col(KEY), key);
 			vals.put(get_col(IV), iv);
 			
-			db_quick.insert_update(SOURCE, ID, vals, where); 
+			db_quick.insert_update(SOURCE, col_id, vals, where); 
+
+			output = db_quick.is_ok(SOURCE);
 		}
 		else 
 		{
@@ -62,9 +68,11 @@ public abstract class db_crypto
 			vals.put(IV, iv);
 			
 			db.insert_update(SOURCE, vals, where);
+			
+			output = db.is_ok(SOURCE);
 		}
 	
-		return db.is_ok(SOURCE);
+		return output;
 	}
 	
 	public static HashMap<String, Object> get(String id_)
@@ -105,7 +113,7 @@ public abstract class db_crypto
 	{
 		db.delete(SOURCE, get_where_id(id_));
 		
-		return db.is_ok();
+		return db.is_ok(SOURCE);
 	}
 	
 	public static String get_where_id(String id_) 

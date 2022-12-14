@@ -70,6 +70,21 @@ public abstract class strings extends parent_static
 
 	public static boolean are_equivalent(String string1_, String string2_) { return are_equal(normalise(string1_), normalise(string2_)); }
 
+	public static boolean contains_any(ArrayList<String> needles_, String haystack_, boolean normalise_) { return contains_any(arrays.to_array(needles_), haystack_, normalise_); }
+	
+	public static boolean contains_any(String[] needles_, String haystack_, boolean normalise_) 
+	{ 
+		boolean output = false;
+		if (!arrays.is_ok(needles_) || !strings.is_ok(haystack_)) return output;
+		
+		for (String needle: needles_)
+		{
+			if (contains(needle, haystack_, normalise_)) return true;
+		}
+		
+		return output; 
+	}
+
 	public static boolean contains_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_) { return (index_of_outside(needle_, haystack_, normalise_, start_, end_) > WRONG_I); }
 
 	public static boolean contains(String needle_, String haystack_, boolean normalise_) { return (index_of(needle_, haystack_, normalise_) >= 0); }
@@ -103,13 +118,19 @@ public abstract class strings extends parent_static
 		return (length_ > 0 ? input_.substring(start_, start_ + length_) : input_.substring(start_));
 	}
 
+	public static String[] split_spaces(String haystack_) { return split_spaces(haystack_, false, false, false); }
+
+	public static String[] split_spaces(String haystack_, boolean normalise_in_, boolean normalise_out_, boolean only_first_) { return split(" ", haystack_, normalise_in_, normalise_out_, only_first_, true); }
+
 	public static String[] split(String needle_, String haystack_) { return split(needle_, haystack_, false); }
 
 	public static String[] split(String needle_, String haystack_, boolean normalise_in_) { return split(needle_, haystack_, normalise_in_, false); }
 
 	public static String[] split(String needle_, String haystack_, boolean normalise_in_, boolean only_first_) { return split(needle_, haystack_, normalise_in_, false, only_first_); }
 
-	public static String[] split(String needle_, String haystack_, boolean normalise_in_, boolean normalise_out_, boolean only_first_)
+	public static String[] split(String needle_, String haystack_, boolean normalise_in_, boolean normalise_out_, boolean only_first_) { return split(needle_, haystack_, normalise_in_, normalise_out_, only_first_, false); }
+	
+	public static String[] split(String needle_, String haystack_, boolean normalise_in_, boolean normalise_out_, boolean only_first_, boolean needle_is_irregular_)
 	{
 		int length = get_length(needle_);
 		if (length < 0 || !is_ok(haystack_, true) || !contains(needle_, haystack_, normalise_in_)) return null; 
@@ -117,10 +138,12 @@ public abstract class strings extends parent_static
 		ArrayList<String> output = new ArrayList<String>(); 
 
 		int i = 0;
+		int max_i2 = (needle_is_irregular_ ? get_length(haystack_) - length : 0);
 
 		while (true)
 		{
 			int temp = index_of(needle_, haystack_, i, normalise_in_);
+			
 			if (temp < 0) 
 			{
 				if (i == 0) return null;
@@ -147,7 +170,21 @@ public abstract class strings extends parent_static
 				output.add(out);
 
 				return arrays.to_array(output);	
-			}						
+			}
+			
+			if (!needle_is_irregular_) continue;
+			
+			for (int i2 = i; i2 <= max_i2; i2++)
+			{
+				String temp2 = substring(haystack_, i2, length);
+
+				if (strings.are_equal(temp2, needle_) || (normalise_in_ && strings.are_equivalent(temp2, needle_)))
+				{
+					i += length;
+					i2 = i - 1;
+				}
+				else break;
+			}
 		}
 	}	
 

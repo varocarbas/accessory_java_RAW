@@ -6,22 +6,33 @@ package accessory;
 //- All the values will be assigned in the main method below. 
 //- All these constants will be accessed directly here, via the corresponding local methods (i.e., no local copies).
 
-class _basic extends parent_first 
+public class _basic extends parent_first 
 {
 	private static _basic _instance = new _basic(); 
 
 	public _basic() { }
 	public static void populate() { _instance.populate_internal_common(); }
 
-	public static boolean IS_WINDOWS = false;
-	public static String DIR_SEPARATOR = null;
+	private static boolean _is_windows = false;
+	private static boolean _is_linux = false;
+	private static String _dir_separator = null;
+	
+	public static boolean is_windows() { return _is_windows; }
+
+	public static boolean is_linux() { return _is_linux; }
+	
+	public static String get_dir_separator() { return _dir_separator; }
 	
 	protected void populate_internal() 
 	{ 
 		if (_populated) return;
 
-		IS_WINDOWS = System.getProperty("os.name").contains("Windows");
-		DIR_SEPARATOR = (IS_WINDOWS ? "\\" : "/");
+		String os = System.getProperty("os.name");
+		
+		if (os.contains("Windows")) _is_windows = true;
+		else if (os.contains("Linux")) _is_linux = true;
+		
+		_dir_separator = (_is_windows ? "\\" : "/");
 
 		_populated = true;
 	} 

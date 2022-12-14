@@ -45,6 +45,8 @@ public class _alls extends parent_first
 
 	public static String[] CRYPTO_WHATS = null;
 	
+	public static String[] MISC_SUPPORTED_SOUND_EXTENSIONS = null;
+	
 	//Method expected to be called from the corresponding _alls.populate_internal() to include
 	//all the additional types from the given app/library.
 	public static void populate_types(String[] all_add_) 
@@ -86,5 +88,7 @@ public class _alls extends parent_first
 		CONFIG_NOT_UPDATE = config.populate_all_not_update();
 		
 		CRYPTO_WHATS = crypto.populate_all_whats();
+		
+		MISC_SUPPORTED_SOUND_EXTENSIONS = misc.populate_all_supported_sound_extensions();
 	} 
 }

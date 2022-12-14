@@ -1,31 +1,32 @@
 package accessory;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-
-import java.util.Scanner;
-
 public abstract class io extends parent_static 
-{
-	public static final int MAX_SECS_SOUND_SHORT = 5;
+{	
+	public static final String STREAM = "stream";
 	
 	public static final String ERROR_WRITE = types.ERROR_FILE_WRITE;
 	public static final String ERROR_READ = types.ERROR_FILE_READ;
 	public static final String ERROR_DELETE = types.ERROR_FILE_DELETE;
+	
+	public static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
 	
 	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{
@@ -49,26 +50,30 @@ public abstract class io extends parent_static
 		method_end();	
 	}
 
-	public static String[] file_to_array(String path_) { return file_web_to_array(path_, true); }
+	public static String[] file_to_array(String path_) { return file_to_array(path_, DEFAULT_ENCODING); }
 
-	public static String[] web_to_array(String url_) { return file_web_to_array(url_, false); }
+	public static String[] file_to_array(String path_, Charset encoding_) { return file_web_to_array(path_, encoding_, true); }
+	
+	public static String[] web_to_array(String url_) { return web_to_array(url_, DEFAULT_ENCODING); }
+
+	public static String[] web_to_array(String url_, Charset encoding_) { return file_web_to_array(url_, encoding_, false); }
 
 	public static ArrayList<HashMap<String, String>> file_to_hashmap(String path_, String[] cols_, String separator_, boolean normalise_, boolean ignore_first_)
 	{
 		method_start();
 
 		int tot = arrays.get_size(cols_);
-		if (tot < 1 || !paths.exists(path_)) return null;
+		if (tot < 1 || !paths.file_exists(path_)) return null;
 
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
 
 		boolean is_first = true;
 		
-		try (Scanner scanner = new Scanner(new FileReader(path_))) 
+		try (BufferedReader reader = get_reader(path_, DEFAULT_ENCODING))
 		{
-			while (scanner.hasNext()) 
+			while (reader != null && reader.ready()) 
 			{ 
-				String line = scanner.nextLine().trim();
+				String line = get_line(reader);
 				
 				if (is_first) 
 				{
@@ -86,7 +91,7 @@ public abstract class io extends parent_static
 
 				output.add(item);
 			}
-		} 
+		}
 		catch (Exception e) 
 		{ 
 			output = null;
@@ -94,9 +99,11 @@ public abstract class io extends parent_static
 			manage_error_io(ERROR_READ, e, path_);
 		}
 
+		if (output != null && arrays.get_size(output) == 0) output = null;
+		
 		method_end();
 
-		return (arrays.is_ok(output) ? output : null);		
+		return output;		
 	}
 
 	public static void hashmap_to_file(String path_, ArrayList<HashMap<String, String>> vals_, String separator_, boolean cols_to_first_)
@@ -133,11 +140,13 @@ public abstract class io extends parent_static
 		method_end();
 	}
 	
-	public static String file_to_string(String path_, boolean only_first_)
+	public static String file_to_string(String path_, boolean only_first_) { return file_to_string(path_, DEFAULT_ENCODING, only_first_); }	
+	
+	public static String file_to_string(String path_, Charset encoding_, boolean only_first_)
 	{	
 		String output = strings.DEFAULT;
 
-		String[] lines = file_to_array(path_);		
+		String[] lines = file_to_array(path_, encoding_);		
 		if (arrays.get_size(lines) > 0) output = (only_first_ ? lines[0] : arrays.lines_to_string(lines)); 
 
 		return output;
@@ -147,16 +156,18 @@ public abstract class io extends parent_static
 
 	public static void empty_file(String path_) { line_to_file(path_, "", false); }
 
+	public static HashMap<String, String> ini_to_array(String path_) { return ini_to_array(path_, DEFAULT_ENCODING); }
+	
 	//Ini files are assumed to contain text stored as key-value pairs, one per line. 
 	//A descriptive example --> this is key: and all this, including :, is value.
-	public static HashMap<String, String> ini_to_array(String path_)
+	public static HashMap<String, String> ini_to_array(String path_, Charset encoding_)
 	{
 		method_start();
 
 		HashMap<String, String> ini = null;
 		if (!strings.contains_end(paths.EXTENSION_INI, path_, true)) return ini;
 
-		String[] lines = file_to_array(path_);
+		String[] lines = file_to_array(path_, encoding_);
 		if (!arrays.is_ok(lines)) return ini;
 
 		ini = new HashMap<String, String>();
@@ -228,7 +239,7 @@ public abstract class io extends parent_static
 		method_start();
 
 		byte[] output = null;
-		if (!paths.exists(path_)) return output;
+		if (!paths.file_exists(path_)) return output;
 
 		try { output = Files.readAllBytes(Paths.get(path_)); } 
 		catch (Exception e) { manage_error_io(ERROR_READ, e, path_); }
@@ -262,7 +273,7 @@ public abstract class io extends parent_static
 		method_start();
 
 		Object output = null;
-		if (!paths.exists(path_)) return output;
+		if (!paths.file_exists(path_)) return output;
 
 		try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(path_))) { output = stream.readObject(); } 
 		catch (Exception e) { manage_error_io(ERROR_WRITE, e, path_); }
@@ -270,15 +281,6 @@ public abstract class io extends parent_static
 		method_end();
 
 		return output;
-	}
-	
-	public static boolean play_sound_short(String file_)
-	{
-		_is_ok = false;
-		
-		if (strings.contains_end(paths.EXTENSION_WAV, file_, true)) play_sound_short_wav(file_);
-		
-		return _is_ok;
 	}
 
 	public static boolean delete_file(String path_)
@@ -303,36 +305,54 @@ public abstract class io extends parent_static
 		return output;
 	}
 
-	private static String[] file_web_to_array(String path_url_, boolean is_file_)
+	public static ArrayList<String> get_lines(String path_) { return get_lines(path_, DEFAULT_ENCODING); }
+	
+	public static ArrayList<String> get_lines(String path_, Charset encoding_)
+	{
+		ArrayList<String> lines = null;
+
+		try { lines = get_lines(get_stream(path_), encoding_, path_); }
+		catch (Exception e) 
+		{
+			lines = null;
+
+			manage_error_io(ERROR_READ, e, path_);
+		}
+
+		return lines;
+	}
+	
+	public static ArrayList<String> get_lines(InputStream input_) { return get_lines(input_, DEFAULT_ENCODING); }
+	
+	public static ArrayList<String> get_lines(InputStream input_, Charset encoding_) { return get_lines(input_, encoding_, null); }
+	
+	private static ArrayList<String> get_lines(InputStream input_, Charset encoding_, String path_)
+	{
+		if (input_ == null) return null;
+		
+		ArrayList<String> lines = new ArrayList<String>();
+	
+		try (BufferedReader reader = get_reader(input_, encoding_))
+		{
+			while (reader.ready()) { lines.add(get_line(reader)); }
+		}
+		catch (Exception e) 
+		{
+			lines = null;
+
+			manage_error_io(ERROR_READ, e, (strings.is_ok(path_) ? path_ : STREAM));
+		}
+		
+		return lines;
+	}
+
+	private static String[] file_web_to_array(String path_url_, Charset encoding_, boolean is_file_)
 	{
 		method_start();
 
 		ArrayList<String> lines = null;
 		
-		try
-		{			
-			if (!strings.is_ok(path_url_)) return null;
-
-			Scanner scanner = null;
-
-			if (is_file_)
-			{
-				if (paths.exists(path_url_)) scanner = new Scanner(new FileReader(path_url_));
-			}
-			else
-			{
-				URL url = new URL(path_url_);
-				
-				scanner = new Scanner(url.openStream());
-			}			
-			if (scanner == null) return null;
-
-			lines = new ArrayList<>();
-						
-			while (scanner.hasNext()) { lines.add(scanner.nextLine().trim()); }
-
-			scanner.close();				
-		} 
+		try { lines = (is_file_ ? get_lines(path_url_, encoding_) : get_lines(new URL(path_url_).openStream(), encoding_, path_url_)); } 
 		catch (Exception e) 
 		{ 
 			lines = null;
@@ -340,31 +360,12 @@ public abstract class io extends parent_static
 			manage_error_io(ERROR_READ, e, path_url_);
 		}
 
+		String[] output = null;
+		if (arrays.is_ok(lines)) output = arrays.to_array(lines);
+		
 		method_end();
 
-		return (arrays.is_ok(lines) ? arrays.to_array(lines) : null);
-	}
-
-	private static boolean play_sound_short_wav(String file_)
-	{
-		_is_ok = false;
-		
-		try 
-		{	
-			String path = (strings.is_ok(file_) ? paths.build(new String[] { paths.get_dir(paths.DIR_SOUNDS), file_ }, true) : strings.DEFAULT);
-			if (!strings.is_ok(path) || !paths.exists(path)) return _is_ok;
-					
-	        Clip clip = AudioSystem.getClip();
-
-	        clip.open(AudioSystem.getAudioInputStream(new File(path)));
-
-	        clip.start();
-	        
-	        misc.pause_secs(MAX_SECS_SOUND_SHORT);
-		} 
-		catch (Exception e) { _is_ok = false; }
-		
-		return _is_ok;
+		return output;
 	}
 	
 	private static void line_to_file(String path_, String line_, boolean append_, FileWriter writer_)
@@ -394,6 +395,14 @@ public abstract class io extends parent_static
 
 		method_end();
 	}	
+
+	private static BufferedReader get_reader(String path_, Charset encoding_) throws Exception { return get_reader(get_stream(path_), encoding_); }
+
+	private static BufferedReader get_reader(InputStream stream_, Charset encoding_) { return (stream_ == null ? null : new BufferedReader(new InputStreamReader(stream_, (encoding_ == null ? DEFAULT_ENCODING : encoding_)))); }
+
+	private static InputStream get_stream(String path_) throws Exception { return (paths.file_exists(path_) ? new FileInputStream(path_) : null); }
+
+	private static String get_line(BufferedReader reader_) throws Exception { return reader_.readLine().trim(); }
 
 	private static void manage_error_io(String type_, Exception e_, String path_)
 	{

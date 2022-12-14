@@ -33,7 +33,9 @@ class db_mysql extends parent_db
 		
 		boolean is_quicker = strings.is_ok(type_quicker_);
 		
-		String query = get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, !is_quicker);
+		if (is_quicker) db_static.update_query_type(type_);
+		
+		String query = get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, !is_quicker, is_quicker);
 		if (!strings.is_ok(query)) return output;
 		
 		boolean return_data = db.query_returns_data(type_);
@@ -41,7 +43,7 @@ class db_mysql extends parent_db
 		if (!is_quicker) output = db_sql.execute_query(source_, query, return_data, cols_);
 		else
 		{
-			if (type_quicker_.equals(db_quicker_mysql.TYPE)) output = db_sql.execute_query_static(db_quicker_mysql.TYPE, source_, query, return_data, cols_, db_quicker_mysql.get_username(), db_quicker_mysql.get_password(), db_quicker_mysql.get_db_name(), db_quicker_mysql.get_host(), db_quicker_mysql.get_max_pool());
+			if (type_quicker_.equals(db_quicker_mysql.TYPE)) output = db_quicker_mysql.execute_query(source_, query, return_data, cols_);
 		}
 		
 		return output;
@@ -130,7 +132,12 @@ class db_mysql extends parent_db
 
 	public String sanitise_string(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 
-	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_) { return execute_static(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, null); }
+	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_) 
+	{
+		
+		
+		return execute_static(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, null); 
+	}
 	
 	public HashMap<String, Object> get_data_type(String data_type_) { return get_data_type_static(data_type_); }
 
@@ -298,10 +305,10 @@ class db_mysql extends parent_db
 		return size;
 	}
 
-	private static String get_query(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_, boolean perform_checks_)
+	private static String get_query(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_, boolean perform_checks_, boolean is_static_)
 	{	
 		String query = strings.DEFAULT;
-		if (perform_checks_ && !db_sql.params_are_ok(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_)) return query;
+		if (perform_checks_ && !db_sql.params_are_ok(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, is_static_)) return query;
 
 		boolean is_ok = false;
 		String table = db.get_table(source_);
@@ -389,7 +396,8 @@ class db_mysql extends parent_db
 
 		if (!is_ok)
 		{
-			db.manage_error(source_, db.ERROR_QUERY, null, null, query);
+			if (is_static_) db_static.manage_error(db.ERROR_QUERY, null, null, query);
+			else db.manage_error(source_, db.ERROR_QUERY, null, null, query);
 			
 			query = strings.DEFAULT;
 		}
@@ -660,7 +668,7 @@ class db_mysql extends parent_db
 		String command = app + " -u '" + username + "' -p'" + password + "' '" + db_name + "' " + pipe + " '" + path + "'";			
 		
 		boolean is_ok = false;		
-		if (!_basic.IS_WINDOWS) is_ok = misc.execute_bash(command, true);
+		if (!_basic.is_windows()) is_ok = misc.execute_bash(command, true);
 		
 		is_ok(is_ok);
 	}

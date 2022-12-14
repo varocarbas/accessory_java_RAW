@@ -29,7 +29,16 @@ public abstract class paths extends parent_static
 	public static final String EXTENSION_LOG = ".log";
 	public static final String EXTENSION_WAV = ".wav";
 	public static final String EXTENSION_SQL = ".sql";
-	
+
+	public static boolean file_exists(String path_) 
+	{ 
+		if (!strings.is_ok(path_)) return false;
+		
+		File file = new File(path_);
+		
+		return (file.exists() && file.isFile()); 
+	}
+
 	public static boolean exists(String path_) { return (strings.is_ok(path_) && (new File(path_)).exists()); }
 	
 	public static boolean is_file(String path_) { return (strings.is_ok(path_) && (new File(path_)).isFile()); }
@@ -65,11 +74,13 @@ public abstract class paths extends parent_static
 
 	public static String normalise_dir(String dir_)
 	{
+		String separator = _basic.get_dir_separator();
+		
 		String dir = dir_;
 		if (!strings.is_ok(dir)) dir = "";
 
 		dir = dir.trim();
-		if (!strings.are_equal(strings.get_end(dir), _basic.DIR_SEPARATOR)) dir += _basic.DIR_SEPARATOR;
+		if (!strings.are_equal(strings.get_end(dir), separator)) dir += separator;
 
 		return dir;
 	}
@@ -80,7 +91,7 @@ public abstract class paths extends parent_static
 		if (!strings.is_ok(file)) return strings.DEFAULT;
 
 		file = file.trim();
-		if (strings.are_equal(strings.get_start(file), _basic.DIR_SEPARATOR))
+		if (strings.are_equal(strings.get_start(file), _basic.get_dir_separator()))
 		{ 
 			file = strings.get_end(file, 1);
 			if (!strings.is_ok(file)) return strings.DEFAULT;
@@ -91,6 +102,8 @@ public abstract class paths extends parent_static
 		return file;
 	}
 
+	public static String get_sound_path(String file_) { return (strings.is_ok(file_) ? build(new String[] { get_dir(DIR_SOUNDS), file_ }, true) : strings.DEFAULT); }
+	
 	public static String get_dir(String type_) { return get_update_dir(type_, null, true); }
 
 	public static void update_dir(String type_, String val_) { get_update_dir(type_, val_, false); }

@@ -79,7 +79,7 @@ public abstract class db
 	private static HashMap<String, HashMap<String, Object>> _source_setups = new HashMap<String, HashMap<String, Object>>();
 	private static HashMap<String, String> _db_setups = new HashMap<String, String>();
 	private static HashMap<String, String> _credentials = new HashMap<String, String>();
-
+	
 	public static String get_cur_source() { return _cur_source; }
 	
 	public static boolean update_cur_source(String source_)
@@ -111,7 +111,7 @@ public abstract class db
 
 	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  
 	{ 
-		boolean stored_in_files = crypto.stored_in_files();
+		boolean stored_in_files = crypto.is_stored_in_files();
 		if (!stored_in_files) crypto.store_in_files();
 		
 		boolean output = credentials.encrypt_username_password_file(get_type(source_), user_, username_, password_);  
@@ -751,49 +751,65 @@ public abstract class db
 
 	static String[] populate_all_queries_data() { return new String[] { QUERY_SELECT, QUERY_SELECT_COUNT, QUERY_TABLE_EXISTS }; }
 
+	static void is_ok(String source_, boolean is_ok_, boolean is_static_) 
+	{ 
+		if (is_static_) db_static.is_ok(is_ok_);
+		else is_ok(source_, is_ok_);
+	}
+	
 	static void is_ok(boolean is_ok_) { is_ok(get_current_source(), is_ok_); }
 
 	static void is_ok(String source_, boolean is_ok_) { get_valid_instance(source_).is_ok(is_ok_); }
+
+	static void update_query_type(String query_type_) { update_query_type(get_current_source(), query_type_); }
+
+	static void update_query_type(String source_, String query_type_) { get_valid_instance(source_).update_query_type(query_type_); }
+
+	static String get_query_type(String source_) { return get_valid_instance(source_).get_query_type(); }
 
 	static String get_host(String setup_) { return (String)config.get(setup_, HOST); }
 
 	static String get_max_pool(String setup_) { return (String)config.get(setup_, MAX_POOL); }
 
+	static String get_user(String setup_) { return (String)config.get(setup_, CREDENTIALS_USER); }
+
 	static void manage_error(String source_, String message_) { manage_error(source_, ERROR_INFO, message_); }
 
 	static void manage_error(String source_, String type_, String message_) { manage_error(source_, type_, null, null, message_); }
-
+	
 	static void manage_error(String source_, String type_, String query_, Exception e_, String message_)
 	{
 		HashMap<String, Object> info = new HashMap<String, Object>();
 		
 		if (strings.is_ok(query_)) info.put("query", query_);
+		
 		String setup = get_valid_setup(source_);
 		info.put(HOST, get_host(setup));
+		info.put(USER, get_user(setup));
+		
 		info.put(NAME, get_db_name(get_db(source_)));
-		info.put(USER, config.get(setup, CREDENTIALS_USER));
-		info.put(_keys.MESSAGE, message_);
-	
-		manage_error(source_, type_, e_, info);		
-	}
+		info.put(errors.MESSAGE, message_);
 
+		manage_error(source_, type_, e_, info);
+	}
+	
 	static void manage_error(String source_, String type_, HashMap<String, Object> info_) { manage_error(source_, type_, null, info_); }
 	
 	static void manage_error(String source_, String type_, Exception e_, HashMap<String, Object> info_)
 	{
 		is_ok(source_, false);
 
-		errors.manage(type_, e_, info_);
+		HashMap<String, Object> info = arrays.get_new_hashmap_xy(info_);
+		info.put("query_type", strings.to_string(get_query_type(source_)));
+		
+		errors.manage(type_, e_, info);
 	}
-
+	
 	static boolean query_returns_data(String type_)
 	{
-		String type = types.check_type(type_, types.DB_QUERY);
-		if (!strings.is_ok(type)) return false;
-
 		for (String target: get_all_queries_data())
 		{
-			if (target.equals(type)) return true;
+			if (target.equals(type_)) return true;
 		}
 
 		return false;
@@ -847,7 +863,7 @@ public abstract class db
 		if (strings.is_ok(username) && password != null) temp = credentials.get_username_password(username, password);
 		else if (strings.is_ok(user)) 
 		{
-			boolean stored_in_files = crypto.stored_in_files();
+			boolean stored_in_files = crypto.is_stored_in_files();
 			if (!stored_in_files) crypto.store_in_files();
 			
 			temp = credentials.get_username_password(get_encryption_id(source_), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
@@ -884,7 +900,7 @@ public abstract class db
 
 		return output;
 	}
-
+	
 	private static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_) { db_queries.create_table(source_, fields_, drop_it_); }
 
 	private static boolean credentials_in_memory(String source_) { return config.get_boolean(get_valid_setup(source_), CREDENTIALS_MEMORY); }

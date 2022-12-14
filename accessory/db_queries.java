@@ -292,12 +292,29 @@ abstract class db_queries extends parent_static
 
 	private static ArrayList<HashMap<String, String>> execute_type(String source_, String what_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
-		String source = db.check_source_error(source_);
+		String source = execute_type_start(source_, what_);
 		if (!strings.is_ok(source)) return null;
 
 		return db.get_valid_instance(source).execute(source, what_, cols_, vals_, where_, max_rows_, order_, cols_info_);
 	}
 
+	private static String execute_type_start(String source_, String what_)
+	{
+		String output = null;
+		
+		String source = db.check_source_error(source_);
+		
+		if (strings.is_ok(source)) 
+		{
+			output = source;
+			
+			db.update_query_type(source_, what_);
+		}
+		else db.update_query_type(source_, strings.DEFAULT);
+		
+		return output;
+	}
+	
 	private static String[] get_cols(String source_, String[] fields_)
 	{
 		String source = db.check_source(source_);

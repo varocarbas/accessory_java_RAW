@@ -96,7 +96,7 @@ public class tests extends parent_tests
 
 		String name = "create_table";
 
-		String[] sources = new String[] { source, db_credentials.SOURCE, db_info.SOURCE, db_crypto.SOURCE };
+		String[] sources = new String[] { source }; //, db_credentials.SOURCE, db_info.SOURCE, db_crypto.SOURCE };
 
 		for (String source2: sources)
 		{

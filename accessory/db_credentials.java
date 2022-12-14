@@ -58,6 +58,8 @@ public abstract class db_credentials
 	
 	static boolean update_info(String id_, String user_, HashMap<String, String> vals_)
 	{
+		boolean output = false;
+		
 		String where = get_db_where(id_, user_, true);
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
@@ -75,11 +77,18 @@ public abstract class db_credentials
 			
 			for (Entry<String, Object> val: vals.entrySet()) { vals2.put(get_col(val.getKey()), db.adapt_input(val.getValue())); }
 
-			db_quick.insert_update(SOURCE, ID, vals2, where);
+			db_quick.insert_update(SOURCE, get_col(ID), vals2, where);
+			
+			output = db_quick.is_ok(SOURCE);
 		}
-		else db.insert_update(SOURCE, vals, where);
+		else 
+		{
+			db.insert_update(SOURCE, vals, where);
 
-		return db.is_ok(SOURCE);
+			output = db.is_ok(SOURCE);
+		}
+		
+		return output;
 	}
 	
 	static String get_username_password(String id_, String user_, boolean is_encrypted_, boolean is_username_) 

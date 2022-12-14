@@ -48,6 +48,8 @@ public class crypto extends parent
 	public static final String DEFAULT_FILES_EXTENSION = strings.DEFAULT;
 	public static final boolean DEFAULT_LOG_INFO = false;	
 	
+	private static boolean _is_ok_last = false;
+	
 	private boolean _is_ok = false;
 	private String _id = strings.DEFAULT;
 	private String _in = strings.DEFAULT;
@@ -61,7 +63,9 @@ public class crypto extends parent
 
 	public String toString() { return strings.DEFAULT; }
 	public boolean is_ok() { return _is_ok; }
-
+	
+	public static boolean is_ok_last() { return _is_ok_last; }
+	
 	public static boolean update_algo_cipher(String algo_cipher_) { return (strings.is_ok(algo_cipher_) ? config.update_crypto(CONFIG_ALGO_CIPHER, algo_cipher_) : false); }
 
 	public static String get_algo_cipher() { return (String)config.get_crypto(CONFIG_ALGO_CIPHER); }
@@ -88,7 +92,7 @@ public class crypto extends parent
 
 	public static void store_in_db() { config.update_crypto(CONFIG_STORAGE, CONFIG_STORAGE_DB); }
 
-	public static boolean stored_in_files() { return strings.are_equal(types.check_type((String)config.get_crypto(CONFIG_STORAGE), CONFIG_STORAGE), CONFIG_STORAGE_FILES); }
+	public static boolean is_stored_in_files() { return strings.are_equal(types.check_type((String)config.get_crypto(CONFIG_STORAGE), CONFIG_STORAGE), CONFIG_STORAGE_FILES); }
 
 	public static boolean update_files_extension(String files_extension_) { return (strings.is_ok(files_extension_) ? config.update_crypto(CONFIG_FILES_EXTENSION, files_extension_) : false); }
 
@@ -122,7 +126,7 @@ public class crypto extends parent
 
 			_out = strings.from_bytes(_cipher_enc.doFinal(_in.getBytes()));
 		
-			_is_ok = true;
+			update_is_ok(true);
 		} 
 		catch (Exception e) { manage_error(ERROR_ENCRYPT, e); }
 	}
@@ -138,7 +142,7 @@ public class crypto extends parent
 			
 			_out = new String(_cipher_dec.doFinal(temp));
 
-			_is_ok = true;
+			update_is_ok(true);
 		} 
 		catch (Exception e) { manage_error(ERROR_DECRYPT, e); }
 	}
@@ -146,23 +150,6 @@ public class crypto extends parent
 	static String[] populate_all_whats() { return new String[] { WHAT_ALGO_CIPHER, WHAT_KEY, WHAT_IV }; }
 
 	private static String[] get_all_whats() { return _alls.CRYPTO_WHATS; }
-	
-	private crypto(String in_, String id_) { instantiate(in_, id_); }
-
-	private void log_encryption_info()
-	{
-		HashMap<String, String> info = new HashMap<String, String>();
-
-		info.put("algo_cipher", _algo_cipher);
-		info.put("algo_key", _algo_key);
-		
-		if (stored_in_files())
-		{
-			for (String what: get_all_whats()) { info.put("path_" + what, get_path(_id, what)); }
-		}
-
-		logs.update_activity(info, _ID);
-	}
 
 	private static String[] encrypt_decrypt_file(String path_, String id_, boolean is_encrypt_) { return encrypt_decrypt(io.file_to_array(path_), id_, is_encrypt_); }	
 
@@ -246,6 +233,25 @@ public class crypto extends parent
 
 		return (instance.is_ok() ? instance._out : strings.DEFAULT);	
 	}
+	
+	private static String get_path(String id_, String what_) { return paths.build(new String[] { paths.get_dir(paths.DIR_CRYPTO), paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID) + misc.SEPARATOR_NAME + what_, get_files_extension()) }, true); }
+	
+	private crypto(String in_, String id_) { instantiate(in_, id_); }
+
+	private void log_encryption_info()
+	{
+		HashMap<String, String> info = new HashMap<String, String>();
+
+		info.put("algo_cipher", _algo_cipher);
+		info.put("algo_key", _algo_key);
+		
+		if (is_stored_in_files())
+		{
+			for (String what: get_all_whats()) { info.put("path_" + what, get_path(_id, what)); }
+		}
+
+		logs.update_activity(info, _ID);
+	}
 
 	private SecretKey get_key()
 	{
@@ -258,7 +264,12 @@ public class crypto extends parent
 			
 			output = keyGen.generateKey();	
 		}
-		catch (Exception e) { manage_error(ERROR_KEY, e); }
+		catch (Exception e) 
+		{ 
+			output = null;
+			
+			manage_error(ERROR_KEY, e); 
+		}
 
 		return output;
 	}
@@ -333,7 +344,7 @@ public class crypto extends parent
 
 	private boolean start_enc_dec(boolean is_enc_)
 	{
-		_is_ok = false;
+		update_is_ok(false);
 		
 		if (!is_ok_common(_in, _id, false)) return false;
 		
@@ -367,7 +378,7 @@ public class crypto extends parent
 	{
 		HashMap<String, Object> output = null;
 		
-		if (stored_in_files()) output = retrieve_from_files();
+		if (is_stored_in_files()) output = retrieve_from_files();
 		else 
 		{
 			output = db_crypto.get(_id);
@@ -447,7 +458,7 @@ public class crypto extends parent
 	{ 
 		boolean output = false;
 		
-		if (stored_in_files()) output = store_in_files_internal(); 
+		if (is_stored_in_files()) output = store_in_files_internal(); 
 		else
 		{
 			output = db_crypto.add(_id, _algo_cipher, _key, _iv);
@@ -486,14 +497,18 @@ public class crypto extends parent
 
 	private void remove() 
 	{
-		if (stored_in_files())
+		if (is_stored_in_files())
 		{
 			for (String what: get_all_whats()) { io.delete_file(get_path(_id, what)); }
 		}
 		else db_crypto.delete(_id);
 	}
 	
-	private static String get_path(String id_, String what_) { return paths.build(new String[] { paths.get_dir(paths.DIR_CRYPTO), paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID) + misc.SEPARATOR_NAME + what_, get_files_extension()) }, true); }
+	private void update_is_ok(boolean is_ok_)
+	{
+		_is_ok = is_ok_;
+		_is_ok_last = is_ok_;
+	}
 	
 	private boolean manage_error(String what_, boolean store_)
 	{
@@ -525,7 +540,7 @@ public class crypto extends parent
 		items.put("algo_key", _algo_key);
 		items.put("algo_cipher", _algo_cipher);
 
-		if (stored_in_files())
+		if (is_stored_in_files())
 		{
 			for (String what: get_all_whats()) { items.put("path_" + what, get_path(_id, what)); }
 		}
@@ -537,7 +552,7 @@ public class crypto extends parent
 
 	private void manage_error()
 	{
-		_is_ok = false;
+		update_is_ok(false);
 
 		_cipher_enc = null;
 		_cipher_dec = null;
@@ -559,7 +574,7 @@ public class crypto extends parent
 
 	private boolean is_ok_common(String in_, String id_, boolean is_start_) 
 	{ 
-		_is_ok = false;
+		update_is_ok(false);
 		
 		boolean is_ok = (in_ != null); 
 	
@@ -575,7 +590,7 @@ public class crypto extends parent
 	
 	private void populate(String in_, String id_)
 	{
-		_is_ok = true;
+		update_is_ok(true);
 
 		_in = in_;
 		_id = id_;

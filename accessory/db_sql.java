@@ -10,7 +10,7 @@ import java.util.Properties;
 
 abstract class db_sql
 {
-	public static boolean params_are_ok(String source_, String what_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	public static boolean params_are_ok(String source_, String what_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_, boolean is_static_)
 	{
 		String table = db.get_table(source_);
 
@@ -43,20 +43,21 @@ abstract class db_sql
 		String temp = strings.to_string(items);
 		if (strings.is_ok(temp)) message += temp;
 		
-		db.manage_error(source_, db.ERROR_QUERY, null, null, message);
+		if (is_static_) db_static.manage_error(db.ERROR_QUERY, null, null, message);
+		else db.manage_error(source_, db.ERROR_QUERY, null, null, message);
 
 		return false;
 	}
 
-	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_) { return execute_query(source_, query_, return_data_, cols_, connect(source_)); }
+	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_) { return execute_query(source_, query_, return_data_, cols_, connect(source_), false); }
 	
-	public static ArrayList<HashMap<String, String>> execute_query_static(String type_, String source_, String query_, boolean return_data_, String[] cols_, String username_, String password_, String db_name_, String host_, String max_pool_) { return execute_query(source_, query_, return_data_, cols_, connect_static(type_, source_, username_, password_, db_name_, host_, max_pool_)); }
+	public static ArrayList<HashMap<String, String>> execute_query_static(String type_, String source_, String query_, boolean return_data_, String[] cols_, String username_, String password_, String db_name_, String host_, String max_pool_) { return execute_query(source_, query_, return_data_, cols_, connect_static(type_, source_, username_, password_, db_name_, host_, max_pool_), true); }
 
 	public static String get_backup_file_extension() { return paths.EXTENSION_SQL; }
-
-	private static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_, Connection conn_)
+	
+	private static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_, Connection conn_, boolean is_static_)
 	{
-		db.is_ok(source_, false);
+		db.is_ok(source_, false, is_static_);
 
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
 		if (conn_ == null) return output;
@@ -69,7 +70,7 @@ abstract class db_sql
 			{
 				statement.executeUpdate();
 
-				db.is_ok(source_, true);
+				db.is_ok(source_, true, is_static_);
 
 				return output;
 			}
@@ -96,7 +97,7 @@ abstract class db_sql
 					output.add(row);
 				}	
 
-				db.is_ok(source_, true);
+				db.is_ok(source_, true, is_static_);
 			}
 			catch (Exception e) { db.manage_error(source_, db.ERROR_QUERY, query_, e, null); }
 		} 
@@ -105,7 +106,7 @@ abstract class db_sql
 
 		return output;
 	}
-	
+
 	private static Connection connect(String source_) 
 	{
 		Properties properties = get_properties(source_);

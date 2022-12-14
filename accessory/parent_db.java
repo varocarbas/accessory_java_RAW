@@ -46,11 +46,17 @@ public abstract class parent_db
 	public abstract String get_db_restore_path(String any_source_);
 	
 	protected abstract Connection connect_internal(String source_, Properties properties);
-	
+		
 	private boolean _is_ok = false;
-	
+	private String _query_type = strings.DEFAULT;
+		
 	public boolean is_ok() { return _is_ok; }
+	
 	public void is_ok(boolean is_ok_) { _is_ok = is_ok_; }
+	
+	public String get_query_type() { return _query_type; }
+	
+	public void update_query_type(String query_type_) { _query_type = query_type_; }
 	
 	public Connection connect(String source_, Properties properties_)
 	{
@@ -64,13 +70,9 @@ public abstract class parent_db
 	
 	public static Connection connect_static(String type_, String source_, Properties properties_, String db_name_, String host_)
 	{
-		db.is_ok(false);
-		
 		Connection output = null;
 		
 		if (strings.are_equal(type_, db.MYSQL)) output = db_mysql.connect_internal_static(source_, properties_, db_name_, host_);
-
-		if (output != null) db.is_ok(true);
 		
 		return output;		
 	}

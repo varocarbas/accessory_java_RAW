@@ -42,18 +42,28 @@ public abstract class db_info
 		
 		for (Object vals: (_is_quick ? (ArrayList<HashMap<String, String>>)all_vals : (ArrayList<HashMap<String, Object>>)all_vals))
 		{
-			if (_is_quick) db_quick.insert(SOURCE, (HashMap<String, String>)vals);
-			else db.insert(SOURCE, (HashMap<String, Object>)vals);
+			boolean is_ok = false;
 			
-			if (!db.is_ok()) 
+			if (_is_quick) 
 			{
-				count_wrong++;
+				db_quick.insert(SOURCE, (HashMap<String, String>)vals);
 				
-				generic.to_screen("Wrong records: " + count_wrong);
-			}			
+				is_ok = db_quick.is_ok(SOURCE);
+			}
+			else 
+			{
+				db.insert(SOURCE, (HashMap<String, Object>)vals);
+				
+				is_ok = db.is_ok(SOURCE);
+			}
+			
+			if (!is_ok) count_wrong++;			
 		}
 		
-		return (count_wrong == 0);
+		if (count_wrong > 0) generic.to_screen("Wrong records: " + count_wrong);
+		else output = true;
+		
+		return output;
 	}
 	
 	public static HashMap<String, String> get(boolean decrypt_) { return get_all(decrypt_); }
@@ -109,20 +119,30 @@ public abstract class db_info
 	
 		HashMap<String, String> output = new HashMap<String, String>();
 	
+		int count_wrong = 0;
+		
 		for (HashMap<String, String> vals: all_vals)
 		{
 			String key = vals.get(get_field_col(KEY));
 			String value = vals.get(get_field_col(VALUE));
 			boolean is_enc = (boolean)db.adapt_output_internal(vals.get(get_field_col(IS_ENC)), data.BOOLEAN);
 		
+			boolean is_ok = true;
+			
 			if (decrypt_ && is_enc)
 			{
 				key = crypto.decrypt(key, ENCRYPTION_ID);
+				if (!crypto.is_ok_last()) is_ok = false;
+				
 				value = crypto.decrypt(value, ENCRYPTION_ID);
+				if (!crypto.is_ok_last()) is_ok = false;
 			}
 			
-			output.put(key, value);
+			if (is_ok) output.put(key, value);
+			else count_wrong++;
 		}
+
+		if (count_wrong > 0) generic.to_screen("Wrong records: " + count_wrong);
 		
 		return output;
 	}
