@@ -10,8 +10,6 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -25,9 +23,7 @@ public abstract class io extends parent_static
 	public static final String ERROR_WRITE = types.ERROR_FILE_WRITE;
 	public static final String ERROR_READ = types.ERROR_FILE_READ;
 	public static final String ERROR_DELETE = types.ERROR_FILE_DELETE;
-	
-	public static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
-	
+		
 	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{
 		method_start();
@@ -50,13 +46,9 @@ public abstract class io extends parent_static
 		method_end();	
 	}
 
-	public static String[] file_to_array(String path_) { return file_to_array(path_, DEFAULT_ENCODING); }
-
-	public static String[] file_to_array(String path_, Charset encoding_) { return file_web_to_array(path_, encoding_, true); }
+	public static String[] file_to_array(String path_) { return file_web_to_array(path_, true); }
 	
-	public static String[] web_to_array(String url_) { return web_to_array(url_, DEFAULT_ENCODING); }
-
-	public static String[] web_to_array(String url_, Charset encoding_) { return file_web_to_array(url_, encoding_, false); }
+	public static String[] web_to_array(String url_) { return file_web_to_array(url_, false); }
 
 	public static ArrayList<HashMap<String, String>> file_to_hashmap(String path_, String[] cols_, String separator_, boolean normalise_, boolean ignore_first_)
 	{
@@ -69,7 +61,7 @@ public abstract class io extends parent_static
 
 		boolean is_first = true;
 		
-		try (BufferedReader reader = get_reader(path_, DEFAULT_ENCODING))
+		try (BufferedReader reader = get_reader(path_))
 		{
 			while (reader != null && reader.ready()) 
 			{ 
@@ -140,13 +132,11 @@ public abstract class io extends parent_static
 		method_end();
 	}
 	
-	public static String file_to_string(String path_, boolean only_first_) { return file_to_string(path_, DEFAULT_ENCODING, only_first_); }	
-	
-	public static String file_to_string(String path_, Charset encoding_, boolean only_first_)
+	public static String file_to_string(String path_, boolean only_first_)
 	{	
 		String output = strings.DEFAULT;
 
-		String[] lines = file_to_array(path_, encoding_);		
+		String[] lines = file_to_array(path_);		
 		if (arrays.get_size(lines) > 0) output = (only_first_ ? lines[0] : arrays.lines_to_string(lines)); 
 
 		return output;
@@ -155,19 +145,17 @@ public abstract class io extends parent_static
 	public static void line_to_file(String path_, String line_, boolean append_) { line_to_file(path_, line_, append_, null); }
 
 	public static void empty_file(String path_) { line_to_file(path_, "", false); }
-
-	public static HashMap<String, String> ini_to_array(String path_) { return ini_to_array(path_, DEFAULT_ENCODING); }
 	
 	//Ini files are assumed to contain text stored as key-value pairs, one per line. 
 	//A descriptive example --> this is key: and all this, including :, is value.
-	public static HashMap<String, String> ini_to_array(String path_, Charset encoding_)
+	public static HashMap<String, String> ini_to_array(String path_)
 	{
 		method_start();
 
 		HashMap<String, String> ini = null;
 		if (!strings.contains_end(paths.EXTENSION_INI, path_, true)) return ini;
 
-		String[] lines = file_to_array(path_, encoding_);
+		String[] lines = file_to_array(path_);
 		if (!arrays.is_ok(lines)) return ini;
 
 		ini = new HashMap<String, String>();
@@ -304,14 +292,12 @@ public abstract class io extends parent_static
 
 		return output;
 	}
-
-	public static ArrayList<String> get_lines(String path_) { return get_lines(path_, DEFAULT_ENCODING); }
 	
-	public static ArrayList<String> get_lines(String path_, Charset encoding_)
+	public static ArrayList<String> get_lines(String path_)
 	{
 		ArrayList<String> lines = null;
 
-		try { lines = get_lines(get_stream(path_), encoding_, path_); }
+		try { lines = get_lines(get_stream(path_), path_); }
 		catch (Exception e) 
 		{
 			lines = null;
@@ -322,17 +308,15 @@ public abstract class io extends parent_static
 		return lines;
 	}
 	
-	public static ArrayList<String> get_lines(InputStream input_) { return get_lines(input_, DEFAULT_ENCODING); }
-	
-	public static ArrayList<String> get_lines(InputStream input_, Charset encoding_) { return get_lines(input_, encoding_, null); }
-	
-	private static ArrayList<String> get_lines(InputStream input_, Charset encoding_, String path_)
+	public static ArrayList<String> get_lines(InputStream input_) { return get_lines(input_, null); }
+
+	private static ArrayList<String> get_lines(InputStream input_, String path_)
 	{
 		if (input_ == null) return null;
 		
 		ArrayList<String> lines = new ArrayList<String>();
 	
-		try (BufferedReader reader = get_reader(input_, encoding_))
+		try (BufferedReader reader = get_reader(input_))
 		{
 			while (reader.ready()) { lines.add(get_line(reader)); }
 		}
@@ -346,13 +330,13 @@ public abstract class io extends parent_static
 		return lines;
 	}
 
-	private static String[] file_web_to_array(String path_url_, Charset encoding_, boolean is_file_)
+	private static String[] file_web_to_array(String path_url_, boolean is_file_)
 	{
 		method_start();
 
 		ArrayList<String> lines = null;
 		
-		try { lines = (is_file_ ? get_lines(path_url_, encoding_) : get_lines(new URL(path_url_).openStream(), encoding_, path_url_)); } 
+		try { lines = (is_file_ ? get_lines(path_url_) : get_lines(new URL(path_url_).openStream(), path_url_)); } 
 		catch (Exception e) 
 		{ 
 			lines = null;
@@ -396,9 +380,9 @@ public abstract class io extends parent_static
 		method_end();
 	}	
 
-	private static BufferedReader get_reader(String path_, Charset encoding_) throws Exception { return get_reader(get_stream(path_), encoding_); }
+	private static BufferedReader get_reader(String path_) throws Exception { return get_reader(get_stream(path_)); }
 
-	private static BufferedReader get_reader(InputStream stream_, Charset encoding_) { return (stream_ == null ? null : new BufferedReader(new InputStreamReader(stream_, (encoding_ == null ? DEFAULT_ENCODING : encoding_)))); }
+	private static BufferedReader get_reader(InputStream stream_) { return (stream_ == null ? null : new BufferedReader(new InputStreamReader(stream_, strings.get_encoding()))); }
 
 	private static InputStream get_stream(String path_) throws Exception { return (paths.file_exists(path_) ? new FileInputStream(path_) : null); }
 

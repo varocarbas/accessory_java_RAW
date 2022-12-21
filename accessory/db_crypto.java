@@ -40,7 +40,7 @@ public abstract class db_crypto
 		
 		String id = db_common.adapt_string(id_, MAX_SIZE_ID);
 		String key = strings.from_object(key_);
-		String iv = strings.from_bytes(iv_);	
+		String iv = strings.from_bytes_base64(iv_);	
 		if (!strings.are_ok(new String[] { id, algo, key, iv }) || iv.length() > MAX_SIZE_IV) return false;
 		
 		String where = get_where_id(id);
@@ -95,7 +95,7 @@ public abstract class db_crypto
 		try { key = (SecretKey)strings.to_object(temp.get(get_field_col(KEY))); }
 		catch (Exception e) { key = null; }
 		
-		byte[] iv = strings.to_bytes(temp.get(get_field_col(IV)));
+		byte[] iv = strings.to_bytes_base64(temp.get(get_field_col(IV)));
 		
 		if (strings.is_ok(algo) && key != null && iv != null) 
 		{

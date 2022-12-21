@@ -1,5 +1,6 @@
 package accessory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class errors extends parent_static 
@@ -50,7 +51,8 @@ public abstract class errors extends parent_static
 
 	public static void manage(String type_, Exception e_, String[] info_) { manage(get_message(type_, e_, get_message(info_))); }
 
-	private static String get_message(Object info_) 
+	@SuppressWarnings("unchecked")
+	private static <x> String get_message(Object info_) 
 	{		
 		Class<?> type = generic.get_class(info_);
 		if (!generic.is_array(type)) return strings.DEFAULT;
@@ -60,7 +62,8 @@ public abstract class errors extends parent_static
 		if (generic.are_equal(type, HashMap.class)) message = arrays.to_string(arrays.add(info_, _temp), DEFAULT_SEPARATOR, misc.SEPARATOR_KEYVAL, null);
 		else 
 		{
-			message = arrays.to_string(info_, DEFAULT_SEPARATOR);
+			if (generic.are_equal(type, ArrayList.class)) message = arrays.to_string((ArrayList<x>)info_, DEFAULT_SEPARATOR);
+			else message = arrays.to_string((x[])info_, DEFAULT_SEPARATOR);
 			
 			String temp = arrays.to_string(_temp, DEFAULT_SEPARATOR, misc.SEPARATOR_KEYVAL, null);
 			if (strings.is_ok(temp))

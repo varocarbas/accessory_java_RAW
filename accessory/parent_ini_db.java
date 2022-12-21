@@ -7,20 +7,11 @@ public abstract class parent_ini_db
 {
 	private boolean _populated = false;
 
-	protected abstract boolean populate_all_dbs(HashMap<String, Object> dbs_setup_);
-
-	public static HashMap<String, Object> get_setup_vals(String db_name_, String setup_, String user_, String host_, boolean encrypted_)
-	{
-		HashMap<String, Object> vals = get_setup_vals(setup_, user_, host_, encrypted_);
-
-		if (strings.is_ok(db_name_)) vals.put(types.CONFIG_DB_NAME, db_name_);
-		
-		return vals;	
-	}
+	public static HashMap<String, Object> get_setup_vals(String db_name_, String setup_, String user_, String host_, boolean encrypted_) { return add_db_to_setup(db_name_, get_setup_vals(setup_, user_, host_, encrypted_));	}
 
 	public static HashMap<String, Object> get_setup_vals(String setup_, String user_, String host_, boolean encrypted_)
 	{
-		HashMap<String, Object> vals = get_setup_default();
+		HashMap<String, Object> vals = get_setup_vals_default();
 
 		if (strings.is_ok(setup_)) vals.put(types.CONFIG_DB_SETUP, setup_);
 		if (strings.is_ok(user_)) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USER, user_); 
@@ -31,19 +22,23 @@ public abstract class parent_ini_db
 		return vals;	
 	}
 
+	public static HashMap<String, Object> get_setup_vals(String db_name_, String setup_, String username_, String password_, String host_) { return add_db_to_setup(db_name_, get_setup_vals(setup_, username_, password_, host_));	}
+
 	public static HashMap<String, Object> get_setup_vals(String setup_, String username_, String password_, String host_)
 	{
-		HashMap<String, Object> vals = get_setup_default();
+		HashMap<String, Object> vals = get_setup_vals_default();
 
 		if (strings.is_ok(setup_)) vals.put(types.CONFIG_DB_SETUP, setup_);
 		if (strings.is_ok(username_)) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME, username_); 
 		if (password_ != null) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD, password_); 
 		if (strings.is_ok(host_)) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
 
+		vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, false);
+
 		return vals;	
 	}
 
-	public static HashMap<String, Object> get_setup_default()
+	public static HashMap<String, Object> get_setup_vals_default()
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 
@@ -65,6 +60,8 @@ public abstract class parent_ini_db
 
 		return true;
 	}
+
+	protected abstract boolean populate_all_dbs(HashMap<String, Object> dbs_setup_);
 
 	protected void populate_all() 
 	{
@@ -248,7 +245,7 @@ public abstract class parent_ini_db
 
 	private HashMap<String, Object> get_setup_vals(String db_, HashMap<String, Object> vals_)
 	{
-		HashMap<String, Object> vals = new HashMap<String, Object>(arrays.is_ok(vals_) ? vals_ : get_setup_default());
+		HashMap<String, Object> vals = new HashMap<String, Object>(arrays.is_ok(vals_) ? vals_ : get_setup_vals_default());
 
 		if (!vals.containsKey(types.CONFIG_DB)) vals.put(types.CONFIG_DB, db_);
 		if (!vals.containsKey(types.CONFIG_DB_SETUP)) vals.put(types.CONFIG_DB_SETUP, db_);
@@ -260,5 +257,14 @@ public abstract class parent_ini_db
 		vals.put(_keys.get_key(types.WHAT_INSTANCE), db.get_instance_ini((String)vals.get(types.CONFIG_DB_SETUP_TYPE)));
 
 		return vals;
+	}
+
+	private static HashMap<String, Object> add_db_to_setup(String db_name_, HashMap<String, Object> vals_)
+	{
+		HashMap<String, Object> vals = new HashMap<String, Object>(vals_);
+
+		if (strings.is_ok(db_name_)) vals.put(types.CONFIG_DB_NAME, db_name_);
+		
+		return vals;	
 	}
 }

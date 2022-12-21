@@ -74,7 +74,7 @@ public abstract class paths extends parent_static
 
 	public static String normalise_dir(String dir_)
 	{
-		String separator = _basic.get_dir_separator();
+		String separator = os.get_dir_separator();
 		
 		String dir = dir_;
 		if (!strings.is_ok(dir)) dir = "";
@@ -91,7 +91,7 @@ public abstract class paths extends parent_static
 		if (!strings.is_ok(file)) return strings.DEFAULT;
 
 		file = file.trim();
-		if (strings.are_equal(strings.get_start(file), _basic.get_dir_separator()))
+		if (strings.are_equal(strings.get_start(file), os.get_dir_separator()))
 		{ 
 			file = strings.get_end(file, 1);
 			if (!strings.is_ok(file)) return strings.DEFAULT;

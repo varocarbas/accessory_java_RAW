@@ -33,7 +33,7 @@ class db_mysql extends parent_db
 		
 		boolean is_quicker = strings.is_ok(type_quicker_);
 		
-		if (is_quicker) db_static.update_query_type(type_);
+		if (is_quicker) db_quicker.update_query_type(type_);
 		
 		String query = get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, !is_quicker, is_quicker);
 		if (!strings.is_ok(query)) return output;
@@ -132,12 +132,7 @@ class db_mysql extends parent_db
 
 	public String sanitise_string(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 
-	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_) 
-	{
-		
-		
-		return execute_static(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, null); 
-	}
+	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_) { return execute_static(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, null); }
 	
 	public HashMap<String, Object> get_data_type(String data_type_) { return get_data_type_static(data_type_); }
 
@@ -182,48 +177,43 @@ class db_mysql extends parent_db
 		return ((date != null) ? paths.build(new String[] { dir, (String)arrays.get_key(all, date) }, true) : output);		
 	}
 	
-	protected static Connection connect_internal_static(String source_, Properties properties_, String db_name_, String host_) 
+	protected static Connection connect_internal_static(String source_, Properties properties_, String db_name_, String host_, boolean is_static_) 
 	{
 		Connection conn = null;
 
-		String url = get_connect_url(source_, db_name_, host_);
+		String url = get_connect_url(source_, db_name_, host_, is_static_);
 		if (!strings.is_ok(url)) return conn;
 
-		try 
-		{
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn = DriverManager.getConnection(url, properties_);
-		} 
+		try { conn = DriverManager.getConnection(url, properties_); } 
 		catch (Exception e) 
 		{
-			db.manage_error(source_, db.ERROR_CONN, null, e, null); 
+			db.manage_error(source_, db.ERROR_CONN, null, e, null, is_static_);
+			
 			conn = null;
 		}
 
 		return conn;
 	} 
 	
-	protected Connection connect_internal(String source_, Properties properties_) { return connect_internal_static(source_, properties_, db.get_db_name(db.get_db(source_)), db.get_host(db.get_valid_setup(source_))); }
+	protected Connection connect_internal(String source_, Properties properties_) { return connect_internal_static(source_, properties_, db.get_db_name(db.get_db(source_)), db.get_host(db.get_valid_setup(source_)), false); }
 
-	private static String get_connect_url(String source_, String db_name_, String host_)
+	private static String get_connect_url(String source_, String db_name_, String host_, boolean is_static_)
 	{   
-		String message = ""; 
+		String output = strings.DEFAULT;
 		
+		String message = strings.DEFAULT; 
 		if (!strings.is_ok(db_name_)) message = "WRONG DB";
 		else if (!strings.is_ok(host_)) message = "WRONG host";
 
-		if (!message.equals(""))
+		if (!message.equals(strings.DEFAULT)) db.manage_error(source_, db.ERROR_INFO, null, null, message, is_static_);
+		else 
 		{
-			db.manage_error(source_, db.ERROR_INFO, null, null, message);
-
-			return strings.DEFAULT;
+			output = "jdbc:mysql://" + host_ + ":3306/" + db_name_;
+			output += "?useUnicode=true&useJDBCCompliantTimezoneShift=true";
+			output += "&useLegacyDatetimeCode=false&serverTimezone=UTC";
 		}
-
-		String url = "jdbc:mysql://" + host_ + ":3306/" + db_name_;
-		url += "?useUnicode=true&useJDBCCompliantTimezoneShift=true";
-		url += "&useLegacyDatetimeCode=false&serverTimezone=UTC";
-
-		return url;
+		
+		return output;
 	}
 
 	private static HashMap<String, Object> get_data_type_static(String data_type_)
@@ -396,9 +386,8 @@ class db_mysql extends parent_db
 
 		if (!is_ok)
 		{
-			if (is_static_) db_static.manage_error(db.ERROR_QUERY, null, null, query);
-			else db.manage_error(source_, db.ERROR_QUERY, null, null, query);
-			
+			db.manage_error(source_, db.ERROR_QUERY, null, null, null, is_static_);
+
 			query = strings.DEFAULT;
 		}
 
@@ -668,7 +657,7 @@ class db_mysql extends parent_db
 		String command = app + " -u '" + username + "' -p'" + password + "' '" + db_name + "' " + pipe + " '" + path + "'";			
 		
 		boolean is_ok = false;		
-		if (!_basic.is_windows()) is_ok = misc.execute_bash(command, true);
+		if (!os.is_windows()) is_ok = os_unix.execute_bash(command, true);
 		
 		is_ok(is_ok);
 	}

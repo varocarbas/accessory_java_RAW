@@ -144,6 +144,9 @@ public abstract class types extends parent_static
 	
 	public static final String CONFIG_NUMBERS = "config_numbers";
 	public static final String CONFIG_NUMBERS_PERC_REF_LARGER = "config_numbers_perc_ref_larger";
+	
+	public static final String CONFIG_STRINGS = "config_strings";
+	public static final String CONFIG_STRINGS_ENCODING = "config_strings_encoding";
 	//------
 
 	public static final String DB = "db";
@@ -299,8 +302,8 @@ public abstract class types extends parent_static
 	public static final String ERROR_CRYPTO_DECRYPT = "error_crypto_decrypt";
 	public static final String ERROR_DATES = "error_dates";
 	public static final String ERROR_DATES_STRING = "error_dates_string";
-	public static final String ERROR_MISC = "error_misc";
-	public static final String ERROR_MISC_EXECUTE = "error_misc_execute";
+	public static final String ERROR_OS = "error_os";
+	public static final String ERROR_OS_EXECUTE = "error_os_execute";
 	//---------
 
 	public static String check_what(String what_) { return check_type(what_, WHAT); }
@@ -501,6 +504,8 @@ public abstract class types extends parent_static
 			CONFIG_TESTS_DB_FIELD_BOOLEAN,
 			CONFIG_NUMBERS, 
 			CONFIG_NUMBERS_PERC_REF_LARGER,
+			CONFIG_STRINGS,
+			CONFIG_STRINGS_ENCODING,
 			
 			DB,
 			DB_QUICKER,
@@ -577,8 +582,8 @@ public abstract class types extends parent_static
 			ERROR_DATES, 
 			ERROR_DATES_STRING,
 			
-			ERROR_MISC,
-			ERROR_MISC_EXECUTE
+			ERROR_OS,
+			ERROR_OS_EXECUTE
 		};
 	}
 }

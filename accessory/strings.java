@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,9 +27,24 @@ public abstract class strings extends parent_static
 
 	public static final int WRONG_I = -1;
 
+	public static final String CONFIG_ENCODING = types.CONFIG_STRINGS_ENCODING;
+	
 	public static final String DEFAULT = _defaults.STRINGS;
 	public static final int DEFAULT_SIZE = _defaults.STRINGS_SIZE;
+	public static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
 
+	public static boolean update_encoding(Charset encoding_) { return (encoding_ != null ? config.update_strings(CONFIG_ENCODING, encoding_) : false); }
+
+	public static Charset get_encoding() 
+	{
+		Charset output = null;
+		
+		try { output = (Charset)config.get_strings(CONFIG_ENCODING); }
+		catch (Exception e) { output = null; }
+	
+		return (output != null ? output : DEFAULT_ENCODING);
+	}
+	
 	public static boolean is_ok(String string_) { return is_ok(string_, false); }
 
 	public static boolean are_ok(String[] strings_)
@@ -369,7 +386,8 @@ public abstract class strings extends parent_static
 
 	public static String to_string(String input_) { return (is_ok(input_) ? input_ : DEFAULT); }
 
-	public static String to_string(Object input_)
+	@SuppressWarnings("unchecked")
+	public static <x> String to_string(Object input_)
 	{
 		String output = DEFAULT;
 
@@ -385,7 +403,8 @@ public abstract class strings extends parent_static
 		else if (generic.is_array(type)) 
 		{
 			if (generic.are_equal(type, HashMap.class)) output = arrays.to_string(input_, null, null, null);
-			else output = arrays.to_string(input_, null);
+			else if (generic.are_equal(type, ArrayList.class)) output = arrays.to_string((ArrayList<x>)input_, null);
+			else output = arrays.to_string((x[])input_, null);
 		}
 		else if (generic.are_equal(type, Class.class)) output = ((Class<?>)input_).getSimpleName();
 		else if (generic.are_equal(type, Method.class)) output = ((Method)input_).getName();
@@ -427,18 +446,15 @@ public abstract class strings extends parent_static
 
 	public static String from_bytes(Byte[] input_) { return from_bytes(arrays.to_small(input_)); }
 
-	public static String from_bytes(byte[] input_) { return (arrays.is_ok(input_) ? Base64.getEncoder().encodeToString(input_) : DEFAULT); }
+	public static String from_bytes_base64(Byte[] input_) { return from_bytes_base64(arrays.to_small(input_)); }
 
-	public static byte[] to_bytes(String input_) 
-	{
-		byte[] output = null;
-		if (!strings.is_ok(input_)) return output;
-		
-		try { output = Base64.getDecoder().decode(input_); }
-		catch (Exception e) { output = null; }
-		
-		return output; 
-	}
+	public static String from_bytes(byte[] input_) { return from_bytes(input_, false); }
+	
+	public static String from_bytes_base64(byte[] input_) { return from_bytes(input_, true); }
+
+	public static byte[] to_bytes(String input_) { return to_bytes(input_, false); }
+
+	public static byte[] to_bytes_base64(String input_) { return to_bytes(input_, true); }
 
 	public static String from_object(Object input_)
 	{
@@ -451,7 +467,7 @@ public abstract class strings extends parent_static
 			{
 				stream.writeObject(input_); 
 				
-				output = strings.from_bytes(array.toByteArray());				
+				output = from_bytes_base64(array.toByteArray());				
 			}
 			catch (Exception e) { output = DEFAULT; }		
 		} 
@@ -464,7 +480,7 @@ public abstract class strings extends parent_static
 	{
 		Object output = null;
 		
-		byte[] bytes = to_bytes(input_);
+		byte[] bytes = to_bytes_base64(input_);
 		if (bytes == null) return output;
 		
 		try (ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream(bytes))) { output = stream.readObject(); } 
@@ -723,6 +739,32 @@ public abstract class strings extends parent_static
 		String target = String.valueOf((symbols_ == null ? DecimalFormatSymbols.getInstance() : symbols_).getGroupingSeparator()); 
 
 		return input_.replaceAll(target, "");
+	}
+	
+	private static String from_bytes(byte[] input_, boolean use_base64_) 
+	{ 
+		String output = DEFAULT;
+		if (!arrays.is_ok(input_)) return output;
+	
+		if (use_base64_) output = Base64.getEncoder().encodeToString(input_);
+		else output = new String(input_, get_encoding());
+		
+		return output;
+	}
+	
+	private static byte[] to_bytes(String input_, boolean use_base64_) 
+	{
+		byte[] output = null;
+		if (!strings.is_ok(input_)) return output;
+		
+		if (use_base64_)
+		{
+			try { output = Base64.getDecoder().decode(input_); }
+			catch (Exception e) { output = null; }			
+		}
+		else output = input_.getBytes();
+		
+		return output; 
 	}
 
 	private static boolean contains_start_end(String needle_, String haystack_, boolean normalise_, boolean first_)

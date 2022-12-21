@@ -43,8 +43,7 @@ abstract class db_sql
 		String temp = strings.to_string(items);
 		if (strings.is_ok(temp)) message += temp;
 		
-		if (is_static_) db_static.manage_error(db.ERROR_QUERY, null, null, message);
-		else db.manage_error(source_, db.ERROR_QUERY, null, null, message);
+		db.manage_error(source_, db.ERROR_QUERY, null, null, message, is_static_);
 
 		return false;
 	}
@@ -79,7 +78,7 @@ abstract class db_sql
 			{
 				ResultSet data = statement.executeQuery();
 
-				String[] cols = execute_query_get_cols(source_, data, cols_);
+				String[] cols = execute_query_get_cols(source_, data, cols_, is_static_);
 				if (!arrays.is_ok(cols)) return output;
 				
 				while (data.next()) 
@@ -99,10 +98,10 @@ abstract class db_sql
 
 				db.is_ok(source_, true, is_static_);
 			}
-			catch (Exception e) { db.manage_error(source_, db.ERROR_QUERY, query_, e, null); }
+			catch (Exception e) { db.manage_error(source_, db.ERROR_QUERY, query_, e, null, is_static_); }
 		} 
-		catch (Exception e) { db.manage_error(source_, db.ERROR_QUERY, query_, e, null); } 
-		finally { disconnect(source_, conn_); }
+		catch (Exception e) { db.manage_error(source_, db.ERROR_QUERY, query_, e, null, is_static_); } 
+		finally { disconnect(source_, conn_, is_static_); }
 
 		return output;
 	}
@@ -116,9 +115,9 @@ abstract class db_sql
 
 	private static Connection connect_static(String type_, String source_, String username_, String password_, String db_name_, String host_, String max_pool_) 
 	{
-		Properties properties = get_properties_static(source_, username_, password_, max_pool_);
+		Properties properties = get_properties_static(username_, password_, max_pool_);
 
-		return (properties != null ? parent_db.connect_static(type_, source_, properties, db_name_, host_) : null);
+		return (properties != null ? db_static.connect(type_, source_, properties, db_name_, host_) : null);
 	}
 
 	private static Properties get_properties(String source_) 
@@ -129,10 +128,10 @@ abstract class db_sql
 		String password = (String)arrays.get_value(credentials, accessory.credentials.PASSWORD);
 		String max_pool = db.get_max_pool(db.get_valid_setup(source_));
 
-		return get_properties_static(source_, username, password, max_pool);
+		return get_properties_static(username, password, max_pool);
 	}
 
-	private static Properties get_properties_static(String source_, String username_, String password_, String max_pool_) 
+	private static Properties get_properties_static(String username_, String password_, String max_pool_) 
 	{	
 		String type = null;
 		String message = ""; 
@@ -151,7 +150,7 @@ abstract class db_sql
 		if (type != null)
 		{
 			message = "Wrong " + message;
-			db.manage_error(source_, type, null, null, message);
+			db_static.manage_error(type, null, null, message);
 
 			return null;
 		}
@@ -164,7 +163,7 @@ abstract class db_sql
 		return properties;
 	}
 
-	private static void disconnect(String source_, Connection conn_) 
+	private static void disconnect(String source_, Connection conn_, boolean is_static_) 
 	{
 		if (conn_ == null) return; 
 
@@ -173,10 +172,10 @@ abstract class db_sql
 			conn_.close();
 			conn_ = null;
 		} 
-		catch (Exception e) { db.manage_error(source_, db.ERROR_CONN, null, e, null); }
+		catch (Exception e) { db.manage_error(source_, db.ERROR_CONN, null, e, null, is_static_); }
 	}
 
-	private static String[] execute_query_get_cols(String source_, ResultSet data_, String[] cols_)
+	private static String[] execute_query_get_cols(String source_, ResultSet data_, String[] cols_, boolean is_static_)
 	{
 		if (arrays.is_ok(cols_)) return cols_;
 
@@ -202,7 +201,7 @@ abstract class db_sql
 		{
 			cols = null;
 
-			db.manage_error(source_, db.ERROR_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns");
+			db.manage_error(source_, db.ERROR_QUERY, strings.DEFAULT, e, "Impossible to retrieve table columns", is_static_);
 		}
 
 		return cols;

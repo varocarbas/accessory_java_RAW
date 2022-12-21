@@ -21,6 +21,8 @@ class _ini_config extends parent_ini_config
 		populate_generic_logs();
 		
 		populate_generic_numbers();
+		
+		populate_generic_strings();
 	}
 
 	private static void populate_generic_basic()
@@ -78,6 +80,16 @@ class _ini_config extends parent_ini_config
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		vals.put(numbers.CONFIG_PERC_REF_LARGER, numbers.DEFAULT_PERC_REF_LARGER);
+
+		return populate(type, null, vals);
+	}
+
+	private boolean populate_generic_strings()
+	{
+		String type = types.CONFIG_STRINGS;
+
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+		vals.put(strings.CONFIG_ENCODING, strings.DEFAULT_ENCODING);
 
 		return populate(type, null, vals);
 	}

@@ -8,7 +8,7 @@ public abstract class db_quick
 {
 	private static ArrayList<String> _sources_quicker_mysql = new ArrayList<String>();
 		
-	public static boolean is_ok(String source_) { return (is_quicker(source_) ? db_static.is_ok() : db.is_ok(source_)); }
+	public static boolean is_ok(String source_) { return (is_quicker(source_) ? db_quicker.is_ok() : db.is_ok(source_)); }
 
 	public static boolean is_quicker(String source_)
 	{
@@ -21,12 +21,12 @@ public abstract class db_quick
 	
 	public static void update_conn_info(String source_)
 	{
-		if (is_quicker(source_)) db_static.update_conn_info(source_);
+		if (is_quicker(source_)) db_quicker.update_conn_info(source_);
 	}
 	
 	public static void update_conn_info(String source_, String username_, String password_, String db_name_, String host_, String user_, String max_pool_)
 	{
-		if (is_quicker(source_)) db_static.update_conn_info(username_, password_, db_name_, host_, user_, max_pool_);
+		if (is_quicker(source_)) db_quicker.update_conn_info(username_, password_, db_name_, host_, user_, max_pool_);
 	}
 	
 	public static boolean change_db_name_queries(String source_, String name_) 
@@ -75,7 +75,7 @@ public abstract class db_quick
 			}
 		}
 
-		if (any_source_mysql != null) db_static.update_conn_info(any_source_mysql);
+		if (any_source_mysql != null) db_quicker.update_conn_info(any_source_mysql);
 	}
 	
 	public static boolean exists(String source_, String where_cols_) 

@@ -17,11 +17,11 @@ public class _basic extends parent_first
 	private static boolean _is_linux = false;
 	private static String _dir_separator = null;
 	
-	public static boolean is_windows() { return _is_windows; }
+	static boolean is_windows() { return _is_windows; }
 
-	public static boolean is_linux() { return _is_linux; }
+	static boolean is_linux() { return _is_linux; }
 	
-	public static String get_dir_separator() { return _dir_separator; }
+	static String get_dir_separator() { return _dir_separator; }
 	
 	protected void populate_internal() 
 	{ 

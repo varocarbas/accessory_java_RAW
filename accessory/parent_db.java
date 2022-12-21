@@ -67,13 +67,4 @@ public abstract class parent_db
 		
 		return output;
 	}
-	
-	public static Connection connect_static(String type_, String source_, Properties properties_, String db_name_, String host_)
-	{
-		Connection output = null;
-		
-		if (strings.are_equal(type_, db.MYSQL)) output = db_mysql.connect_internal_static(source_, properties_, db_name_, host_);
-		
-		return output;		
-	}
 }

@@ -111,11 +111,14 @@ public abstract class db
 
 	public static boolean encrypt_credentials(String source_, String user_, String username_, String password_)  
 	{ 
+		String id = get_encryption_id(source_);
+		if (!strings.is_ok(id)) return false;
+
 		boolean stored_in_files = crypto.is_stored_in_files();
 		if (!stored_in_files) crypto.store_in_files();
 		
-		boolean output = credentials.encrypt_username_password_file(get_type(source_), user_, username_, password_);  
-	
+		boolean output = credentials.encrypt_username_password_file(id, user_, username_, password_);  
+
 		if (!stored_in_files) crypto.store_in_db();
 		
 		return output;
@@ -128,6 +131,46 @@ public abstract class db
 		return config.update(db_, NAME, db_name_);
 	}
 
+	public static boolean update_credentials(String source_, String user_)
+	{
+		String db = accessory.db.get_db(source_);
+		if (!strings.is_ok(db) || !strings.is_ok(user_)) return false;
+		
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+
+		vals.put(USER, user_);
+		vals.put(CREDENTIALS_ENCRYPTED, true);
+
+		return update_vals(get_setup_from_db(db), vals);
+	}
+
+	public static boolean update_credentials(String source_, String user_, String username_, String password_)
+	{
+		String db = accessory.db.get_db(source_);
+		if (!strings.is_ok(db) || !strings.is_ok(user_) || !strings.is_ok(username_) || password_ == null || !encrypt_credentials(source_, user_, username_, password_)) return false;
+		
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+
+		vals.put(USER, user_);
+		vals.put(CREDENTIALS_ENCRYPTED, true);
+
+		return update_vals(get_setup_from_db(db), vals);
+	}
+
+	public static boolean update_credentials(String source_, String username_, String password_)
+	{
+		String db = accessory.db.get_db(source_);
+		if (!strings.is_ok(db) || !strings.is_ok(username_) || password_ == null) return false;
+		
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+
+		vals.put(USERNAME, username_);
+		vals.put(PASSWORD, password_);
+		vals.put(CREDENTIALS_ENCRYPTED, false);
+		
+		return update_vals(get_setup_from_db(db), vals);
+	}
+	
 	public static boolean update_conn_info(String db_, String user_, String db_name_, String host_, boolean encrypted_)
 	{
 		if (strings.is_ok(db_name_)) 
@@ -776,6 +819,12 @@ public abstract class db
 	static void manage_error(String source_, String message_) { manage_error(source_, ERROR_INFO, message_); }
 
 	static void manage_error(String source_, String type_, String message_) { manage_error(source_, type_, null, null, message_); }
+
+	static void manage_error(String source_, String type_, String query_, Exception e_, String message_, boolean is_static_)
+	{
+		if (is_static_) db_static.manage_error(db.ERROR_INFO, null, null, message_);
+		else manage_error(source_, db.ERROR_INFO, null, null, message_);
+	}
 	
 	static void manage_error(String source_, String type_, String query_, Exception e_, String message_)
 	{

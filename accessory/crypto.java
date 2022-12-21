@@ -124,7 +124,7 @@ public class crypto extends parent
 		{
 			if (!encrypt_internal()) return;
 
-			_out = strings.from_bytes(_cipher_enc.doFinal(_in.getBytes()));
+			_out = strings.from_bytes_base64(_cipher_enc.doFinal(_in.getBytes()));
 		
 			update_is_ok(true);
 		} 
@@ -137,7 +137,7 @@ public class crypto extends parent
 		{
 			if (!decrypt_internal()) return;
 
-			byte[] temp = strings.to_bytes(_in);
+			byte[] temp = strings.to_bytes_base64(_in);
 			if (temp == null) return;
 			
 			_out = new String(_cipher_dec.doFinal(temp));

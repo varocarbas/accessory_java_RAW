@@ -728,7 +728,7 @@ public abstract class arrays extends parent_static
 		Object output = null;
 
 		Class<?> type = generic.get_class(input_);
-		if (!generic.is_array(type) || generic.are_equal(type, HashMap.class) || start_i_ < 0 || size_ < 0) return output;
+		if (!generic.is_array(type) || generic.are_equal(type, HashMap.class) || start_i_ < 0) return output;
 
 		int size0 = get_size(input_);
 		int size = (size_ < 1 ? size0 : start_i_ + size_);
@@ -909,24 +909,28 @@ public abstract class arrays extends parent_static
 	@SuppressWarnings("unchecked")
 	public static <x> ArrayList<x> get_values_hashmap(Object input_) { return (ArrayList<x>)get_keys_values_hashmap(input_, false); }
 
-	public static <x, y> String to_string(HashMap<x, y> input_, String sep_items_, String sep_keyval_, String[] keys_ignore_) { return to_string_internal(input_, sep_items_, sep_keyval_, keys_ignore_, false); }
+	public static <x, y> String to_string(HashMap<x, y> input_, String sep_items_, String sep_keyval_, String[] keys_ignore_) { return to_string(input_, sep_items_, sep_keyval_, keys_ignore_, true, true); }
 
-	public static <x> String to_string(Object input_, String sep_items_, String sep_keyval_, String[] keys_ignore_) { return (generic.are_equal(generic.get_class(input_), HashMap.class) ? to_string_internal(input_, sep_items_, sep_keyval_, keys_ignore_, false) : strings.DEFAULT); }
+	public static <x> String to_string(Object input_, String sep_items_, String sep_keyval_, String[] keys_ignore_) { return (generic.are_equal(generic.get_class(input_), HashMap.class) ? to_string(input_, sep_items_, sep_keyval_, keys_ignore_, false, true) : strings.DEFAULT); }
 
-	public static String to_string(double[] input_, String separator_) { return to_string(to_big(input_), separator_); }
+	public static String to_string(double[] input_, String separator_) { return to_string(to_big(input_), separator_, true); }
 
-	public static String to_string(long[] input_, String separator_) { return to_string(to_big(input_), separator_); }
+	public static String to_string(long[] input_, String separator_) { return to_string(to_big(input_), separator_, true); }
 
-	public static String to_string(int[] input_, String separator_) { return to_string(to_big(input_), separator_); }
+	public static String to_string(int[] input_, String separator_) { return to_string(to_big(input_), separator_, true); }
 
-	public static String to_string(boolean[] input_, String separator_) { return to_string(to_big(input_), separator_); }
+	public static String to_string(boolean[] input_, String separator_) { return to_string(to_big(input_), separator_, true); }
 
-	public static String to_string(byte[] input_, String separator_) { return strings.from_bytes(input_); }
+	public static String to_string(byte[] input_, String separator_) { return strings.from_bytes_base64(input_); }
 
-	public static String to_string(char[] input_, String separator_) { return to_string(to_big(input_), separator_); }
+	public static String to_string(char[] input_, String separator_) { return to_string(to_big(input_), separator_, true); }
+
+	public static <x> String to_string(x[] input_, String separator_) { return to_string(input_, separator_, true); }
+
+	public static <x> String to_string(ArrayList<x> input_, String separator_) { return to_string(input_, separator_, true); }
 
 	@SuppressWarnings("unchecked")
-	public static <x> String to_string(Object input_, String separator_)
+	public static <x> String to_string(Object input_, String separator_, boolean include_brackets_)
 	{
 		String output = strings.DEFAULT;
 
@@ -948,7 +952,7 @@ public abstract class arrays extends parent_static
 		String separator = (strings.is_ok(separator_) ? separator_ : misc.SEPARATOR_ITEM);
 		boolean first_time = true;
 
-		if (generic.are_equal(type, Byte[].class)) output = strings.from_bytes((Byte[])input_);
+		if (generic.are_equal(type, Byte[].class)) output = strings.from_bytes_base64((Byte[])input_);
 		else if (is_array)
 		{
 			for (x item: (x[])input_)
@@ -970,6 +974,42 @@ public abstract class arrays extends parent_static
 			}
 		}
 
+		if (include_brackets_ && strings.is_ok(output)) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
+
+		return output;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <x, y> String to_string(Object input_, String sep_items_, String sep_keyval_, String[] keys_ignore_, boolean is_xy_, boolean include_brackets_)
+	{
+		if (!is_ok(input_) || !generic.are_equal(generic.get_class(input_), HashMap.class)) return strings.DEFAULT;
+
+		String output = "";
+		String separator1 = (strings.is_ok(sep_items_) ? sep_items_ : misc.SEPARATOR_ITEM);
+		String separator2 = (strings.is_ok(sep_keyval_) ? sep_keyval_ : misc.SEPARATOR_KEYVAL);
+
+		boolean first_time = true;
+
+		Object input = get_new_hashmap(input_, is_xy_);
+		
+		for (Object item: (is_xy_ ? (HashMap<x, y>)input : (HashMap<x, x>)input).entrySet())
+		{
+			Object[] temp = get_entry_key_val(item, is_xy_);
+			Object key = temp[0];
+			Object val = temp[1];					
+			if (!generic.is_ok(key) || value_exists(keys_ignore_, key)) continue; 
+
+			if (first_time) first_time = false;
+			else output += separator1;
+
+			String key2 = (generic.is_array(key) ? key.toString() : strings.to_string(key));
+			String val2 = to_string_val(val);
+
+			output += (key2 + separator2 + val2);
+		}
+
+		if (include_brackets_ && strings.is_ok(output)) output = misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE;
+		
 		return output;
 	}
 
@@ -1704,38 +1744,6 @@ public abstract class arrays extends parent_static
 		}
 		
 		return (out_is_y ? output_y : output_x); 
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <x, y> String to_string_internal(Object input_, String sep_items_, String sep_keyval_, String[] keys_ignore_, boolean is_xy_)
-	{
-		if (!is_ok(input_)) return strings.DEFAULT;
-
-		String output = "";
-		String separator1 = (strings.is_ok(sep_items_) ? sep_items_ : misc.SEPARATOR_ITEM);
-		String separator2 = (strings.is_ok(sep_keyval_) ? sep_keyval_ : misc.SEPARATOR_KEYVAL);
-
-		boolean first_time = true;
-
-		Object input = get_new_hashmap(input_, is_xy_);
-		
-		for (Object item: (is_xy_ ? (HashMap<x, y>)input : (HashMap<x, x>)input).entrySet())
-		{
-			Object[] temp = get_entry_key_val(item, is_xy_);
-			Object key = temp[0];
-			Object val = temp[1];					
-			if (!generic.is_ok(key) || value_exists(keys_ignore_, key)) continue; 
-
-			if (first_time) first_time = false;
-			else output += separator1;
-
-			String key2 = (generic.is_array(key) ? key.toString() : strings.to_string(key));
-			String val2 = to_string_val(val);
-
-			output += (key2 + separator2 + val2);
-		}
-
-		return output;
 	}
 
 	private static double[] remove_key_value(double[] array_, Object key_val_, boolean normalise_, boolean is_key_) { return to_small((Double[])remove_key_value(to_big(array_), key_val_, normalise_, is_key_)); }
