@@ -39,7 +39,7 @@ class db_mysql extends parent_db
 		if (!strings.is_ok(query)) return output;
 		
 		boolean return_data = db.query_returns_data(type_);
-		
+
 		if (!is_quicker) output = db_sql.execute_query(source_, query, return_data, cols_);
 		else
 		{
@@ -515,8 +515,10 @@ class db_mysql extends parent_db
 			if (!strings.is_ok(col) || !strings.is_ok(type2)) continue;
 
 			if (!query.equals("")) query += ", ";
-			String item2 = get_variable_static(col) + " " + type2 + " NOT NULL";
 
+			String item2 = get_variable_static(col) + " " + type2;
+			if (!type.equals(data.STRING_BIG)) item2 += " NOT NULL";
+			
 			String[] further = create_table_check_further(field.get_further());					
 			String def_val = strings.DEFAULT;
 

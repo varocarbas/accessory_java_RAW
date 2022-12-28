@@ -1,5 +1,8 @@
 package accessory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public abstract class db_common 
 {
 	public static final int MAX_SIZE_KEY = 30;
@@ -13,10 +16,6 @@ public abstract class db_common
 	public static final boolean DEFAULT_IS_QUICK = true;
 	public static final int DEFAULT_SIZE_DECIMAL = 7;
 	public static final int DEFAULT_SIZE_STRING = 30;
-
-	public static String[] populate_all_sources() { return new String[] { db_tests.SOURCE, db_credentials.SOURCE, db_info.SOURCE }; }
-
-	public static String[] get_all_sources() { return _alls.DB_SOURCES; }
 
 	public static db_field get_field_decimal_tiny() { return get_field_decimal(3); }
 
@@ -86,18 +85,150 @@ public abstract class db_common
 	
 	public static int get_max_length(int max_) { return (max_ <= WRONG_MAX_SIZE ? WRONG_MAX_LENGTH : max_); }
 	
-	public static Object get_val(Object val_, boolean is_quick_) { return (is_quick_ ? db.adapt_input(val_) : val_); }
-	
 	public static String get_field_col(String source_, String field_, boolean is_quick_) { return (is_quick_ ? get_col(source_, field_) : field_); }
 
 	public static String get_col(String source_, String field_) { return db.get_col(source_, field_); }
+	
+	public static String[] add_default_fields(String source_, String[] fields_)
+	{
+		if (!db.includes_default_fields(source_)) return fields_;
+		
+		ArrayList<String> temp = arrays.to_arraylist(fields_);
+		
+		for (String field: parent_ini_db.get_default_field_types()) { temp.add(field); }
+		
+		return arrays.to_array(temp);
+	}
+
+	public static String[] get_all_sources_inbuilt() { return _alls.DB_SOURCES_INBUILT; }
+
+	public static Object get_val_inbuilt(String source_, Object val_) { return (is_quick_inbuilt(source_) ? db.adapt_input(val_) : val_); }
+
+	public static boolean is_quick_inbuilt(String source_) 
+	{
+		if (source_.equals(db_tests.SOURCE)) return db_tests._is_quick;
+		else if (source_.equals(db_credentials.SOURCE)) return db_credentials._is_quick;
+		else if (source_.equals(db_crypto.SOURCE)) return db_crypto._is_quick;
+		else if (source_.equals(db_info.SOURCE)) return db_info._is_quick;
+		
+		return false; 
+	}
+	
+	public static void is_quick_inbuilt(String source_, boolean is_quick_) 
+	{ 
+		if (source_.equals(db_tests.SOURCE)) db_tests._is_quick = is_quick_;
+		else if (source_.equals(db_credentials.SOURCE)) db_credentials._is_quick = is_quick_;
+		else if (source_.equals(db_crypto.SOURCE)) db_crypto._is_quick = is_quick_;
+		else if (source_.equals(db_info.SOURCE)) db_info._is_quick = is_quick_;
+	}
+	
+	public static String get_field_col_inbuilt(String source_, String field_) { return (is_quick_inbuilt(source_) ? get_col_inbuilt(source_, field_) : field_); }
+
+	public static String get_col_inbuilt(String source_, String field_) 
+	{ 
+		HashMap<String, String> fields_cols = get_fields_cols_inbuilt(source_);
+		
+		return ((fields_cols != null && fields_cols.containsKey(field_)) ? fields_cols.get(field_) : strings.DEFAULT); 
+	}
+
+	public static String[] get_fields_inbuilt(String source_) 
+	{
+		if (source_.equals(db_tests.SOURCE))
+		{
+			if (db_tests._fields == null) db_tests.populate_fields();
+			
+			return db_tests._fields;
+		}
+		else if (source_.equals(db_credentials.SOURCE))
+		{
+			if (db_credentials._fields == null) db_credentials.populate_fields();
+			
+			return db_credentials._fields;
+		}
+		else if (source_.equals(db_crypto.SOURCE))
+		{
+			if (db_crypto._fields == null) db_crypto.populate_fields();
+			
+			return db_crypto._fields;
+		}
+		else if (source_.equals(db_info.SOURCE))
+		{
+			if (db_info._fields == null) db_info.populate_fields();
+			
+			return db_info._fields;
+		}
+		
+		return null;
+	}
+
+	public static String[] get_cols_inbuilt(String source_) 
+	{ 
+		if (source_.equals(db_tests.SOURCE))
+		{
+			if (db_tests._cols == null) db_tests._cols = get_cols_inbuilt_internal(source_);
+			
+			return db_tests._cols;
+		}
+		else if (source_.equals(db_credentials.SOURCE))
+		{
+			if (db_credentials._cols == null) db_credentials._cols = get_cols_inbuilt_internal(source_);
+			
+			return db_credentials._cols;
+		}
+		else if (source_.equals(db_crypto.SOURCE))
+		{
+			if (db_crypto._cols == null) db_crypto._cols = get_cols_inbuilt_internal(source_);
+			
+			return db_crypto._cols;
+		}
+		else if (source_.equals(db_info.SOURCE))
+		{
+			if (db_info._cols == null) db_info._cols = get_cols_inbuilt_internal(source_);
+			
+			return db_info._cols;
+		}
+		
+		return null;
+	}
+	
+	public static HashMap<String, String> get_fields_cols_inbuilt(String source_) 
+	{ 
+		if (source_.equals(db_tests.SOURCE))
+		{
+			if (db_tests._fields_cols == null) db_tests._fields_cols = get_fields_cols_inbuilt_internal(source_);
+			
+			return db_tests._fields_cols;
+		}
+		else if (source_.equals(db_credentials.SOURCE))
+		{
+			if (db_credentials._fields_cols == null) db_credentials._fields_cols = get_fields_cols_inbuilt_internal(source_);
+			
+			return db_credentials._fields_cols;
+		}
+		else if (source_.equals(db_crypto.SOURCE))
+		{
+			if (db_crypto._fields_cols == null) db_crypto._fields_cols = get_fields_cols_inbuilt_internal(source_);
+			
+			return db_crypto._fields_cols;
+		}
+		else if (source_.equals(db_info.SOURCE))
+		{
+			if (db_info._fields_cols == null) db_info._fields_cols = get_fields_cols_inbuilt_internal(source_);
+			
+			return db_info._fields_cols;
+		}
+		
+		return null;
+	} 
 
 	static void start()
 	{
-		db_tests.start();
-		
-		db_credentials.start();
-	
-		db_info.start();
+		for (String source: get_all_sources_inbuilt()) { get_fields_cols_inbuilt(source); }
 	}
+
+	static String[] populate_all_sources_inbuilt() { return new String[] { db_tests.SOURCE, db_credentials.SOURCE, db_crypto.SOURCE, db_info.SOURCE }; }
+
+	private static String[] get_cols_inbuilt_internal(String source_) { return db.get_cols(get_fields_cols_inbuilt(source_)); }
+
+	private static HashMap<String, String> get_fields_cols_inbuilt_internal(String source_) { return db.get_fields_cols(source_, get_fields_inbuilt(source_)); }
 }

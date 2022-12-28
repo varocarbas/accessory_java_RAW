@@ -32,7 +32,7 @@ abstract class db_queries extends parent_static
 	{
 		HashMap<String, String> vals = db.check_vals_error(source_, vals_raw_);
 		if (!arrays.is_ok(vals)) return;
-
+		
 		insert_internal(source_, vals);
 	}
 

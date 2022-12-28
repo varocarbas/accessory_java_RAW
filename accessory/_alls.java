@@ -33,7 +33,7 @@ public class _alls extends parent_first
 	public static HashMap<String, Class<?>> DATA_CLASSES = null;
 	public static HashMap<Class<?>, Class<?>[]> DATA_COMPATIBLE = null;
 
-	public static String[] DB_SOURCES = null;
+	public static String[] DB_SOURCES_INBUILT = null;
 	public static String[] DB_QUERIES_DATA = null;
 
 	public static HashMap<String, String[]> DB_WHERE_OPERANDS = null;
@@ -77,7 +77,7 @@ public class _alls extends parent_first
 		DATA_CLASSES = data.populate_all_classes();
 		DATA_COMPATIBLE = data.populate_all_compatible();
 
-		DB_SOURCES = db_common.populate_all_sources();
+		DB_SOURCES_INBUILT = db_common.populate_all_sources_inbuilt();
 		DB_QUERIES_DATA = db.populate_all_queries_data();
 
 		DB_WHERE_OPERANDS = db_where.populate_all_operands();

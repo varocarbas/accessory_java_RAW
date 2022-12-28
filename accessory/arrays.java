@@ -72,7 +72,7 @@ public abstract class arrays extends parent_static
 		else if (type.equals(byte[].class)) size = get_size((byte[])input_);
 		else if (type.equals(char[].class)) size = get_size((char[])input_);
 		else if (generic.are_equal(type, ArrayList.class)) size = ((ArrayList<x>)input_).size();
-		else if (generic.are_equal(type, HashMap.class)) size = (is_xy(input_) ? (HashMap<x, y>)input_ : (HashMap<x, x>)input_).size();
+		else if (generic.are_equal(type, HashMap.class)) size = (hashmap_is_xy(input_) ? (HashMap<x, y>)input_ : (HashMap<x, x>)input_).size();
 		else size = ((Object[])input_).length;
 
 		return size;
@@ -1201,6 +1201,15 @@ public abstract class arrays extends parent_static
 	public static Class<?> get_class_items(char[] input_) { return char.class; }
 
 	public static <x> Class<?> get_class_items(Object input_) { return get_class_items(input_, true); }
+	
+	public static boolean hashmap_is_xy(Object input_)
+	{
+		Class<?>[] types = get_classes_items(input_, false);
+
+		return (types != null && !generic.are_equal(types[0], types[1]));
+	}
+	
+	public static boolean hashmap_is(Object input_, Class<?>[] types_) { return arrays.are_equal(types_, get_classes_items(input_, false)); }
 
 	static <x, y> Class<?>[] get_classes_items(HashMap<x, y> input_, boolean check_input_) { return new Class<?>[] { get_class_key_val(input_, true, true, check_input_), get_class_key_val(input_, false, true, check_input_) }; }
 
@@ -1324,13 +1333,6 @@ public abstract class arrays extends parent_static
 
 	static Class<?>[] populate_all_classes_numeric() { return new Class<?>[] { Double[].class, double[].class, Long[].class, long[].class, Integer[].class, int[].class }; }
 
-	private static boolean is_xy(Object input_)
-	{
-		Class<?>[] types = get_classes_items(input_, false);
-
-		return generic.are_equal(types[0], types[1]);
-	}
-
 	private static <x> x[] get_new_array(x[] input_) { return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length)); }
 
 	private static <x> ArrayList<x> get_new_arraylist(ArrayList<x> input_) { return (!is_ok(input_) ? new ArrayList<x>() : new ArrayList<x>(input_)); }
@@ -1440,7 +1442,7 @@ public abstract class arrays extends parent_static
 		return false;
 	}
 
-	private static <x, y> Object get_new_hashmap(Object input_) { return get_new_hashmap(input_, is_xy(input_)); }
+	private static <x, y> Object get_new_hashmap(Object input_) { return get_new_hashmap(input_, hashmap_is_xy(input_)); }
 
 	@SuppressWarnings("unchecked")
 	private static <x, y> Object get_new_hashmap(Object input_, boolean is_xy_) 
@@ -1719,7 +1721,7 @@ public abstract class arrays extends parent_static
 	{ 
 		if (!generic.are_equal(generic.get_class(input_), HashMap.class)) return null;
 		
-		boolean is_xy = is_xy(input_);
+		boolean is_xy = hashmap_is_xy(input_);
 		Object input = get_new_hashmap(input_, is_xy);
 		
 		boolean out_is_y = (is_xy && !is_keys_);
@@ -1778,7 +1780,7 @@ public abstract class arrays extends parent_static
 
 		if (generic.are_equal(type, HashMap.class))
 		{
-			boolean is_xy = is_xy(array_);
+			boolean is_xy = hashmap_is_xy(array_);
 
 			output = (is_xy ? new HashMap<x, y>() : new HashMap<x, x>());
 			Object array = get_new_hashmap(array_, is_xy);

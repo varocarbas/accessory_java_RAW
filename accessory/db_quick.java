@@ -78,6 +78,8 @@ public abstract class db_quick
 		if (any_source_mysql != null) db_quicker.update_conn_info(any_source_mysql);
 	}
 	
+	public static boolean input_is_ok(Object input_) { return (db.input_is_ok(input_) && !arrays.hashmap_is_xy(input_)); }
+	
 	public static boolean exists(String source_, String where_cols_) 
 	{
 		boolean output = db.WRONG_BOOLEAN;
@@ -236,5 +238,5 @@ public abstract class db_quick
 		else db.update_quick(source_, vals_, where_cols_);		
 	}
 	
-	static void start() { add_sources_quicker(db_common.get_all_sources()); }
+	static void start() { add_sources_quicker(db_common.get_all_sources_inbuilt()); }
 }

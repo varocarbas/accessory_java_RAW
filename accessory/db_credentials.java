@@ -14,47 +14,13 @@ public abstract class db_credentials
 	public static final String PASSWORD = types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD;
 	public static final String IS_ENC = types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC;
 	
-	private static String[] _fields = null;
-	private static String[] _cols = null;
-	private static HashMap<String, String> _fields_cols = null;
+	static String[] _fields = null;
+	static String[] _cols = null;
+	static HashMap<String, String> _fields_cols = null;
 	
-	private static boolean _is_quick = db_common.DEFAULT_IS_QUICK;
+	static boolean _is_quick = db_common.DEFAULT_IS_QUICK;
 	
-	public static boolean is_quick() { return _is_quick; }
-	
-	public static void is_quick(boolean is_quick_) { _is_quick = is_quick_; }
-	
-	public static String get_field_col(String field_) { return (_is_quick ? get_col(field_) : field_); }
-
-	public static String get_col(String field_) 
-	{ 
-		get_fields_cols();
-		
-		return (_fields_cols.containsKey(field_) ? _fields_cols.get(field_) : strings.DEFAULT); 
-	}
-
-	public static String[] get_fields() 
-	{
-		if (_fields == null) _fields = new String[] { ID, ID_ENC, USER, USERNAME, PASSWORD, IS_ENC };
-		
-		return _fields; 
-	}
-
-	public static String[] get_cols() 
-	{
-		if (_cols == null) get_fields_cols();
-		
-		return db.get_cols(_fields_cols); 
-	}
-
-	public static HashMap<String, String> get_fields_cols() 
-	{ 
-		if (_fields_cols == null) _fields_cols = db.get_fields_cols(SOURCE, get_fields());
-			
-		return _fields_cols; 
-	} 
-
-	static void start() { get_fields_cols(); }
+	static void populate_fields() { _fields = db_common.add_default_fields(SOURCE, new String[] { ID, ID_ENC, USER, USERNAME, PASSWORD, IS_ENC }); }
 	
 	static boolean update_info(String id_, String user_, HashMap<String, String> vals_)
 	{
@@ -75,9 +41,9 @@ public abstract class db_credentials
 		{
 			HashMap<String, String> vals2 = new HashMap<String, String>();
 			
-			for (Entry<String, Object> val: vals.entrySet()) { vals2.put(get_col(val.getKey()), db.adapt_input(val.getValue())); }
+			for (Entry<String, Object> val: vals.entrySet()) { vals2.put(db_common.get_col_inbuilt(SOURCE, val.getKey()), db.adapt_input(val.getValue())); }
 
-			db_quick.insert_update(SOURCE, get_col(ID), vals2, where);
+			db_quick.insert_update(SOURCE, db_common.get_col_inbuilt(SOURCE, ID), vals2, where);
 			
 			output = db_quick.is_ok(SOURCE);
 		}
@@ -93,7 +59,7 @@ public abstract class db_credentials
 	
 	static String get_username_password(String id_, String user_, boolean is_encrypted_, boolean is_username_) 
 	{ 
-		String field_col = get_field_col(is_username_ ? USERNAME : PASSWORD);
+		String field_col = db_common.get_field_col_inbuilt(SOURCE, (is_username_ ? USERNAME : PASSWORD));
 		String where = get_db_where(id_, user_, is_encrypted_);
 		
 		return (_is_quick ? db_quick.select_one_string(SOURCE, field_col, where, db.DEFAULT_ORDER) : db.select_one_string(SOURCE, field_col, where, db.DEFAULT_ORDER)); 

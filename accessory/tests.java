@@ -131,9 +131,11 @@ public class tests extends parent_tests
 		is_ok = _instance.run_method(class0, name, new Class<?>[] { String.class, String.class }, args, target);
 		outputs.put(name, is_ok);
 		
+		db_common.is_quick_inbuilt(source, false);
+		
 		name = "insert";
 
-		HashMap<String, Object> vals = (HashMap<String, Object>)get_vals(source, false);
+		HashMap<String, Object> vals = (HashMap<String, Object>)get_vals(source);
 
 		args = new ArrayList<Object>();
 		args.add(source);
@@ -141,11 +143,14 @@ public class tests extends parent_tests
 
 		is_ok = _instance.run_method(class0, name, new Class<?>[] { String.class, HashMap.class }, args, target);
 		outputs.put(name, is_ok);
+
 		if (!is_ok) return outputs;
+
+		db_common.is_quick_inbuilt(source, true);
 		
 		name = "insert_quick";
 
-		HashMap<String, String> vals_quick = (HashMap<String, String>)get_vals(source, true);
+		HashMap<String, String> vals_quick = (HashMap<String, String>)get_vals(source);
 
 		args = new ArrayList<Object>();
 		args.add(source);
@@ -153,6 +158,8 @@ public class tests extends parent_tests
 
 		is_ok = _instance.run_method(class0, name, new Class<?>[] { String.class, HashMap.class }, args, target);
 		outputs.put(name, is_ok);
+
+		db_common.is_quick_inbuilt(source, false);
 		
 		name = "update";
 
@@ -174,6 +181,8 @@ public class tests extends parent_tests
 		is_ok = _instance.run_method(class0, name, new Class<?>[] { String.class, HashMap.class, db_where[].class }, args, target);
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
+
+		db_common.is_quick_inbuilt(source, true);
 		
 		name = "update_quick";
 
@@ -257,10 +266,12 @@ public class tests extends parent_tests
 		return outputs;	
 	}
 	
-	private static Object get_vals(String source_, boolean is_quick_)
+	private static Object get_vals(String source_)
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		HashMap<String, String> vals_quick = new HashMap<String, String>();
+
+		boolean is_quick = db_common.is_quick_inbuilt(source_);
 
 		int max = 123456;
 		double max2 = 123456789.123;
@@ -276,11 +287,11 @@ public class tests extends parent_tests
 			else if (field.equals(db_tests.STRING)) val = strings.get_random(strings.SIZE_SMALL);
 			else if (field.equals(db_tests.BOOLEAN)) val = generic.get_random_boolean();
 			
-			if (is_quick_) vals_quick = get_val_quick(source_, field, val, vals_quick);
+			if (is_quick) vals_quick = get_val_quick(source_, field, val, vals_quick);
 			else vals.put(field, val);
 		}
-				
-		return (is_quick_ ? vals_quick : vals);
+		
+		return (is_quick ? vals_quick : vals);
 	}
 
 	private static HashMap<String, String> get_val_quick(String source_, String field_, Object val_, HashMap<String, String> all_)

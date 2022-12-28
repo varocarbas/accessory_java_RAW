@@ -36,6 +36,8 @@ abstract class db_quicker
 	public static boolean change_table_name_queries(String source_, String name_) { return db_static.change_table_name_queries(source_, name_); }
 	
 	public static boolean change_col_name_queries(String source_, String field_, String name_) { return db_static.change_col_name_queries(source_, field_, name_); }
+	
+	public static boolean input_is_ok(Object input_) { return db_quick.input_is_ok(input_); }
 
 	public static boolean exists(String type_, String source_, String where_cols_) 
 	{
