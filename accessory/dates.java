@@ -327,7 +327,7 @@ public abstract class dates extends parent_static
 		String[] temp = strings.split(":", time_);
 
 		int size = arrays.get_size(temp);
-		if (size < 2 || size > 3 || strings.to_number_int(temp[0]) > 99) return output;
+		if (size < 2 || size > 3 || !strings.is_number(temp[0]) || !strings.is_number(temp[1]) || (size == 3 && !strings.is_number(temp[2])) || strings.to_number_int(temp[0]) > 99) return output;
 		
 		int i2 = 3;
 		if (no_hours_) i2--;

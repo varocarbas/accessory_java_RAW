@@ -133,92 +133,98 @@ public abstract class db_common
 
 	public static String[] get_fields_inbuilt(String source_) 
 	{
+		String[] output = null;
+		
 		if (source_.equals(db_tests.SOURCE))
 		{
 			if (db_tests._fields == null) db_tests.populate_fields();
 			
-			return db_tests._fields;
+			output = (String[])arrays.get_new(db_tests._fields);
 		}
 		else if (source_.equals(db_credentials.SOURCE))
 		{
 			if (db_credentials._fields == null) db_credentials.populate_fields();
 			
-			return db_credentials._fields;
+			output = (String[])arrays.get_new(db_credentials._fields);
 		}
 		else if (source_.equals(db_crypto.SOURCE))
 		{
 			if (db_crypto._fields == null) db_crypto.populate_fields();
 			
-			return db_crypto._fields;
+			output = (String[])arrays.get_new(db_crypto._fields);
 		}
 		else if (source_.equals(db_info.SOURCE))
 		{
 			if (db_info._fields == null) db_info.populate_fields();
 			
-			return db_info._fields;
+			output = (String[])arrays.get_new(db_info._fields);
 		}
 		
-		return null;
+		return output;
 	}
 
 	public static String[] get_cols_inbuilt(String source_) 
 	{ 
+		String[] output = null;
+		
 		if (source_.equals(db_tests.SOURCE))
 		{
-			if (db_tests._cols == null) db_tests._cols = get_cols_inbuilt_internal(source_);
+			if (db_tests._cols == null) db_tests._cols = (String[])arrays.get_new(get_cols_inbuilt_internal(source_));
 			
-			return db_tests._cols;
+			output = (String[])arrays.get_new(db_tests._cols);
 		}
 		else if (source_.equals(db_credentials.SOURCE))
 		{
-			if (db_credentials._cols == null) db_credentials._cols = get_cols_inbuilt_internal(source_);
+			if (db_credentials._cols == null) db_credentials._cols = (String[])arrays.get_new(get_cols_inbuilt_internal(source_));
 			
-			return db_credentials._cols;
+			output = (String[])arrays.get_new(db_credentials._cols);
 		}
 		else if (source_.equals(db_crypto.SOURCE))
 		{
-			if (db_crypto._cols == null) db_crypto._cols = get_cols_inbuilt_internal(source_);
+			if (db_crypto._cols == null) db_crypto._cols = (String[])arrays.get_new(get_cols_inbuilt_internal(source_));
 			
-			return db_crypto._cols;
+			output = (String[])arrays.get_new(db_crypto._cols);
 		}
 		else if (source_.equals(db_info.SOURCE))
 		{
-			if (db_info._cols == null) db_info._cols = get_cols_inbuilt_internal(source_);
+			if (db_info._cols == null) db_info._cols = (String[])arrays.get_new(get_cols_inbuilt_internal(source_));
 			
-			return db_info._cols;
+			output = (String[])arrays.get_new(db_info._cols);
 		}
 		
-		return null;
+		return output;
 	}
 	
 	public static HashMap<String, String> get_fields_cols_inbuilt(String source_) 
 	{ 
+		HashMap<String, String> output = null;
+		
 		if (source_.equals(db_tests.SOURCE))
 		{
-			if (db_tests._fields_cols == null) db_tests._fields_cols = get_fields_cols_inbuilt_internal(source_);
+			if (db_tests._fields_cols == null) db_tests._fields_cols = arrays.get_new_hashmap_xx(get_fields_cols_inbuilt_internal(source_));
 			
-			return db_tests._fields_cols;
+			output = arrays.get_new_hashmap_xx(db_tests._fields_cols);
 		}
 		else if (source_.equals(db_credentials.SOURCE))
 		{
-			if (db_credentials._fields_cols == null) db_credentials._fields_cols = get_fields_cols_inbuilt_internal(source_);
+			if (db_credentials._fields_cols == null) db_credentials._fields_cols = arrays.get_new_hashmap_xx(get_fields_cols_inbuilt_internal(source_));
 			
-			return db_credentials._fields_cols;
+			output = arrays.get_new_hashmap_xx(db_credentials._fields_cols);
 		}
 		else if (source_.equals(db_crypto.SOURCE))
 		{
-			if (db_crypto._fields_cols == null) db_crypto._fields_cols = get_fields_cols_inbuilt_internal(source_);
+			if (db_crypto._fields_cols == null) db_crypto._fields_cols = arrays.get_new_hashmap_xx(get_fields_cols_inbuilt_internal(source_));
 			
-			return db_crypto._fields_cols;
+			output = arrays.get_new_hashmap_xx(db_crypto._fields_cols);
 		}
 		else if (source_.equals(db_info.SOURCE))
 		{
-			if (db_info._fields_cols == null) db_info._fields_cols = get_fields_cols_inbuilt_internal(source_);
+			if (db_info._fields_cols == null) db_info._fields_cols = arrays.get_new_hashmap_xx(get_fields_cols_inbuilt_internal(source_));
 			
-			return db_info._fields_cols;
+			output = arrays.get_new_hashmap_xx(db_info._fields_cols);
 		}
 		
-		return null;
+		return output;
 	} 
 
 	static void start()

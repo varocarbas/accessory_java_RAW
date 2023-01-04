@@ -316,7 +316,7 @@ abstract class db_quicker
 	public static ArrayList<HashMap<String, String>> select(String type_, String source_, String[] cols_, String where_cols_, int max_rows_, String order_cols_) 
 	{	
 		db_static.initialise();
-		
+
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
 
 		try { output = db_mysql.execute_static(source_, db.QUERY_SELECT, cols_, null, where_cols_, max_rows_, order_cols_, null, type_); }

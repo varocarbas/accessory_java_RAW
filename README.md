@@ -9,7 +9,7 @@ Tested with OpenJDK 11.0.15.
 
 Articles about this code:
 - [Encryption](https://www.codeproject.com/Articles/5349970/Encryption-accessory-java).
-
+- [Context, conventions, structure, evolution](https://www.codeproject.com/Articles/5351092/Context-conventions-structure-evolution-accessory).
 
 # \_RAW repositories
 All the \_RAW repositories include code which I use for personal purposes. The overall structure and used conventions are assumed to be more than enough for an experienced programmer to adequately understand and appreciate everything. 
