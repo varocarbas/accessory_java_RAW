@@ -6,7 +6,7 @@ public abstract class os
 {
 	public static final int WRONG_WINDOW_ID = -1;
 
-	public static final String ERROR_EXECUTE = types.ERROR_OS_EXECUTE;
+	public static final String ERROR_EXECUTE = _types.ERROR_OS_EXECUTE;
 
 	public static boolean is_windows() { return _basic.is_windows(); }
 

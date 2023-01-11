@@ -17,11 +17,11 @@ public abstract class parent_ini_db
 	{
 		HashMap<String, Object> vals = get_setup_vals_default();
 
-		if (strings.is_ok(setup_)) vals.put(types.CONFIG_DB_SETUP, setup_);
-		if (strings.is_ok(user_)) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USER, user_); 
-		if (strings.is_ok(host_)) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
+		if (strings.is_ok(setup_)) vals.put(_types.CONFIG_DB_SETUP, setup_);
+		if (strings.is_ok(user_)) vals.put(_types.CONFIG_DB_SETUP_CREDENTIALS_USER, user_); 
+		if (strings.is_ok(host_)) vals.put(_types.CONFIG_DB_SETUP_HOST, host_); 
 
-		vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, encrypted_);
+		vals.put(_types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, encrypted_);
 
 		return vals;	
 	}
@@ -32,12 +32,12 @@ public abstract class parent_ini_db
 	{
 		HashMap<String, Object> vals = get_setup_vals_default();
 
-		if (strings.is_ok(setup_)) vals.put(types.CONFIG_DB_SETUP, setup_);
-		if (strings.is_ok(username_)) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME, username_); 
-		if (password_ != null) vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD, password_); 
-		if (strings.is_ok(host_)) vals.put(types.CONFIG_DB_SETUP_HOST, host_); 
+		if (strings.is_ok(setup_)) vals.put(_types.CONFIG_DB_SETUP, setup_);
+		if (strings.is_ok(username_)) vals.put(_types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME, username_); 
+		if (password_ != null) vals.put(_types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD, password_); 
+		if (strings.is_ok(host_)) vals.put(_types.CONFIG_DB_SETUP_HOST, host_); 
 
-		vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, false);
+		vals.put(_types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, false);
 
 		return vals;	
 	}
@@ -46,21 +46,21 @@ public abstract class parent_ini_db
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 
-		vals.put(types.CONFIG_DB_SETUP, db.DEFAULT_SETUP);
-		vals.put(types.CONFIG_DB_SETUP_TYPE, db.DEFAULT_TYPE);
-		vals.put(types.CONFIG_DB_SETUP_MAX_POOL, db.DEFAULT_MAX_POOL);
-		vals.put(types.CONFIG_DB_SETUP_HOST, db.DEFAULT_HOST);
-		vals.put(types.CONFIG_DB_SETUP_CREDENTIALS_MEMORY, db.DEFAULT_CREDENTIALS_MEMORY);
+		vals.put(_types.CONFIG_DB_SETUP, db.DEFAULT_SETUP);
+		vals.put(_types.CONFIG_DB_SETUP_TYPE, db.DEFAULT_TYPE);
+		vals.put(_types.CONFIG_DB_SETUP_MAX_POOL, db.DEFAULT_MAX_POOL);
+		vals.put(_types.CONFIG_DB_SETUP_HOST, db.DEFAULT_HOST);
+		vals.put(_types.CONFIG_DB_SETUP_CREDENTIALS_MEMORY, db.DEFAULT_CREDENTIALS_MEMORY);
 		
 		return vals;
 	}
 
 	public static boolean setup_vals_are_ok(HashMap<String, Object> setup_vals_)
 	{
-		String instance = _keys.get_key(types.WHAT_INSTANCE);
+		String instance = _keys.get_key(_types.WHAT_INSTANCE);
 
-		if (!arrays.keys_exist(setup_vals_, new String[] { types.CONFIG_DB, types.CONFIG_DB_SETUP, types.CONFIG_DB_SETUP_TYPE, instance })) return false;
-		if (!strings.are_ok(new String[] { (String)setup_vals_.get(types.CONFIG_DB), (String)setup_vals_.get(types.CONFIG_DB_SETUP), (String)setup_vals_.get(types.CONFIG_DB_SETUP_TYPE) })) return false;
+		if (!arrays.keys_exist(setup_vals_, new String[] { _types.CONFIG_DB, _types.CONFIG_DB_SETUP, _types.CONFIG_DB_SETUP_TYPE, instance })) return false;
+		if (!strings.are_ok(new String[] { (String)setup_vals_.get(_types.CONFIG_DB), (String)setup_vals_.get(_types.CONFIG_DB_SETUP), (String)setup_vals_.get(_types.CONFIG_DB_SETUP_TYPE) })) return false;
 
 		return true;
 	}
@@ -115,7 +115,7 @@ public abstract class parent_ini_db
 		boolean is_ok = true;
 		String db = config.check_type(db_);
 
-		config.update_ini(db, types.CONFIG_DB_NAME, (strings.is_ok(name_) ? name_ : get_db_name_default(db)));		
+		config.update_ini(db, _types.CONFIG_DB_NAME, (strings.is_ok(name_) ? name_ : get_db_name_default(db)));		
 		HashMap<String, Object> setup_vals = get_setup_vals(db, setup_vals_);
 
 		String any_source = null;
@@ -130,7 +130,7 @@ public abstract class parent_ini_db
 			if (!populate_source(id, (String)temp[0], arrays.get_new_hashmap_xy((HashMap<String, Object[]>)temp[1]), setup_vals, (boolean)temp[2]))
 			{
 				HashMap<String, Object> info = new HashMap<String, Object>();
-				info.put(_keys.get_key(types.WHAT_TYPE), parent_ini.ERROR_SOURCE);
+				info.put(_keys.get_key(_types.WHAT_TYPE), parent_ini.ERROR_SOURCE);
 				info.put("source", id);
 
 				_ini.manage_error(info);
@@ -174,7 +174,7 @@ public abstract class parent_ini_db
 	{
 		if (!setup_vals_are_ok(setup_vals_)) return false;
 
-		String db = config.check_type((String)setup_vals_.get(types.CONFIG_DB));
+		String db = config.check_type((String)setup_vals_.get(_types.CONFIG_DB));
 		String source = config.check_type(source_);
 		if (!strings.is_ok(db) || !strings.is_ok(source) || !strings.is_ok(table_) || !arrays.is_ok(fields_)) return false;
 
@@ -200,7 +200,7 @@ public abstract class parent_ini_db
 
 	private void start_quicker(HashMap<String, Object> setup_vals_, String any_source_)
 	{
-		if (setup_vals_.get(types.CONFIG_DB_SETUP_TYPE).equals(db_quicker_mysql.TYPE)) db_quicker_mysql.update_conn_info(any_source_);
+		if (setup_vals_.get(_types.CONFIG_DB_SETUP_TYPE).equals(db_quicker_mysql.TYPE)) db_quicker_mysql.update_conn_info(any_source_);
 	}
 	
 	private void populate_all_internal(HashMap<String, Object> dbs_setup_) 
@@ -218,14 +218,14 @@ public abstract class parent_ini_db
 
 	private String get_table_default(String source_, String db_) 
 	{ 
-		String output = strings.remove(new String[] { types.SEPARATOR + "source" }, source_);
+		String output = strings.remove(new String[] { _types.SEPARATOR + "source" }, source_);
 
 		return get_default_common(output, db_, null, null);
 	}
 
 	private String get_col_default(String field_, String source_, String table_, String db_) 
 	{ 
-		String output = strings.remove(new String[] { "common_field" + types.SEPARATOR, "default_field" + types.SEPARATOR, "field" + types.SEPARATOR }, field_); 
+		String output = strings.remove(new String[] { "common_field" + _types.SEPARATOR, "default_field" + _types.SEPARATOR, "field" + _types.SEPARATOR }, field_); 
 
 		return get_default_common(output, db_, source_, table_);
 	}
@@ -235,11 +235,11 @@ public abstract class parent_ini_db
 		String output = input_;
 		
 		String source = source_;
-		String target = types.SEPARATOR + "source";
+		String target = _types.SEPARATOR + "source";
 		if (strings.contains_end(target, source, true)) source = strings.substring_before(target, source, true);
 		
 		String[] items = new String[] { db_, source, table_, "config", "db" };
-		for (String item: items) { output = strings.remove(new String[] { types.SEPARATOR + item, item + types.SEPARATOR, item }, output); }
+		for (String item: items) { output = strings.remove(new String[] { _types.SEPARATOR + item, item + _types.SEPARATOR, item }, output); }
 
 		return output;
 	}
@@ -270,14 +270,14 @@ public abstract class parent_ini_db
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>(arrays.is_ok(vals_) ? vals_ : get_setup_vals_default());
 
-		if (!vals.containsKey(types.CONFIG_DB)) vals.put(types.CONFIG_DB, db_);
-		if (!vals.containsKey(types.CONFIG_DB_SETUP)) vals.put(types.CONFIG_DB_SETUP, db_);
-		if (!vals.containsKey(types.CONFIG_DB_SETUP_TYPE)) vals.put(types.CONFIG_DB_SETUP_TYPE, db.DEFAULT_TYPE);
+		if (!vals.containsKey(_types.CONFIG_DB)) vals.put(_types.CONFIG_DB, db_);
+		if (!vals.containsKey(_types.CONFIG_DB_SETUP)) vals.put(_types.CONFIG_DB_SETUP, db_);
+		if (!vals.containsKey(_types.CONFIG_DB_SETUP_TYPE)) vals.put(_types.CONFIG_DB_SETUP_TYPE, db.DEFAULT_TYPE);
 
-		vals = parent_ini_config.get_config_default_generic(types.CONFIG_DB_SETUP_CREDENTIALS, vals);
-		if (arrays.value_exists(config.update_ini((String)vals.get(types.CONFIG_DB_SETUP), vals), false)) return null;
+		vals = parent_ini_config.get_config_default_generic(_types.CONFIG_DB_SETUP_CREDENTIALS, vals);
+		if (arrays.value_exists(config.update_ini((String)vals.get(_types.CONFIG_DB_SETUP), vals), false)) return null;
 
-		vals.put(_keys.get_key(types.WHAT_INSTANCE), db.get_instance_ini((String)vals.get(types.CONFIG_DB_SETUP_TYPE)));
+		vals.put(_keys.get_key(_types.WHAT_INSTANCE), db.get_instance_ini((String)vals.get(_types.CONFIG_DB_SETUP_TYPE)));
 
 		return vals;
 	}
@@ -286,7 +286,7 @@ public abstract class parent_ini_db
 	{
 		HashMap<String, Object> vals = new HashMap<String, Object>(vals_);
 
-		if (strings.is_ok(db_name_)) vals.put(types.CONFIG_DB_NAME, db_name_);
+		if (strings.is_ok(db_name_)) vals.put(_types.CONFIG_DB_NAME, db_name_);
 		
 		return vals;	
 	}

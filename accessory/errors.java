@@ -10,7 +10,7 @@ public abstract class errors extends parent_static
 	public static final String TYPE = _keys.TYPE;
 	public static final String MESSAGE = _keys.MESSAGE;
 	
-	public static final String DEFAULT_TYPE = types.ERROR_DEFAULT;
+	public static final String DEFAULT_TYPE = _types.ERROR_DEFAULT;
 	public static final String DEFAULT_MESSAGE = DEFAULT_TYPE;
 	public static final String DEFAULT_SEPARATOR = misc.SEPARATOR_CONTENT;
 

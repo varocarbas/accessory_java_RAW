@@ -382,7 +382,14 @@ abstract class db_quicker
 		catch (Exception e) { manage_error(type_, strings.to_string(source_), e, null, null, null, strings.to_string(where_cols_), null, db.WRONG_INT, vals_); }		
 	}
 
-	public static ArrayList<HashMap<String, String>> execute_query(String type_, String source_, String query_, boolean return_data_, String[] cols_) { return db_sql.execute_query_static(type_, source_, query_, return_data_, cols_, db_static.get_username(), db_static.get_password(), db_static.get_db_name(), db_static.get_host(), db_static.get_max_pool()); }
+	public static ArrayList<HashMap<String, String>> execute_query(String type_, String source_, String query_, boolean return_data_, String[] cols_) 
+	{ 
+		ArrayList<HashMap<String, String>> output = null;
+	
+		if (db_sql.is_sql(type_)) output = db_sql.execute_query_static(type_, source_, query_, return_data_, cols_, db_static.get_username(), db_static.get_password(), db_static.get_db_name(), db_static.get_host(), db_static.get_max_pool()); 
+	
+		return output;
+	}
 	
 	private static Object get_val(String col_, HashMap<String, String> item_, String type_) 
 	{ 

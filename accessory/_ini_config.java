@@ -27,16 +27,16 @@ class _ini_config extends parent_ini_config
 
 	private static void populate_generic_basic()
 	{
-		String type = types.CONFIG_BASIC;
+		String type = _types.CONFIG_BASIC;
 
-		config.update_ini(type, types.CONFIG_BASIC_NAME, _defaults.APP_NAME);
+		config.update_ini(type, _types.CONFIG_BASIC_NAME, _defaults.APP_NAME);
 
-		for (String subtype: types.get_subtypes(types.CONFIG_BASIC_DIR)) { config.update_ini(type, subtype, paths.get_default_dir(subtype)); }
+		for (String subtype: _types.get_subtypes(_types.CONFIG_BASIC_DIR)) { config.update_ini(type, subtype, paths.get_default_dir(subtype)); }
 	}
 
 	private boolean populate_generic_credentials()
 	{
-		String type = types.CONFIG_CREDENTIALS;
+		String type = _types.CONFIG_CREDENTIALS;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();		
 		vals.put(credentials.CONFIG_WHERE, credentials.DEFAULT_WHERE);
@@ -50,7 +50,7 @@ class _ini_config extends parent_ini_config
 
 	private boolean populate_generic_crypto()
 	{
-		String type = types.CONFIG_CRYPTO;
+		String type = _types.CONFIG_CRYPTO;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		vals.put(crypto.CONFIG_STORAGE, crypto.DEFAULT_STORAGE);
@@ -64,7 +64,7 @@ class _ini_config extends parent_ini_config
 
 	private boolean populate_generic_logs()
 	{
-		String type = types.CONFIG_LOGS;
+		String type = _types.CONFIG_LOGS;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		vals.put(logs.CONFIG_OUT_SCREEN, logs.DEFAULT_OUT_SCREEN);
@@ -76,7 +76,7 @@ class _ini_config extends parent_ini_config
 
 	private boolean populate_generic_numbers()
 	{
-		String type = types.CONFIG_NUMBERS;
+		String type = _types.CONFIG_NUMBERS;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		vals.put(numbers.CONFIG_PERC_REF_LARGER, numbers.DEFAULT_PERC_REF_LARGER);
@@ -86,7 +86,7 @@ class _ini_config extends parent_ini_config
 
 	private boolean populate_generic_strings()
 	{
-		String type = types.CONFIG_STRINGS;
+		String type = _types.CONFIG_STRINGS;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		vals.put(strings.CONFIG_ENCODING, strings.DEFAULT_ENCODING);

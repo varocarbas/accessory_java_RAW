@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class db_order extends parent
 {	
-	public static final String ORDER_ASC = types.DB_ORDER_ASC;
-	public static final String ORDER_DESC = types.DB_ORDER_DESC;
+	public static final String ORDER_ASC = _types.DB_ORDER_ASC;
+	public static final String ORDER_DESC = _types.DB_ORDER_DESC;
 
-	public static final String DEFAULT_ORDER = types.DB_ORDER_ASC;
+	public static final String DEFAULT_ORDER = _types.DB_ORDER_ASC;
 	public static final boolean DEFAULT_IS_FIELD_COL = true;
 	public static final boolean DEFAULT_IS_QUICK = false;
 	
@@ -39,11 +39,11 @@ public class db_order extends parent
 		return output;
 	}
 
-	public static boolean order_is_ok(String order_) { return val_is_ok_common(order_, types.DB_ORDER, DEFAULT_ORDER); }
+	public static boolean order_is_ok(String order_) { return val_is_ok_common(order_, _types.DB_ORDER, DEFAULT_ORDER); }
 
-	public static String check_order(String order_) { return check_val_common(order_, types.DB_ORDER, DEFAULT_ORDER); }
+	public static String check_order(String order_) { return check_val_common(order_, _types.DB_ORDER, DEFAULT_ORDER); }
 
-	public static String order_to_string(String order_) { return val_to_string_common(order_, types.DB_ORDER, DEFAULT_ORDER); }
+	public static String order_to_string(String order_) { return val_to_string_common(order_, _types.DB_ORDER, DEFAULT_ORDER); }
 
 	public static db_order[] get_orders_desc(String source_, String[] fields_) { return get_orders_desc_asc(source_, fields_, ORDER_DESC, false); }
 
@@ -125,7 +125,7 @@ public class db_order extends parent
 	{
 		_temp_source = db.check_source(source_);
 		_temp_field_col_else = ((is_field_col_ && !is_quick_) ? db.check_field(_temp_source, field_col_else_) : field_col_else_);
-		_temp_order = types.check_type(order_, types.DB_ORDER);
+		_temp_order = _types.check_type(order_, _types.DB_ORDER);
 
 		return (strings.are_ok(new String[] { _temp_source, _temp_field_col_else, _temp_order }));
 	}

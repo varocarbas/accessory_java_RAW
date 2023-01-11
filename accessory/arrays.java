@@ -633,6 +633,8 @@ public abstract class arrays extends parent_static
 		else if (generic.are_equal(type, db_where.class)) output = (x[])input_.toArray(new db_where[size]);
 		else if (generic.are_equal(type, db_order.class)) output = (x[])input_.toArray(new db_order[size]);
 		else if (generic.are_equal(type, Object.class)) output = (x[])input_.toArray(new Object[size]);
+		else if (generic.are_equal(type, HashMap.class)) output = (x[])input_.toArray(new HashMap[size]);
+		else if (generic.are_equal(type, ArrayList.class)) output = (x[])input_.toArray(new ArrayList[size]);
 
 		return output;
 	}
@@ -1522,7 +1524,8 @@ public abstract class arrays extends parent_static
 	private static Class<?> get_class_item(Object item_, Class<?> class_)
 	{
 		Class<?> output = class_;
-
+		if (item_ == null) return output;
+		
 		Class<?> temp = generic.get_class(item_);
 		if (output == null) output = temp;
 		else if (!generic.are_equal(temp, output)) output = Object.class;
@@ -1811,7 +1814,7 @@ public abstract class arrays extends parent_static
 			{
 				x val = (is_arraylist ? arraylist.get(i) : array[i]);
 				if (remove_key_value_loop(val01, (is_key_ ? i : val), normalise_)) continue;
-
+				
 				output2.add(val);
 			}
 
@@ -1828,7 +1831,7 @@ public abstract class arrays extends parent_static
 		Class<?> type1 = generic.get_class(val01_);
 		Class<?> type2 = generic.get_class(val02_);
 
-		if (!generic.are_equal(val01_, val02_))
+		if (type2 != null && !generic.are_equal(val01_, val02_))
 		{
 			if (!normalise_ || !generic.are_equal(type1, String.class) || !generic.are_equal(type2, String.class)) output = false;
 			else

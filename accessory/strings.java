@@ -27,7 +27,7 @@ public abstract class strings extends parent_static
 
 	public static final int WRONG_I = -1;
 
-	public static final String CONFIG_ENCODING = types.CONFIG_STRINGS_ENCODING;
+	public static final String CONFIG_ENCODING = _types.CONFIG_STRINGS_ENCODING;
 	
 	public static final String DEFAULT = _defaults.STRINGS;
 	public static final int DEFAULT_SIZE = _defaults.STRINGS_SIZE;
@@ -306,8 +306,8 @@ public abstract class strings extends parent_static
 	{
 		String type = data.BOOLEAN;
 
-		String[] targets = types.get_subtypes(type);
-		String string = types.check_type(string_, targets, types.ACTION_ADD, type);
+		String[] targets = _types.get_subtypes(type);
+		String string = _types.check_type(string_, targets, _types.ACTION_ADD, type);
 
 		for (String target: targets)
 		{
@@ -489,21 +489,21 @@ public abstract class strings extends parent_static
 		return output;
 	}
 	
-	public static String remove(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, null, types.ACTION_REMOVE); }
+	public static String remove(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, null, _types.ACTION_REMOVE); }
 
-	public static String remove(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, types.ACTION_REMOVE); }
+	public static String remove(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, _types.ACTION_REMOVE); }
 
-	public static String escape(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, null, types.ACTION_ESCAPE); }
+	public static String escape(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, null, _types.ACTION_ESCAPE); }
 
-	public static String escape(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, types.ACTION_ESCAPE); }
+	public static String escape(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, _types.ACTION_ESCAPE); }
 
-	public static String unescape(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, null, types.ACTION_UNESCAPE); }
+	public static String unescape(String needle_, String haystack_) { return remove_escape_replace(needle_, haystack_, null, _types.ACTION_UNESCAPE); }
 
-	public static String unescape(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, types.ACTION_UNESCAPE); }
+	public static String unescape(String[] needles_, String haystack_) { return remove_escape_replace_many(needles_, haystack_, null, _types.ACTION_UNESCAPE); }
 
-	public static String replace(String needle_, String haystack_, String replacement_) { return remove_escape_replace(needle_, haystack_, replacement_, types.ACTION_REPLACE); }
+	public static String replace(String needle_, String haystack_, String replacement_) { return remove_escape_replace(needle_, haystack_, replacement_, _types.ACTION_REPLACE); }
 
-	public static String replace(String[] needles_, String haystack_, String replacement_) { return remove_escape_replace_many(needles_, haystack_, replacement_, types.ACTION_REPLACE); }
+	public static String replace(String[] needles_, String haystack_, String replacement_) { return remove_escape_replace_many(needles_, haystack_, replacement_, _types.ACTION_REPLACE); }
 	
 	static boolean is_ok(String string_, boolean minimal_) { return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0)); }
 
@@ -545,7 +545,7 @@ public abstract class strings extends parent_static
 		
 		String replacement = get_replacement(needle_, replacement_, action_);
 
-		return ((action_.equals(types.ACTION_UNESCAPE) || (action_.equals(types.ACTION_ESCAPE) && haystack_.contains(replacement))) ? unescape_escape_escaped(needle_, haystack_, action_) : remove_escape_replace(needle_, haystack_, replacement));
+		return ((action_.equals(_types.ACTION_UNESCAPE) || (action_.equals(_types.ACTION_ESCAPE) && haystack_.contains(replacement))) ? unescape_escape_escaped(needle_, haystack_, action_) : remove_escape_replace(needle_, haystack_, replacement));
 	}
 
 	private static String remove_escape_replace(String needle_, String haystack_, String replacement_) { return haystack_.replace(needle_, replacement_); }
@@ -587,7 +587,7 @@ public abstract class strings extends parent_static
 			{
 				boolean escaped = (i > 0 && chars.get(i - 1) == escape);
 				
-				if (action_.equals(types.ACTION_ESCAPE))
+				if (action_.equals(_types.ACTION_ESCAPE))
 				{
 					if (!escaped)
 					{
@@ -595,7 +595,7 @@ public abstract class strings extends parent_static
 						add++;
 					}
 				}
-				else if (action_.equals(types.ACTION_UNESCAPE))
+				else if (action_.equals(_types.ACTION_UNESCAPE))
 				{
 					if (escaped && (i == 1 || chars.get(i - 2) != escape))
 					{
@@ -618,8 +618,8 @@ public abstract class strings extends parent_static
 	{
 		String replacement = replacement_;	
 		
-		if (action_.equals(types.ACTION_REMOVE)) replacement = "";
-		else if (action_.equals(types.ACTION_ESCAPE)) replacement = "\\" + needle_;
+		if (action_.equals(_types.ACTION_REMOVE)) replacement = "";
+		else if (action_.equals(_types.ACTION_ESCAPE)) replacement = "\\" + needle_;
 	
 		return replacement;
 	}

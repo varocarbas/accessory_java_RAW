@@ -18,28 +18,28 @@ public class crypto extends parent
 	public static final String WHAT_ALGO = "algo";
 	public static final String WHAT_ALGO_CIPHER = WHAT_ALGO;
 
-	public static final String CONFIG_ALGO_CIPHER = types.CONFIG_CRYPTO_ALGO_CIPHER;
-	public static final String CONFIG_ALGO_KEY = types.CONFIG_CRYPTO_ALGO_KEY;
-	public static final String CONFIG_STORAGE = types.CONFIG_CRYPTO_STORAGE;
-	public static final String CONFIG_STORAGE_FILES = types.CONFIG_CRYPTO_STORAGE_FILES;
-	public static final String CONFIG_STORAGE_DB = types.CONFIG_CRYPTO_STORAGE_DB;
-	public static final String CONFIG_FILES_EXTENSION = types.CONFIG_CRYPTO_FILES_EXTENSION;
-	public static final String CONFIG_LOG_INFO = types.CONFIG_CRYPTO_LOG_INFO;
+	public static final String CONFIG_ALGO_CIPHER = _types.CONFIG_CRYPTO_ALGO_CIPHER;
+	public static final String CONFIG_ALGO_KEY = _types.CONFIG_CRYPTO_ALGO_KEY;
+	public static final String CONFIG_STORAGE = _types.CONFIG_CRYPTO_STORAGE;
+	public static final String CONFIG_STORAGE_FILES = _types.CONFIG_CRYPTO_STORAGE_FILES;
+	public static final String CONFIG_STORAGE_DB = _types.CONFIG_CRYPTO_STORAGE_DB;
+	public static final String CONFIG_FILES_EXTENSION = _types.CONFIG_CRYPTO_FILES_EXTENSION;
+	public static final String CONFIG_LOG_INFO = _types.CONFIG_CRYPTO_LOG_INFO;
 
-	public static final String ERROR_ALGO_CIPHER = types.ERROR_CRYPTO_ALGO_CIPHER;
-	public static final String ERROR_ALGO_KEY = types.ERROR_CRYPTO_ALGO_KEY;
-	public static final String ERROR_KEY = types.ERROR_CRYPTO_KEY;
-	public static final String ERROR_IV = types.ERROR_CRYPTO_IV;
-	public static final String ERROR_STORE = types.ERROR_CRYPTO_STORE;
-	public static final String ERROR_STORE_ALGO_CIPHER = types.ERROR_CRYPTO_STORE_ALGO_CIPHER;
-	public static final String ERROR_STORE_KEY = types.ERROR_CRYPTO_STORE_KEY;
-	public static final String ERROR_STORE_IV = types.ERROR_CRYPTO_STORE_IV;
-	public static final String ERROR_RETRIEVE = types.ERROR_CRYPTO_RETRIEVE;
-	public static final String ERROR_RETRIEVE_ALGO_CIPHER = types.ERROR_CRYPTO_RETRIEVE_ALGO_CIPHER;
-	public static final String ERROR_RETRIEVE_KEY = types.ERROR_CRYPTO_RETRIEVE_KEY;
-	public static final String ERROR_RETRIEVE_IV = types.ERROR_CRYPTO_RETRIEVE_IV;
-	public static final String ERROR_ENCRYPT = types.ERROR_CRYPTO_ENCRYPT;
-	public static final String ERROR_DECRYPT = types.ERROR_CRYPTO_DECRYPT;
+	public static final String ERROR_ALGO_CIPHER = _types.ERROR_CRYPTO_ALGO_CIPHER;
+	public static final String ERROR_ALGO_KEY = _types.ERROR_CRYPTO_ALGO_KEY;
+	public static final String ERROR_KEY = _types.ERROR_CRYPTO_KEY;
+	public static final String ERROR_IV = _types.ERROR_CRYPTO_IV;
+	public static final String ERROR_STORE = _types.ERROR_CRYPTO_STORE;
+	public static final String ERROR_STORE_ALGO_CIPHER = _types.ERROR_CRYPTO_STORE_ALGO_CIPHER;
+	public static final String ERROR_STORE_KEY = _types.ERROR_CRYPTO_STORE_KEY;
+	public static final String ERROR_STORE_IV = _types.ERROR_CRYPTO_STORE_IV;
+	public static final String ERROR_RETRIEVE = _types.ERROR_CRYPTO_RETRIEVE;
+	public static final String ERROR_RETRIEVE_ALGO_CIPHER = _types.ERROR_CRYPTO_RETRIEVE_ALGO_CIPHER;
+	public static final String ERROR_RETRIEVE_KEY = _types.ERROR_CRYPTO_RETRIEVE_KEY;
+	public static final String ERROR_RETRIEVE_IV = _types.ERROR_CRYPTO_RETRIEVE_IV;
+	public static final String ERROR_ENCRYPT = _types.ERROR_CRYPTO_ENCRYPT;
+	public static final String ERROR_DECRYPT = _types.ERROR_CRYPTO_DECRYPT;
 	
 	public static final String DEFAULT_ID = _ID;
 	public static final String DEFAULT_STORAGE = CONFIG_STORAGE_FILES;
@@ -92,7 +92,7 @@ public class crypto extends parent
 
 	public static void store_in_db() { config.update_crypto(CONFIG_STORAGE, CONFIG_STORAGE_DB); }
 
-	public static boolean is_stored_in_files() { return strings.are_equal(types.check_type((String)config.get_crypto(CONFIG_STORAGE), CONFIG_STORAGE), CONFIG_STORAGE_FILES); }
+	public static boolean is_stored_in_files() { return strings.are_equal(_types.check_type((String)config.get_crypto(CONFIG_STORAGE), CONFIG_STORAGE), CONFIG_STORAGE_FILES); }
 
 	public static boolean update_files_extension(String files_extension_) { return (strings.is_ok(files_extension_) ? config.update_crypto(CONFIG_FILES_EXTENSION, files_extension_) : false); }
 

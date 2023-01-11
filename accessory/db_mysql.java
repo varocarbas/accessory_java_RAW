@@ -10,13 +10,13 @@ import java.util.Map.Entry;
 
 class db_mysql extends parent_db
 {	
-	private static final String VARCHAR = types.DB_MYSQL_DATA_VARCHAR;
-	private static final String TEXT = types.DB_MYSQL_DATA_TEXT;
-	private static final String INT = types.DB_MYSQL_DATA_INT;
-	private static final String TINYINT = types.DB_MYSQL_DATA_TINYINT;
-	private static final String BIGINT = types.DB_MYSQL_DATA_BIGINT;
-	private static final String DECIMAL = types.DB_MYSQL_DATA_DECIMAL;
-	private static final String TIMESTAMP = types.DB_MYSQL_DATA_TIMESTAMP;
+	private static final String VARCHAR = _types.DB_MYSQL_DATA_VARCHAR;
+	private static final String TEXT = _types.DB_MYSQL_DATA_TEXT;
+	private static final String INT = _types.DB_MYSQL_DATA_INT;
+	private static final String TINYINT = _types.DB_MYSQL_DATA_TINYINT;
+	private static final String BIGINT = _types.DB_MYSQL_DATA_BIGINT;
+	private static final String DECIMAL = _types.DB_MYSQL_DATA_DECIMAL;
+	private static final String TIMESTAMP = _types.DB_MYSQL_DATA_TIMESTAMP;
 
 	private static final String QUOTE_VARIABLE = "`";
 	private static final String QUOTE_VALUE = "'";
@@ -37,7 +37,7 @@ class db_mysql extends parent_db
 		
 		String query = get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, !is_quicker, is_quicker);
 		if (!strings.is_ok(query)) return output;
-		
+
 		boolean return_data = db.query_returns_data(type_);
 
 		if (!is_quicker) output = db_sql.execute_query(source_, query, return_data, cols_);
@@ -449,7 +449,7 @@ class db_mysql extends parent_db
 		HashMap<String, Object> info = get_data_type_static(field_.get_type());
 		if (!arrays.is_ok(info)) return output;
 
-		output = types.remove_type((String)info.get(_keys.TYPE), types.DB_MYSQL_DATA);
+		output = _types.remove_type((String)info.get(_keys.TYPE), _types.DB_MYSQL_DATA);
 		String size = get_data_type_size(field_);
 		if (!strings.is_ok(size)) return output;
 
@@ -590,7 +590,7 @@ class db_mysql extends parent_db
 		if (arrays.value_exists(further_, db_field.AUTO_INCREMENT))
 		{
 			if (!output.equals("")) output += " ";
-			output += types.remove_type(db_field.AUTO_INCREMENT, types.DB_FIELD_FURTHER);
+			output += _types.remove_type(db_field.AUTO_INCREMENT, _types.DB_FIELD_FURTHER);
 		}
 		else if (arrays.value_exists(further_, db_field.TIMESTAMP))
 		{

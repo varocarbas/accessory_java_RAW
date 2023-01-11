@@ -6,12 +6,12 @@ import javax.crypto.SecretKey;
 
 public abstract class db_crypto 
 {
-	public static final String SOURCE = types.CONFIG_CRYPTO_DB_SOURCE;
+	public static final String SOURCE = _types.CONFIG_CRYPTO_DB_SOURCE;
 
-	public static final String ID = types.CONFIG_CRYPTO_DB_FIELD_ID;
-	public static final String ALGO = types.CONFIG_CRYPTO_DB_FIELD_ALGO;
-	public static final String IV = types.CONFIG_CRYPTO_DB_FIELD_IV;
-	public static final String KEY = types.CONFIG_CRYPTO_DB_FIELD_KEY;
+	public static final String ID = _types.CONFIG_CRYPTO_DB_FIELD_ID;
+	public static final String ALGO = _types.CONFIG_CRYPTO_DB_FIELD_ALGO;
+	public static final String IV = _types.CONFIG_CRYPTO_DB_FIELD_IV;
+	public static final String KEY = _types.CONFIG_CRYPTO_DB_FIELD_KEY;
 
 	public static final int MAX_SIZE_ID = db_common.MAX_SIZE_KEY;
 	public static final int MAX_SIZE_ALGO = db_common.MAX_SIZE_KEY;

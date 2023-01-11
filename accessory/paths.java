@@ -9,19 +9,19 @@ public abstract class paths extends parent_static
 {
 	public static final String HOME = get_dir_home();
 
-	public static final String DIR = types.CONFIG_BASIC_DIR;
-	public static final String DIR_APP = types.CONFIG_BASIC_DIR_APP;
-	public static final String DIR_INI = types.CONFIG_BASIC_DIR_INI;
-	public static final String DIR_LOGS = types.CONFIG_BASIC_DIR_LOGS;
-	public static final String DIR_LOGS_ERRORS = types.CONFIG_BASIC_DIR_LOGS_ERRORS;
-	public static final String DIR_LOGS_ACTIVITY = types.CONFIG_BASIC_DIR_LOGS_ACTIVITY;
-	public static final String DIR_CREDENTIALS = types.CONFIG_BASIC_DIR_CREDENTIALS;
-	public static final String DIR_CRYPTO = types.CONFIG_BASIC_DIR_CRYPTO;
-	public static final String DIR_SOUNDS = types.CONFIG_BASIC_DIR_SOUNDS;
-	public static final String DIR_BACKUPS = types.CONFIG_BASIC_DIR_BACKUPS;
-	public static final String DIR_BACKUPS_DBS = types.CONFIG_BASIC_DIR_BACKUPS_DBS;
-	public static final String DIR_BACKUPS_FILES = types.CONFIG_BASIC_DIR_BACKUPS_FILES;
-	public static final String DIR_INFO = types.CONFIG_BASIC_DIR_INFO;
+	public static final String DIR = _types.CONFIG_BASIC_DIR;
+	public static final String DIR_APP = _types.CONFIG_BASIC_DIR_APP;
+	public static final String DIR_INI = _types.CONFIG_BASIC_DIR_INI;
+	public static final String DIR_LOGS = _types.CONFIG_BASIC_DIR_LOGS;
+	public static final String DIR_LOGS_ERRORS = _types.CONFIG_BASIC_DIR_LOGS_ERRORS;
+	public static final String DIR_LOGS_ACTIVITY = _types.CONFIG_BASIC_DIR_LOGS_ACTIVITY;
+	public static final String DIR_CREDENTIALS = _types.CONFIG_BASIC_DIR_CREDENTIALS;
+	public static final String DIR_CRYPTO = _types.CONFIG_BASIC_DIR_CRYPTO;
+	public static final String DIR_SOUNDS = _types.CONFIG_BASIC_DIR_SOUNDS;
+	public static final String DIR_BACKUPS = _types.CONFIG_BASIC_DIR_BACKUPS;
+	public static final String DIR_BACKUPS_DBS = _types.CONFIG_BASIC_DIR_BACKUPS_DBS;
+	public static final String DIR_BACKUPS_FILES = _types.CONFIG_BASIC_DIR_BACKUPS_FILES;
+	public static final String DIR_INFO = _types.CONFIG_BASIC_DIR_INFO;
 	
 	public static final String EXTENSION_TEXT = ".txt";
 	public static final String EXTENSION_JAR = ".jar";
@@ -172,7 +172,7 @@ public abstract class paths extends parent_static
 	
 	static String get_default_dir(String type_)
 	{
-		String type = types.check_type(type_, DIR);
+		String type = _types.check_type(type_, DIR);
 
 		if (!strings.is_ok(type)) return strings.DEFAULT;
 		else if (strings.are_equal(type, DIR_APP)) return get_dir_app_default();
@@ -180,17 +180,17 @@ public abstract class paths extends parent_static
 		ArrayList<String> parts = new ArrayList<String>();
 		parts.add(get_dir_home());
 
-		if (types.is_subtype_of(type, DIR_LOGS))
+		if (_types.is_subtype_of(type, DIR_LOGS))
 		{
-			parts.add(types.remove_type(DIR_LOGS, DIR));
-			parts.add(types.remove_type(type, DIR_LOGS));
+			parts.add(_types.remove_type(DIR_LOGS, DIR));
+			parts.add(_types.remove_type(type, DIR_LOGS));
 		}
-		else if (types.is_subtype_of(type, DIR_BACKUPS))
+		else if (_types.is_subtype_of(type, DIR_BACKUPS))
 		{
-			parts.add(types.remove_type(DIR_BACKUPS, DIR));
-			parts.add(types.remove_type(type, DIR_BACKUPS));
+			parts.add(_types.remove_type(DIR_BACKUPS, DIR));
+			parts.add(_types.remove_type(type, DIR_BACKUPS));
 		}
-		else parts.add(types.remove_type(type, DIR)); 
+		else parts.add(_types.remove_type(type, DIR)); 
 
 		return build(arrays.to_array(parts), false);
 	}
@@ -199,7 +199,7 @@ public abstract class paths extends parent_static
 	{
 		String output = strings.DEFAULT;
 
-		String type = types.check_type(type_, DIR);
+		String type = _types.check_type(type_, DIR);
 		if (!strings.is_ok(type)) return output;
 
 		if (is_get_) output = (String)config.get_basic(type);

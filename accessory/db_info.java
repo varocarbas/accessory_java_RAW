@@ -6,11 +6,11 @@ import java.util.Map.Entry;
 
 public abstract class db_info
 {
-	public static final String SOURCE = types.CONFIG_INFO_DB_SOURCE;
+	public static final String SOURCE = _types.CONFIG_INFO_DB_SOURCE;
 	
-	public static final String KEY = types.CONFIG_INFO_DB_FIELD_KEY;
-	public static final String VALUE = types.CONFIG_INFO_DB_FIELD_VALUE;
-	public static final String IS_ENC = types.CONFIG_INFO_DB_FIELD_IS_ENC;
+	public static final String KEY = _types.CONFIG_INFO_DB_FIELD_KEY;
+	public static final String VALUE = _types.CONFIG_INFO_DB_FIELD_VALUE;
+	public static final String IS_ENC = _types.CONFIG_INFO_DB_FIELD_IS_ENC;
 
 	public static final int MAX_SIZE_KEY = 200;
 	public static final int MAX_SIZE_VALUE = 200;

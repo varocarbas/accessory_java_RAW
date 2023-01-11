@@ -11,8 +11,8 @@ public abstract class parent_ini
 	//tables or DB setup whose values could be partially or completely overwritten from the legacy package.
 	public static final String LEGACY_PACKAGE = "legacy";  
 
-	public static final String ERROR_DBS = types.ERROR_INI_DB_DBS;
-	public static final String ERROR_SOURCE = types.ERROR_INI_DB_SOURCE;
+	public static final String ERROR_DBS = _types.ERROR_INI_DB_DBS;
+	public static final String ERROR_SOURCE = _types.ERROR_INI_DB_SOURCE;
 
 	protected boolean _populated = false;
 	protected boolean _includes_legacy = false;
@@ -24,7 +24,7 @@ public abstract class parent_ini
 	protected static void manage_error(String type_)
 	{
 		HashMap<String, Object> info = new HashMap<String, Object>();
-		info.put(_keys.get_key(types.WHAT_TYPE), (strings.is_ok(type_) ? type_ : strings.DEFAULT));
+		info.put(_keys.get_key(_types.WHAT_TYPE), (strings.is_ok(type_) ? type_ : strings.DEFAULT));
 
 		manage_error(info);
 	}
@@ -77,7 +77,7 @@ public abstract class parent_ini
 		if (package_name.equals("accessory")) populate_all_internal_accessory();
 		else populate_all_internal_other_all(package_name);
 
-		config.update_basic(types.CONFIG_BASIC_NAME, _name);
+		config.update_basic(_types.CONFIG_BASIC_NAME, _name);
 
 		_populated = true;
 	}
@@ -85,8 +85,13 @@ public abstract class parent_ini
 	private void populate_all_internal_accessory() 
 	{
 		_basic.populate();
+		
+		_types.populate();
+		
 		_alls.populate();
+		
 		_keys.populate();
+		
 		_defaults.populate();
 
 		_ini_config.populate();
@@ -98,7 +103,7 @@ public abstract class parent_ini
 
 	private void populate_all_internal_other_all(String package_) 
 	{
-		String[] classes = new String[] { "_basic", "_alls", "_defaults", "_keys", "_ini_config", "_ini_db", "_starts" };
+		String[] classes = new String[] { "_basic", "_types", "_alls", "_defaults", "_keys", "_ini_config", "_ini_db", "_starts" };
 
 		for (String class0: classes) { populate_all_internal_other_class(package_, class0); }
 
@@ -144,9 +149,9 @@ public abstract class parent_ini
 					
 					args = new Object[] 
 					{ 
-						get_setup_val(types.CONFIG_DB_SETUP_CREDENTIALS_USER), get_setup_val(types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME), 
-						get_setup_val(types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD), get_setup_val(types.CONFIG_DB_SETUP_HOST), 
-						get_setup_val(types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED) 
+						get_setup_val(_types.CONFIG_DB_SETUP_CREDENTIALS_USER), get_setup_val(_types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME), 
+						get_setup_val(_types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD), get_setup_val(_types.CONFIG_DB_SETUP_HOST), 
+						get_setup_val(_types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED) 
 					};					
 				}
 				else if (count == 2)

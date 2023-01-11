@@ -13,7 +13,7 @@ public abstract class parent_ini_config
 	{
 		HashMap<String, Object> output = (HashMap<String, Object>)arrays.get_new(vals_);
 
-		for (String subtype: types.get_subtypes(type_))
+		for (String subtype: _types.get_subtypes(type_))
 		{
 			if (output.containsKey(subtype)) continue;
 

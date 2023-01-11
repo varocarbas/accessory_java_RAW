@@ -5,15 +5,15 @@ import java.util.Map.Entry;
 
 public abstract class credentials extends parent_static
 {
-	public static final String CONFIG_WHERE = types.CONFIG_CREDENTIALS_WHERE;
-	public static final String CONFIG_FILE_EXTENSION = types.CONFIG_CREDENTIALS_FILE_EXTENSION;
-	public static final String CONFIG_FILE_USERNAME = types.CONFIG_CREDENTIALS_FILE_USERNAME;
-	public static final String CONFIG_FILE_PASSWORD = types.CONFIG_CREDENTIALS_FILE_PASSWORD;
-	public static final String CONFIG_FILE_ENCRYPTED = types.CONFIG_CREDENTIALS_FILE_ENCRYPTED;
+	public static final String CONFIG_WHERE = _types.CONFIG_CREDENTIALS_WHERE;
+	public static final String CONFIG_FILE_EXTENSION = _types.CONFIG_CREDENTIALS_FILE_EXTENSION;
+	public static final String CONFIG_FILE_USERNAME = _types.CONFIG_CREDENTIALS_FILE_USERNAME;
+	public static final String CONFIG_FILE_PASSWORD = _types.CONFIG_CREDENTIALS_FILE_PASSWORD;
+	public static final String CONFIG_FILE_ENCRYPTED = _types.CONFIG_CREDENTIALS_FILE_ENCRYPTED;
 	
 	public static final String WHERE = CONFIG_WHERE;
-	public static final String WHERE_FILE = types.CONFIG_CREDENTIALS_WHERE_FILE;
-	public static final String WHERE_DB = types.CONFIG_CREDENTIALS_WHERE_DB;
+	public static final String WHERE_FILE = _types.CONFIG_CREDENTIALS_WHERE_FILE;
+	public static final String WHERE_DB = _types.CONFIG_CREDENTIALS_WHERE_DB;
 	public static final String ID = _keys.ID;
 	public static final String USER = _keys.USER;
 	public static final String USERNAME = _keys.USERNAME;
@@ -118,7 +118,7 @@ public abstract class credentials extends parent_static
 
 	public static boolean encrypt_username_password_db(String id_, String user_, String username_, String password_) { return encrypt_username_password_internal(id_, user_, username_, password_, WHERE_DB); }
 
-	public static String get_extension() { return (String)config.get_credentials(types.CONFIG_CREDENTIALS_FILE_EXTENSION); }
+	public static String get_extension() { return (String)config.get_credentials(_types.CONFIG_CREDENTIALS_FILE_EXTENSION); }
 
 	public static String get_file_full(String id_) { return paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID), get_extension()); }
 
@@ -217,21 +217,21 @@ public abstract class credentials extends parent_static
 		return (io.is_ok() ? val : strings.DEFAULT);
 	}
 	
-	private static String get_path_username_password(String id_, String user_, boolean is_encrypted_, boolean is_username_) { return get_path(id_, user_, is_encrypted_, (String)(is_username_ ? config.get_credentials(types.CONFIG_CREDENTIALS_FILE_USERNAME) : config.get_credentials(types.CONFIG_CREDENTIALS_FILE_PASSWORD))); }
+	private static String get_path_username_password(String id_, String user_, boolean is_encrypted_, boolean is_username_) { return get_path(id_, user_, is_encrypted_, (String)(is_username_ ? config.get_credentials(_types.CONFIG_CREDENTIALS_FILE_USERNAME) : config.get_credentials(_types.CONFIG_CREDENTIALS_FILE_PASSWORD))); }
 
 	private static String get_path(String id_, String user_, boolean is_encrypted_, String further_)
 	{
 		String file = id_ + SEPARATOR + user_;
 
 		if (strings.is_ok(further_)) file += SEPARATOR + further_;
-		if (is_encrypted_) file += SEPARATOR + config.get_credentials(types.CONFIG_CREDENTIALS_FILE_ENCRYPTED); 
+		if (is_encrypted_) file += SEPARATOR + config.get_credentials(_types.CONFIG_CREDENTIALS_FILE_ENCRYPTED); 
 
 		return paths.build(new String[] { paths.get_dir(paths.DIR_CREDENTIALS), get_file_full(file) }, true);
 	}
 
 	private static String check_where(String where_)
 	{
-		String where = types.check_type(where_, WHERE);
+		String where = _types.check_type(where_, WHERE);
 
 		return (strings.is_ok(where) ? where : DEFAULT_WHERE);
 	}

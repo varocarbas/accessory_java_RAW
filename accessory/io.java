@@ -20,9 +20,9 @@ public abstract class io extends parent_static
 {	
 	public static final String STREAM = "stream";
 	
-	public static final String ERROR_WRITE = types.ERROR_FILE_WRITE;
-	public static final String ERROR_READ = types.ERROR_FILE_READ;
-	public static final String ERROR_DELETE = types.ERROR_FILE_DELETE;
+	public static final String ERROR_WRITE = _types.ERROR_FILE_WRITE;
+	public static final String ERROR_READ = _types.ERROR_FILE_READ;
+	public static final String ERROR_DELETE = _types.ERROR_FILE_DELETE;
 		
 	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{

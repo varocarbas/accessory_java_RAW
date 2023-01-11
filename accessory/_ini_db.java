@@ -17,10 +17,10 @@ class _ini_db extends parent_ini_db
 	{	
 		HashMap<String, Object> setup_vals = (HashMap<String, Object>)arrays.get_new(dbs_setup_);
 
-		String db = (String)arrays.get_value(setup_vals, types.CONFIG_DB);
+		String db = (String)arrays.get_value(setup_vals, _types.CONFIG_DB);
 		if (!strings.is_ok(db)) db = accessory.db.DEFAULT_DB;
 		
-		String name = (String)arrays.get_value(setup_vals, types.CONFIG_DB_NAME);		
+		String name = (String)arrays.get_value(setup_vals, _types.CONFIG_DB_NAME);		
 		if (!strings.is_ok(name)) name = accessory.db.DEFAULT_DB_NAME;
 	
 		HashMap<String, Object[]> sources = new HashMap<String, Object[]>();

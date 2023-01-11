@@ -5,9 +5,9 @@ import java.util.HashMap;
 
 public abstract class logs extends parent_static
 {	
-	public static final String CONFIG_OUT_SCREEN = types.CONFIG_LOGS_OUT_SCREEN;
-	public static final String CONFIG_OUT_FILE = types.CONFIG_LOGS_OUT_FILE;
-	public static final String CONFIG_ERRORS_TIMESTAMP = types.CONFIG_LOGS_ERRORS_TIMESTAMP;
+	public static final String CONFIG_OUT_SCREEN = _types.CONFIG_LOGS_OUT_SCREEN;
+	public static final String CONFIG_OUT_FILE = _types.CONFIG_LOGS_OUT_FILE;
+	public static final String CONFIG_ERRORS_TIMESTAMP = _types.CONFIG_LOGS_ERRORS_TIMESTAMP;
 	
 	public static final String SCREEN = CONFIG_OUT_SCREEN;
 	public static final String FILE = CONFIG_OUT_FILE;
@@ -56,7 +56,7 @@ public abstract class logs extends parent_static
 	public static void update_file(String message_, String id_, boolean is_error_, boolean add_timestamp_path_)
 	{		
 		String id = id_;
-		if (!strings.is_ok(id)) id = (String)config.get_basic(types.CONFIG_BASIC_NAME);
+		if (!strings.is_ok(id)) id = (String)config.get_basic(_types.CONFIG_BASIC_NAME);
 		
 		update_file(message_, get_path(id, is_error_, add_timestamp_path_));
 	}

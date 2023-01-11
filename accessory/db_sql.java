@@ -39,7 +39,7 @@ abstract class db_sql
 		if (what_.equals(db.QUERY_INSERT) || what_.equals(db.QUERY_UPDATE)) items.put("values", strings.to_string(vals_));
 		if (what_.equals(db.QUERY_TABLE_CREATE)) items.put(_keys.INFO, strings.to_string(cols_info_));
 
-		String message = "Wrong " + types.remove_type(what_, types.DB_QUERY).toUpperCase() + " query" + misc.SEPARATOR_CONTENT;
+		String message = "Wrong " + _types.remove_type(what_, _types.DB_QUERY).toUpperCase() + " query" + misc.SEPARATOR_CONTENT;
 		String temp = strings.to_string(items);
 		if (strings.is_ok(temp)) message += temp;
 		
@@ -53,6 +53,12 @@ abstract class db_sql
 	public static ArrayList<HashMap<String, String>> execute_query_static(String type_, String source_, String query_, boolean return_data_, String[] cols_, String username_, String password_, String db_name_, String host_, String max_pool_) { return execute_query(source_, query_, return_data_, cols_, connect_static(type_, source_, username_, password_, db_name_, host_, max_pool_), true); }
 
 	public static String get_backup_file_extension() { return paths.EXTENSION_SQL; }
+	
+	public static boolean is_sql(String type_) { return get_all_types().contains(type_); }
+	
+	public static ArrayList<String> get_all_types() { return _alls.DB_SQL_TYPES; }
+	
+	public static ArrayList<String> populate_all_types() { return arrays.to_arraylist(new String[] { db.MYSQL }); }
 	
 	private static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_, Connection conn_, boolean is_static_)
 	{

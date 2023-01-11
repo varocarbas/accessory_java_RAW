@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 public abstract class parent_tests 
 {	
-	public static final String ERROR_RUN = types.ERROR_TEST_RUN;
+	public static final String ERROR_RUN = _types.ERROR_TEST_RUN;
 
 	public static final boolean DEFAULT_REPORT_ALL_ERRORS = true;
 	public static final boolean DEFAULT_TEST_DB = true;
@@ -58,7 +58,7 @@ public abstract class parent_tests
 		
 		if (!arrays.is_ok(methods))
 		{
-			errors.manage(types.ERROR_TEST_RUN, null, (generic.is_ok(class_) ? new String[] { class_.getName() } : null));
+			errors.manage(_types.ERROR_TEST_RUN, null, (generic.is_ok(class_) ? new String[] { class_.getName() } : null));
 			
 			return run_outs;
 		}

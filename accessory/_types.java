@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public abstract class types extends parent_static
+public class _types extends parent_types
 {
+	private static _types _instance = new _types(); 
+
+	public _types() { }
+	public static void populate() { _instance.populate_internal(); }
+	
 	public static final String SEPARATOR = misc.SEPARATOR_NAME;
 
 	//--------- To be synced with the populate_all_types() method below.
@@ -109,6 +114,7 @@ public abstract class types extends parent_static
 	public static final String CONFIG_TESTS_DB_FIELD_DECIMAL = "config_tests_db_field_decimal";
 	public static final String CONFIG_TESTS_DB_FIELD_BOOLEAN = "config_tests_db_field_boolean";
 	
+	public static final String CONFIG_INFO = "config_info";
 	public static final String CONFIG_INFO_DB = "config_info_db";
 	public static final String CONFIG_INFO_DB_SOURCE = "config_info_db_source";
 	public static final String CONFIG_INFO_DB_FIELD = "config_info_db_field";
@@ -306,6 +312,8 @@ public abstract class types extends parent_static
 	public static final String ERROR_OS_EXECUTE = "error_os_execute";
 	//---------
 
+	static String[] TYPES = null;
+	
 	public static String check_what(String what_) { return check_type(what_, WHAT); }
 
 	public static String what_to_key(String what_) { return check_type(what_, get_subtypes(WHAT), ACTION_REMOVE, WHAT); }
@@ -411,179 +419,43 @@ public abstract class types extends parent_static
 
 	public static String[] get_subtypes(String type_) { return get_subtypes(type_, null); }
 
-	public static String[] get_subtypes(String type_, String[] all_)
+	public static String[] get_subtypes(String type_, String[] all_) { return get_subtypes(type_, all_, false); }
+
+	public static String[] get_subtypes(String type_, boolean only_roots_) { return get_subtypes(type_, null, only_roots_); }
+	
+	public static String[] get_subtypes(String type_, String[] all_, boolean only_roots_)
 	{
 		ArrayList<String> subtypes = new ArrayList<String>();
 
 		String heading = (strings.is_ok(type_) ? type_ + SEPARATOR : null);
 		boolean add_all = !strings.is_ok(heading);
 
-		for (String subtype: (String[])arrays.remove_value((arrays.is_ok(all_) ? all_ : get_all_types()), heading, false))
+		for (String subtype: (String[])arrays.remove_value((arrays.is_ok(all_) ? all_ : get_types()), heading, false))
 		{
 			if (add_all || strings.contains_start(heading, subtype, false)) subtypes.add(subtype);
 		}
 
+		if (only_roots_ && subtypes.size() > 0)
+		{
+			for (String subtype: new ArrayList<String>(subtypes))
+			{
+				boolean is_ok = true;
+				
+				for (String subtype2: new ArrayList<String>(subtypes))
+				{
+					if (strings.are_equal(subtype, subtype2) || !strings.contains_start(subtype2, subtype, false)) continue;
+					
+					is_ok = false;
+					
+					break;
+				}
+				
+				if (!is_ok) subtypes.remove(subtype);
+			}
+		}
+		
 		return arrays.to_array(subtypes);
 	}
-
-	public static String[] get_all_types() { return _alls.TYPES_ALL; }
-
-	static String[] populate_all_types()
-	{
-		return new String[]
-		{	
-			CONFIG,
-			CONFIG_BASIC,
-			CONFIG_BASIC_NAME, 
-			CONFIG_BASIC_DIR,
-			CONFIG_BASIC_DIR_APP, CONFIG_BASIC_DIR_INI,CONFIG_BASIC_DIR_CREDENTIALS, 
-			CONFIG_BASIC_DIR_CRYPTO, CONFIG_BASIC_DIR_SOUNDS,
-			CONFIG_BASIC_DIR_LOGS,
-			CONFIG_BASIC_DIR_LOGS_ERRORS, CONFIG_BASIC_DIR_LOGS_ACTIVITY,
-			CONFIG_BASIC_DIR_BACKUPS,
-			CONFIG_BASIC_DIR_BACKUPS_DBS, CONFIG_BASIC_DIR_BACKUPS_FILES,
-			CONFIG_BASIC_DIR_INFO,
-
-			CONFIG_CREDENTIALS, 
-			CONFIG_CREDENTIALS_WHERE, 
-			CONFIG_CREDENTIALS_WHERE_FILE, CONFIG_CREDENTIALS_WHERE_DB,
-			CONFIG_CREDENTIALS_FILE, 
-			CONFIG_CREDENTIALS_FILE_EXTENSION, CONFIG_CREDENTIALS_FILE_USERNAME, 
-			CONFIG_CREDENTIALS_FILE_PASSWORD, CONFIG_CREDENTIALS_FILE_ENCRYPTED,
-			CONFIG_CREDENTIALS_DB, 
-			CONFIG_CREDENTIALS_DB_SOURCE, 
-			CONFIG_CREDENTIALS_DB_FIELD,
-			CONFIG_CREDENTIALS_DB_FIELD_ID, CONFIG_CREDENTIALS_DB_FIELD_ID_ENC, CONFIG_CREDENTIALS_DB_FIELD_USER, 
-			CONFIG_CREDENTIALS_DB_FIELD_USERNAME, CONFIG_CREDENTIALS_DB_FIELD_PASSWORD, CONFIG_CREDENTIALS_DB_FIELD_IS_ENC,
-			
-			CONFIG_INFO_DB,
-			CONFIG_INFO_DB_SOURCE, 
-			CONFIG_INFO_DB_FIELD,
-			CONFIG_INFO_DB_FIELD_KEY, CONFIG_INFO_DB_FIELD_VALUE, CONFIG_INFO_DB_FIELD_IS_ENC,
-			
-			CONFIG_CRYPTO,
-			CONFIG_CRYPTO_ALGO,
-			CONFIG_CRYPTO_ALGO_CIPHER, CONFIG_CRYPTO_ALGO_KEY,
-			CONFIG_CRYPTO_STORAGE,
-			CONFIG_CRYPTO_STORAGE_FILES, CONFIG_CRYPTO_STORAGE_DB,
-			CONFIG_CRYPTO_FILES, 
-			CONFIG_CRYPTO_FILES_EXTENSION,
-			CONFIG_CRYPTO_DB,
-			CONFIG_CRYPTO_DB_SOURCE,
-			CONFIG_CRYPTO_DB_FIELD,
-			CONFIG_CRYPTO_DB_FIELD_ID, CONFIG_CRYPTO_DB_FIELD_ALGO, CONFIG_CRYPTO_DB_FIELD_IV, 
-			CONFIG_CRYPTO_DB_FIELD_KEY,
-			CONFIG_CRYPTO_LOG,
-			CONFIG_CRYPTO_LOG_INFO,			
-			
-			CONFIG_LOGS,
-			CONFIG_LOGS_OUT,
-			CONFIG_LOGS_OUT_SCREEN, CONFIG_LOGS_OUT_FILE,
-			CONFIG_LOGS_ERRORS,
-			CONFIG_LOGS_ERRORS_TIMESTAMP,
-			
-			CONFIG_DB,
-			CONFIG_DB_NAME,
-			CONFIG_DB_SETUP,
-			CONFIG_DB_SETUP_MAX_POOL, CONFIG_DB_SETUP_HOST, 
-			CONFIG_DB_SETUP_TYPE,
-			CONFIG_DB_SETUP_TYPE_MYSQL,
-			CONFIG_DB_SETUP_CREDENTIALS,
-			CONFIG_DB_SETUP_CREDENTIALS_USERNAME, CONFIG_DB_SETUP_CREDENTIALS_PASSWORD,
-			CONFIG_DB_SETUP_CREDENTIALS_USER, CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED, 
-			CONFIG_DB_SETUP_CREDENTIALS_MEMORY, 
-			CONFIG_DB_DEFAULT, 
-			CONFIG_DB_DEFAULT_FIELD, 
-			CONFIG_DB_DEFAULT_FIELD_ID, CONFIG_DB_DEFAULT_FIELD_TIMESTAMP, 
-			
-			CONFIG_TESTS, 
-			CONFIG_TESTS_DB,
-			CONFIG_TESTS_DB_SOURCE, 
-			CONFIG_TESTS_DB_FIELD,
-			CONFIG_TESTS_DB_FIELD_INT, CONFIG_TESTS_DB_FIELD_STRING, CONFIG_TESTS_DB_FIELD_DECIMAL,
-			CONFIG_TESTS_DB_FIELD_BOOLEAN,
-			CONFIG_NUMBERS, 
-			CONFIG_NUMBERS_PERC_REF_LARGER,
-			CONFIG_STRINGS,
-			CONFIG_STRINGS_ENCODING,
-			
-			DB,
-			DB_QUICKER,
-			DB_QUICKER_MYSQL,
-			DB_WHERE,
-			DB_WHERE_OPERAND,
-			DB_WHERE_OPERAND_EQUAL, DB_WHERE_OPERAND_NOT_EQUAL, DB_WHERE_OPERAND_GREATER,
-			DB_WHERE_OPERAND_GREATER_EQUAL, DB_WHERE_OPERAND_LESS, DB_WHERE_OPERAND_LESS_EQUAL,
-			DB_WHERE_LINK,
-			DB_WHERE_LINK_AND, DB_WHERE_LINK_OR,
-			DB_ORDER,
-			DB_ORDER_ASC, DB_ORDER_DESC,
-			DB_FIELD_FURTHER,
-			DB_FIELD_FURTHER_KEY, DB_FIELD_FURTHER_KEY_PRIMARY, DB_FIELD_FURTHER_KEY_UNIQUE, 
-			DB_FIELD_FURTHER_AUTO_INCREMENT, DB_FIELD_FURTHER_TIMESTAMP,
-			DB_QUERY,
-			DB_QUERY_SELECT, DB_QUERY_SELECT_COUNT, DB_QUERY_INSERT, DB_QUERY_UPDATE, DB_QUERY_DELETE, 
-			DB_QUERY_TABLE,
-			DB_QUERY_TABLE_EXISTS, DB_QUERY_TABLE_CREATE, DB_QUERY_TABLE_DROP, DB_QUERY_TABLE_TRUNCATE,
-			DB_MYSQL,
-			DB_MYSQL_DATA_VARCHAR, DB_MYSQL_DATA_TEXT, DB_MYSQL_DATA_INT, DB_MYSQL_DATA_TINYINT, 
-			DB_MYSQL_DATA_BIGINT, DB_MYSQL_DATA_DECIMAL,
-
-			DATA,
-			DATA_STRING_SMALL, DATA_STRING_BIG, DATA_TINYINT, DATA_INT, DATA_LONG, DATA_DECIMAL, DATA_TIMESTAMP,
-			DATA_BOOLEAN,
-			DATA_BOOLEAN_TRUE, DATA_BOOLEAN_FALSE,
-
-			DATES,
-			DATES_FORMAT,
-			DATES_FORMAT_TIME, DATES_FORMAT_TIME_FULL, DATES_FORMAT_TIME_SHORT,
-			DATES_FORMAT_DATE, DATES_FORMAT_DATE_TIME, DATES_FORMAT_TIMESTAMP,
-			DATES_UNIT, 
-			DATES_UNIT_SECONDS, DATES_UNIT_MINUTES, DATES_UNIT_HOURS, DATES_UNIT_DAYS,
-			
-			ACTION,
-			ACTION_ADD, ACTION_REMOVE, ACTION_ESCAPE, ACTION_UNESCAPE, ACTION_REPLACE, ACTION_ENCRYPT, ACTION_DECRYPT, 
-			ACTION_START, ACTION_STOP,
-
-			WHAT,
-			WHAT_USER, WHAT_USERNAME, WHAT_PASSWORD, WHAT_DB, WHAT_HOST, WHAT_MAX, WHAT_MIN, WHAT_FILE, 
-			WHAT_SCREEN, WHAT_INFO, WHAT_QUERY, WHAT_KEY, WHAT_VALUE, WHAT_FURTHER, WHAT_TYPE, WHAT_APP, 
-			WHAT_SERVER, WHAT_ID, WHAT_INSTANCE, WHAT_MESSAGE, WHAT_PATH, WHAT_IV, WHAT_ALGO,
-			
-			ERROR,
-			ERROR_DEFAULT,
-			ERROR_INI,
-			ERROR_INI_DB, 
-			ERROR_INI_DB_DBS, ERROR_INI_DB_SOURCE,
-			ERROR_DB,
-			ERROR_DB_TYPE, ERROR_DB_CONN, ERROR_DB_QUERY, ERROR_DB_INFO, ERROR_DB_CREDENTIALS,
-			ERROR_DB_SOURCE, ERROR_DB_FIELD, ERROR_DB_VALS, ERROR_DB_BACKUP, ERROR_DB_RESTORE, 
-			ERROR_DB_QUICKER,
-			ERROR_FILE,
-			ERROR_FILE_WRITE, ERROR_FILE_READ, ERROR_FILE_DELETE,
-			ERROR_STRING,
-			ERROR_GENERIC,
-			ERROR_GENERIC_METHOD,
-			ERROR_GENERIC_METHOD_GET, ERROR_GENERIC_METHOD_CALL,
-			ERROR_TEST,
-			ERROR_TEST_RUN,
-
-			ERROR_CRYPTO,
-			ERROR_CRYPTO_ALGO,
-			ERROR_CRYPTO_ALGO_CIPHER, ERROR_CRYPTO_ALGO_KEY,
-			ERROR_CRYPTO_KEY,
-			ERROR_CRYPTO_IV,
-			ERROR_CRYPTO_STORE,
-			ERROR_CRYPTO_STORE_ALGO_CIPHER, ERROR_CRYPTO_STORE_KEY, ERROR_CRYPTO_STORE_IV,
-			ERROR_CRYPTO_RETRIEVE,
-			ERROR_CRYPTO_RETRIEVE_ALGO_CIPHER, ERROR_CRYPTO_RETRIEVE_KEY, ERROR_CRYPTO_RETRIEVE_IV,
-			ERROR_CRYPTO_ENCRYPT, ERROR_CRYPTO_DECRYPT,
-
-			ERROR_DATES, 
-			ERROR_DATES_STRING,
-			
-			ERROR_OS,
-			ERROR_OS_EXECUTE
-		};
-	}
+	
+	protected String[] get_constant_names_to_ignore() { return new String[] { "SEPARATOR" }; }
 }

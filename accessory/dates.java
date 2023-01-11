@@ -13,17 +13,17 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class dates extends parent_static
 {
-	public static final String FORMAT_TIME = types.DATES_FORMAT_TIME;
-	public static final String FORMAT_TIME_FULL = types.DATES_FORMAT_TIME_FULL;
-	public static final String FORMAT_TIME_SHORT = types.DATES_FORMAT_TIME_SHORT;
-	public static final String FORMAT_DATE = types.DATES_FORMAT_DATE;
-	public static final String FORMAT_DATE_TIME = types.DATES_FORMAT_DATE_TIME;
-	public static final String FORMAT_TIMESTAMP = types.DATES_FORMAT_TIMESTAMP;
+	public static final String FORMAT_TIME = _types.DATES_FORMAT_TIME;
+	public static final String FORMAT_TIME_FULL = _types.DATES_FORMAT_TIME_FULL;
+	public static final String FORMAT_TIME_SHORT = _types.DATES_FORMAT_TIME_SHORT;
+	public static final String FORMAT_DATE = _types.DATES_FORMAT_DATE;
+	public static final String FORMAT_DATE_TIME = _types.DATES_FORMAT_DATE_TIME;
+	public static final String FORMAT_TIMESTAMP = _types.DATES_FORMAT_TIMESTAMP;
 
-	public static final String UNIT_SECONDS = types.DATES_UNIT_SECONDS;
-	public static final String UNIT_MINUTES = types.DATES_UNIT_MINUTES;
-	public static final String UNIT_HOURS = types.DATES_UNIT_HOURS;
-	public static final String UNIT_DAYS = types.DATES_UNIT_DAYS;
+	public static final String UNIT_SECONDS = _types.DATES_UNIT_SECONDS;
+	public static final String UNIT_MINUTES = _types.DATES_UNIT_MINUTES;
+	public static final String UNIT_HOURS = _types.DATES_UNIT_HOURS;
+	public static final String UNIT_DAYS = _types.DATES_UNIT_DAYS;
 
 	public static final String TZ_MADRID = "Europe/Madrid";
 	public static final String TZ_LONDON = "Europe/London";
@@ -36,7 +36,7 @@ public abstract class dates extends parent_static
 	
 	public static final long ELAPSED_START = 0;
 	
-	public static final String ERROR_STRING = types.ERROR_DATES_STRING;
+	public static final String ERROR_STRING = _types.ERROR_DATES_STRING;
 	
 	public static final String DEFAULT_FORMAT = FORMAT_DATE_TIME;
 	public static final String DEFAULT_FORMAT_DATE_TIME = FORMAT_DATE_TIME;
@@ -278,7 +278,7 @@ public abstract class dates extends parent_static
 
 	public static String check_format(String format_, boolean use_default_)
 	{
-		String format = types.check_type(format_, types.DATES_FORMAT);
+		String format = _types.check_type(format_, _types.DATES_FORMAT);
 
 		return (strings.is_ok(format) ? format : (use_default_ ? DEFAULT_FORMAT : strings.DEFAULT));
 	}

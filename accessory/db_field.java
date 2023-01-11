@@ -9,10 +9,10 @@ import java.util.HashMap;
 
 public class db_field extends parent
 {
-	public static final String KEY_UNIQUE = types.DB_FIELD_FURTHER_KEY_UNIQUE;
-	public static final String KEY_PRIMARY = types.DB_FIELD_FURTHER_KEY_PRIMARY;
-	public static final String TIMESTAMP = types.DB_FIELD_FURTHER_TIMESTAMP;
-	public static final String AUTO_INCREMENT = types.DB_FIELD_FURTHER_AUTO_INCREMENT;
+	public static final String KEY_UNIQUE = _types.DB_FIELD_FURTHER_KEY_UNIQUE;
+	public static final String KEY_PRIMARY = _types.DB_FIELD_FURTHER_KEY_PRIMARY;
+	public static final String TIMESTAMP = _types.DB_FIELD_FURTHER_TIMESTAMP;
+	public static final String AUTO_INCREMENT = _types.DB_FIELD_FURTHER_AUTO_INCREMENT;
 
 	public static final int MAX_DECIMALS = size.MAX_DECIMALS;
 	public static final int MIN_DECIMALS = size.MIN_DECIMALS;
@@ -51,9 +51,9 @@ public class db_field extends parent
 		return true;
 	}
 
-	public static boolean further_is_ok(String further_) { return val_is_ok_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT); }
+	public static boolean further_is_ok(String further_) { return val_is_ok_common(further_, _types.DB_FIELD_FURTHER, strings.DEFAULT); }
 
-	public static String check_further(String further_) { return check_val_common(further_, types.DB_FIELD_FURTHER, strings.DEFAULT); }
+	public static String check_further(String further_) { return check_val_common(further_, _types.DB_FIELD_FURTHER, strings.DEFAULT); }
 
 	public static long check_size(String source_, String type_, long size_)
 	{
@@ -112,7 +112,7 @@ public class db_field extends parent
 
 	public static data to_data(String type_, long size_, int decimals_)
 	{	
-		String type = types.check_type(type_, types.DATA);
+		String type = _types.check_type(type_, _types.DATA);
 		if (!strings.is_ok(type) || size_ < 1 || decimals_ < 0) return null;
 
 		double temp = db.get_max_value(type_);

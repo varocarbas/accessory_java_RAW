@@ -8,19 +8,19 @@ import java.util.Map.Entry;
 
 public class data extends parent
 {
-	public static final String STRING_SMALL = types.DATA_STRING_SMALL;
-	public static final String STRING_BIG = types.DATA_STRING_BIG;
-	public static final String TINYINT = types.DATA_TINYINT;
-	public static final String INT = types.DATA_INT;	
-	public static final String LONG = types.DATA_LONG;
-	public static final String DECIMAL = types.DATA_DECIMAL;
-	public static final String TIMESTAMP = types.DATA_TIMESTAMP;
-	public static final String BOOLEAN = types.DATA_BOOLEAN;
+	public static final String STRING_SMALL = _types.DATA_STRING_SMALL;
+	public static final String STRING_BIG = _types.DATA_STRING_BIG;
+	public static final String TINYINT = _types.DATA_TINYINT;
+	public static final String INT = _types.DATA_INT;	
+	public static final String LONG = _types.DATA_LONG;
+	public static final String DECIMAL = _types.DATA_DECIMAL;
+	public static final String TIMESTAMP = _types.DATA_TIMESTAMP;
+	public static final String BOOLEAN = _types.DATA_BOOLEAN;
 
 	public static final String STRING = STRING_SMALL;
 	
-	public static final String TRUE = types.DATA_BOOLEAN_TRUE;
-	public static final String FALSE = types.DATA_BOOLEAN_FALSE;
+	public static final String TRUE = _types.DATA_BOOLEAN_TRUE;
+	public static final String FALSE = _types.DATA_BOOLEAN_FALSE;
 
 	//--- For numeric types, min./max. variables refer to values (e.g., max. decimal value); and, for other types, 
 	//they refer to lengths or numbers of elements (e.g., max. string length). 
@@ -167,9 +167,9 @@ public class data extends parent
 		return output;
 	}
 
-	public static boolean type_is_ok(String type_) { return val_is_ok_common(type_, types.DATA, DEFAULT_TYPE); }
+	public static boolean type_is_ok(String type_) { return val_is_ok_common(type_, _types.DATA, DEFAULT_TYPE); }
 
-	public static String check_type(String type_) { return check_val_common(type_, types.DATA, DEFAULT_TYPE); }
+	public static String check_type(String type_) { return check_val_common(type_, _types.DATA, DEFAULT_TYPE); }
 
 	public static boolean size_is_ok(String type_, size size_) { return size.complies(size_, get_boundaries(type_)); }
 

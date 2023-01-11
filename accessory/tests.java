@@ -68,7 +68,7 @@ public class tests extends parent_tests
 		Class<?>[] classes = new Class<?>[] 
 		{ 
 			crypto.class, strings.class, arrays.class, dates.class, generic.class,
-			io.class, numbers.class, paths.class, types.class, credentials.class
+			io.class, numbers.class, paths.class, _types.class, credentials.class
 		}; 
 
 		for (Class<?> type: classes) { outputs.put(type.getName(), run_internal(type)); }
@@ -538,7 +538,7 @@ public class tests extends parent_tests
 	{
 		String[] skip = new String[] { "check_multiple" };
 
-		return _instance.run(types.class, skip);
+		return _instance.run(_types.class, skip);
 	}
 
 	public static HashMap<String, Boolean> run_credentials()
@@ -617,7 +617,7 @@ public class tests extends parent_tests
 		else if (class_.equals(io.class)) output = run_io();
 		else if (class_.equals(numbers.class)) output = run_numbers();
 		else if (class_.equals(paths.class)) output = run_paths();
-		else if (class_.equals(types.class)) output = run_types();
+		else if (class_.equals(_types.class)) output = run_types();
 		else if (class_.equals(credentials.class)) output = run_credentials();
 		else if (class_.equals(db.class)) output = run_db();
 

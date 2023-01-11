@@ -5,15 +5,15 @@ import java.util.HashMap;
 
 public class db_where extends parent
 {	
-	public static final String OPERAND_EQUAL = types.DB_WHERE_OPERAND_EQUAL;
-	public static final String OPERAND_NOT_EQUAL = types.DB_WHERE_OPERAND_NOT_EQUAL;
-	public static final String OPERAND_GREATER = types.DB_WHERE_OPERAND_GREATER;
-	public static final String OPERAND_GREATER_EQUAL = types.DB_WHERE_OPERAND_GREATER_EQUAL;
-	public static final String OPERAND_LESS = types.DB_WHERE_OPERAND_LESS;
-	public static final String OPERAND_LESS_EQUAL = types.DB_WHERE_OPERAND_LESS_EQUAL;
+	public static final String OPERAND_EQUAL = _types.DB_WHERE_OPERAND_EQUAL;
+	public static final String OPERAND_NOT_EQUAL = _types.DB_WHERE_OPERAND_NOT_EQUAL;
+	public static final String OPERAND_GREATER = _types.DB_WHERE_OPERAND_GREATER;
+	public static final String OPERAND_GREATER_EQUAL = _types.DB_WHERE_OPERAND_GREATER_EQUAL;
+	public static final String OPERAND_LESS = _types.DB_WHERE_OPERAND_LESS;
+	public static final String OPERAND_LESS_EQUAL = _types.DB_WHERE_OPERAND_LESS_EQUAL;
 
-	public static final String LINK_AND = types.DB_WHERE_LINK_AND;
-	public static final String LINK_OR = types.DB_WHERE_LINK_OR;
+	public static final String LINK_AND = _types.DB_WHERE_LINK_AND;
+	public static final String LINK_OR = _types.DB_WHERE_LINK_OR;
 
 	public static final String DEFAULT_OPERAND = OPERAND_EQUAL;
 	public static final String DEFAULT_LINK = LINK_AND;
@@ -63,7 +63,7 @@ public class db_where extends parent
 		return output;	
 	}
 
-	public static boolean operand_is_ok(String operand_) { return val_is_ok_common(operand_, types.DB_WHERE_OPERAND, DEFAULT_OPERAND); }
+	public static boolean operand_is_ok(String operand_) { return val_is_ok_common(operand_, _types.DB_WHERE_OPERAND, DEFAULT_OPERAND); }
 
 	public static String check_operand(String operand_) { return check_val_common(operand_, get_all_operands(), DEFAULT_OPERAND); }
 
@@ -73,7 +73,7 @@ public class db_where extends parent
 
 	public static String check_link(String link_) { return check_val_common(link_, get_all_links(), DEFAULT_LINK); }
 
-	public static String link_to_string(String link_) { return val_to_string_common(link_, types.DB_WHERE_LINK, DEFAULT_LINK); }
+	public static String link_to_string(String link_) { return val_to_string_common(link_, _types.DB_WHERE_LINK, DEFAULT_LINK); }
 
 	public static String join(db_where[] where1s_, db_where[] where2s_, String link_) { return join(to_string(where1s_), to_string(where2s_), link_); }
 

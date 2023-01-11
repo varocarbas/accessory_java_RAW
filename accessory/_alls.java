@@ -1,5 +1,6 @@
 package accessory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 //This class includes all the array constants to be loaded at the very beginning, except for the ones included in _basic. 
@@ -13,8 +14,6 @@ public class _alls extends parent_first
 
 	public _alls() { }
 	public static void populate() { _instance.populate_internal_common(); }
-
-	public static String[] TYPES_ALL = null;
 
 	public static Class<?>[] ARRAYS_CLASSES_SMALL = null;
 	public static Class<?>[] ARRAYS_CLASSES_ARRAY = null;
@@ -36,30 +35,21 @@ public class _alls extends parent_first
 	public static String[] DB_SOURCES_INBUILT = null;
 	public static String[] DB_QUERIES_DATA = null;
 
+	public static ArrayList<String> DB_SQL_TYPES = null;
+	
 	public static HashMap<String, String[]> DB_WHERE_OPERANDS = null;
 	public static HashMap<String, String[]> DB_WHERE_LINKS = null;
 
 	public static String[] DB_FIELD_TYPES_NO_SIZE = null;
-
+	
 	public static String[] CONFIG_NOT_UPDATE = null;
 
 	public static String[] CRYPTO_WHATS = null;
 	
 	public static String[] MISC_SUPPORTED_SOUND_EXTENSIONS = null;
-	
-	//Method expected to be called from the corresponding _alls.populate_internal() to include
-	//all the additional types from the given app/library.
-	public static void populate_types(String[] all_add_) 
-	{ 
-		if (TYPES_ALL == null) TYPES_ALL = types.populate_all_types();
-
-		if (arrays.is_ok(all_add_)) TYPES_ALL = (String[])arrays.add(TYPES_ALL, all_add_);
-	}
 
 	protected void populate_internal() 
 	{ 
-		populate_types(null);
-
 		ARRAYS_CLASSES_SMALL = arrays.populate_all_classes_small();
 		ARRAYS_CLASSES_ARRAY = arrays.populate_all_classes_array();
 		ARRAYS_CLASSES_NUMERIC = arrays.populate_all_classes_numeric();
@@ -80,6 +70,8 @@ public class _alls extends parent_first
 		DB_SOURCES_INBUILT = db_common.populate_all_sources_inbuilt();
 		DB_QUERIES_DATA = db.populate_all_queries_data();
 
+		DB_SQL_TYPES = db_sql.populate_all_types();
+		
 		DB_WHERE_OPERANDS = db_where.populate_all_operands();
 		DB_WHERE_LINKS = db_where.populate_all_links();
 

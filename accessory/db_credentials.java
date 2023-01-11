@@ -5,14 +5,14 @@ import java.util.Map.Entry;
 
 public abstract class db_credentials
 {
-	public static final String SOURCE = types.CONFIG_CREDENTIALS_DB_SOURCE;
+	public static final String SOURCE = _types.CONFIG_CREDENTIALS_DB_SOURCE;
 
-	public static final String ID = types.CONFIG_CREDENTIALS_DB_FIELD_ID;
-	public static final String ID_ENC = types.CONFIG_CREDENTIALS_DB_FIELD_ID_ENC;
-	public static final String USER = types.CONFIG_CREDENTIALS_DB_FIELD_USER;
-	public static final String USERNAME = types.CONFIG_CREDENTIALS_DB_FIELD_USERNAME;
-	public static final String PASSWORD = types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD;
-	public static final String IS_ENC = types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC;
+	public static final String ID = _types.CONFIG_CREDENTIALS_DB_FIELD_ID;
+	public static final String ID_ENC = _types.CONFIG_CREDENTIALS_DB_FIELD_ID_ENC;
+	public static final String USER = _types.CONFIG_CREDENTIALS_DB_FIELD_USER;
+	public static final String USERNAME = _types.CONFIG_CREDENTIALS_DB_FIELD_USERNAME;
+	public static final String PASSWORD = _types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD;
+	public static final String IS_ENC = _types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC;
 	
 	static String[] _fields = null;
 	static String[] _cols = null;

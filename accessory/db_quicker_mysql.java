@@ -8,7 +8,7 @@ public abstract class db_quicker_mysql
 {
 	public static final String TYPE = db.MYSQL;
 	
-	public static final String ERROR = types.ERROR_DB_QUICKER;
+	public static final String ERROR = _types.ERROR_DB_QUICKER;
 	
 	public static boolean is_ok() { return db_quicker.is_ok(); }
 	

@@ -1,7 +1,9 @@
 package accessory;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -12,8 +14,8 @@ import java.util.Map.Entry;
 
 public abstract class generic extends parent_static 
 {	
-	public static final String ERROR_METHOD_GET = types.ERROR_GENERIC_METHOD_GET;
-	public static final String ERROR_METHOD_CALL = types.ERROR_GENERIC_METHOD_CALL;
+	public static final String ERROR_METHOD_GET = _types.ERROR_GENERIC_METHOD_GET;
+	public static final String ERROR_METHOD_CALL = _types.ERROR_GENERIC_METHOD_CALL;
 
 	public static boolean is_ok(double[] input_) { return is_ok(input_, false); }
 
@@ -327,6 +329,18 @@ public abstract class generic extends parent_static
 		return output;
 	}
 
+	public static Object[] get_class_static_variables(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, true, false, true, false, return_values_, false); }
+
+	public static Object[] get_class_variables(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_non_static_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, true, false, false, only_non_static_, return_values_, false); }
+
+	public static Object[] get_class_static_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, true, true, false, return_values_, false); }
+
+	public static Object[] get_class_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_non_static_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, true, false, only_non_static_, return_values_, false); }
+
+	public static Object[] get_class_static_variables_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, false, true, false, return_values_, false); }
+
+	public static Object[] get_class_variables_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_non_static_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, false, false, only_non_static_, return_values_, false); }
+	
 	static boolean is_ok(double[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 
 	static boolean is_ok(long[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
@@ -438,6 +452,78 @@ public abstract class generic extends parent_static
 		else output = input1_.equals(input2_);
 
 		return output;
+	}
+
+	@SuppressWarnings("unchecked")
+	static <x> x[] get_class_variables_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_variables_, boolean only_constants_, boolean only_static_, boolean only_non_static_, boolean return_values_, boolean is_startup_)
+	{
+		if (class_ == null) return null;
+		
+		ArrayList<x> output = new ArrayList<x>();
+		
+		boolean check_names = (ignore_names_ != null && ignore_names_.length > 0);
+		boolean check_class = (valid_classes_ != null && valid_classes_.length > 0);
+
+		for (Field field: class_.getFields()) 
+		{ 
+			String name = field.getName();
+
+			if (check_names)
+			{
+				boolean is_ok = true;
+				
+				for (String ignore: ignore_names_)
+				{
+					if (name.equals(ignore))
+					{
+						is_ok = false;
+						
+						break;
+					}	
+				}
+				
+				if (!is_ok) continue;
+			}
+			
+			int modifiers = field.getModifiers();
+			
+			boolean is_static = Modifier.isStatic(modifiers);
+			if ((only_static_ && !is_static) || (only_non_static_ && is_static)) continue;
+
+			boolean is_final = Modifier.isFinal(modifiers);
+			if ((only_variables_ && is_final) || (only_constants_ && !is_final)) continue;
+
+			if (check_class)
+			{
+				boolean is_ok = false;
+				
+				Class<?> class2 = field.getType();
+
+				for (Class<?> valid: valid_classes_)
+				{
+					if ((is_startup_ && class2.equals(valid)) || (!is_startup_ && are_equal(class2, valid)))
+					{
+						is_ok = true;
+						
+						break;
+					}
+				}
+				
+				if (!is_ok) continue;
+			}
+			
+			if (return_values_)
+			{
+				try { output.add((x)field.get(null)); } 
+				catch (Exception e) { }				
+			}
+			else output.add((x)name); 
+		}
+		
+		int size = output.size();
+		if (size == 0) return null;
+		
+		return ((return_values_ && !is_startup_) ? (x[])output.toArray(new Object[size]) : (x[])output.toArray(new String[size]));
 	}
 
 	private static String[] get_all_default_methods() { return _alls.GENERIC_DEFAULT_METHOD_NAMES; }

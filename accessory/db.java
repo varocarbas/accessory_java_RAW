@@ -6,47 +6,47 @@ import java.util.Map.Entry;
 
 public abstract class db
 {
-	public static final String NAME = types.CONFIG_DB_NAME;
-	public static final String HOST = types.CONFIG_DB_SETUP_HOST;
-	public static final String USERNAME = types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME;
-	public static final String PASSWORD = types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD;
-	public static final String USER = types.CONFIG_DB_SETUP_CREDENTIALS_USER;
+	public static final String NAME = _types.CONFIG_DB_NAME;
+	public static final String HOST = _types.CONFIG_DB_SETUP_HOST;
+	public static final String USERNAME = _types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME;
+	public static final String PASSWORD = _types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD;
+	public static final String USER = _types.CONFIG_DB_SETUP_CREDENTIALS_USER;
 	public static final String CREDENTIALS_USERNAME = USERNAME;
 	public static final String CREDENTIALS_PASSWORD = PASSWORD;
 	public static final String CREDENTIALS_USER = USER;
-	public static final String CREDENTIALS_ENCRYPTED = types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED;
-	public static final String CREDENTIALS_MEMORY = types.CONFIG_DB_SETUP_CREDENTIALS_MEMORY;
-	public static final String MAX_POOL = types.CONFIG_DB_SETUP_MAX_POOL;
-	public static final String TYPE = types.CONFIG_DB_SETUP_TYPE;
-	public static final String MYSQL = types.CONFIG_DB_SETUP_TYPE_MYSQL;
+	public static final String CREDENTIALS_ENCRYPTED = _types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED;
+	public static final String CREDENTIALS_MEMORY = _types.CONFIG_DB_SETUP_CREDENTIALS_MEMORY;
+	public static final String MAX_POOL = _types.CONFIG_DB_SETUP_MAX_POOL;
+	public static final String TYPE = _types.CONFIG_DB_SETUP_TYPE;
+	public static final String MYSQL = _types.CONFIG_DB_SETUP_TYPE_MYSQL;
 	public static final String TYPE_MYSQL = MYSQL;
-	public static final String SETUP = types.CONFIG_DB_SETUP;
+	public static final String SETUP = _types.CONFIG_DB_SETUP;
 
-	public static final String FIELD_ID = types.CONFIG_DB_DEFAULT_FIELD_ID;
-	public static final String FIELD_TIMESTAMP = types.CONFIG_DB_DEFAULT_FIELD_TIMESTAMP;
+	public static final String FIELD_ID = _types.CONFIG_DB_DEFAULT_FIELD_ID;
+	public static final String FIELD_TIMESTAMP = _types.CONFIG_DB_DEFAULT_FIELD_TIMESTAMP;
 
-	public static final String QUERY_SELECT = types.DB_QUERY_SELECT;
-	public static final String QUERY_SELECT_COUNT = types.DB_QUERY_SELECT_COUNT;
-	public static final String QUERY_INSERT = types.DB_QUERY_INSERT;
-	public static final String QUERY_UPDATE = types.DB_QUERY_UPDATE;
-	public static final String QUERY_DELETE = types.DB_QUERY_DELETE;	
-	public static final String QUERY_TABLE_EXISTS = types.DB_QUERY_TABLE_EXISTS;
-	public static final String QUERY_TABLE_CREATE = types.DB_QUERY_TABLE_CREATE;
-	public static final String QUERY_TABLE_DROP = types.DB_QUERY_TABLE_DROP;
-	public static final String QUERY_TABLE_TRUNCATE = types.DB_QUERY_TABLE_TRUNCATE;
+	public static final String QUERY_SELECT = _types.DB_QUERY_SELECT;
+	public static final String QUERY_SELECT_COUNT = _types.DB_QUERY_SELECT_COUNT;
+	public static final String QUERY_INSERT = _types.DB_QUERY_INSERT;
+	public static final String QUERY_UPDATE = _types.DB_QUERY_UPDATE;
+	public static final String QUERY_DELETE = _types.DB_QUERY_DELETE;	
+	public static final String QUERY_TABLE_EXISTS = _types.DB_QUERY_TABLE_EXISTS;
+	public static final String QUERY_TABLE_CREATE = _types.DB_QUERY_TABLE_CREATE;
+	public static final String QUERY_TABLE_DROP = _types.DB_QUERY_TABLE_DROP;
+	public static final String QUERY_TABLE_TRUNCATE = _types.DB_QUERY_TABLE_TRUNCATE;
 
 	public static final int MAX_ROWS_ALL = 0;
 	
-	public static final String ERROR_INFO = types.ERROR_DB_INFO;
-	public static final String ERROR_CREDENTIALS = types.ERROR_DB_CREDENTIALS;
-	public static final String ERROR_TYPE = types.ERROR_DB_TYPE;
-	public static final String ERROR_CONN = types.ERROR_DB_CONN;
-	public static final String ERROR_QUERY = types.ERROR_DB_QUERY;
-	public static final String ERROR_SOURCE = types.ERROR_DB_SOURCE;
-	public static final String ERROR_FIELD = types.ERROR_DB_FIELD;
-	public static final String ERROR_VALS = types.ERROR_DB_VALS;
-	public static final String ERROR_BACKUP = types.ERROR_DB_BACKUP;
-	public static final String ERROR_RESTORE = types.ERROR_DB_RESTORE;
+	public static final String ERROR_INFO = _types.ERROR_DB_INFO;
+	public static final String ERROR_CREDENTIALS = _types.ERROR_DB_CREDENTIALS;
+	public static final String ERROR_TYPE = _types.ERROR_DB_TYPE;
+	public static final String ERROR_CONN = _types.ERROR_DB_CONN;
+	public static final String ERROR_QUERY = _types.ERROR_DB_QUERY;
+	public static final String ERROR_SOURCE = _types.ERROR_DB_SOURCE;
+	public static final String ERROR_FIELD = _types.ERROR_DB_FIELD;
+	public static final String ERROR_VALS = _types.ERROR_DB_VALS;
+	public static final String ERROR_BACKUP = _types.ERROR_DB_BACKUP;
+	public static final String ERROR_RESTORE = _types.ERROR_DB_RESTORE;
 	
 	public static final String WRONG_STRING = strings.DEFAULT;
 	public static final double WRONG_DECIMAL = numbers.MIN_DECIMAL;
@@ -60,15 +60,15 @@ public abstract class db
 	public static final String DEFAULT_WHERE = strings.DEFAULT;
 	public static final String DEFAULT_ORDER = strings.DEFAULT;
 
-	public static final String DEFAULT_DB = types.CONFIG_DB_DEFAULT;
+	public static final String DEFAULT_DB = _types.CONFIG_DB_DEFAULT;
 	public static final String DEFAULT_DB_NAME = "accessory";
-	public static final String DEFAULT_SOURCE = types.CONFIG_TESTS_DB_SOURCE;
-	public static final String DEFAULT_SETUP = types.CONFIG_DB;
-	public static final String DEFAULT_TYPE = types.CONFIG_DB_SETUP_TYPE_MYSQL;
+	public static final String DEFAULT_SOURCE = _types.CONFIG_TESTS_DB_SOURCE;
+	public static final String DEFAULT_SETUP = _types.CONFIG_DB;
+	public static final String DEFAULT_TYPE = _types.CONFIG_DB_SETUP_TYPE_MYSQL;
 
 	public static final String DEFAULT_MAX_POOL = "500";
 	public static final String DEFAULT_HOST = "localhost";
-	public static final String DEFAULT_CREDENTIALS_TYPE = types.remove_type(DEFAULT_TYPE, types.CONFIG_DB_SETUP_TYPE);
+	public static final String DEFAULT_CREDENTIALS_TYPE = _types.remove_type(DEFAULT_TYPE, _types.CONFIG_DB_SETUP_TYPE);
 	public static final boolean DEFAULT_CREDENTIALS_MEMORY = true;
 	
 	static String _cur_source = strings.DEFAULT; //Only updated by the user, as a way to keep using the same source without having to expressly provide it.
@@ -98,7 +98,7 @@ public abstract class db
 	{
 		boolean is_ok = false;
 		
-		String type = types.check_type(type_, TYPE);
+		String type = _types.check_type(type_, TYPE);
 
 		if (strings.is_ok(type)) 
 		{
@@ -127,7 +127,7 @@ public abstract class db
 
 	public static boolean update_db(String db_, String db_name_) 
 	{ 
-		if (!types.is_config_db(db_) || !strings.is_ok(db_name_)) return manage_error("Wrong DB");
+		if (!_types.is_config_db(db_) || !strings.is_ok(db_name_)) return manage_error("Wrong DB");
 
 		return config.update(db_, NAME, db_name_);
 	}
@@ -207,7 +207,7 @@ public abstract class db
 	public static boolean update_setup(String db_, HashMap<String, Object> setup_vals_)
 	{
 		String db = config.check_type(db_);
-		if (!strings.is_ok(db) || !config.vals_are_ok(setup_vals_, types.CONFIG_DB_SETUP)) return false;
+		if (!strings.is_ok(db) || !config.vals_are_ok(setup_vals_, _types.CONFIG_DB_SETUP)) return false;
 
 		return update_vals(get_setup_from_db(db), setup_vals_);
 	}
@@ -522,7 +522,7 @@ public abstract class db
 
 	public static String get_current_db() { return get_db(get_current_source()); }
 
-	public static String get_db(String source_) { return (String)get_setup_common(get_valid_source(source_), types.CONFIG_DB); }
+	public static String get_db(String source_) { return (String)get_setup_common(get_valid_source(source_), _types.CONFIG_DB); }
 
 	public static String get_current_setup() { return get_setup(get_current_source()); }
 
@@ -533,7 +533,7 @@ public abstract class db
 		return (strings.is_ok(output) ? output : DEFAULT_SETUP);
 	}
 
-	public static String get_setup(String source_) { return (String)get_setup_common(get_valid_source(source_), types.CONFIG_DB_SETUP); }
+	public static String get_setup(String source_) { return (String)get_setup_common(get_valid_source(source_), _types.CONFIG_DB_SETUP); }
 
 	public static String get_valid_type(String source_) 
 	{ 
@@ -552,7 +552,7 @@ public abstract class db
 	{ 
 		String source = check_source(source_);
 
-		String type = (strings.is_ok(source) ? (String)get_setup_common(source, types.CONFIG_DB_SETUP_TYPE) : strings.DEFAULT); 
+		String type = (strings.is_ok(source) ? (String)get_setup_common(source, _types.CONFIG_DB_SETUP_TYPE) : strings.DEFAULT); 
 		if (strings.is_ok(type) && !type.equals(_cur_type)) _cur_type = type;
 		
 		return type;
@@ -570,7 +570,7 @@ public abstract class db
 	public static HashMap<String, String> get_fields_cols(String source_, String[] fields_)
 	{
 		HashMap<String, String> output = new HashMap<String, String>();
-		if (!arrays.is_ok(fields_)) return output;
+		if (!source_is_ok(source_) || !arrays.is_ok(fields_)) return output;
 		
 		for (String field: fields_) { output.put(field, get_col(source_, field)); }
 		
@@ -728,7 +728,7 @@ public abstract class db
 	
 	public static String get_current_encryption_id() { return get_encryption_id(get_current_source()); }
 
-	public static String get_encryption_id(String source_) { return types.remove_type(get_type(source_), TYPE); }
+	public static String get_encryption_id(String source_) { return _types.remove_type(get_type(source_), TYPE); }
 
 	public static String get_current_host() { return get_host(get_current_setup()); }
 
@@ -742,7 +742,7 @@ public abstract class db
 
 	public static boolean is_ok(String source_) { return get_valid_instance(source_).is_ok(); }
 
-	public static String check_query_type(String input_) { return types.check_type(input_, types.get_subtypes(types.DB_QUERY), types.ACTION_ADD, types.DB_QUERY); }
+	public static String check_query_type(String input_) { return _types.check_type(input_, _types.get_subtypes(_types.DB_QUERY), _types.ACTION_ADD, _types.DB_QUERY); }
 	
 	public static String sanitise_string_default(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
 
@@ -783,8 +783,8 @@ public abstract class db
 
 	static void manage_error(String source_, String type_, String query_, Exception e_, String message_, boolean is_static_)
 	{
-		if (is_static_) db_static.manage_error(db.ERROR_INFO, null, null, message_);
-		else manage_error(source_, db.ERROR_INFO, null, null, message_);
+		if (is_static_) db_static.manage_error(type_, query_, e_, message_);
+		else manage_error(source_, type_, query_, e_, message_);
 	}
 	
 	static void manage_error(String source_, String type_, String query_, Exception e_, String message_)
@@ -849,7 +849,7 @@ public abstract class db
 	{ 
 		parent_db output = null;
 
-		String type = types.check_type(type_, TYPE);
+		String type = _types.check_type(type_, TYPE);
 		if (!strings.is_ok(type)) type = DEFAULT_TYPE;
 
 		if (type.equals(MYSQL)) output = new db_mysql();
@@ -876,7 +876,7 @@ public abstract class db
 			boolean stored_in_files = crypto.is_stored_in_files();
 			if (!stored_in_files) crypto.store_in_files();
 			
-			temp = credentials.get_username_password(get_encryption_id(source_), user, encrypted, types.CONFIG_CREDENTIALS_WHERE_FILE);
+			temp = credentials.get_username_password(get_encryption_id(source_), user, encrypted, _types.CONFIG_CREDENTIALS_WHERE_FILE);
 
 			if (!stored_in_files) crypto.store_in_db();
 		}
@@ -941,14 +941,14 @@ public abstract class db
 			return false;
 		}
 
-		String setup = (String)setup_vals_.get(types.CONFIG_DB_SETUP);
-		String db = (String)setup_vals_.get(types.CONFIG_DB);
+		String setup = (String)setup_vals_.get(_types.CONFIG_DB_SETUP);
+		String db = (String)setup_vals_.get(_types.CONFIG_DB);
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
-		vals.put(types.CONFIG_DB, db);
-		vals.put(types.CONFIG_DB_SETUP, setup);
-		vals.put(types.CONFIG_DB_SETUP_TYPE, (String)setup_vals_.get(types.CONFIG_DB_SETUP_TYPE));
-		String instance = _keys.get_key(types.WHAT_INSTANCE);
+		vals.put(_types.CONFIG_DB, db);
+		vals.put(_types.CONFIG_DB_SETUP, setup);
+		vals.put(_types.CONFIG_DB_SETUP_TYPE, (String)setup_vals_.get(_types.CONFIG_DB_SETUP_TYPE));
+		String instance = _keys.get_key(_types.WHAT_INSTANCE);
 		vals.put(instance, setup_vals_.get(instance));
 
 		if (!arrays.is_ok(_source_setups)) _source_setups = new HashMap<String, HashMap<String, Object>>();

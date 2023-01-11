@@ -88,7 +88,15 @@ public abstract class db_common
 	public static String get_field_col(String source_, String field_, boolean is_quick_) { return (is_quick_ ? get_col(source_, field_) : field_); }
 
 	public static String get_col(String source_, String field_) { return db.get_col(source_, field_); }
-	
+
+	public static String get_type(String key_, HashMap<String, String> types_keys_) { return ((types_keys_ != null && types_keys_.containsValue(key_)) ? (String)arrays.get_key(types_keys_, key_) : strings.DEFAULT); }
+
+	public static String get_key(String type_, HashMap<String, String> types_keys_) { return ((types_keys_ != null && types_keys_.containsKey(type_)) ? types_keys_.get(type_) : strings.DEFAULT); }
+
+	public static String get_type(String key_, String root_) { return ((strings.is_ok(key_) && strings.is_ok(root_)) ? (root_ + _types.SEPARATOR + key_) : strings.DEFAULT); }
+
+	public static String get_key(String type_, String root_) { return accessory._keys.get_key(type_, root_); }
+
 	public static String[] add_default_fields(String source_, String[] fields_)
 	{
 		if (!db.includes_default_fields(source_)) return fields_;
@@ -226,7 +234,19 @@ public abstract class db_common
 		
 		return output;
 	} 
+	
+	public static HashMap<String, String> get_fields_cols(String source_, String[] fields_) { return db.get_fields_cols(source_, fields_); }
 
+	public static HashMap<String, String> get_types_keys(String source_, String[] types_, String root_)
+	{
+		HashMap<String, String> output = new HashMap<String, String>();
+		if (!db.source_is_ok(source_) || !arrays.is_ok(types_) || !strings.is_ok(root_)) return output;
+		
+		for (String type: types_) { output.put(type, get_key(type, root_)); }
+		
+		return output;
+	}
+	
 	static void start()
 	{
 		for (String source: get_all_sources_inbuilt()) { get_fields_cols_inbuilt(source); }
@@ -236,5 +256,5 @@ public abstract class db_common
 
 	private static String[] get_cols_inbuilt_internal(String source_) { return db.get_cols(get_fields_cols_inbuilt(source_)); }
 
-	private static HashMap<String, String> get_fields_cols_inbuilt_internal(String source_) { return db.get_fields_cols(source_, get_fields_inbuilt(source_)); }
+	private static HashMap<String, String> get_fields_cols_inbuilt_internal(String source_) { return get_fields_cols(source_, get_fields_inbuilt(source_)); }
 }

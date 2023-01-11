@@ -7,37 +7,37 @@ public abstract class config extends parent_static
 {
 	private static HashMap<String, HashMap<String, Object>> _info = new HashMap<String, HashMap<String, Object>>();
 
-	public static Object get_basic(String key_) { return get(types.CONFIG_BASIC, key_); }
+	public static Object get_basic(String key_) { return get(_types.CONFIG_BASIC, key_); }
 
-	public static boolean get_basic_boolean(String key_) { return get_boolean(types.CONFIG_BASIC, key_); }
+	public static boolean get_basic_boolean(String key_) { return get_boolean(_types.CONFIG_BASIC, key_); }
 
-	public static boolean update_basic(String key_, Object val_) { return update(types.CONFIG_BASIC, key_, val_); }
+	public static boolean update_basic(String key_, Object val_) { return update(_types.CONFIG_BASIC, key_, val_); }
 
-	public static Object get_credentials(String key_) { return get(types.CONFIG_CREDENTIALS, key_); }
+	public static Object get_credentials(String key_) { return get(_types.CONFIG_CREDENTIALS, key_); }
 
-	public static boolean update_credentials(String key_, Object val_) { return update(types.CONFIG_CREDENTIALS, key_, val_); }
+	public static boolean update_credentials(String key_, Object val_) { return update(_types.CONFIG_CREDENTIALS, key_, val_); }
 
-	public static Object get_crypto(String key_) { return get(types.CONFIG_CRYPTO, key_); }
+	public static Object get_crypto(String key_) { return get(_types.CONFIG_CRYPTO, key_); }
 
-	public static boolean get_crypto_boolean(String key_) { return get_boolean(types.CONFIG_CRYPTO, key_); }
+	public static boolean get_crypto_boolean(String key_) { return get_boolean(_types.CONFIG_CRYPTO, key_); }
 
-	public static boolean update_crypto(String key_, Object val_) { return update(types.CONFIG_CRYPTO, key_, val_); }
+	public static boolean update_crypto(String key_, Object val_) { return update(_types.CONFIG_CRYPTO, key_, val_); }
 
-	public static Object get_logs(String key_) { return get(types.CONFIG_LOGS, key_); }
+	public static Object get_logs(String key_) { return get(_types.CONFIG_LOGS, key_); }
 
-	public static boolean get_logs_boolean(String key_) { return get_boolean(types.CONFIG_LOGS, key_); }
+	public static boolean get_logs_boolean(String key_) { return get_boolean(_types.CONFIG_LOGS, key_); }
 
-	public static boolean update_logs(String key_, Object val_) { return update(types.CONFIG_LOGS, key_, val_); }
+	public static boolean update_logs(String key_, Object val_) { return update(_types.CONFIG_LOGS, key_, val_); }
 
-	public static Object get_numbers(String key_) { return get(types.CONFIG_NUMBERS, key_); }
+	public static Object get_numbers(String key_) { return get(_types.CONFIG_NUMBERS, key_); }
 
-	public static boolean get_numbers_boolean(String key_) { return get_boolean(types.CONFIG_NUMBERS, key_); }
+	public static boolean get_numbers_boolean(String key_) { return get_boolean(_types.CONFIG_NUMBERS, key_); }
 
-	public static boolean update_numbers(String key_, Object val_) { return update(types.CONFIG_NUMBERS, key_, val_); }
+	public static boolean update_numbers(String key_, Object val_) { return update(_types.CONFIG_NUMBERS, key_, val_); }
 
-	public static Object get_strings(String key_) { return get(types.CONFIG_STRINGS, key_); }
+	public static Object get_strings(String key_) { return get(_types.CONFIG_STRINGS, key_); }
 
-	public static boolean update_strings(String key_, Object val_) { return update(types.CONFIG_STRINGS, key_, val_); }
+	public static boolean update_strings(String key_, Object val_) { return update(_types.CONFIG_STRINGS, key_, val_); }
 
 	public static boolean update(String type_, String key_, Object val_) { return update_matches(type_, key_, val_, true, false); }
 
@@ -51,18 +51,18 @@ public abstract class config extends parent_static
 
 	public static boolean matches(String type_, String key_, String val_) { return update_matches(type_, key_, val_, false, false); }	
 
-	public static String check_type(String type_) { return types.check_type(type_, types.CONFIG); }
+	public static String check_type(String type_) { return _types.check_type(type_, _types.CONFIG); }
 
 	public static boolean vals_are_ok(HashMap<String, Object> vals_, String type_)
 	{
 		String type = check_type(type_);
 		if (!arrays.is_ok(vals_) || !strings.is_ok(type)) return false;
 
-		String[] subtypes = types.get_subtypes(type);
+		String[] subtypes = _types.get_subtypes(type);
 
 		for (Entry<String, Object> item: vals_.entrySet())
 		{
-			if (!strings.is_ok(types.check_type(item.getKey(), subtypes))) return false;
+			if (!strings.is_ok(_types.check_type(item.getKey(), subtypes))) return false;
 		}
 
 		return true;
@@ -87,7 +87,7 @@ public abstract class config extends parent_static
 		return output;
 	}
 
-	static String[] populate_all_not_update() { return new String[] { types.CONFIG_DB, types.CONFIG_DB_SETUP, types.CONFIG_DB_SETUP_TYPE}; }
+	static String[] populate_all_not_update() { return new String[] { _types.CONFIG_DB, _types.CONFIG_DB_SETUP, _types.CONFIG_DB_SETUP_TYPE}; }
 
 	private static String[] get_all_not_update() { return _alls.CONFIG_NOT_UPDATE; }
 
