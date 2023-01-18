@@ -37,10 +37,9 @@ public class tests extends parent_tests
 		return outputs;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static HashMap<String, HashMap<String, Boolean>> run_db(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		HashMap<String, HashMap<String, Boolean>> outputs = (HashMap<String, HashMap<String, Boolean>>)arrays.get_new(outputs_);
+		HashMap<String, HashMap<String, Boolean>> outputs = arrays.get_new_hashmap_xy(outputs_);
 		if (!_instance._test_db) return outputs;
 
 		String name = "accessory_db";
@@ -55,10 +54,9 @@ public class tests extends parent_tests
 		return outputs;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static HashMap<String, HashMap<String, Boolean>> run_main(HashMap<String, HashMap<String, Boolean>> outputs_)
 	{
-		HashMap<String, HashMap<String, Boolean>> outputs = (HashMap<String, HashMap<String, Boolean>>)arrays.get_new(outputs_);
+		HashMap<String, HashMap<String, Boolean>> outputs = arrays.get_new_hashmap_xy(outputs_);
 
 		String name = "accessory_main";
 		int level = 0;
@@ -566,10 +564,9 @@ public class tests extends parent_tests
 		return outputs;
 	}
 
-	@SuppressWarnings("unchecked")
 	private static HashMap<String, Boolean> run_credentials_internal(Class<?> class_, HashMap<String, Boolean> outputs_, String id_, String user_, String username_, String password_, boolean is_file_)
 	{
-		HashMap<String, Boolean> outputs = (HashMap<String, Boolean>)arrays.get_new(outputs_);
+		HashMap<String, Boolean> outputs = arrays.get_new_hashmap_xy(outputs_);
 
 		String name = "encrypt_username_password_" + (is_file_ ? "file" : "db");
 

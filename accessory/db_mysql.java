@@ -255,6 +255,7 @@ class db_mysql extends parent_db
 		else if (data_type.equals(data.LONG)) max = numbers.MAX_DIGITS_LONG;
 		else if (data_type.equals(data.STRING)) max = (long)get_max_value_static(data_type);
 		else if (data_type.equals(data.STRING_BIG)) max = (long)get_max_value_static(data_type);
+		
 		return max;
 	}
 	

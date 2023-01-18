@@ -6,9 +6,8 @@ import java.util.Map.Entry;
 
 public abstract class parent_keys 
 {
-	private static ArrayList<String> _roots = new ArrayList<String>();
-	@SuppressWarnings("unchecked")
-	private static HashMap<String, String>[] _types_keys = (HashMap<String, String>[])new HashMap[1];
+	private static ArrayList<String> ROOTS = null;
+	private static HashMap<String, String>[] TYPES_KEYS = null;
 
 	public static String get_startup_key(String type_, String root_) 
 	{
@@ -36,17 +35,20 @@ public abstract class parent_keys
 
 	protected abstract HashMap<String, HashMap<String, String>> get_startup_merged_types();
 
+	@SuppressWarnings("unchecked")
 	protected void populate_internal()
 	{
 		if (_populated) return;
 
+		ROOTS = new ArrayList<String>();
+		
 		ArrayList<HashMap<String, String>> types_keys = new ArrayList<HashMap<String, String>>();
 
 		types_keys = populate_internal_roots(types_keys);
 		types_keys = populate_internal_merged_roots(types_keys);
 		types_keys = populate_internal_merged_types(types_keys);
 		
-		_types_keys = arrays.to_array(types_keys);
+		TYPES_KEYS = (types_keys.size() > 0 ? arrays.to_array(types_keys) : (HashMap<String, String>[])new HashMap[1]);
 	}
 
 	private ArrayList<HashMap<String, String>> populate_internal_roots(ArrayList<HashMap<String, String>> types_keys_)
@@ -99,13 +101,13 @@ public abstract class parent_keys
 	@SuppressWarnings("unchecked")
 	private ArrayList<HashMap<String, String>> populate_internal_loop(String root_id_, String root_type_, String root_key_, ArrayList<HashMap<String, String>> types_keys_, boolean is_root_)
 	{
-		int i = _roots.indexOf(root_id_);
+		int i = ROOTS.indexOf(root_id_);
 
 		if (i < 0) 
 		{
-			_roots.add(root_id_);
+			ROOTS.add(root_id_);
 
-			i = _roots.size() - 1;
+			i = ROOTS.size() - 1;
 		}
 
 		HashMap<String, String> items = new HashMap<String, String>();
@@ -136,8 +138,8 @@ public abstract class parent_keys
 		HashMap<String, String> output = new HashMap<String, String>();
 		if (!strings.are_ok(new String[] { type_key_, root_ })) return output;
 
-		int i = _roots.indexOf(root_);
+		int i = ROOTS.indexOf(root_);
 
-		return (i >= 0 ? new HashMap<String, String>(_types_keys[i]) : new HashMap<String, String>());
+		return (i >= 0 ? new HashMap<String, String>(TYPES_KEYS[i]) : new HashMap<String, String>());
 	}
 }

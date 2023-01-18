@@ -913,7 +913,7 @@ public abstract class arrays extends parent_static
 
 	public static <x, y> String to_string(HashMap<x, y> input_, String sep_items_, String sep_keyval_, String[] keys_ignore_) { return to_string(input_, sep_items_, sep_keyval_, keys_ignore_, true, true); }
 
-	public static <x> String to_string(Object input_, String sep_items_, String sep_keyval_, String[] keys_ignore_) { return (generic.are_equal(generic.get_class(input_), HashMap.class) ? to_string(input_, sep_items_, sep_keyval_, keys_ignore_, false, true) : strings.DEFAULT); }
+	public static String to_string(Object input_, String sep_items_, String sep_keyval_, String[] keys_ignore_) { return (generic.are_equal(generic.get_class(input_), HashMap.class) ? to_string(input_, sep_items_, sep_keyval_, keys_ignore_, false, true) : strings.DEFAULT); }
 
 	public static String to_string(double[] input_, String separator_) { return to_string(to_big(input_), separator_, true); }
 

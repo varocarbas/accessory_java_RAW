@@ -62,7 +62,7 @@ abstract class db_sql
 	
 	private static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_, Connection conn_, boolean is_static_)
 	{
-		db.is_ok(source_, false, is_static_);
+		db.update_is_ok(source_, false, is_static_);
 
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
 		if (conn_ == null) return output;
@@ -75,7 +75,7 @@ abstract class db_sql
 			{
 				statement.executeUpdate();
 
-				db.is_ok(source_, true, is_static_);
+				db.update_is_ok(source_, true, is_static_);
 
 				return output;
 			}
@@ -102,7 +102,7 @@ abstract class db_sql
 					output.add(row);
 				}	
 
-				db.is_ok(source_, true, is_static_);
+				db.update_is_ok(source_, true, is_static_);
 			}
 			catch (Exception e) { db.manage_error(source_, db.ERROR_QUERY, query_, e, null, is_static_); }
 		} 

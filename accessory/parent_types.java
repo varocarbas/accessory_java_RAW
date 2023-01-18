@@ -43,13 +43,19 @@ public abstract class parent_types
 		}
 	}
 	
-	public static String[] get_types(Class<?> class_, String[] constant_names_to_ignore_) { return generic.get_class_variables_constants(class_, constant_names_to_ignore_, new Class<?>[] { String.class }, false, true, true, false, true, true); }
+	public static String[] get_types(Class<?> class_, String[] constant_names_to_ignore_) 
+	{ 
+		return generic.get_class_variables_constants(class_, constant_names_to_ignore_, new Class<?>[] { String.class }, false, true, true, false, true, true); 
+	}
 	
 	protected void populate_internal()
 	{
 		if (_populated) return;
 		
-		String[] types = generic.get_class_variables_constants(getClass(), get_constant_names_to_ignore(), new Class<?>[] { String.class }, false, true, true, false, true, true);
+		String[] types = generic.get_class_variables_constants
+		(
+			getClass(), get_constant_names_to_ignore(), new Class<?>[] { String.class }, false, true, true, false, true, true
+		);
 
 		add_types(types);
 

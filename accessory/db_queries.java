@@ -181,7 +181,7 @@ abstract class db_queries extends parent_static
 
 		if (!strings.is_ok(field_col_)) 
 		{
-			db.is_ok(source_, false);
+			db.update_is_ok(source_, false);
 
 			return output;
 		}

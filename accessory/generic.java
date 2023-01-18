@@ -329,17 +329,35 @@ public abstract class generic extends parent_static
 		return output;
 	}
 
-	public static Object[] get_class_static_variables(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, true, false, true, false, return_values_, false); }
+	public static Object[] get_class_static_variables(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean return_values_) 
+	{ 
+		return get_class_variables_constants(class_, ignore_names_, valid_classes_, true, false, true, false, return_values_, false); 
+	}
 
-	public static Object[] get_class_variables(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_non_static_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, true, false, false, only_non_static_, return_values_, false); }
+	public static Object[] get_class_variables(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_non_static_, boolean return_values_) 
+	{ 
+		return get_class_variables_constants(class_, ignore_names_, valid_classes_, true, false, false, only_non_static_, return_values_, false); 
+	}
 
-	public static Object[] get_class_static_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, true, true, false, return_values_, false); }
+	public static Object[] get_class_static_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean return_values_) 
+	{ 
+		return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, true, true, false, return_values_, false); 
+	}
 
-	public static Object[] get_class_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_non_static_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, true, false, only_non_static_, return_values_, false); }
+	public static Object[] get_class_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_non_static_, boolean return_values_) 
+	{ 
+		return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, true, false, only_non_static_, return_values_, false); 
+	}
 
-	public static Object[] get_class_static_variables_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, false, true, false, return_values_, false); }
+	public static Object[] get_class_static_variables_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean return_values_) 
+	{ 
+		return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, false, true, false, return_values_, false); 
+	}
 
-	public static Object[] get_class_variables_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_non_static_, boolean return_values_) { return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, false, false, only_non_static_, return_values_, false); }
+	public static Object[] get_class_variables_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_non_static_, boolean return_values_) 
+	{ 
+		return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, false, false, only_non_static_, return_values_, false); 
+	}
 	
 	static boolean is_ok(double[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 
@@ -455,7 +473,11 @@ public abstract class generic extends parent_static
 	}
 
 	@SuppressWarnings("unchecked")
-	static <x> x[] get_class_variables_constants(Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_variables_, boolean only_constants_, boolean only_static_, boolean only_non_static_, boolean return_values_, boolean is_startup_)
+	static <x> x[] get_class_variables_constants
+	(
+		Class<?> class_, String[] ignore_names_, Class<?>[] valid_classes_, boolean only_variables_, 
+		boolean only_constants_, boolean only_static_, boolean only_non_static_, boolean return_values_, boolean is_startup_
+	)
 	{
 		if (class_ == null) return null;
 		

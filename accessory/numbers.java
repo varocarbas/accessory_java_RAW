@@ -96,7 +96,6 @@ public abstract class numbers extends parent_static
 	public static Object get_random(Class<?> class_)
 	{
 		Object output = null;
-		if (!generic.is_number(class_)) return output;
 
 		if (generic.are_equal(class_, Double.class)) output = get_random_decimal(MIN_DECIMAL, MAX_DECIMAL);
 		else if (generic.are_equal(class_, Long.class)) output = get_random_long(MIN_LONG, MAX_LONG);
@@ -132,6 +131,9 @@ public abstract class numbers extends parent_static
 
 	public static double get_random_decimal(double min_, double max_)
 	{
+		if (min_ > max_) return 0.0;
+		if (min_ == max_) return min_;
+		
 		double output = (new Random()).nextDouble();
 
 		output = (min_ + output * (max_ - min_));
@@ -219,7 +221,6 @@ public abstract class numbers extends parent_static
 		
 		return output;
 	}
-
 
 	public static double round(double val_) { return round(val_, _round_decimals); }
 

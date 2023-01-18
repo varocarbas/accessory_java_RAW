@@ -737,6 +737,8 @@ public abstract class db
 	public static String get_current_db_name() { return get_db_name(get_current_db()); }
 
 	public static String get_db_name(String db_) { return (String)config.get(db_, NAME); }
+
+	public static boolean is_ok(String source_, boolean is_quick_) { return (is_quick_ ? db_quick.is_ok(source_) : is_ok(source_)); }
 	
 	public static boolean is_ok() { return is_ok(get_current_source()); }
 
@@ -755,15 +757,15 @@ public abstract class db
 
 	static String[] populate_all_queries_data() { return new String[] { QUERY_SELECT, QUERY_SELECT_COUNT, QUERY_TABLE_EXISTS }; }
 
-	static void is_ok(String source_, boolean is_ok_, boolean is_static_) 
+	static void update_is_ok(String source_, boolean is_ok_, boolean is_static_) 
 	{ 
 		if (is_static_) db_static.is_ok(is_ok_);
-		else is_ok(source_, is_ok_);
+		else update_is_ok(source_, is_ok_);
 	}
 	
-	static void is_ok(boolean is_ok_) { is_ok(get_current_source(), is_ok_); }
+	static void update_is_ok(boolean is_ok_) { update_is_ok(get_current_source(), is_ok_); }
 
-	static void is_ok(String source_, boolean is_ok_) { get_valid_instance(source_).is_ok(is_ok_); }
+	static void update_is_ok(String source_, boolean is_ok_) { get_valid_instance(source_).is_ok(is_ok_); }
 
 	static void update_query_type(String query_type_) { update_query_type(get_current_source(), query_type_); }
 
@@ -807,7 +809,7 @@ public abstract class db
 	
 	static void manage_error(String source_, String type_, Exception e_, HashMap<String, Object> info_)
 	{
-		is_ok(source_, false);
+		update_is_ok(source_, false);
 
 		HashMap<String, Object> info = arrays.get_new_hashmap_xy(info_);
 		info.put("query_type", strings.to_string(get_query_type(source_)));
@@ -827,12 +829,12 @@ public abstract class db
 
 	static String check_source_error(String source_)
 	{
-		is_ok(source_, true);
+		update_is_ok(source_, true);
 
 		String source = check_source(source_);
 
 		if (!strings.is_ok(source)) manage_error(source, ERROR_SOURCE, null, null, null);
-		else is_ok(source, true);
+		else update_is_ok(source, true);
 
 		return source;
 	}
