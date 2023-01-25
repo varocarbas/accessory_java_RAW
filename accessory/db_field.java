@@ -51,7 +51,7 @@ public class db_field extends parent
 		return true;
 	}
 
-	public static boolean further_is_ok(String further_) { return val_is_ok_common(further_, _types.DB_FIELD_FURTHER, strings.DEFAULT); }
+	public static boolean further_is_ok(String further_) { return val_is_ok_common(further_, _types.DB_FIELD_FURTHER); }
 
 	public static String check_further(String further_) { return check_val_common(further_, _types.DB_FIELD_FURTHER, strings.DEFAULT); }
 

@@ -42,7 +42,7 @@ abstract class db_quicker
 	public static boolean exists(String type_, String source_, String where_cols_) 
 	{
 		db_static.initialise();
-		
+
 		boolean output = false;
 		
 		try { output = (select_count(type_, source_, where_cols_) > 0); }

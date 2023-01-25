@@ -30,10 +30,10 @@ class _ini_db extends parent_ini_db
 		sources = add_source_crypto(db, sources);
 		
 		boolean is_ok = populate_db(db, name, sources, setup_vals);
-
+		
 		return is_ok;
 	}
-
+	
 	private HashMap<String, Object[]> add_source_tests(String db_, HashMap<String, Object[]> sources_)
 	{
 		String source = db_tests.SOURCE;

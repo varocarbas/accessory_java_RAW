@@ -17,10 +17,6 @@ public abstract class db_info
 
 	public static final String ENCRYPTION_ID = "info";
 	
-	static String[] _fields = null;
-	static String[] _cols = null;
-	static HashMap<String, String> _fields_cols = null;
-	
 	static boolean _is_quick = db_common.DEFAULT_IS_QUICK;
 	
 	@SuppressWarnings("unchecked")
@@ -72,13 +68,11 @@ public abstract class db_info
 	
 	public static void truncate() { db.truncate_table(SOURCE); }
 	
-	public static String get_where_is_enc(boolean is_enc_) { return (new db_where(SOURCE, db_common.get_field_col_inbuilt(SOURCE, IS_ENC), db_where.OPERAND_EQUAL, db_common.get_val_inbuilt(SOURCE, is_enc_), true, db_where.DEFAULT_LINK, _is_quick)).toString(); }
-	
-	static void populate_fields() { _fields = db_common.add_default_fields(SOURCE, new String[] { KEY, VALUE, IS_ENC }); }
+	public static String get_where_is_enc(boolean is_enc_) { return (new db_where(SOURCE, db_common.get_field_quick_col(SOURCE, IS_ENC), db_where.OPERAND_EQUAL, db_common.get_val(SOURCE, is_enc_), true, db_where.DEFAULT_LINK, _is_quick)).toString(); }
 	
 	private static HashMap<String, String> get_internal(String where_, boolean decrypt_)
 	{
-		ArrayList<HashMap<String, String>> all_vals = (_is_quick ? db_quick.select(SOURCE, db_common.get_cols_inbuilt(SOURCE), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER) : db.select(SOURCE, db_common.get_fields_inbuilt(SOURCE), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER));
+		ArrayList<HashMap<String, String>> all_vals = (_is_quick ? db_quick.select(SOURCE, db_quick.get_cols(SOURCE), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER) : db.select(SOURCE, db_common.get_fields(SOURCE), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER));
 		if (!arrays.is_ok(all_vals)) return null;
 	
 		HashMap<String, String> output = new HashMap<String, String>();
@@ -87,9 +81,9 @@ public abstract class db_info
 		
 		for (HashMap<String, String> vals: all_vals)
 		{
-			String key = vals.get(db_common.get_field_col_inbuilt(SOURCE, KEY));
-			String value = vals.get(db_common.get_field_col_inbuilt(SOURCE, VALUE));
-			boolean is_enc = (boolean)db.adapt_output_internal(vals.get(db_common.get_field_col_inbuilt(SOURCE, IS_ENC)), data.BOOLEAN);
+			String key = vals.get(db_common.get_field_quick_col(SOURCE, KEY));
+			String value = vals.get(db_common.get_field_quick_col(SOURCE, VALUE));
+			boolean is_enc = (boolean)db.adapt_output_internal(vals.get(db_common.get_field_quick_col(SOURCE, IS_ENC)), data.BOOLEAN);
 		
 			boolean is_ok = true;
 			
@@ -159,9 +153,9 @@ public abstract class db_info
 			if (_is_quick)
 			{
 				HashMap<String, String> output = new HashMap<String, String>();				
-				output.put(db_common.get_col_inbuilt(SOURCE, KEY), key);
-				output.put(db_common.get_col_inbuilt(SOURCE, VALUE), value);
-				output.put(db_common.get_col_inbuilt(SOURCE, IS_ENC), is_enc_quick);	
+				output.put(db_quick.get_col(SOURCE, KEY), key);
+				output.put(db_quick.get_col(SOURCE, VALUE), value);
+				output.put(db_quick.get_col(SOURCE, IS_ENC), is_enc_quick);	
 
 				outputs_quick.add(output);
 			}

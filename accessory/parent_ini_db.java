@@ -8,8 +8,8 @@ public abstract class parent_ini_db
 {
 	private boolean _populated = false;
 
-	private static HashMap<String, Object[]> _default_fields = null;
-	private static String[] _default_field_types = null;
+	private static HashMap<String, Object[]> DEFAULT_FIELDS = null;
+	private static String[] DEFAULT_FIELD_TYPES = null;
 	
 	public static HashMap<String, Object> get_setup_vals(String db_name_, String setup_, String user_, String host_, boolean encrypted_) { return add_db_to_setup(db_name_, get_setup_vals(setup_, user_, host_, encrypted_));	}
 
@@ -67,16 +67,9 @@ public abstract class parent_ini_db
 
 	public static String[] get_default_field_types()
 	{
-		if (_default_field_types == null) populate_default_field_types();
+		if (DEFAULT_FIELD_TYPES == null) populate_default_field_types();
 		
-		return _default_field_types;
-	}
-
-	protected static HashMap<String, Object[]> add_field(String id_, String col_, db_field field_, HashMap<String, Object[]> all_fields_)
-	{
-		all_fields_.put(id_, new Object[] { col_, field_ });
-
-		return all_fields_;
+		return DEFAULT_FIELD_TYPES;
 	}
 
 	protected abstract boolean populate_all_dbs(HashMap<String, Object> dbs_setup_);
@@ -106,8 +99,7 @@ public abstract class parent_ini_db
 
 		populate_all_internal(dbs_setup);
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	protected boolean populate_db(String db_, String name_, HashMap<String, Object[]> sources_, HashMap<String, Object> setup_vals_)
 	{
 		if (!arrays.is_ok(sources_)) return false;
@@ -127,7 +119,7 @@ public abstract class parent_ini_db
 			
 			Object[] temp = (Object[])arrays.get_new(item.getValue());
 
-			if (!populate_source(id, (String)temp[0], arrays.get_new_hashmap_xy((HashMap<String, Object[]>)temp[1]), setup_vals, (boolean)temp[2]))
+			if (!populate_source(id, get_table(temp), get_fields(temp), setup_vals, get_add_default_fields(temp)))
 			{
 				HashMap<String, Object> info = new HashMap<String, Object>();
 				info.put(_keys.get_key(_types.WHAT_TYPE), parent_ini.ERROR_SOURCE);
@@ -146,30 +138,17 @@ public abstract class parent_ini_db
 
 	protected HashMap<String, Object[]> add_source(String source_, String table_, String db_, HashMap<String, db_field> fields_info_, boolean add_default_fields_, HashMap<String, Object[]> all_sources_)
 	{
+		if (!strings.is_ok(source_) || !arrays.is_ok(fields_info_)) return all_sources_;
+		
 		String table = (strings.is_ok(table_) ? table_ : get_table_default(source_, db_));
 		
-		all_sources_.put(source_, new Object[] { table, get_fields(fields_info_, source_, table, db_, add_default_fields_), add_default_fields_ });
+		HashMap<String, Object[]> fields = get_fields(fields_info_, source_, table, db_, add_default_fields_);
+		
+		all_sources_.put(source_, new Object[] { table, fields, add_default_fields_ });
 
 		return all_sources_;
 	}
-
-	protected HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String source_, String table_, String db_, boolean add_default_)
-	{		
-		if (!arrays.is_ok(info_)) return null;
-
-		HashMap<String, Object[]> fields = arrays.get_new_hashmap_xy(add_default_ ? get_default_fields() : new HashMap<String, Object[]>());
-
-		String table = (strings.is_ok(table_) ? table_ : get_table_default(source_, db_));
-
-		for (Entry<String, db_field> item: info_.entrySet())
-		{
-			String id = item.getKey();
-			fields = add_field(id, get_col_default(id, source_, table, db_), item.getValue(), fields);
-		}
-
-		return fields;
-	}
-
+	
 	protected boolean populate_source(String source_, String table_, HashMap<String, Object[]> fields_, HashMap<String, Object> setup_vals_, boolean includes_default_fields_)
 	{
 		if (!setup_vals_are_ok(setup_vals_)) return false;
@@ -197,6 +176,36 @@ public abstract class parent_ini_db
 
 		return true;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private static HashMap<String, Object[]> get_fields(Object[] source_info_) { return arrays.get_new_hashmap_xy((HashMap<String, Object[]>)source_info_[1]); }
+
+	private static String get_table(Object[] source_info_) { return (String)source_info_[0]; }
+
+	private static boolean get_add_default_fields(Object[] source_info_) { return (boolean)source_info_[2]; }
+	
+	private HashMap<String, Object[]> get_fields(HashMap<String, db_field> info_, String source_, String table_, String db_, boolean add_default_)
+	{		
+		HashMap<String, Object[]> fields = arrays.get_new_hashmap_xy(add_default_ ? get_default_fields() : new HashMap<String, Object[]>());
+
+		String table = (strings.is_ok(table_) ? table_ : get_table_default(source_, db_));
+
+		for (Entry<String, db_field> item: info_.entrySet())
+		{
+			String id = item.getKey();
+			
+			fields = add_field(id, get_col_default(id, source_, table, db_), item.getValue(), fields);
+		}
+		
+		return fields;
+	}
+	
+	private static HashMap<String, Object[]> add_field(String id_, String col_, db_field field_, HashMap<String, Object[]> all_fields_)
+	{		
+		all_fields_.put(id_, new Object[] { col_, field_ });
+
+		return all_fields_;
+	}
 
 	private void start_quicker(HashMap<String, Object> setup_vals_, String any_source_)
 	{
@@ -206,7 +215,9 @@ public abstract class parent_ini_db
 	private void populate_all_internal(HashMap<String, Object> dbs_setup_) 
 	{	
 		String error = strings.DEFAULT;
-		if (!populate_all_dbs(dbs_setup_)) error = parent_ini.ERROR_DBS;
+		
+		if (populate_all_dbs(dbs_setup_)) perform_actions_after_population();
+		else error = parent_ini.ERROR_DBS;
 
 		_populated = true;
 		if (error.equals(strings.DEFAULT)) return;
@@ -214,6 +225,15 @@ public abstract class parent_ini_db
 		_ini.manage_error(error);
 	}
 
+	private void perform_actions_after_population()
+	{
+		db_common.populate_is_quick_ini();
+		
+		db_common.populate_fields_cols_ini();
+		
+		db_quick.populate_quicker_ini();
+	}
+	
 	private String get_db_name_default(String db_) { return get_default_common(db_, null, null, null); }
 
 	private String get_table_default(String source_, String db_) 
@@ -250,20 +270,20 @@ public abstract class parent_ini_db
 		
 		for (Entry<String, Object[]> item: get_default_fields().entrySet()) { temp.add(item.getKey()); }
 			
-		_default_field_types = arrays.to_array(temp);
+		DEFAULT_FIELD_TYPES = arrays.to_array(temp);
 	}
 	
 	private static HashMap<String, Object[]> get_default_fields()
 	{
-		if (_default_fields == null) populate_default_fields();
+		if (DEFAULT_FIELDS == null) populate_default_fields();
 		
-		return _default_fields;
+		return DEFAULT_FIELDS;
 	}
 	
 	private static void populate_default_fields()
 	{		
-		_default_fields = add_field(db.FIELD_ID, "_id", new db_field(data.INT, new String[] { db_field.KEY_PRIMARY, db_field.AUTO_INCREMENT }), new HashMap<String, Object[]>());
-		_default_fields = add_field(db.FIELD_TIMESTAMP, "_timestamp", new db_field(data.TIMESTAMP, new String[] { db_field.TIMESTAMP }), _default_fields);
+		DEFAULT_FIELDS = add_field(db.FIELD_ID, "_id", new db_field(data.INT, new String[] { db_field.KEY_PRIMARY, db_field.AUTO_INCREMENT }), new HashMap<String, Object[]>());
+		DEFAULT_FIELDS = add_field(db.FIELD_TIMESTAMP, "_timestamp", new db_field(data.TIMESTAMP, new String[] { db_field.TIMESTAMP }), DEFAULT_FIELDS);
 	}
 
 	private HashMap<String, Object> get_setup_vals(String db_, HashMap<String, Object> vals_)

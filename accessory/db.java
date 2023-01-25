@@ -74,11 +74,12 @@ public abstract class db
 	static String _cur_source = strings.DEFAULT; //Only updated by the user, as a way to keep using the same source without having to expressly provide it.
 	static String _cur_type = DEFAULT_TYPE; //Automatically updated every time a new DB type is used.
 	
-	static HashMap<String, HashMap<String, db_field>> _sources = new HashMap<String, HashMap<String, db_field>>();
+	static HashMap<String, HashMap<String, db_field>> SOURCES = new HashMap<String, HashMap<String, db_field>>();
 
-	private static HashMap<String, HashMap<String, Object>> _source_setups = new HashMap<String, HashMap<String, Object>>();
-	private static HashMap<String, Boolean> _source_defaults = new HashMap<String, Boolean>();
-	private static HashMap<String, String> _db_setups = new HashMap<String, String>();
+	private static HashMap<String, HashMap<String, Object>> SOURCE_SETUPS = new HashMap<String, HashMap<String, Object>>();
+	private static HashMap<String, Boolean> SOURCE_DEFAULTS = new HashMap<String, Boolean>();
+	private static HashMap<String, String> DB_SETUPS = new HashMap<String, String>();
+	
 	private static HashMap<String, String> _credentials = new HashMap<String, String>();
 	
 	public static String get_cur_source() { return _cur_source; }
@@ -466,20 +467,20 @@ public abstract class db
 
 	public static String check_source(String source_)
 	{
-		if (!arrays.is_ok(_sources)) 
+		if (!arrays.is_ok(SOURCES)) 
 		{
 			_cur_source = strings.DEFAULT;
 
 			return _cur_source;
 		}
-		if (!strings.is_ok(_cur_source) || !_sources.containsKey(_cur_source)) _cur_source = strings.DEFAULT;
+		if (!strings.is_ok(_cur_source) || !SOURCES.containsKey(_cur_source)) _cur_source = strings.DEFAULT;
 
 		String source = source_;
 		if (!strings.is_ok(source)) source = strings.DEFAULT;
-		else if (!_sources.containsKey(source))
+		else if (!SOURCES.containsKey(source))
 		{
 			String temp = strings.normalise(source);
-			source = (_sources.containsKey(temp) ? temp : strings.DEFAULT);
+			source = (SOURCES.containsKey(temp) ? temp : strings.DEFAULT);
 		}
 		if (!strings.is_ok(source) && strings.is_ok(_cur_source)) source = _cur_source;
 
@@ -491,7 +492,7 @@ public abstract class db
 	public static boolean field_is_ok(String source_, String field_) { return (get_field(source_, field_) != null); }
 
 	@SuppressWarnings("unchecked")
-	public static db_field get_field(String source_, String field_) { return (db_field)arrays.get_value((HashMap<String, db_field>)arrays.get_value(_sources, check_source(source_)), field_); }
+	public static db_field get_field(String source_, String field_) { return (db_field)arrays.get_value((HashMap<String, db_field>)arrays.get_value(SOURCES, check_source(source_)), field_); }
 
 	@SuppressWarnings("unchecked")
 	public static String check_field(String source_, String field_)
@@ -499,7 +500,7 @@ public abstract class db
 		String output = strings.DEFAULT;
 		if (!strings.is_ok(field_)) return output; 
 
-		HashMap<String, db_field> fields = (HashMap<String, db_field>)arrays.get_value(_sources, check_source(source_));
+		HashMap<String, db_field> fields = (HashMap<String, db_field>)arrays.get_value(SOURCES, check_source(source_));
 		if (!arrays.is_ok(fields)) return output;
 
 		for (Entry<String, db_field> item: fields.entrySet())
@@ -517,7 +518,7 @@ public abstract class db
 	{
 		String db = config.check_type(db_);
 
-		return ((strings.is_ok(db) && _db_setups.containsKey(db)) ? _db_setups.get(db) : strings.DEFAULT);
+		return ((strings.is_ok(db) && DB_SETUPS.containsKey(db)) ? DB_SETUPS.get(db) : strings.DEFAULT);
 	}
 
 	public static String get_current_db() { return get_db(get_current_source()); }
@@ -562,7 +563,7 @@ public abstract class db
 	{
 		String source = check_source(source_);
 
-		return (strings.is_ok(source) ? _sources.get(source) : null);
+		return (strings.is_ok(source) ? SOURCES.get(source) : null);
 	}
 
 	public static String get_col(String source_, String field_) { return (String)config.get(get_db(source_), field_); }
@@ -752,7 +753,7 @@ public abstract class db
 	{
 		String source = check_source(source_);
 
-		return ((strings.is_ok(source) && _source_defaults.containsKey(source)) ? _source_defaults.get(source) : false);
+		return ((strings.is_ok(source) && SOURCE_DEFAULTS.containsKey(source)) ? SOURCE_DEFAULTS.get(source) : false);
 	}
 
 	static String[] populate_all_queries_data() { return new String[] { QUERY_SELECT, QUERY_SELECT_COUNT, QUERY_TABLE_EXISTS }; }
@@ -861,7 +862,7 @@ public abstract class db
 
 	static HashMap<String, String> get_credentials(String source_)
 	{
-		if (arrays.is_ok(_credentials) && credentials_in_memory(source_)) return _credentials;
+		if (arrays.is_ok(_credentials) && credentials_in_memory(source_)) return new HashMap<String, String>(_credentials);
 			
 		String setup = get_valid_setup(source_);
 
@@ -887,7 +888,7 @@ public abstract class db
 		
 		_credentials = new HashMap<String, String>(temp);
 
-		return _credentials;
+		return new HashMap<String, String>(_credentials);
 	}
 
 	static parent_db get_valid_instance(String source_) 
@@ -915,7 +916,7 @@ public abstract class db
 
 	static boolean add_source_ini(String source_, HashMap<String, db_field> fields_, HashMap<String, Object> setup_vals_, boolean includes_default_fields_)
 	{
-		if (!arrays.is_ok(_sources)) _sources = new HashMap<String, HashMap<String, db_field>>();
+		if (!arrays.is_ok(SOURCES)) SOURCES = new HashMap<String, HashMap<String, db_field>>();
 		if (!strings.is_ok(source_)) return false;
 		
 		HashMap<String, db_field> fields = new HashMap<String, db_field>();
@@ -934,7 +935,7 @@ public abstract class db
 			fields.put(item.getKey(), field);
 		}
 
-		_sources.put(source_, fields);
+		SOURCES.put(source_, fields);
 
 		if (!_ini_db.setup_vals_are_ok(setup_vals_))
 		{
@@ -953,18 +954,18 @@ public abstract class db
 		String instance = _keys.get_key(_types.WHAT_INSTANCE);
 		vals.put(instance, setup_vals_.get(instance));
 
-		if (!arrays.is_ok(_source_setups)) _source_setups = new HashMap<String, HashMap<String, Object>>();
-		_source_setups.put(source_, vals);
+		if (!arrays.is_ok(SOURCE_SETUPS)) SOURCE_SETUPS = new HashMap<String, HashMap<String, Object>>();
+		SOURCE_SETUPS.put(source_, vals);
 
-		if (!arrays.is_ok(_db_setups)) _db_setups = new HashMap<String, String>();
-		if (strings.is_ok(db) && !_db_setups.containsKey(source_)) _db_setups.put(db, setup);
+		if (!arrays.is_ok(DB_SETUPS)) DB_SETUPS = new HashMap<String, String>();
+		if (strings.is_ok(db) && !DB_SETUPS.containsKey(source_)) DB_SETUPS.put(db, setup);
 
-		if (!arrays.is_ok(_source_defaults)) _source_defaults = new HashMap<String, Boolean>();
-		_source_defaults.put(source_, includes_default_fields_);
+		if (!arrays.is_ok(SOURCE_DEFAULTS)) SOURCE_DEFAULTS = new HashMap<String, Boolean>();
+		SOURCE_DEFAULTS.put(source_, includes_default_fields_);
 		
 		return true;
-	}
-
+	}	
+	
 	private static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_) { db_queries.create_table(source_, fields_, drop_it_); }
 
 	private static boolean credentials_in_memory(String source_) { return config.get_boolean(get_valid_setup(source_), CREDENTIALS_MEMORY); }
@@ -995,7 +996,7 @@ public abstract class db
 	{
 		String source = check_source(source_);
 
-		return ((strings.is_ok(source) && _source_setups.containsKey(source)) ? _source_setups.get(source).get(type_) : null);
+		return ((strings.is_ok(source) && SOURCE_SETUPS.containsKey(source)) ? SOURCE_SETUPS.get(source).get(type_) : null);
 	}
 
 	private static boolean manage_error(HashMap<String, Boolean> output)

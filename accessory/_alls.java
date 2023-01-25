@@ -38,6 +38,8 @@ public class _alls extends parent_first
 	public static ArrayList<String> DB_SQL_TYPES = null;
 	
 	public static HashMap<String, String[]> DB_WHERE_OPERANDS = null;
+	public static HashMap<String, String[]> DB_WHERE_OPERANDS_LIKE = null;
+	public static HashMap<String, String[]> DB_WHERE_OPERANDS_NOT_LIKE = null;
 	public static HashMap<String, String[]> DB_WHERE_LINKS = null;
 
 	public static String[] DB_FIELD_TYPES_NO_SIZE = null;
@@ -73,6 +75,8 @@ public class _alls extends parent_first
 		DB_SQL_TYPES = db_sql.populate_all_types();
 		
 		DB_WHERE_OPERANDS = db_where.populate_all_operands();
+		DB_WHERE_OPERANDS_LIKE = db_where.populate_all_operands_like();
+		DB_WHERE_OPERANDS_NOT_LIKE = db_where.populate_all_operands_not_like();
 		DB_WHERE_LINKS = db_where.populate_all_links();
 
 		DB_FIELD_TYPES_NO_SIZE = db_field.populate_all_types_no_size();

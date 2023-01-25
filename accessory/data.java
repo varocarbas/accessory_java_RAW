@@ -167,7 +167,7 @@ public class data extends parent
 		return output;
 	}
 
-	public static boolean type_is_ok(String type_) { return val_is_ok_common(type_, _types.DATA, DEFAULT_TYPE); }
+	public static boolean type_is_ok(String type_) { return val_is_ok_common(type_, _types.DATA); }
 
 	public static String check_type(String type_) { return check_val_common(type_, _types.DATA, DEFAULT_TYPE); }
 

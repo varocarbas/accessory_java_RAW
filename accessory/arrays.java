@@ -639,7 +639,7 @@ public abstract class arrays extends parent_static
 		return output;
 	}
 
-	public static <x> ArrayList<x> get_new(ArrayList<x> input_) { return (!is_ok(input_) ? new ArrayList<x>() : new ArrayList<x>(input_)); }
+	public static <x> ArrayList<x> get_new(ArrayList<x> input_) { return get_new_arraylist(input_); }
 
 	public static double[] get_new(double[] input_) { return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length)); }
 
@@ -668,7 +668,7 @@ public abstract class arrays extends parent_static
 
 		Class<?> type = generic.get_class(input_);
 		if (!generic.is_array(type)) return output;
-
+		
 		if (type.equals(double[].class)) output = get_new(to_big((double[])input_));
 		else if (type.equals(long[].class)) output = get_new(to_big((long[])input_));
 		else if (type.equals(int[].class)) output = get_new(to_big((int[])input_));
@@ -1113,6 +1113,132 @@ public abstract class arrays extends parent_static
 
 		return output;
 	}
+	
+	public static Double[][] to_big(double[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		Double[][] output = new Double[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new Double[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (Double)input_[i][i2];
+		}
+
+		return output;
+	}
+
+	public static Long[][] to_big(long[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		Long[][] output = new Long[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new Long[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (Long)input_[i][i2];
+		}
+
+		return output;
+	}
+
+	public static Integer[][] to_big(int[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		Integer[][] output = new Integer[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new Integer[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (Integer)input_[i][i2];
+		}
+
+		return output;
+	}
+
+	public static Boolean[][] to_big(boolean[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		Boolean[][] output = new Boolean[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new Boolean[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (Boolean)input_[i][i2];
+		}
+
+		return output;
+	}
+
+	public static Byte[][] to_big(byte[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		Byte[][] output = new Byte[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new Byte[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (Byte)input_[i][i2];
+		}
+
+		return output;
+	}
+
+	public static Character[][] to_big(char[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		Character[][] output = new Character[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new Character[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (Character)input_[i][i2];
+		}
+
+		return output;
+	}
 
 	public static double[] to_small(Double[] input_)
 	{
@@ -1186,6 +1312,132 @@ public abstract class arrays extends parent_static
 		return output;
 	}
 
+	public static double[][] to_small(Double[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		double[][] output = new double[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new double[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (double)input_[i][i2];
+		}
+
+		return output;
+	}
+
+	public static long[][] to_small(Long[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		long[][] output = new long[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new long[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (long)input_[i][i2];
+		}
+
+		return output;
+	}
+
+	public static int[][] to_small(Integer[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		int[][] output = new int[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new int[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (int)input_[i][i2];
+		}
+
+		return output;
+	}
+
+	public static boolean[][] to_small(Boolean[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		boolean[][] output = new boolean[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new boolean[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (boolean)input_[i][i2];
+		}
+
+		return output;
+	}
+
+	public static byte[][] to_small(Byte[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		byte[][] output = new byte[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new byte[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (byte)input_[i][i2];
+		}
+
+		return output;
+	}
+
+	public static char[][] to_small(Character[][] input_)
+	{
+		int tot = get_size(input_);
+		if (tot < 1) return null;
+
+		char[][] output = new char[tot][];
+
+		for (int i = 0; i < tot; i++) 
+		{ 
+			if (input_[i] == null) continue;
+			
+			int tot2 = input_[i].length;
+			
+			output[i] = new char[tot2];
+			
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (char)input_[i][i2];
+		}
+
+		return output;
+	}
+	
 	public static <x, y> Class<?>[] get_classes_items(HashMap<x, y> input_)  { return get_classes_items(input_, true); }
 
 	public static <x> Class<?>[] get_classes_items(Object input_) { return get_classes_items(input_, true); }
@@ -1213,6 +1465,54 @@ public abstract class arrays extends parent_static
 	
 	public static boolean hashmap_is(Object input_, Class<?>[] types_) { return arrays.are_equal(types_, get_classes_items(input_, false)); }
 
+	public static double[][] add_1d(double[][] main_, double[] new_) { return to_small(add_1d(to_big(main_), to_big(new_))); }
+
+	public static long[][] add_1d(long[][] main_, long[] new_) { return to_small(add_1d(to_big(main_), to_big(new_))); }
+
+	public static int[][] add_1d(int[][] main_, int[] new_) { return to_small(add_1d(to_big(main_), to_big(new_))); }
+
+	public static boolean[][] add_1d(boolean[][] main_, boolean[] new_) { return to_small(add_1d(to_big(main_), to_big(new_))); }
+
+	public static byte[][] add_1d(byte[][] main_, byte[] new_) { return to_small(add_1d(to_big(main_), to_big(new_))); }
+
+	public static char[][] add_1d(char[][] main_, char[] new_) { return to_small(add_1d(to_big(main_), to_big(new_))); }
+
+	@SuppressWarnings("unchecked")
+	public static <x> x[][] add_1d(x[][] main_, x[] new_) { return (x[][])add_1d(main_, new_, true); }
+	
+	@SuppressWarnings("unchecked")
+	public static <x> ArrayList<x>[] add_1d_arraylist(ArrayList<x>[] main_, ArrayList<x> new_) { return (ArrayList<x>[])add_1d(main_, new_, false); }
+	
+	@SuppressWarnings("unchecked")
+	public static <x> HashMap<x, x>[] add_1d_hashmap_xx(HashMap<x, x>[] main_, HashMap<x, x> new_) { return (HashMap<x, x>[])add_1d(main_, new_, false); }
+	
+	@SuppressWarnings("unchecked")
+	public static <x, y> HashMap<x, y>[] add_1d_hashmap_xy(HashMap<x, y>[] main_, HashMap<x, y> new_) { return (HashMap<x, y>[])add_1d(main_, new_, false); }
+
+	public static double[] get_1d(double[][] input_, int i_) { return to_small(get_1d(to_big(input_), i_)); }
+
+	public static long[] get_1d(long[][] input_, int i_) { return to_small(get_1d(to_big(input_), i_)); }
+
+	public static int[] get_1d(int[][] input_, int i_) { return to_small(get_1d(to_big(input_), i_)); }
+
+	public static boolean[] get_1d(boolean[][] input_, int i_) { return to_small(get_1d(to_big(input_), i_)); }
+
+	public static byte[] get_1d(byte[][] input_, int i_) { return to_small(get_1d(to_big(input_), i_)); }
+
+	public static char[] get_1d(char[][] input_, int i_) { return to_small(get_1d(to_big(input_), i_)); }
+
+	@SuppressWarnings("unchecked")
+	public static <x> x[] get_1d(x[][] main_, int i_) { return (x[])get_1d(main_, i_, true); }
+	
+	@SuppressWarnings("unchecked")
+	public static <x> ArrayList<x> get_1d_arraylist(ArrayList<x>[] main_, int i_) { return (ArrayList<x>)get_1d(main_, i_, false); }
+	
+	@SuppressWarnings("unchecked")
+	public static <x> HashMap<x, x> get_1d_hashmap_xx(HashMap<x, x>[] main_, int i_) { return (HashMap<x, x>)get_1d(main_, i_, false); }
+	
+	@SuppressWarnings("unchecked")
+	public static <x, y> HashMap<x, y> get_1d_hashmap_xy(HashMap<x, y>[] main_, int i_) { return (HashMap<x, y>)get_1d(main_, i_, false); }
+	
 	static <x, y> Class<?>[] get_classes_items(HashMap<x, y> input_, boolean check_input_) { return new Class<?>[] { get_class_key_val(input_, true, true, check_input_), get_class_key_val(input_, false, true, check_input_) }; }
 
 	static Class<?>[] get_classes_items(Object input_, boolean check_input_) 
@@ -1335,9 +1635,49 @@ public abstract class arrays extends parent_static
 
 	static Class<?>[] populate_all_classes_numeric() { return new Class<?>[] { Double[].class, double[].class, Long[].class, long[].class, Integer[].class, int[].class }; }
 
-	private static <x> x[] get_new_array(x[] input_) { return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length)); }
+	@SuppressWarnings("unchecked")
+	private static <x> x[] get_new_array(x[] input_) 
+	{ 
+		x[] output = null;
+		
+		int tot = get_size(input_);
+		if (tot == 0) return output;
+		
+		Class<?> type = generic.get_class(input_[0]);
+		
+		boolean is_hashmap = generic.are_equal(type, HashMap.class);
+		
+		if (is_hashmap || generic.are_equal(type, ArrayList.class)) 
+		{
+			output = (x[])(is_hashmap ? new HashMap[tot] : new ArrayList[tot]);
+			
+			for (int i = 0; i < tot; i++) output[i] = (x)get_new(input_[i]);
+		}
+		else output = Arrays.copyOfRange(input_, 0, tot);
+		
+		return output;
+	}
 
-	private static <x> ArrayList<x> get_new_arraylist(ArrayList<x> input_) { return (!is_ok(input_) ? new ArrayList<x>() : new ArrayList<x>(input_)); }
+	@SuppressWarnings("unchecked")
+	private static <x> ArrayList<x> get_new_arraylist(ArrayList<x> input_) 
+	{
+		ArrayList<x> output = new ArrayList<x>();
+		
+		int tot = get_size(input_);
+		if (tot == 0) return output;
+		
+		Class<?> type = generic.get_class(input_.get(0));
+		
+		boolean is_hashmap = generic.are_equal(type, HashMap.class);
+		
+		if (is_hashmap || generic.are_equal(type, ArrayList.class)) 
+		{
+			for (int i = 0; i < tot; i++) output.add((x)(is_hashmap ? get_new_hashmap(input_.get(i)) : get_new_arraylist((ArrayList<x>)input_.get(i))));
+		}
+		else output = new ArrayList<x>(input_);
+		
+		return output;
+	}
 
 	private static Object __key_value_get_exists_sync(Object input_, Object key_val_, boolean is_key_, boolean is_get_) 
 	{
@@ -1844,5 +2184,39 @@ public abstract class arrays extends parent_static
 		}
 
 		return output;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <x> Object add_1d(Object main_, Object new_, boolean is_array_)
+	{
+		int tot0 = get_size(main_);
+		if (tot0 == 0) return null;
+		
+		int tot = get_size(new_);
+		if (tot == 0) return get_new(main_);
+
+		tot0++;
+		int max_i0 = tot0 - 1;
+		
+		Object output = Arrays.copyOf((is_array_ ? (x[][])main_ : (x[])main_), tot0);
+		
+		for (int i = 0; i <= max_i0; i++)
+		{
+			Object item = (i == max_i0 ? get_new(new_) : get_1d(main_, i, is_array_));
+			if (item == null) continue;
+			
+			if (is_array_) ((x[][])output)[i] = (x[])get_new(item);
+			else ((x[])output)[i] = (x)get_new(item);
+		}
+		
+		return output;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <x> Object get_1d(Object input_, int i_, boolean is_array_)
+	{
+		int max_i = get_size(input_) - 1;
+		
+		return ((max_i >= 0 && i_ >= 0 && i_ <= max_i) ? get_new((is_array_ ? ((x[][])input_)[i_] : ((x[])input_)[i_])) : null);
 	}
 }

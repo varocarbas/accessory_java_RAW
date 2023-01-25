@@ -39,11 +39,11 @@ public class db_order extends parent
 		return output;
 	}
 
-	public static boolean order_is_ok(String order_) { return val_is_ok_common(order_, _types.DB_ORDER, DEFAULT_ORDER); }
+	public static boolean order_is_ok(String order_) { return val_is_ok_common(order_, _types.DB_ORDER); }
 
 	public static String check_order(String order_) { return check_val_common(order_, _types.DB_ORDER, DEFAULT_ORDER); }
 
-	public static String order_to_string(String order_) { return val_to_string_common(order_, _types.DB_ORDER, DEFAULT_ORDER); }
+	public static String order_to_string(String order_) { return val_to_string_common(order_, _types.DB_ORDER); }
 
 	public static db_order[] get_orders_desc(String source_, String[] fields_) { return get_orders_desc_asc(source_, fields_, ORDER_DESC, false); }
 

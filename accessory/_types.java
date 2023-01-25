@@ -166,6 +166,14 @@ public class _types extends parent_types
 	public static final String DB_WHERE_OPERAND_GREATER_EQUAL = "db_where_operand_greater_equal";
 	public static final String DB_WHERE_OPERAND_LESS = "db_where_operand_less";
 	public static final String DB_WHERE_OPERAND_LESS_EQUAL = "db_where_operand_less_equal";
+	public static final String DB_WHERE_OPERAND_LIKE = "db_where_operand_like";
+	public static final String DB_WHERE_OPERAND_LIKE_START = "db_where_operand_like_start";
+	public static final String DB_WHERE_OPERAND_LIKE_END = "db_where_operand_like_end";
+	public static final String DB_WHERE_OPERAND_LIKE_BOTH = "db_where_operand_like_both";
+	public static final String DB_WHERE_OPERAND_NOT_LIKE = "db_where_operand_not_like";
+	public static final String DB_WHERE_OPERAND_NOT_LIKE_START = "db_where_operand_not_like_start";
+	public static final String DB_WHERE_OPERAND_NOT_LIKE_END = "db_where_operand_not_like_end";
+	public static final String DB_WHERE_OPERAND_NOT_LIKE_BOTH = "db_where_operand_not_like_both";
 	public static final String DB_WHERE_LINK = "db_where_link";
 	public static final String DB_WHERE_LINK_AND = "db_where_link_and";
 	public static final String DB_WHERE_LINK_OR = "db_where_link_or";

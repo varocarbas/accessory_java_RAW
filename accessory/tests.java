@@ -129,7 +129,7 @@ public class tests extends parent_tests
 		is_ok = _instance.run_method(class0, name, new Class<?>[] { String.class, String.class }, args, target);
 		outputs.put(name, is_ok);
 		
-		db_common.is_quick_inbuilt(source, false);
+		db_common.is_quick(source, false);
 		
 		name = "insert";
 
@@ -144,7 +144,7 @@ public class tests extends parent_tests
 
 		if (!is_ok) return outputs;
 
-		db_common.is_quick_inbuilt(source, true);
+		db_common.is_quick(source, true);
 		
 		name = "insert_quick";
 
@@ -157,7 +157,7 @@ public class tests extends parent_tests
 		is_ok = _instance.run_method(class0, name, new Class<?>[] { String.class, HashMap.class }, args, target);
 		outputs.put(name, is_ok);
 
-		db_common.is_quick_inbuilt(source, false);
+		db_common.is_quick(source, false);
 		
 		name = "update";
 
@@ -180,7 +180,7 @@ public class tests extends parent_tests
 		outputs.put(name, is_ok);
 		if (!is_ok) return outputs;
 
-		db_common.is_quick_inbuilt(source, true);
+		db_common.is_quick(source, true);
 		
 		name = "update_quick";
 
@@ -269,7 +269,7 @@ public class tests extends parent_tests
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		HashMap<String, String> vals_quick = new HashMap<String, String>();
 
-		boolean is_quick = db_common.is_quick_inbuilt(source_);
+		boolean is_quick = db_common.is_quick(source_);
 
 		int max = 123456;
 		double max2 = 123456789.123;

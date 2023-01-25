@@ -14,15 +14,15 @@ public abstract class parent
 
 	protected static boolean are_equal_common(Object input1_, Object input2_) { return generic.are_equal(input1_, input2_); }
 
-	protected static boolean val_is_ok_common(String val_, String type_, String default_) { return (strings.is_ok(check_val_common(val_, type_, default_))); }
+	protected static boolean val_is_ok_common(String val_, String type_) { return (strings.is_ok(check_val_common(val_, type_, null))); }
 
-	protected static boolean val_is_ok_common(String val_, HashMap<String, String[]> types_, String default_) { return (strings.is_ok(check_val_common(val_, types_, default_))); }
+	protected static boolean val_is_ok_common(String val_, HashMap<String, String[]> types_) { return (strings.is_ok(check_val_common(val_, types_, null))); }
 
 	protected static String check_val_common(String val_, String type_, String default_) { return check_internal(_types.check_type(val_, type_), default_); }
 
 	protected static String check_val_common(String val_, HashMap<String, String[]> types_, String default_) { return check_internal(_types.check_multiple(val_, types_), default_); }
 
-	protected static String val_to_string_common(String val_, String type_, String default_) { return (val_is_ok_common(val_, type_, default_) ? to_string_internal(_types.remove_type(val_, type_)) : strings.DEFAULT); }
+	protected static String val_to_string_common(String val_, String type_) { return (val_is_ok_common(val_, type_) ? to_string_internal(_types.remove_type(val_, type_)) : strings.DEFAULT); }
 
 	protected static String val_to_string_common(String val_, HashMap<String, String[]> types_, String default_)
 	{

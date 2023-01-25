@@ -2,6 +2,7 @@ package accessory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public abstract class db_common 
 {
@@ -14,8 +15,278 @@ public abstract class db_common
 	public static final double WRONG_MAX_VAL = 0.0;
 	
 	public static final boolean DEFAULT_IS_QUICK = true;
+	public static final boolean DEFAULT_IS_FIELD = true;
 	public static final int DEFAULT_SIZE_DECIMAL = 7;
 	public static final int DEFAULT_SIZE_STRING = 30;
+	
+	static String[][] COLS = null;
+	static HashMap<String, String>[] FIELDS_COLS = null;
+
+	private static ArrayList<String> SOURCES2 = null;
+	private static String[][] FIELDS = null;
+	private static ArrayList<String> IS_QUICK = null;
+
+	public static String[] get_fields(String source_) 
+	{
+		int i = get_i(source_);
+
+		return (i >= 0 ? (String[])arrays.get_new(FIELDS[i]) : null);
+	}
+	
+	public static HashMap<String, String> get_fields_cols(String source_, String[] fields_) { return db.get_fields_cols(source_, fields_); }
+
+	public static boolean is_quick(String source_) { return IS_QUICK.contains(source_); }
+	
+	public static void is_quick(String source_, boolean is_quick_) 
+	{ 
+		if (!strings.is_ok(source_)) return;
+		
+		if (is_quick_)
+		{
+			if (!IS_QUICK.contains(source_)) IS_QUICK.add(source_);
+		}
+		else IS_QUICK.remove(source_);
+	}
+
+	public static String get_field_quick_col(String source_, String field_col_) { return get_field_quick_col(source_, field_col_, DEFAULT_IS_FIELD, is_quick(source_)); }
+
+	public static String get_field_quick_col(String source_, String field_col_, boolean is_field_, boolean is_quick_) { return ((is_field_ && is_quick_) ? db_quick.get_col(source_, field_col_) : field_col_); }
+	
+	public static HashMap<String, String> get_fields_quick_cols(String source_) 
+	{ 
+		int i = get_i(source_);
+
+		return (i >= 0 ? arrays.get_new_hashmap_xx(FIELDS_COLS[i]) : null);
+	} 
+
+	public static void update_quick_cols(String source_) { db_quick.update_cols(source_); }
+	
+	public static boolean is_empty(String source_) { return (get_count(source_, db.DEFAULT_WHERE) == 0); }
+
+	public static int get_count(String source_, String where_) { return db_quick.select_count(source_, where_); }
+
+	public static boolean exists(String source_, String where_) { return db_quick.exists(source_, where_); }
+
+	public static String get_string(String source_, String field_col_, String where_, String wrong_) { return get_string(source_, field_col_, where_, wrong_, DEFAULT_IS_FIELD, is_quick(source_)); }
+
+	public static String get_string(String source_, String field_col_, String where_, String wrong_, boolean is_field_, boolean is_quick_) 
+	{ 
+		String output = (is_quick_ ? db_quick.select_one_string(source_, get_field_quick_col(source_, field_col_, is_field_, is_quick_), where_, db.DEFAULT_ORDER) : db.select_one_string(source_, field_col_, where_, db.DEFAULT_ORDER)); 
+	
+		return (!db.WRONG_STRING.equals(output) ? output : wrong_);
+	}
+	
+	public static int get_int(String source_, String field_col_, String where_, int wrong_) { return get_int(source_, field_col_, where_, wrong_, DEFAULT_IS_FIELD, is_quick(source_)); }	
+	
+	public static int get_int(String source_, String field_col_, String where_, int wrong_, boolean is_field_, boolean is_quick_) 
+	{ 
+		int output = (is_quick_ ? db_quick.select_one_int(source_, get_field_quick_col(source_, field_col_, is_field_, true), where_, db.DEFAULT_ORDER) : db.select_one_int(source_, field_col_, where_, db.DEFAULT_ORDER)); 
+	
+		return (output != db.WRONG_INT ? output : wrong_);
+	}
+
+	public static double get_decimal(String source_, String field_col_, String where_, double wrong_) { return get_decimal(source_, field_col_, where_, wrong_, DEFAULT_IS_FIELD, is_quick(source_)); }
+	
+	public static double get_decimal(String source_, String field_col_, String where_, double wrong_, boolean is_field_, boolean is_quick_) 
+	{ 
+		double output = (is_quick_ ? db_quick.select_one_decimal(source_, get_field_quick_col(source_, field_col_, is_field_, true), where_, db.DEFAULT_ORDER) : db.select_one_decimal(source_, field_col_, where_, db.DEFAULT_ORDER)); 
+	
+		return (output != db.WRONG_DECIMAL ? output : wrong_);
+	}
+
+	public static long get_long(String source_, String field_col_, String where_, long wrong_) { return get_long(source_, field_col_, where_, wrong_, DEFAULT_IS_FIELD, is_quick(source_)); }
+	
+	public static long get_long(String source_, String field_col_, String where_, long wrong_, boolean is_field_, boolean is_quick_) 
+	{ 
+		long output = (is_quick_ ? db_quick.select_one_long(source_, get_field_quick_col(source_, field_col_, is_field_, true), where_, db.DEFAULT_ORDER) : db.select_one_long(source_, field_col_, where_, db.DEFAULT_ORDER)); 
+	
+		return (output != db.WRONG_LONG ? output : wrong_);
+	}
+	
+	public static boolean get_boolean(String source_, String field_col_, String where_) { return get_boolean(source_, field_col_, where_, DEFAULT_IS_FIELD, is_quick(source_)); }
+	
+	public static boolean get_boolean(String source_, String field_col_, String where_, boolean is_field_, boolean is_quick_) { return (is_quick_ ? db_quick.select_one_boolean(source_, get_field_quick_col(source_, field_col_, is_field_, true), where_, db.DEFAULT_ORDER) : db.select_one_boolean(source_, field_col_, where_, db.DEFAULT_ORDER)); }
+
+	public static ArrayList<Double> get_all_decimals(String source_, String field_col_, String where_) { return get_all_decimals(source_, field_col_, where_, DEFAULT_IS_FIELD, is_quick(source_)); }
+
+	public static ArrayList<Double> get_all_decimals(String source_, String field_col_, String where_, boolean is_field_, boolean is_quick_) { return (is_quick_ ? db_quick.select_some_decimals(source_, db_common.get_field_quick_col(source_, field_col_, is_field_, true), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER) : db.select_some_decimals(source_, field_col_, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER)); }
+
+	public static ArrayList<String> get_all_strings(String source_, String field_col_, String where_) { return get_all_strings(source_, field_col_, where_, DEFAULT_IS_FIELD, is_quick(source_)); }
+
+	public static ArrayList<String> get_all_strings(String source_, String field_col_, String where_, boolean is_field_, boolean is_quick_) { return (is_quick_ ? db_quick.select_some_strings(source_, db_common.get_field_quick_col(source_, field_col_, is_field_, true), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER) : db.select_some_strings(source_, field_col_, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER)); }
+
+	public static ArrayList<Integer> get_all_ints(String source_, String field_col_, String where_) { return get_all_ints(source_, field_col_, where_, DEFAULT_IS_FIELD, is_quick(source_)); }
+
+	public static ArrayList<Integer> get_all_ints(String source_, String field_col_, String where_, boolean is_field_, boolean is_quick_) { return (is_quick_ ? db_quick.select_some_ints(source_, db_common.get_field_quick_col(source_, field_col_, is_field_, true), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER) : db.select_some_ints(source_, field_col_, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER)); }
+
+	public static ArrayList<HashMap<String, String>> get_all_vals(String source_, String[] fields_cols_, String where_) { return get_all_vals(source_, fields_cols_, where_, DEFAULT_IS_FIELD, is_quick(source_)); }
+
+	public static ArrayList<HashMap<String, String>> get_all_vals(String source_, String[] fields_cols_, String where_, boolean are_fields_, boolean is_quick_) { return (is_quick_ ? db_quick.select(source_, (are_fields_ ? db_quick.get_cols(source_, fields_cols_) : fields_cols_), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER) : accessory.db.select(source_, fields_cols_, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER)); }
+
+	public static HashMap<String, String> get_vals(String source_, String[] fields_cols_, String where_) { return get_vals(source_, fields_cols_, where_, db.DEFAULT_ORDER); }
+
+	public static HashMap<String, String> get_vals(String source_, String[] fields_cols_, String where_, String order_) { return get_vals(source_, fields_cols_, where_, order_, DEFAULT_IS_FIELD, is_quick(source_)); }
+
+	public static HashMap<String, String> get_vals(String source_, String[] fields_cols_, String where_, String order_, boolean are_fields_, boolean is_quick_) { return (is_quick_ ? db_quick.select_one(source_, (are_fields_ ? db_quick.get_cols(source_, fields_cols_) : fields_cols_), where_, order_) : db.select_one(source_, fields_cols_, where_, order_)); }
+
+	public static boolean insert(String source_, Object vals_) { return insert(source_, vals_, is_quick(source_)); }
+	
+	@SuppressWarnings("unchecked")
+	public static boolean insert(String source_, Object vals_, boolean is_quick_) 
+	{ 
+		if (!arrays.is_ok(vals_)) return false;
+		
+		if (is_quick_) db_quick.insert(source_, (HashMap<String, String>)vals_);
+		else db.insert(source_, (HashMap<String, Object>)vals_);
+
+		return db.is_ok(source_, is_quick_);
+	}
+
+	public static boolean update(String source_, String field_col_, Object val_, String where_) { return update(source_, field_col_, val_, where_, DEFAULT_IS_FIELD, is_quick(source_)); }
+
+	public static boolean update(String source_, String field_col_, Object val_, String where_, boolean is_field_, boolean is_quick_) { return update(source_, add_to_vals(source_, field_col_, val_, null, is_field_, is_quick_), where_, is_quick(source_)); }
+	
+	public static boolean update(String source_, Object vals_, String where_) { return update(source_, vals_, where_, is_quick(source_)); }
+	
+	@SuppressWarnings("unchecked")
+	public static boolean update(String source_, Object vals_, String where_, boolean is_quick_)
+	{	
+		if (!vals_are_ok(source_, vals_, is_quick_)) return false;
+		
+		if (is_quick_) db_quick.update(source_, (HashMap<String, String>)vals_, where_);
+		else db.update(source_, (HashMap<String, Object>)vals_, where_);
+		
+		return db.is_ok(source_, is_quick_);
+	}
+	
+	public static boolean insert_update(String source_, String field_col_, Object val_, String where_, String field_where_) { return insert_update(source_, field_col_, val_, where_, field_where_, DEFAULT_IS_FIELD, is_quick(source_)); }
+
+	public static boolean insert_update(String source_, String field_col_, Object val_, String where_, String field_where_, boolean is_field_, boolean is_quick_) { return insert_update(source_, add_to_vals(source_, field_col_, val_, null, is_field_, is_quick_), where_, field_where_, is_quick_); }
+
+	public static boolean insert_update(String source_, Object vals_, String where_, String field_where_) { return insert_update(source_, vals_, where_, field_where_, is_quick(source_)); }
+	
+	@SuppressWarnings("unchecked")
+	public static boolean insert_update(String source_, Object vals_, String where_, String field_where_, boolean is_quick_)
+	{	
+		if (!vals_are_ok(source_, vals_, is_quick_)) return false;
+		
+		if (is_quick_) db_quick.insert_update(source_, db_quick.get_col(source_, field_where_), (HashMap<String, String>)vals_, where_);
+		else 
+		{
+			if (strings.are_equal(field_where_, db.FIELD_ID)) db.insert_update_id(source_, (HashMap<String, Object>)vals_, where_);
+			else db.insert_update(source_, (HashMap<String, Object>)vals_, where_);
+		}
+		
+		return db.is_ok(source_, is_quick_);
+	}
+
+	public static boolean delete(String source_, String where_)
+	{
+		db.delete(source_, where_);
+		
+		return db.is_ok(source_);
+	}
+	
+	public static Object add_to_vals(String source_, String field_, Object val_, Object vals_) { return add_to_vals(source_, field_, val_, vals_, DEFAULT_IS_FIELD, is_quick(source_)); }
+	
+	@SuppressWarnings("unchecked")
+	public static Object add_to_vals(String source_, String field_col_, Object val_, Object vals_, boolean is_field_, boolean is_quick_) 
+	{ 
+		Object output = null;
+		
+		String field_col = get_field_quick_col(source_, field_col_, is_field_, is_quick_);
+
+		if (is_quick_)
+		{
+			HashMap<String, String> vals = (HashMap<String, String>)arrays.get_new_hashmap_xx((HashMap<String, String>)vals_);	
+			vals.put(field_col, accessory.db.adapt_input(val_));
+
+			output = new HashMap<String, String>(vals);
+		}
+		else
+		{
+			HashMap<String, Object> vals = (HashMap<String, Object>)arrays.get_new_hashmap_xy((HashMap<String, Object>)vals_);
+			vals.put(field_col, val_);
+			
+			output = new HashMap<String, Object>(vals);
+		}
+		
+		return output;
+	}
+	
+	public static Object get_from_vals(String source_, String field_col_, Object vals_) { return get_from_vals(source_, field_col_, vals_, DEFAULT_IS_FIELD, is_quick(source_)); }
+	
+	@SuppressWarnings("unchecked")
+	public static Object get_from_vals(String source_, String field_col_, Object vals_, boolean is_field_, boolean is_quick_) 
+	{ 
+		Object output = null;
+		if (!vals_are_ok(source_, vals_, is_quick_)) return output;
+		
+		if (is_quick_)
+		{
+			HashMap<String, String> vals = arrays.get_new_hashmap_xx((HashMap<String, String>)vals_);	
+			
+			if (vals.containsKey(field_col_)) output = vals.get(field_col_);
+		}
+		else
+		{
+			HashMap<String, Object> vals = arrays.get_new_hashmap_xy((HashMap<String, Object>)vals_);
+		
+			if (vals.containsKey(field_col_)) output = vals.get(field_col_);				
+		}
+		
+		return output;
+	}
+	
+	public static Object get_input(String source_, Object input_) { return get_input(source_, input_, is_quick(source_)); }
+
+	public static Object get_input(String source_, Object input_, boolean is_quick_) { return (is_quick_ ? db.adapt_input(input_) : input_); }
+
+	public static double adapt_number(double val_, int max_) { return adapt_number(val_, max_, false); }
+	
+	public static String adapt_string(String val_, int max_) 
+	{
+		int max = get_max_length(max_);
+		
+		return (strings.get_length(val_) <= max ? val_ : strings.truncate(val_, max)); 
+	}
+
+	public static double adapt_number(double val_, int max_, boolean is_negative_)
+	{
+		double output = numbers.round(val_);
+		if (max_ <= WRONG_MAX_SIZE) return output;
+		
+		double max = get_max_val(max_);
+		double min = -1 * max;
+		
+		if (is_negative_)
+		{
+			if (output < min) output = min;
+		}
+		else if (output <= 0.0) output = 0.0;
+			
+		if (output > max) output = max;
+		
+		return output;
+	}
+	
+	public static double get_max_val(int max_) { return (max_ <= WRONG_MAX_SIZE ? WRONG_MAX_VAL : (Math.pow(10.0, ((double)max_ + 1.0)) - 1.0)); }
+	
+	public static int get_max_length(int max_) { return (max_ <= WRONG_MAX_SIZE ? WRONG_MAX_LENGTH : max_); }
+
+	public static boolean vals_are_ok(String source_, Object vals_) { return vals_are_ok(source_, vals_, is_quick(source_)); }
+
+	public static boolean vals_are_ok(String source_, Object vals_, boolean is_quick_) { return (arrays.is_ok(vals_) && (is_quick_ ? db_quick.input_is_ok(vals_) : db.input_is_ok(vals_))); }
+
+	public static String[] get_all_sources_inbuilt() { return _alls.DB_SOURCES_INBUILT; }
+
+	public static Object get_val(String source_, Object val_) { return (is_quick(source_) ? db.adapt_input(val_) : val_); }
+
+	public static String get_where(String source_, String field_, String val_) { return (db.get_variable(db_quick.get_col(source_, field_)) + "=" + db.get_value(val_)); }
+
+	public static String join_wheres(String where1_, String where2_) { return join_wheres(where1_, where2_, db_where.LINK_AND); }
+
+	public static String join_wheres(String where1_, String where2_, String link_) { return db_where.join(where1_, where2_, link_); }
 
 	public static db_field get_field_decimal_tiny() { return get_field_decimal(3); }
 
@@ -52,209 +323,109 @@ public abstract class db_common
 	public static db_field get_field_time(String format_) { return new db_field(data.STRING, dates.get_length(format_), db_field.WRONG_DECIMALS, dates.get_default(format_), null); }
 	
 	public static db_field get_field_date(String format_) { return new db_field(data.STRING, dates.get_length(format_), db_field.WRONG_DECIMALS, dates.get_default(format_), null); }
-	
-	public static double adapt_number(double val_, int max_) { return adapt_number(val_, max_, false); }
-	
-	public static String adapt_string(String val_, int max_) 
-	{
-		int max = get_max_length(max_);
-		
-		return (strings.get_length(val_) <= max ? val_ : strings.truncate(val_, max)); 
-	}
-
-	public static double adapt_number(double val_, int max_, boolean is_negative_)
-	{
-		double output = numbers.round(val_);
-		if (max_ <= WRONG_MAX_SIZE) return output;
-		
-		double max = get_max_val(max_);
-		double min = -1 * max;
-		
-		if (is_negative_)
-		{
-			if (output < min) output = min;
-		}
-		else if (output <= 0.0) output = 0.0;
-			
-		if (output > max) output = max;
-		
-		return output;
-	}
-	
-	public static double get_max_val(int max_) { return (max_ <= WRONG_MAX_SIZE ? WRONG_MAX_VAL : (Math.pow(10.0, ((double)max_ + 1.0)) - 1.0)); }
-	
-	public static int get_max_length(int max_) { return (max_ <= WRONG_MAX_SIZE ? WRONG_MAX_LENGTH : max_); }
-	
-	public static String get_field_col(String source_, String field_, boolean is_quick_) { return (is_quick_ ? get_col(source_, field_) : field_); }
-
-	public static String get_col(String source_, String field_) { return db.get_col(source_, field_); }
-
-	public static String get_type(String key_, HashMap<String, String> types_keys_) { return ((types_keys_ != null && types_keys_.containsValue(key_)) ? (String)arrays.get_key(types_keys_, key_) : strings.DEFAULT); }
-
-	public static String get_key(String type_, HashMap<String, String> types_keys_) { return ((types_keys_ != null && types_keys_.containsKey(type_)) ? types_keys_.get(type_) : strings.DEFAULT); }
-
-	public static String get_type(String key_, String root_) { return ((strings.is_ok(key_) && strings.is_ok(root_)) ? (root_ + _types.SEPARATOR + key_) : strings.DEFAULT); }
-
-	public static String get_key(String type_, String root_) { return accessory._keys.get_key(type_, root_); }
-
-	public static String[] add_default_fields(String source_, String[] fields_)
-	{
-		if (!db.includes_default_fields(source_)) return fields_;
-		
-		ArrayList<String> temp = arrays.to_arraylist(fields_);
-		
-		for (String field: parent_ini_db.get_default_field_types()) { temp.add(field); }
-		
-		return arrays.to_array(temp);
-	}
-
-	public static String[] get_all_sources_inbuilt() { return _alls.DB_SOURCES_INBUILT; }
-
-	public static Object get_val_inbuilt(String source_, Object val_) { return (is_quick_inbuilt(source_) ? db.adapt_input(val_) : val_); }
-
-	public static boolean is_quick_inbuilt(String source_) 
-	{
-		if (source_.equals(db_tests.SOURCE)) return db_tests._is_quick;
-		else if (source_.equals(db_credentials.SOURCE)) return db_credentials._is_quick;
-		else if (source_.equals(db_crypto.SOURCE)) return db_crypto._is_quick;
-		else if (source_.equals(db_info.SOURCE)) return db_info._is_quick;
-		
-		return false; 
-	}
-	
-	public static void is_quick_inbuilt(String source_, boolean is_quick_) 
-	{ 
-		if (source_.equals(db_tests.SOURCE)) db_tests._is_quick = is_quick_;
-		else if (source_.equals(db_credentials.SOURCE)) db_credentials._is_quick = is_quick_;
-		else if (source_.equals(db_crypto.SOURCE)) db_crypto._is_quick = is_quick_;
-		else if (source_.equals(db_info.SOURCE)) db_info._is_quick = is_quick_;
-	}
-	
-	public static String get_field_col_inbuilt(String source_, String field_) { return (is_quick_inbuilt(source_) ? get_col_inbuilt(source_, field_) : field_); }
-
-	public static String get_col_inbuilt(String source_, String field_) 
-	{ 
-		HashMap<String, String> fields_cols = get_fields_cols_inbuilt(source_);
-		
-		return ((fields_cols != null && fields_cols.containsKey(field_)) ? fields_cols.get(field_) : strings.DEFAULT); 
-	}
-
-	public static String[] get_fields_inbuilt(String source_) 
-	{
-		String[] output = null;
-		
-		if (source_.equals(db_tests.SOURCE))
-		{
-			if (db_tests._fields == null) db_tests.populate_fields();
-			
-			output = (String[])arrays.get_new(db_tests._fields);
-		}
-		else if (source_.equals(db_credentials.SOURCE))
-		{
-			if (db_credentials._fields == null) db_credentials.populate_fields();
-			
-			output = (String[])arrays.get_new(db_credentials._fields);
-		}
-		else if (source_.equals(db_crypto.SOURCE))
-		{
-			if (db_crypto._fields == null) db_crypto.populate_fields();
-			
-			output = (String[])arrays.get_new(db_crypto._fields);
-		}
-		else if (source_.equals(db_info.SOURCE))
-		{
-			if (db_info._fields == null) db_info.populate_fields();
-			
-			output = (String[])arrays.get_new(db_info._fields);
-		}
-		
-		return output;
-	}
-
-	public static String[] get_cols_inbuilt(String source_) 
-	{ 
-		String[] output = null;
-		
-		if (source_.equals(db_tests.SOURCE))
-		{
-			if (db_tests._cols == null) db_tests._cols = (String[])arrays.get_new(get_cols_inbuilt_internal(source_));
-			
-			output = (String[])arrays.get_new(db_tests._cols);
-		}
-		else if (source_.equals(db_credentials.SOURCE))
-		{
-			if (db_credentials._cols == null) db_credentials._cols = (String[])arrays.get_new(get_cols_inbuilt_internal(source_));
-			
-			output = (String[])arrays.get_new(db_credentials._cols);
-		}
-		else if (source_.equals(db_crypto.SOURCE))
-		{
-			if (db_crypto._cols == null) db_crypto._cols = (String[])arrays.get_new(get_cols_inbuilt_internal(source_));
-			
-			output = (String[])arrays.get_new(db_crypto._cols);
-		}
-		else if (source_.equals(db_info.SOURCE))
-		{
-			if (db_info._cols == null) db_info._cols = (String[])arrays.get_new(get_cols_inbuilt_internal(source_));
-			
-			output = (String[])arrays.get_new(db_info._cols);
-		}
-		
-		return output;
-	}
-	
-	public static HashMap<String, String> get_fields_cols_inbuilt(String source_) 
-	{ 
-		HashMap<String, String> output = null;
-		
-		if (source_.equals(db_tests.SOURCE))
-		{
-			if (db_tests._fields_cols == null) db_tests._fields_cols = arrays.get_new_hashmap_xx(get_fields_cols_inbuilt_internal(source_));
-			
-			output = arrays.get_new_hashmap_xx(db_tests._fields_cols);
-		}
-		else if (source_.equals(db_credentials.SOURCE))
-		{
-			if (db_credentials._fields_cols == null) db_credentials._fields_cols = arrays.get_new_hashmap_xx(get_fields_cols_inbuilt_internal(source_));
-			
-			output = arrays.get_new_hashmap_xx(db_credentials._fields_cols);
-		}
-		else if (source_.equals(db_crypto.SOURCE))
-		{
-			if (db_crypto._fields_cols == null) db_crypto._fields_cols = arrays.get_new_hashmap_xx(get_fields_cols_inbuilt_internal(source_));
-			
-			output = arrays.get_new_hashmap_xx(db_crypto._fields_cols);
-		}
-		else if (source_.equals(db_info.SOURCE))
-		{
-			if (db_info._fields_cols == null) db_info._fields_cols = arrays.get_new_hashmap_xx(get_fields_cols_inbuilt_internal(source_));
-			
-			output = arrays.get_new_hashmap_xx(db_info._fields_cols);
-		}
-		
-		return output;
-	} 
-	
-	public static HashMap<String, String> get_fields_cols(String source_, String[] fields_) { return db.get_fields_cols(source_, fields_); }
-
-	public static HashMap<String, String> get_types_keys(String source_, String[] types_, String root_)
-	{
-		HashMap<String, String> output = new HashMap<String, String>();
-		if (!db.source_is_ok(source_) || !arrays.is_ok(types_) || !strings.is_ok(root_)) return output;
-		
-		for (String type: types_) { output.put(type, get_key(type, root_)); }
-		
-		return output;
-	}
-	
-	static void start()
-	{
-		for (String source: get_all_sources_inbuilt()) { get_fields_cols_inbuilt(source); }
-	}
 
 	static String[] populate_all_sources_inbuilt() { return new String[] { db_tests.SOURCE, db_credentials.SOURCE, db_crypto.SOURCE, db_info.SOURCE }; }
 
-	private static String[] get_cols_inbuilt_internal(String source_) { return db.get_cols(get_fields_cols_inbuilt(source_)); }
+	static void populate_is_quick_ini()
+	{
+		if (IS_QUICK == null) IS_QUICK = new ArrayList<String>();
+		
+		if (!DEFAULT_IS_QUICK) return;
+		
+		int tot = db.SOURCES.size();
+		if (tot == 0) return;
+ 
+		for (Entry<String, HashMap<String, db_field>> item: db.SOURCES.entrySet()) 
+		{
+			String source = item.getKey();
+			
+			if (!IS_QUICK.contains(source)) IS_QUICK.add(source);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	static void populate_fields_cols_ini()
+	{
+		int tot = db.SOURCES.size();
+		if (tot == 0) return;
+		
+		if (SOURCES2 == null) SOURCES2 = new ArrayList<String>();
+		
+		if (!arrays.is_ok(FIELDS)) FIELDS = new String[tot][];
+		if (!arrays.is_ok(COLS)) COLS = new String[tot][];
+		if (!arrays.is_ok(FIELDS_COLS)) FIELDS_COLS = (HashMap<String, String>[])new HashMap[tot];
+ 
+		for (Entry<String, HashMap<String, db_field>> item: db.SOURCES.entrySet()) populate_fields_cols(item.getKey(), item.getValue());
+	}
+	
+	static int get_i(String source_) { return ((SOURCES2 != null || !strings.is_ok(source_)) ? SOURCES2.indexOf(source_) : -1); }
 
-	private static HashMap<String, String> get_fields_cols_inbuilt_internal(String source_) { return get_fields_cols(source_, get_fields_inbuilt(source_)); }
+	static void populate_fields_cols(String source_, HashMap<String, db_field> fields_)
+	{
+		int tot = fields_.size();
+		
+		int i = SOURCES2.indexOf(source_);
+		
+		if (i < 0)
+		{
+			i = SOURCES2.size();
+			
+			SOURCES2.add(source_);
+		}
+		
+		String[] fields = null;
+		String[] cols = null;	
+		HashMap<String, String> fields_cols = new HashMap<String, String>();
+		
+		int i2 = 0;
+		
+		if (db.includes_default_fields(source_))
+		{
+			String[] fields2 = parent_ini_db.get_default_field_types();
+			
+			tot += fields2.length;
+			
+			fields = new String[tot];
+			cols = new String[tot];	
+			
+			for (i2 = 0; i2 < fields2.length; i2++) 
+			{ 
+				String field = fields2[i2];
+				String col = db.get_col(source_, field);
+				
+				fields[i2] = field;
+				cols[i2] = col;
+				
+				fields_cols.put(field, col);
+			}
+		}
+		else
+		{
+			fields = new String[tot];
+			cols = new String[tot];
+		}
+		
+		for (Entry<String, db_field> item2: fields_.entrySet())
+		{	
+			String field = item2.getKey();
+			String col = db.get_col(source_, field);
+			
+			fields[i2] = field;
+			cols[i2] = col;
+			
+			fields_cols.put(field, col);
+			
+			i2++;
+		}
+		
+		if (i < FIELDS.length) FIELDS[i] = (String[])arrays.get_new(fields);
+		else FIELDS = arrays.add_1d(FIELDS, fields);
+		
+		if (i < COLS.length) COLS[i] = (String[])arrays.get_new(cols);
+		else COLS = arrays.add_1d(COLS, cols);
+		
+		if (i < FIELDS_COLS.length) FIELDS_COLS[i] = arrays.get_new_hashmap_xx(fields_cols);
+		else FIELDS_COLS = arrays.add_1d_hashmap_xx(FIELDS_COLS, fields_cols);
+	}
+
 }

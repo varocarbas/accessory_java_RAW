@@ -40,9 +40,9 @@ public abstract class parent_keys
 	{
 		if (_populated) return;
 
-		ROOTS = new ArrayList<String>();
-		
-		ArrayList<HashMap<String, String>> types_keys = new ArrayList<HashMap<String, String>>();
+		ROOTS = (arrays.is_ok(ROOTS) ? new ArrayList<String>(ROOTS) : new ArrayList<String>());
+
+		ArrayList<HashMap<String, String>> types_keys = (arrays.is_ok(TYPES_KEYS) ? arrays.to_arraylist(TYPES_KEYS) : new ArrayList<HashMap<String, String>>());
 
 		types_keys = populate_internal_roots(types_keys);
 		types_keys = populate_internal_merged_roots(types_keys);
