@@ -75,17 +75,25 @@ abstract class db_queries extends parent_static
 	
 	public static void __create_table_like(String table_name_, String source_like_, boolean drop_it_) 
 	{ 
+		__lock();
+		
 		String source = db.check_source_error(source_like_);
-		if (!strings.is_ok(source)) return;
+		
+		if (!strings.is_ok(source)) 
+		{
+			__unlock();
+			
+			return;
+		}
 		
 		if (!strings.is_ok(table_name_))
 		{
 			db.manage_error(source, "Wrong table name");
 			
+			__unlock();
+			
 			return;
 		}
-		
-		__lock();
 		
 		String cur_source = db._cur_source;
 		db._cur_source = source;
@@ -101,20 +109,26 @@ abstract class db_queries extends parent_static
 	
 	public static void __backup_table(String source_, String backup_name_) 
 	{ 
+		__lock();
+		
 		String source = db.check_source_error(source_);
-		if (!strings.is_ok(source)) return;
+		
+		if (!strings.is_ok(source)) 
+		{
+			__unlock();
+			
+			return;
+		}
 		
 		String table_source = db.get_table(source);
 		String table_backup = (strings.is_ok(backup_name_) ? backup_name_ : (table_source + "_backup"));
-		
-		__lock();
 		
 		String cur_source = db._cur_source;
 		db._cur_source = source;
 		
 		parent_db instance = db.get_valid_instance(source);
 		
-		create_table_like_internal(table_backup, table_source, instance, true); 
+		create_table_like_internal(table_backup, source, instance, true); 
 
 		instance.backup_table(table_source, table_backup);
 		
@@ -140,7 +154,7 @@ abstract class db_queries extends parent_static
 			if (drop_it_) instance_.drop_table(table_name_);
 			else return;
 		}
-		
+
 		if (db.table_exists(source_)) instance_.create_table_like(table_name_, db.get_table(source_));
 		else instance_.create_table(table_name_, get_cols(source_, db.get_source_fields(source_)));		
 	}

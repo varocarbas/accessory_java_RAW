@@ -15,7 +15,14 @@ public abstract class arrays extends parent_static
 	public static final int WRONG_I = -1;
 
 	public static final int DEFAULT_SIZE = 5;
-
+	
+	public static final double DEFAULT_DECIMAL = 0.0;
+	public static final long DEFAULT_LONG = 0l;
+	public static final int DEFAULT_INT = 0;
+	public static final boolean DEFAULT_BOOLEAN = false;
+	public static final byte DEFAULT_BYTE = (byte)0;
+	public static final char DEFAULT_CHAR = ' ';
+	
 	public static Class<?>[] get_all_classes() { return _alls.ARRAYS_CLASSES; }
 
 	//All these classes require a special treatment. In some cases, they are assumed to be equivalent to their big counterparts.
@@ -653,9 +660,9 @@ public abstract class arrays extends parent_static
 
 	public static char[] get_new(char[] input_) { return (!is_ok(input_) ? null : Arrays.copyOfRange(input_, 0, input_.length)); }
 
-	@SuppressWarnings("unchecked")
 	//Specific _xx and _xy overloads are needed because the default Object overload fails to recognise a null hashmap as such.
 	//It would be possible to create an additional get_new() overload, but not the two required to account for both scenarios (xx and xy).
+	@SuppressWarnings("unchecked")
 	public static <x> HashMap<x, x> get_new_hashmap_xx(HashMap<x, x> input_) { return (HashMap<x, x>)get_new_hashmap(input_, false); }
 
 	@SuppressWarnings("unchecked")
@@ -1247,7 +1254,7 @@ public abstract class arrays extends parent_static
 
 		double[] output = new double[tot];
 
-		for (int i = 0; i < tot; i++) { output[i] = (Double)input_[i]; }
+		for (int i = 0; i < tot; i++) { output[i] = (input_[i] != null ? input_[i] : DEFAULT_DECIMAL); }
 
 		return output;
 	}
@@ -1259,7 +1266,7 @@ public abstract class arrays extends parent_static
 
 		long[] output = new long[tot];
 
-		for (int i = 0; i < tot; i++) { output[i] = (Long)input_[i]; }
+		for (int i = 0; i < tot; i++) { output[i] = (input_[i] != null ? input_[i] : DEFAULT_LONG); }
 
 		return output;
 	}
@@ -1271,7 +1278,7 @@ public abstract class arrays extends parent_static
 
 		int[] output = new int[tot];
 
-		for (int i = 0; i < tot; i++) { output[i] = (Integer)input_[i]; }
+		for (int i = 0; i < tot; i++) { output[i] = (input_[i] != null ? input_[i] : DEFAULT_INT); }
 
 		return output;
 	}
@@ -1283,7 +1290,7 @@ public abstract class arrays extends parent_static
 
 		boolean[] output = new boolean[tot];
 
-		for (int i = 0; i < tot; i++) { output[i] = (boolean)input_[i]; }
+		for (int i = 0; i < tot; i++) { output[i] = (input_[i] != null ? input_[i] : DEFAULT_BOOLEAN); }
 
 		return output;
 	}
@@ -1295,7 +1302,7 @@ public abstract class arrays extends parent_static
 
 		byte[] output = new byte[tot];
 
-		for (int i = 0; i < tot; i++) { output[i] = (byte)input_[i]; }
+		for (int i = 0; i < tot; i++) { output[i] = (input_[i] != null ? input_[i] : DEFAULT_BYTE); }
 
 		return output;
 	}
@@ -1307,7 +1314,7 @@ public abstract class arrays extends parent_static
 
 		char[] output = new char[tot];
 
-		for (int i = 0; i < tot; i++) { output[i] = (char)input_[i]; }
+		for (int i = 0; i < tot; i++) { output[i] = (input_[i] != null ? input_[i] : DEFAULT_CHAR); }
 
 		return output;
 	}
@@ -1327,7 +1334,7 @@ public abstract class arrays extends parent_static
 			
 			output[i] = new double[tot2];
 			
-			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (double)input_[i][i2];
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (input_[i][i2] != null ? output[i][i2] : DEFAULT_DECIMAL);
 		}
 
 		return output;
@@ -1348,7 +1355,7 @@ public abstract class arrays extends parent_static
 			
 			output[i] = new long[tot2];
 			
-			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (long)input_[i][i2];
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (input_[i][i2] != null ? output[i][i2] : DEFAULT_LONG);
 		}
 
 		return output;
@@ -1369,7 +1376,7 @@ public abstract class arrays extends parent_static
 			
 			output[i] = new int[tot2];
 			
-			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (int)input_[i][i2];
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (input_[i][i2] != null ? output[i][i2] : DEFAULT_INT);
 		}
 
 		return output;
@@ -1390,7 +1397,7 @@ public abstract class arrays extends parent_static
 			
 			output[i] = new boolean[tot2];
 			
-			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (boolean)input_[i][i2];
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (input_[i][i2] != null ? output[i][i2] : DEFAULT_BOOLEAN);
 		}
 
 		return output;
@@ -1411,7 +1418,7 @@ public abstract class arrays extends parent_static
 			
 			output[i] = new byte[tot2];
 			
-			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (byte)input_[i][i2];
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (input_[i][i2] != null ? output[i][i2] : DEFAULT_BYTE);
 		}
 
 		return output;
@@ -1432,7 +1439,7 @@ public abstract class arrays extends parent_static
 			
 			output[i] = new char[tot2];
 			
-			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (char)input_[i][i2];
+			for (int i2 = 0; i2 < tot2; i2++) output[i][i2] = (input_[i][i2] != null ? output[i][i2] : DEFAULT_CHAR);
 		}
 
 		return output;
@@ -1512,6 +1519,58 @@ public abstract class arrays extends parent_static
 	
 	@SuppressWarnings("unchecked")
 	public static <x, y> HashMap<x, y> get_1d_hashmap_xy(HashMap<x, y>[] main_, int i_) { return (HashMap<x, y>)get_1d(main_, i_, false); }
+
+	public static double[] redim(double[] array_) { return redim(array_, get_size(array_) + 1); }
+	
+	public static double[] redim(double[] array_, int new_size_) { return to_small(redim(to_big(array_))); }
+
+	public static long[] redim(long[] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static long[] redim(long[] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static int[] redim(int[] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static int[] redim(int[] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static boolean[] redim(boolean[] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static boolean[] redim(boolean[] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static byte[] redim(byte[] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static byte[] redim(byte[] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static char[] redim(char[] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static char[] redim(char[] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static double[][] redim(double[][] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static double[][] redim(double[][] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static long[][] redim(long[][] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static long[][] redim(long[][] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static int[][] redim(int[][] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static int[][] redim(int[][] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static boolean[][] redim(boolean[][] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static boolean[][] redim(boolean[][] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static byte[][] redim(byte[][] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static byte[][] redim(byte[][] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static char[][] redim(char[][] array_) { return to_small(redim(to_big(array_), get_size(array_) + 1)); }
+	
+	public static char[][] redim(char[][] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
+
+	public static <x> x[] redim(x[] array_) { return redim(array_, get_size(array_) + 1); }
+	
+	public static <x> x[] redim(x[] array_, int new_size_) { return ((array_ != null && new_size_ > 0) ? Arrays.copyOf(array_, new_size_) : null); }
 	
 	static <x, y> Class<?>[] get_classes_items(HashMap<x, y> input_, boolean check_input_) { return new Class<?>[] { get_class_key_val(input_, true, true, check_input_), get_class_key_val(input_, false, true, check_input_) }; }
 
@@ -2195,14 +2254,11 @@ public abstract class arrays extends parent_static
 		int tot = get_size(new_);
 		if (tot == 0) return get_new(main_);
 
-		tot0++;
-		int max_i0 = tot0 - 1;
+		Object output = redim((is_array_ ? (x[][])main_ : (x[])main_));
 		
-		Object output = Arrays.copyOf((is_array_ ? (x[][])main_ : (x[])main_), tot0);
-		
-		for (int i = 0; i <= max_i0; i++)
+		for (int i = 0; i <= tot0; i++)
 		{
-			Object item = (i == max_i0 ? get_new(new_) : get_1d(main_, i, is_array_));
+			Object item = (i == tot0 ? get_new(new_) : get_1d(main_, i, is_array_));
 			if (item == null) continue;
 			
 			if (is_array_) ((x[][])output)[i] = (x[])get_new(item);

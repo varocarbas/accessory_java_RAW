@@ -11,6 +11,7 @@ Articles about this code:
 - [Encryption](https://www.codeproject.com/Articles/5349970/Encryption-accessory-java).
 - [Context, conventions, structure, evolution](https://www.codeproject.com/Articles/5351092/Context-conventions-structure-evolution-accessory).
 - [Friendliness, safety, efficiency and adaptability](https://www.codeproject.com/Articles/5352157/Friendliness-safety-efficiency-and-adaptability).
+- [Types and classes](https://gist.github.com/varocarbas/dbc87154b96ef39b10cb7ce768794e66).
 
 # \_RAW repositories
 All the \_RAW repositories include code which I use for personal purposes. The overall structure and used conventions are assumed to be more than enough for an experienced programmer to adequately understand and appreciate everything. 

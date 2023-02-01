@@ -57,9 +57,7 @@ public abstract class parent_ini_db
 
 	public static boolean setup_vals_are_ok(HashMap<String, Object> setup_vals_)
 	{
-		String instance = _keys.get_key(_types.WHAT_INSTANCE);
-
-		if (!arrays.keys_exist(setup_vals_, new String[] { _types.CONFIG_DB, _types.CONFIG_DB_SETUP, _types.CONFIG_DB_SETUP_TYPE, instance })) return false;
+		if (!arrays.keys_exist(setup_vals_, db.SETUP_IDS)) return false;
 		if (!strings.are_ok(new String[] { (String)setup_vals_.get(_types.CONFIG_DB), (String)setup_vals_.get(_types.CONFIG_DB_SETUP), (String)setup_vals_.get(_types.CONFIG_DB_SETUP_TYPE) })) return false;
 
 		return true;
@@ -213,7 +211,9 @@ public abstract class parent_ini_db
 	}
 	
 	private void populate_all_internal(HashMap<String, Object> dbs_setup_) 
-	{	
+	{		
+		perform_first_actions();
+		
 		String error = strings.DEFAULT;
 		
 		if (populate_all_dbs(dbs_setup_)) perform_actions_after_population();
@@ -225,6 +225,12 @@ public abstract class parent_ini_db
 		_ini.manage_error(error);
 	}
 
+	private void perform_first_actions()
+	{
+		db.INSTANCE = _keys.get_key(_types.WHAT_INSTANCE);
+		db.SETUP_IDS = new String[] { _types.CONFIG_DB, _types.CONFIG_DB_SETUP, _types.CONFIG_DB_SETUP_TYPE, db.INSTANCE };		
+	}
+	
 	private void perform_actions_after_population()
 	{
 		db_common.populate_is_quick_ini();
@@ -297,7 +303,7 @@ public abstract class parent_ini_db
 		vals = parent_ini_config.get_config_default_generic(_types.CONFIG_DB_SETUP_CREDENTIALS, vals);
 		if (arrays.value_exists(config.update_ini((String)vals.get(_types.CONFIG_DB_SETUP), vals), false)) return null;
 
-		vals.put(_keys.get_key(_types.WHAT_INSTANCE), db.get_instance_ini((String)vals.get(_types.CONFIG_DB_SETUP_TYPE)));
+		vals.put(db.INSTANCE, db.get_instance_ini((String)vals.get(_types.CONFIG_DB_SETUP_TYPE)));
 
 		return vals;
 	}

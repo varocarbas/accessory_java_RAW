@@ -68,7 +68,7 @@ public abstract class parent_ini
 	private void populate_all_internal(String name_, boolean includes_legacy_) 
 	{
 		if (_populated) return;
-
+		
 		if (strings.is_ok(name_)) _name = name_;
 		_includes_legacy = includes_legacy_;
 
@@ -81,7 +81,7 @@ public abstract class parent_ini
 
 		_populated = true;
 	}
-
+	
 	private void populate_all_internal_accessory() 
 	{
 		_basic.populate();

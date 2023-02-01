@@ -19,18 +19,16 @@ public abstract class db_common
 	public static final int DEFAULT_SIZE_DECIMAL = 7;
 	public static final int DEFAULT_SIZE_STRING = 30;
 	
-	static String[][] COLS = null;
-	static HashMap<String, String>[] FIELDS_COLS = null;
-
-	private static ArrayList<String> SOURCES2 = null;
-	private static String[][] FIELDS = null;
-	private static ArrayList<String> IS_QUICK = null;
+	static String[][] COLS = new String[0][0];
+	static String[][] FIELDS = new String[0][0];
+	
+	private static ArrayList<String> IS_QUICK = new ArrayList<String>();
 
 	public static String[] get_fields(String source_) 
 	{
-		int i = get_i(source_);
+		int i = db.get_i(source_);
 
-		return (i >= 0 ? (String[])arrays.get_new(FIELDS[i]) : null);
+		return (i > db.WRONG_I ? (String[])arrays.get_new(FIELDS[i]) : null);
 	}
 	
 	public static HashMap<String, String> get_fields_cols(String source_, String[] fields_) { return db.get_fields_cols(source_, fields_); }
@@ -51,13 +49,6 @@ public abstract class db_common
 	public static String get_field_quick_col(String source_, String field_col_) { return get_field_quick_col(source_, field_col_, DEFAULT_IS_FIELD, is_quick(source_)); }
 
 	public static String get_field_quick_col(String source_, String field_col_, boolean is_field_, boolean is_quick_) { return ((is_field_ && is_quick_) ? db_quick.get_col(source_, field_col_) : field_col_); }
-	
-	public static HashMap<String, String> get_fields_quick_cols(String source_) 
-	{ 
-		int i = get_i(source_);
-
-		return (i >= 0 ? arrays.get_new_hashmap_xx(FIELDS_COLS[i]) : null);
-	} 
 
 	public static void update_quick_cols(String source_) { db_quick.update_cols(source_); }
 	
@@ -328,50 +319,31 @@ public abstract class db_common
 
 	static void populate_is_quick_ini()
 	{
-		if (IS_QUICK == null) IS_QUICK = new ArrayList<String>();
-		
 		if (!DEFAULT_IS_QUICK) return;
 		
-		int tot = db.SOURCES.size();
-		if (tot == 0) return;
- 
-		for (Entry<String, HashMap<String, db_field>> item: db.SOURCES.entrySet()) 
+		for (String source: db.SOURCES) 
 		{
-			String source = item.getKey();
-			
 			if (!IS_QUICK.contains(source)) IS_QUICK.add(source);
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	static void populate_fields_cols_ini()
 	{
-		int tot = db.SOURCES.size();
+		int tot = db.SOURCES.length;
 		if (tot == 0) return;
-		
-		if (SOURCES2 == null) SOURCES2 = new ArrayList<String>();
 		
 		if (!arrays.is_ok(FIELDS)) FIELDS = new String[tot][];
 		if (!arrays.is_ok(COLS)) COLS = new String[tot][];
-		if (!arrays.is_ok(FIELDS_COLS)) FIELDS_COLS = (HashMap<String, String>[])new HashMap[tot];
  
-		for (Entry<String, HashMap<String, db_field>> item: db.SOURCES.entrySet()) populate_fields_cols(item.getKey(), item.getValue());
+		for (String source: db.SOURCES) populate_fields_cols(source, db.get_source_fields(source));
 	}
 	
-	static int get_i(String source_) { return ((SOURCES2 != null || !strings.is_ok(source_)) ? SOURCES2.indexOf(source_) : -1); }
-
 	static void populate_fields_cols(String source_, HashMap<String, db_field> fields_)
 	{
 		int tot = fields_.size();
 		
-		int i = SOURCES2.indexOf(source_);
-		
-		if (i < 0)
-		{
-			i = SOURCES2.size();
-			
-			SOURCES2.add(source_);
-		}
+		int i = db.get_i(source_);
+		if (i <= db.WRONG_I) return;
 		
 		String[] fields = null;
 		String[] cols = null;	
@@ -423,9 +395,5 @@ public abstract class db_common
 		
 		if (i < COLS.length) COLS[i] = (String[])arrays.get_new(cols);
 		else COLS = arrays.add_1d(COLS, cols);
-		
-		if (i < FIELDS_COLS.length) FIELDS_COLS[i] = arrays.get_new_hashmap_xx(fields_cols);
-		else FIELDS_COLS = arrays.add_1d_hashmap_xx(FIELDS_COLS, fields_cols);
 	}
-
 }

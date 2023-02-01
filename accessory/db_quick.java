@@ -2,7 +2,6 @@ package accessory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 //Use the methods in this class very carefully! Low-to-no checks are performed.
 public abstract class db_quick 
@@ -59,33 +58,37 @@ public abstract class db_quick
 
 	public static String get_col(String source_, String field_) 
 	{ 
-		HashMap<String, String> fields_cols = db_common.get_fields_quick_cols(source_);
+		int i = db.get_i(source_);
+		if (i <= db.WRONG_I) return strings.DEFAULT;
 		
-		return ((fields_cols != null && fields_cols.containsKey(field_)) ? fields_cols.get(field_) : db.get_col(source_, field_)); 
+		int i2 = arrays_quick.get_i(db_common.FIELDS, i, field_);
+		
+		return (i2 > db.WRONG_I ? db_common.COLS[i][i2] : db.get_col(source_, field_)); 
 	}
 
 	public static String[] get_cols(String source_) 
 	{ 
-		int i = db_common.get_i(source_);
+		int i = db.get_i(source_);
 
-		return (i >= 0 ? (String[])arrays.get_new(db_common.COLS[i]) : null);
+		return (i > db.WRONG_I ? (String[])arrays.get_new(db_common.COLS[i]) : null);
 	}
 
 	public static String[] get_cols(String source_, String[] fields_) 
 	{ 
-		if (!arrays.is_ok(fields_)) return null;
+		int tot = arrays.get_size(fields_);
+		if (tot == 0) return null;
+				
+		String[] cols = new String[tot];
 		
-		HashMap<String, String> fields_cols = db_common.get_fields_quick_cols(source_);
-		if (!arrays.is_ok(fields_cols)) return null;
-		
-		ArrayList<String> temp = new ArrayList<String>();
-		
-		for (String field: fields_) 
+		for (int i = 0; i < tot; i++) 
 		{ 
-			if (fields_cols.containsKey(field)) temp.add(fields_cols.get(field));
+			String col = get_col(source_, fields_[i]);
+			if (!strings.is_ok(col)) continue;
+			
+			cols[i] = col;
 		}
 		
-		return arrays.to_array(temp);
+		return cols;
 	}
 	
 	public static void update_cols(String source_) { db_common.populate_fields_cols(source_, db.get_source_fields(source_)); }
@@ -253,14 +256,9 @@ public abstract class db_quick
 	static void populate_quicker_ini()
 	{
 		if (QUICKER_MYSQL == null) QUICKER_MYSQL = new ArrayList<String>();
-		
-		int tot = db.SOURCES.size();
-		if (tot == 0) return;
  
-		for (Entry<String, HashMap<String, db_field>> item: db.SOURCES.entrySet()) 
+		for (String source: db.SOURCES) 
 		{
-			String source = item.getKey();
-			
 			String type = db.get_valid_type(source);
 			if (!strings.is_ok(type)) continue;
 			

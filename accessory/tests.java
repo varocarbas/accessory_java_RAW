@@ -297,7 +297,7 @@ public class tests extends parent_tests
 		HashMap<String, String> all = new HashMap<String, String>(all_);
 		
 		all.put(db.get_col(source_, field_), db.adapt_input(source_, field_, val_));
-		
+
 		return all;
 	}
 
