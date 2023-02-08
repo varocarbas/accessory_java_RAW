@@ -14,12 +14,14 @@ public abstract class parent_ini
 	public static final String ERROR_DBS = _types.ERROR_INI_DB_DBS;
 	public static final String ERROR_SOURCE = _types.ERROR_INI_DB_SOURCE;
 
-	protected boolean _populated = false;
-	protected boolean _includes_legacy = false;
-	protected String _name = _defaults.APP_NAME;
-	protected String _user = _defaults.USER;
+	protected HashMap<String, Object> DBS_SETUP = null;
+	protected String[] TYPES_TO_IGNORE = null;
 	
-	protected HashMap<String, Object> _dbs_setup = null;
+	protected boolean INCLUDES_LEGACY = false;
+	protected String NAME = _defaults.APP_NAME;
+	protected String USER = _defaults.USER;
+
+	protected boolean _populated = false;
 	
 	protected static void manage_error(String type_)
 	{
@@ -40,12 +42,16 @@ public abstract class parent_ini
 
 	protected void populate_all(String name_, boolean includes_legacy_) { populate_all_internal(name_, includes_legacy_); }
 
-	protected void populate_all(String name_, HashMap<String, Object> dbs_setup_) { populate_all(name_, false, dbs_setup_); } 
+	protected void populate_all(String name_, HashMap<String, Object> dbs_setup_) { populate_all(name_, dbs_setup_, null); } 
 
-	protected void populate_all(String name_, boolean includes_legacy_, HashMap<String, Object> dbs_setup_) 
+	protected void populate_all(String name_, HashMap<String, Object> dbs_setup_, String[] types_to_ignore_) { populate_all(name_, false, dbs_setup_, types_to_ignore_); } 
+
+	protected void populate_all(String name_, boolean includes_legacy_, HashMap<String, Object> dbs_setup_, String[] types_to_ignore_) 
 	{ 
-		_dbs_setup = (dbs_setup_ == null ? new HashMap<String, Object>() : new HashMap<String, Object>(dbs_setup_));
+		DBS_SETUP = (dbs_setup_ == null ? new HashMap<String, Object>() : new HashMap<String, Object>(dbs_setup_));
 
+		if (types_to_ignore_ != null) TYPES_TO_IGNORE = arrays_quick.get_new(types_to_ignore_);
+		
 		populate_all_internal(name_, includes_legacy_); 
 	}
 
@@ -53,32 +59,36 @@ public abstract class parent_ini
 
 	protected void populate_all(String name_, String user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_, boolean includes_legacy_) 
 	{
-		if (strings.is_ok(user_)) _user = user_;
+		if (strings.is_ok(user_)) USER = user_;
 		
-		_dbs_setup = new HashMap<String, Object>();
+		DBS_SETUP = new HashMap<String, Object>();
 		
-		if (strings.is_ok(user_)) _dbs_setup = parent_ini_db.get_setup_vals(null, user_, dbs_host_, dbs_encrypted_);
-		else if (strings.is_ok(dbs_username_) && dbs_password_ != null) _dbs_setup = parent_ini_db.get_setup_vals(null, dbs_username_, dbs_password_, dbs_host_);
+		if (strings.is_ok(user_)) DBS_SETUP = parent_ini_db.get_setup_vals(null, user_, dbs_host_, dbs_encrypted_);
+		else if (strings.is_ok(dbs_username_) && dbs_password_ != null) DBS_SETUP = parent_ini_db.get_setup_vals(null, dbs_username_, dbs_password_, dbs_host_);
 
 		populate_all_internal(name_, includes_legacy_);
 	}
 
-	private Object get_setup_val(String key_) { return arrays.get_value(_dbs_setup, key_); }
+	private Object get_setup_val(String key_) { return arrays.get_value(DBS_SETUP, key_); }
 	
 	private void populate_all_internal(String name_, boolean includes_legacy_) 
 	{
 		if (_populated) return;
 		
-		if (strings.is_ok(name_)) _name = name_;
-		_includes_legacy = includes_legacy_;
+		if (strings.is_ok(name_)) NAME = name_;
+		
+		INCLUDES_LEGACY = includes_legacy_;
 
 		String package_name = getClass().getPackageName();
 
 		if (package_name.equals("accessory")) populate_all_internal_accessory();
 		else populate_all_internal_other_all(package_name);
 
-		config.update_basic(_types.CONFIG_BASIC_NAME, _name);
+		config.update_basic(_types.CONFIG_BASIC_NAME, NAME);
 
+		DBS_SETUP = null;
+		TYPES_TO_IGNORE = null;
+		
 		_populated = true;
 	}
 	
@@ -90,13 +100,13 @@ public abstract class parent_ini
 		
 		_alls.populate();
 		
-		_keys.populate();
+		_keys.populate(TYPES_TO_IGNORE);
 		
 		_defaults.populate();
 
 		_ini_config.populate();
 	
-		_ini_db.populate(_dbs_setup);
+		_ini_db.populate(DBS_SETUP, TYPES_TO_IGNORE);
 		
 		_starts.populate();
 	}
@@ -125,8 +135,13 @@ public abstract class parent_ini
 		
 		if (class_.equals("_ini_db"))
 		{
-			params = new Class<?>[] { HashMap.class };
-			args = new Object[] { _dbs_setup };
+			params = new Class<?>[] { HashMap.class, String[].class };
+			args = new Object[] { new HashMap<String, Object>(DBS_SETUP), (String[])arrays.get_new(TYPES_TO_IGNORE) };
+		}
+		else if (class_.equals("_keys"))
+		{
+			params = new Class<?>[] { String[].class };
+			args = new Object[] { (String[])arrays.get_new(TYPES_TO_IGNORE) };
 		}
 		
 		Method method = null;
@@ -160,6 +175,14 @@ public abstract class parent_ini
 					args = null;
 				}
 				else return;
+			}
+			else if (class_.equals("_keys"))
+			{
+				if (count == 1)
+				{
+					params = null;
+					args = null;	
+				}
 			}
 			else return;
 		}

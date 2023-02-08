@@ -9,6 +9,8 @@ public abstract class parent_keys
 	private static ArrayList<String> ROOTS = null;
 	private static HashMap<String, String>[] TYPES_KEYS = null;
 
+	private static String[] ROOTS_TO_IGNORE = null;
+	
 	public static String get_startup_key(String type_, String root_) 
 	{
 		HashMap<String, String> types_keys = get_startup_common(type_, root_);
@@ -35,11 +37,15 @@ public abstract class parent_keys
 
 	protected abstract HashMap<String, HashMap<String, String>> get_startup_merged_types();
 
+	protected void populate_internal() { populate_internal(null); }
+	
 	@SuppressWarnings("unchecked")
-	protected void populate_internal()
+	protected void populate_internal(String[] roots_to_ignore_)
 	{
 		if (_populated) return;
 
+		if (roots_to_ignore_ != null) ROOTS_TO_IGNORE = arrays_quick.get_new(roots_to_ignore_);
+		
 		ROOTS = (arrays.is_ok(ROOTS) ? new ArrayList<String>(ROOTS) : new ArrayList<String>());
 
 		ArrayList<HashMap<String, String>> types_keys = (arrays.is_ok(TYPES_KEYS) ? arrays.to_arraylist(TYPES_KEYS) : new ArrayList<HashMap<String, String>>());
@@ -49,6 +55,8 @@ public abstract class parent_keys
 		types_keys = populate_internal_merged_types(types_keys);
 		
 		TYPES_KEYS = (types_keys.size() > 0 ? arrays.to_array(types_keys) : (HashMap<String, String>[])new HashMap[1]);
+	
+		ROOTS_TO_IGNORE = null;
 	}
 
 	private ArrayList<HashMap<String, String>> populate_internal_roots(ArrayList<HashMap<String, String>> types_keys_)
@@ -60,7 +68,7 @@ public abstract class parent_keys
 		{
 			String root = item.getKey();
 			String root_key = item.getValue();
-			if (!strings.are_ok(new String[] { root, root_key })) continue;
+			if (!strings.are_ok(new String[] { root, root_key }) || arrays.value_exists(ROOTS_TO_IGNORE, root)) continue;
 
 			types_keys_ = populate_internal_loop(root, root, root_key, types_keys_, true);	
 		}
@@ -80,7 +88,7 @@ public abstract class parent_keys
 		for (Entry<String, HashMap<String, String>> item: merged.entrySet())
 		{
 			String root_id = item.getKey();
-			if (!strings.is_ok(root_id)) continue;
+			if (!strings.is_ok(root_id) || arrays.value_exists(ROOTS_TO_IGNORE, root_id)) continue;
 
 			HashMap<String, String> items2 = item.getValue();
 			if (!arrays.is_ok(items2)) continue;
@@ -89,7 +97,7 @@ public abstract class parent_keys
 			{
 				String root_type = item2.getKey();
 				String root_key = item2.getValue();
-				if (!strings.are_ok(new String[] { root_type, root_key })) continue;
+				if (!strings.are_ok(new String[] { root_type, root_key }) || arrays.value_exists(ROOTS_TO_IGNORE, root_type)) continue;
 
 				types_keys_ = populate_internal_loop(root_id, root_type, root_key, types_keys_, are_roots_);				
 			}

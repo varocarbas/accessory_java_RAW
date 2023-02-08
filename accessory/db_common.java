@@ -2,7 +2,6 @@ package accessory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 public abstract class db_common 
 {
@@ -19,17 +18,9 @@ public abstract class db_common
 	public static final int DEFAULT_SIZE_DECIMAL = 7;
 	public static final int DEFAULT_SIZE_STRING = 30;
 	
-	static String[][] COLS = new String[0][0];
-	static String[][] FIELDS = new String[0][0];
-	
 	private static ArrayList<String> IS_QUICK = new ArrayList<String>();
 
-	public static String[] get_fields(String source_) 
-	{
-		int i = db.get_i(source_);
-
-		return (i > db.WRONG_I ? (String[])arrays.get_new(FIELDS[i]) : null);
-	}
+	public static String[] get_fields(String source_) { return (String[])db.get_source_fields(source_, true, false); }
 	
 	public static HashMap<String, String> get_fields_cols(String source_, String[] fields_) { return db.get_fields_cols(source_, fields_); }
 
@@ -325,75 +316,5 @@ public abstract class db_common
 		{
 			if (!IS_QUICK.contains(source)) IS_QUICK.add(source);
 		}
-	}
-	
-	static void populate_fields_cols_ini()
-	{
-		int tot = db.SOURCES.length;
-		if (tot == 0) return;
-		
-		if (!arrays.is_ok(FIELDS)) FIELDS = new String[tot][];
-		if (!arrays.is_ok(COLS)) COLS = new String[tot][];
- 
-		for (String source: db.SOURCES) populate_fields_cols(source, db.get_source_fields(source));
-	}
-	
-	static void populate_fields_cols(String source_, HashMap<String, db_field> fields_)
-	{
-		int tot = fields_.size();
-		
-		int i = db.get_i(source_);
-		if (i <= db.WRONG_I) return;
-		
-		String[] fields = null;
-		String[] cols = null;	
-		HashMap<String, String> fields_cols = new HashMap<String, String>();
-		
-		int i2 = 0;
-		
-		if (db.includes_default_fields(source_))
-		{
-			String[] fields2 = parent_ini_db.get_default_field_types();
-			
-			tot += fields2.length;
-			
-			fields = new String[tot];
-			cols = new String[tot];	
-			
-			for (i2 = 0; i2 < fields2.length; i2++) 
-			{ 
-				String field = fields2[i2];
-				String col = db.get_col(source_, field);
-				
-				fields[i2] = field;
-				cols[i2] = col;
-				
-				fields_cols.put(field, col);
-			}
-		}
-		else
-		{
-			fields = new String[tot];
-			cols = new String[tot];
-		}
-		
-		for (Entry<String, db_field> item2: fields_.entrySet())
-		{	
-			String field = item2.getKey();
-			String col = db.get_col(source_, field);
-			
-			fields[i2] = field;
-			cols[i2] = col;
-			
-			fields_cols.put(field, col);
-			
-			i2++;
-		}
-		
-		if (i < FIELDS.length) FIELDS[i] = (String[])arrays.get_new(fields);
-		else FIELDS = arrays.add_1d(FIELDS, fields);
-		
-		if (i < COLS.length) COLS[i] = (String[])arrays.get_new(cols);
-		else COLS = arrays.add_1d(COLS, cols);
 	}
 }

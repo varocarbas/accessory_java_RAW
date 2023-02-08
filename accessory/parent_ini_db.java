@@ -8,6 +8,7 @@ public abstract class parent_ini_db
 {
 	private boolean _populated = false;
 
+	private static String[] SOURCES_TO_IGNORE = null;
 	private static HashMap<String, Object[]> DEFAULT_FIELDS = null;
 	private static String[] DEFAULT_FIELD_TYPES = null;
 	
@@ -76,14 +77,16 @@ public abstract class parent_ini_db
 	{
 		if (_populated) return;
 
-		populate_all_internal(null); 
+		populate_all_internal(null, null); 
 	}
 
-	protected void populate_all(HashMap<String, Object> dbs_setup_) 
+	protected void populate_all(HashMap<String, Object> dbs_setup_) { populate_all(dbs_setup_, null); }
+	
+	protected void populate_all(HashMap<String, Object> dbs_setup_, String[] sources_to_ignore_) 
 	{
 		if (_populated) return;
 
-		populate_all_internal(dbs_setup_); 
+		populate_all_internal(dbs_setup_, sources_to_ignore_); 
 	}
 	
 	protected void populate_all(String dbs_user_, String dbs_username_, String dbs_password_, String dbs_host_, boolean dbs_encrypted_) 
@@ -95,7 +98,7 @@ public abstract class parent_ini_db
 		if (dbs_user_ != null) dbs_setup = get_setup_vals(null, dbs_user_, dbs_host_, dbs_encrypted_);
 		else if (dbs_username_ != null && dbs_password_ != null) dbs_setup = get_setup_vals(null, dbs_username_, dbs_password_, dbs_host_);
 
-		populate_all_internal(dbs_setup);
+		populate_all_internal(dbs_setup, null);
 	}
 
 	protected boolean populate_db(String db_, String name_, HashMap<String, Object[]> sources_, HashMap<String, Object> setup_vals_)
@@ -113,6 +116,8 @@ public abstract class parent_ini_db
 		for (Entry<String, Object[]> item: sources_.entrySet())
 		{
 			String id = item.getKey();
+			if (arrays.value_exists(SOURCES_TO_IGNORE, id)) continue;
+			
 			if (any_source == null) any_source = id;
 			
 			Object[] temp = (Object[])arrays.get_new(item.getValue());
@@ -210,8 +215,10 @@ public abstract class parent_ini_db
 		if (setup_vals_.get(_types.CONFIG_DB_SETUP_TYPE).equals(db_quicker_mysql.TYPE)) db_quicker_mysql.update_conn_info(any_source_);
 	}
 	
-	private void populate_all_internal(HashMap<String, Object> dbs_setup_) 
-	{		
+	private void populate_all_internal(HashMap<String, Object> dbs_setup_, String[] sources_to_ignore_) 
+	{	
+		if (sources_to_ignore_ != null) SOURCES_TO_IGNORE = arrays_quick.get_new(sources_to_ignore_);
+		
 		perform_first_actions();
 		
 		String error = strings.DEFAULT;
@@ -219,6 +226,8 @@ public abstract class parent_ini_db
 		if (populate_all_dbs(dbs_setup_)) perform_actions_after_population();
 		else error = parent_ini.ERROR_DBS;
 
+		SOURCES_TO_IGNORE = null;
+		
 		_populated = true;
 		if (error.equals(strings.DEFAULT)) return;
 
@@ -235,7 +244,7 @@ public abstract class parent_ini_db
 	{
 		db_common.populate_is_quick_ini();
 		
-		db_common.populate_fields_cols_ini();
+		db_quick.populate_cols_ini();
 		
 		db_quick.populate_quicker_ini();
 	}

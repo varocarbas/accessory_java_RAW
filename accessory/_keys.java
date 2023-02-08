@@ -7,7 +7,10 @@ public class _keys extends parent_keys
 	private static _keys _instance = new _keys(); 
 
 	public _keys() { }
-	public static void populate() { _instance.populate_internal(); }
+	
+	public static void populate() { populate(null); }
+	
+	public static void populate(String[] roots_to_ignore_) { _instance.populate_internal(roots_to_ignore_); }
 	
 	public static final String TYPE = get_key(_types.WHAT_TYPE);
 	public static final String KEY = get_key(_types.WHAT_KEY);

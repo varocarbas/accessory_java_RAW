@@ -32,15 +32,38 @@ public abstract class arrays_quick
 	public static int get_i(String[][] array_, int i_, String value_) { return get_i(array_[i_], value_); }
 
 	public static int[] get_new(int[] input_) { return Arrays.copyOfRange(input_, 0, input_.length); }
+	
+	public static String[] get_new(String[] input_) { return Arrays.copyOfRange(input_, 0, input_.length); }
 
+	public static String[] add(String[] array_, String value_) { return add(array_, array_.length, value_); }
+	
 	public static String[] add(String[] array_, int i_, String value_)
 	{
-		if (i_ >= array_.length) array_ = arrays.redim(array_, i_ + 1);
+		if (i_ >= array_.length) array_ = redim(array_, i_ + 1);
+		
+		array_[i_] = value_;
+		
+		return array_;
+	}
+
+	public static int[] add(int[] array_, int value_) { return add(array_, array_.length, value_); }
+
+	public static int[] add(int[] array_, int i_, int value_)
+	{
+		if (i_ >= array_.length) array_ = redim(array_, i_ + 1);
 		
 		array_[i_] = value_;
 		
 		return array_;
 	}
 	
+	public static String[] redim(String[] array_) { return redim(array_, array_.length + 1); }
+	
+	public static String[] redim(String[] array_, int new_size_) { return Arrays.copyOf(array_, new_size_); }
+	
+	public static int[] redim(int[] array_) { return redim(array_, array_.length + 1); }
+	
+	public static int[] redim(int[] array_, int new_size_) { return Arrays.copyOf(array_, new_size_); }
+
 	public static double[] get_1d(double[][] array_, int i_) { return Arrays.copyOfRange(array_[i_], 0, array_[i_].length); }
 }

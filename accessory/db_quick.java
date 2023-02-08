@@ -2,10 +2,13 @@ package accessory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 //Use the methods in this class very carefully! Low-to-no checks are performed.
 public abstract class db_quick 
 {		
+	static String[] _cols = new String[0];
+	
 	private static ArrayList<String> QUICKER_MYSQL = null;
 		
 	public static boolean is_ok(String source_) { return (is_quicker(source_) ? db_quicker.is_ok() : db.is_ok(source_)); }
@@ -58,19 +61,30 @@ public abstract class db_quick
 
 	public static String get_col(String source_, String field_) 
 	{ 
-		int i = db.get_i(source_);
-		if (i <= db.WRONG_I) return strings.DEFAULT;
+		int i = db.get_field_i(source_, field_);
 		
-		int i2 = arrays_quick.get_i(db_common.FIELDS, i, field_);
-		
-		return (i2 > db.WRONG_I ? db_common.COLS[i][i2] : db.get_col(source_, field_)); 
+		return (i > arrays.WRONG_I ? _cols[i] : db.get_col(source_, field_)); 
 	}
 
 	public static String[] get_cols(String source_) 
 	{ 
-		int i = db.get_i(source_);
+		String[] output = null;
+		
+		int[] min_max = db.get_source_min_max(source_);
+		if (min_max == null) return output;
+		
+		output = new String[db.get_source_fields_tot(min_max)];
 
-		return (i > db.WRONG_I ? (String[])arrays.get_new(db_common.COLS[i]) : null);
+		int i2 = -1;
+
+		for (int i = min_max[0]; i <= min_max[1]; i++) 
+		{
+			i2++;
+			
+			output[i2] = _cols[i];
+		}
+		
+		return output;
 	}
 
 	public static String[] get_cols(String source_, String[] fields_) 
@@ -91,7 +105,7 @@ public abstract class db_quick
 		return cols;
 	}
 	
-	public static void update_cols(String source_) { db_common.populate_fields_cols(source_, db.get_source_fields(source_)); }
+	public static void update_cols(String source_) { populate_cols(source_, db.get_source_fields(source_)); }
 	
 	public static boolean input_is_ok(Object input_) { return (db.input_is_ok(input_) && !arrays.hashmap_is_xy(input_)); }
 
@@ -266,6 +280,26 @@ public abstract class db_quick
 			{
 				if (!QUICKER_MYSQL.contains(source)) QUICKER_MYSQL.add(source);
 			}
+		}
+	}
+	
+	static void populate_cols_ini()
+	{
+		int tot = db.SOURCES.length;
+		if (tot == 0) return;
+ 
+		for (String source: db.SOURCES) populate_cols(source, db.get_source_fields(source));
+	}
+	
+	private static void populate_cols(String source_, HashMap<String, db_field> fields_)
+	{
+		if (!arrays.is_ok(fields_)) return;
+		
+		for (Entry<String, db_field> item: fields_.entrySet())
+		{
+			String field = item.getKey();
+
+			_cols = arrays_quick.add(_cols, db.get_field_i(source_, field), db.get_col(source_, field));
 		}
 	}
 }
