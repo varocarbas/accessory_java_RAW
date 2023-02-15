@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 public abstract class parent_keys 
 {
-	private static ArrayList<String> ROOTS = null;
+	private static String[] ROOTS = new String[0];
 	private static HashMap<String, String>[] TYPES_KEYS = null;
 
 	private static String[] ROOTS_TO_IGNORE = null;
@@ -46,8 +46,6 @@ public abstract class parent_keys
 
 		if (roots_to_ignore_ != null) ROOTS_TO_IGNORE = arrays_quick.get_new(roots_to_ignore_);
 		
-		ROOTS = (arrays.is_ok(ROOTS) ? new ArrayList<String>(ROOTS) : new ArrayList<String>());
-
 		ArrayList<HashMap<String, String>> types_keys = (arrays.is_ok(TYPES_KEYS) ? arrays.to_arraylist(TYPES_KEYS) : new ArrayList<HashMap<String, String>>());
 
 		types_keys = populate_internal_roots(types_keys);
@@ -109,13 +107,13 @@ public abstract class parent_keys
 	@SuppressWarnings("unchecked")
 	private ArrayList<HashMap<String, String>> populate_internal_loop(String root_id_, String root_type_, String root_key_, ArrayList<HashMap<String, String>> types_keys_, boolean is_root_)
 	{
-		int i = ROOTS.indexOf(root_id_);
+		int i = arrays_quick.get_i(ROOTS, root_id_);
 
 		if (i < 0) 
 		{
-			ROOTS.add(root_id_);
-
-			i = ROOTS.size() - 1;
+			i = ROOTS.length;
+			
+			ROOTS = arrays_quick.add(ROOTS, root_id_);
 		}
 
 		HashMap<String, String> items = new HashMap<String, String>();
@@ -146,7 +144,7 @@ public abstract class parent_keys
 		HashMap<String, String> output = new HashMap<String, String>();
 		if (!strings.are_ok(new String[] { type_key_, root_ })) return output;
 
-		int i = ROOTS.indexOf(root_);
+		int i = arrays_quick.get_i(ROOTS, root_);
 
 		return (i >= 0 ? new HashMap<String, String>(TYPES_KEYS[i]) : new HashMap<String, String>());
 	}

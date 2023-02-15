@@ -147,6 +147,8 @@ public abstract class parent_ini_db
 		
 		HashMap<String, Object[]> fields = get_fields(fields_info_, source_, table, db_, add_default_fields_);
 		
+		if (all_sources_ == null) all_sources_ = new HashMap<String, Object[]>();
+		
 		all_sources_.put(source_, new Object[] { table, fields, add_default_fields_ });
 
 		return all_sources_;
@@ -179,6 +181,8 @@ public abstract class parent_ini_db
 
 		return true;
 	}
+	
+	protected boolean ignore_source(String source_) { return (!strings.is_ok(source_) || (SOURCES_TO_IGNORE != null && arrays_quick.value_exists(SOURCES_TO_IGNORE, source_))); }
 	
 	@SuppressWarnings("unchecked")
 	private static HashMap<String, Object[]> get_fields(Object[] source_info_) { return arrays.get_new_hashmap_xy((HashMap<String, Object[]>)source_info_[1]); }
