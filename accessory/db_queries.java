@@ -286,48 +286,23 @@ abstract class db_queries extends parent_static
 
 	private static ArrayList<HashMap<String, String>> select_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return adapt_string_outputs(source_, select_quick_internal(source_, cols_, where_, max_rows_, order_)); }
 
-	private static ArrayList<HashMap<String, String>> select_quick_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return execute_type(source_, db.QUERY_SELECT, cols_, null, where_, max_rows_, order_, null); }
+	private static ArrayList<HashMap<String, String>> select_quick_internal(String source_, String[] cols_, String where_, int max_rows_, String order_) { return db.execute(source_, db.QUERY_SELECT, cols_, null, where_, max_rows_, order_, null); }
 
-	private static ArrayList<HashMap<String, String>> select_count_internal(String source_, String where_) { return execute_type(source_, db.QUERY_SELECT_COUNT, db.DEFAULT_FIELDS_COLS, null, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
+	private static ArrayList<HashMap<String, String>> select_count_internal(String source_, String where_) { return db.execute(source_, db.QUERY_SELECT_COUNT, db.DEFAULT_FIELDS_COLS, null, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 
-	private static void insert_internal(String source_, HashMap<String, String> vals_) { execute_type(source_, db.QUERY_INSERT, db.DEFAULT_FIELDS_COLS, vals_, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
+	private static void insert_internal(String source_, HashMap<String, String> vals_) { db.execute(source_, db.QUERY_INSERT, db.DEFAULT_FIELDS_COLS, vals_, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 
-	private static void update_internal(String source_, HashMap<String, String> vals_, String where_) { execute_type(source_, db.QUERY_UPDATE, db.DEFAULT_FIELDS_COLS, vals_, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
+	private static void update_internal(String source_, HashMap<String, String> vals_, String where_) { db.execute(source_, db.QUERY_UPDATE, db.DEFAULT_FIELDS_COLS, vals_, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 
-	private static void delete_internal(String source_, String where_) { execute_type(source_, db.QUERY_DELETE, db.DEFAULT_FIELDS_COLS, null, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
+	private static void delete_internal(String source_, String where_) { db.execute(source_, db.QUERY_DELETE, db.DEFAULT_FIELDS_COLS, null, where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 
-	private static boolean table_exists_internal(String source_) { return arrays.is_ok(execute_type(source_, db.QUERY_TABLE_EXISTS, db.DEFAULT_FIELDS_COLS, null, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null)); } 
+	private static boolean table_exists_internal(String source_) { return arrays.is_ok(db.execute(source_, db.QUERY_TABLE_EXISTS, db.DEFAULT_FIELDS_COLS, null, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null)); } 
 
-	private static void create_table_internal(String source_, HashMap<String, db_field> cols_) { execute_type(source_, db.QUERY_TABLE_CREATE, db.DEFAULT_FIELDS_COLS, null, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, cols_); } 
+	private static void create_table_internal(String source_, HashMap<String, db_field> cols_) { db.execute(source_, db.QUERY_TABLE_CREATE, db.DEFAULT_FIELDS_COLS, null, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, cols_); } 
 
-	private static void drop_table_internal(String source_) { execute_type(source_, db.QUERY_TABLE_DROP, db.DEFAULT_FIELDS_COLS, null, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); } 
+	private static void drop_table_internal(String source_) { db.execute(source_, db.QUERY_TABLE_DROP, db.DEFAULT_FIELDS_COLS, null, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); } 
 
-	private static void truncate_table_internal(String source_) { execute_type(source_, db.QUERY_TABLE_TRUNCATE, db.DEFAULT_FIELDS_COLS, null, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
-
-	private static ArrayList<HashMap<String, String>> execute_type(String source_, String what_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
-	{
-		String source = execute_type_start(source_, what_);
-		if (!strings.is_ok(source)) return null;
-
-		return db.get_valid_instance(source).execute(source, what_, cols_, vals_, where_, max_rows_, order_, cols_info_);
-	}
-
-	private static String execute_type_start(String source_, String what_)
-	{
-		String output = null;
-		
-		String source = db.check_source_error(source_);
-		
-		if (strings.is_ok(source)) 
-		{
-			output = source;
-			
-			db.update_query_type(source_, what_);
-		}
-		else db.update_query_type(source_, strings.DEFAULT);
-		
-		return output;
-	}
+	private static void truncate_table_internal(String source_) { db.execute(source_, db.QUERY_TABLE_TRUNCATE, db.DEFAULT_FIELDS_COLS, null, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 	
 	private static String[] get_cols(String source_, String[] fields_)
 	{

@@ -13,7 +13,9 @@ public abstract class db_quick
 		
 	public static boolean is_ok(String source_) { return (is_quicker(source_) ? db_quicker.is_ok() : db.is_ok(source_)); }
 
-	public static boolean is_quicker(String source_) 
+	public static boolean is_quicker(String source_) { return is_quicker_mysql(source_); }
+	
+	public static boolean is_quicker_mysql(String source_) 
 	{
 		boolean output = false;
 		
@@ -113,7 +115,7 @@ public abstract class db_quick
 	{
 		boolean output = db.WRONG_BOOLEAN;
 		
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.exists(source_, where_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.exists(source_, where_cols_);
 		else output = db.exists(source_, where_cols_);
 		
 		return output; 
@@ -123,7 +125,7 @@ public abstract class db_quick
 	{ 
 		String output = db.WRONG_STRING;
 		
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_one_string(source_, col_, where_cols_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_one_string(source_, col_, where_cols_, order_cols_);
 		else output = db.select_one_string_quick(source_, col_, where_cols_, order_cols_);
 	
 		return output;
@@ -133,7 +135,7 @@ public abstract class db_quick
 	{ 
 		double output = db.WRONG_DECIMAL;
 		
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_one_decimal(source_, col_, where_cols_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_one_decimal(source_, col_, where_cols_, order_cols_);
 		else output = db.select_one_decimal_quick(source_, col_, where_cols_, order_cols_);
 	
 		return output;
@@ -143,7 +145,7 @@ public abstract class db_quick
 	{ 
 		long output = db.WRONG_LONG;
 		
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_one_long(source_, col_, where_cols_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_one_long(source_, col_, where_cols_, order_cols_);
 		else output = db.select_one_long_quick(source_, col_, where_cols_, order_cols_);
 	
 		return output;
@@ -153,7 +155,7 @@ public abstract class db_quick
 	{ 
 		int output = db.WRONG_INT;
 		
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_one_int(source_, col_, where_cols_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_one_int(source_, col_, where_cols_, order_cols_);
 		else output = db.select_one_int_quick(source_, col_, where_cols_, order_cols_);
 	
 		return output;
@@ -163,7 +165,7 @@ public abstract class db_quick
 	{ 
 		boolean output = db.WRONG_BOOLEAN;
 		
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_one_boolean(source_, col_, where_cols_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_one_boolean(source_, col_, where_cols_, order_cols_);
 		else output = db.select_one_boolean_quick(source_, col_, where_cols_, order_cols_);
 	
 		return output;
@@ -173,7 +175,7 @@ public abstract class db_quick
 	{ 
 		HashMap<String, String> output = new HashMap<String, String>();
 
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_one(source_, cols_, where_cols_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_one(source_, cols_, where_cols_, order_cols_);
 		else output = db.select_one_quick(source_, cols_, where_cols_, order_cols_);
 
 		return output;
@@ -183,7 +185,7 @@ public abstract class db_quick
 	{ 
 		ArrayList<String> output = new ArrayList<String>();
 
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_some_strings(source_, col_, where_cols_, max_rows_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_some_strings(source_, col_, where_cols_, max_rows_, order_cols_);
 		else output = db.select_some_strings_quick(source_, col_, where_cols_, max_rows_, order_cols_);
 
 		return output;
@@ -193,7 +195,7 @@ public abstract class db_quick
 	{ 
 		ArrayList<Double> output = new ArrayList<Double>();
 
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_some_decimals(source_, col_, where_cols_, max_rows_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_some_decimals(source_, col_, where_cols_, max_rows_, order_cols_);
 		else output = db.select_some_decimals_quick(source_, col_, where_cols_, max_rows_, order_cols_);
 
 		return output;
@@ -203,7 +205,7 @@ public abstract class db_quick
 	{ 
 		ArrayList<Long> output = new ArrayList<Long>();
 
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_some_longs(source_, col_, where_cols_, max_rows_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_some_longs(source_, col_, where_cols_, max_rows_, order_cols_);
 		else output = db.select_some_longs_quick(source_, col_, where_cols_, max_rows_, order_cols_);
 
 		return output;
@@ -213,7 +215,7 @@ public abstract class db_quick
 	{ 
 		ArrayList<Integer> output = new ArrayList<Integer>();
 
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_some_ints(source_, col_, where_cols_, max_rows_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_some_ints(source_, col_, where_cols_, max_rows_, order_cols_);
 		else output = db.select_some_ints_quick(source_, col_, where_cols_, max_rows_, order_cols_);
 
 		return output;
@@ -223,7 +225,7 @@ public abstract class db_quick
 	{ 
 		ArrayList<Boolean> output = new ArrayList<Boolean>();
 
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_some_booleans(source_, col_, where_cols_, max_rows_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_some_booleans(source_, col_, where_cols_, max_rows_, order_cols_);
 		else output = db.select_some_booleans_quick(source_, col_, where_cols_, max_rows_, order_cols_);
 
 		return output;
@@ -233,7 +235,7 @@ public abstract class db_quick
 	{	
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
 
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select(source_, cols_, where_cols_, max_rows_, order_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select(source_, cols_, where_cols_, max_rows_, order_cols_);
 		else output = db.select_quick(source_, cols_, where_cols_, max_rows_, order_cols_);
 
 		return output;
@@ -243,7 +245,7 @@ public abstract class db_quick
 	{
 		int output = 0;
 		
-		if (QUICKER_MYSQL.contains(source_)) output = db_quicker_mysql.select_count(source_, where_cols_);
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.select_count(source_, where_cols_);
 		else output = db.select_count(source_, where_cols_);
 
 		return output;
@@ -251,19 +253,19 @@ public abstract class db_quick
 	
 	public static void insert_update(String source_, String any_col_, HashMap<String, String> vals_, String where_cols_) 
 	{
-		if (QUICKER_MYSQL.contains(source_)) db_quicker_mysql.insert_update(source_, any_col_, vals_, where_cols_); 
+		if (is_quicker_mysql(source_)) db_quicker_mysql.insert_update(source_, any_col_, vals_, where_cols_); 
 		else db.insert_update_quick(source_, vals_, where_cols_);
 	}
 	
 	public static void insert(String source_, HashMap<String, String> vals_) 
 	{
-		if (QUICKER_MYSQL.contains(source_)) db_quicker_mysql.insert(source_, vals_); 
+		if (is_quicker_mysql(source_)) db_quicker_mysql.insert(source_, vals_); 
 		else db.insert_quick(source_, vals_);		
 	}
 	
 	public static void update(String source_, HashMap<String, String> vals_, String where_cols_) 
 	{
-		if (QUICKER_MYSQL.contains(source_)) db_quicker_mysql.update(source_, vals_, where_cols_); 
+		if (is_quicker_mysql(source_)) db_quicker_mysql.update(source_, vals_, where_cols_); 
 		else db.update_quick(source_, vals_, where_cols_);		
 	}
 
@@ -289,6 +291,26 @@ public abstract class db_quick
 		if (tot == 0) return;
  
 		for (String source: db.SOURCES) populate_cols(source, db.get_source_fields(source));
+	}
+	
+	static ArrayList<HashMap<String, String>> execute(String source_, String query_type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_) 
+	{ 
+		ArrayList<HashMap<String, String>> output = null;
+	
+		if (is_quicker_mysql(source_)) output = db_quicker_mysql.execute(source_, query_type_, cols_, vals_, where_, max_rows_, order_, cols_info_); 
+		else db.execute(source_, query_type_, cols_, vals_, where_, max_rows_, order_, cols_info_);
+		
+		return output;
+	}
+	
+	static ArrayList<HashMap<String, String>> execute_query(String type_, String source_, String query_, boolean return_data_, String[] cols_) 
+	{ 
+		ArrayList<HashMap<String, String>> output = null;
+		
+		if (is_quicker(source_)) output = db_quicker.execute_query(type_, source_, query_, return_data_, cols_);
+		else output = db.execute_query(type_, source_, query_, return_data_, cols_);
+	
+		return output;
 	}
 	
 	private static void populate_cols(String source_, HashMap<String, db_field> fields_)

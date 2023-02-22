@@ -24,6 +24,16 @@ public abstract class parent_db
 	public abstract String get_value(String input_);
 	
 	public abstract String get_variable(String input_);
+
+	public abstract String get_quote_value();
+	
+	public abstract String get_quote_variable();
+	
+	public abstract String get_keyword_where();
+	
+	public abstract String get_keyword_order();
+	
+	public abstract String get_keyword_max_rows();
 	
 	public abstract String get_select_count_col();
 	

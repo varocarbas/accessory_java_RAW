@@ -319,7 +319,7 @@ abstract class db_quicker
 
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
 
-		try { output = db_mysql.execute_static(source_, db.QUERY_SELECT, cols_, null, where_cols_, max_rows_, order_cols_, null, type_); }
+		try { output = execute(type_, source_, db.QUERY_SELECT, cols_, null, where_cols_, max_rows_, order_cols_, null); }
 		catch (Exception e) 
 		{
 			output = new ArrayList<HashMap<String, String>>();
@@ -340,7 +340,7 @@ abstract class db_quicker
 		{ 
 			String col = db_static.get_count_col(source_);
 			
-			ArrayList<HashMap<String, String>> temp = db_mysql.execute_static(source_, db.QUERY_SELECT_COUNT, db.DEFAULT_FIELDS_COLS, null, where_cols_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null, type_); 
+			ArrayList<HashMap<String, String>> temp = execute(type_, source_, db.QUERY_SELECT_COUNT, db.DEFAULT_FIELDS_COLS, null, where_cols_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); 
 
 			if (temp != null && temp.size() > 0) output = Integer.parseInt(temp.get(0).get(col));
 		}		
@@ -370,7 +370,7 @@ abstract class db_quicker
 	{ 
 		db_static.initialise();
 		
-		try { db_mysql.execute_static(source_, db.QUERY_INSERT, null, vals_, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null, type_); }
+		try { execute(type_, source_, db.QUERY_INSERT, null, vals_, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 		catch (Exception e) { manage_error(type_, strings.to_string(source_), e, null, null, null, null, null, db.WRONG_INT, vals_); }		
 	}
 	
@@ -378,19 +378,21 @@ abstract class db_quicker
 	{
 		db_static.initialise();
 
-		try { db_mysql.execute_static(source_, db.QUERY_UPDATE, null, vals_, where_cols_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null, type_); }
+		try { execute(type_, source_, db.QUERY_UPDATE, null, vals_, where_cols_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 		catch (Exception e) { manage_error(type_, strings.to_string(source_), e, null, null, null, strings.to_string(where_cols_), null, db.WRONG_INT, vals_); }		
 	}
-
-	public static ArrayList<HashMap<String, String>> execute_query(String type_, String source_, String query_, boolean return_data_, String[] cols_) 
+	
+	public static ArrayList<HashMap<String, String>> execute(String type_, String source_, String query_type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_) 
 	{ 
 		ArrayList<HashMap<String, String>> output = null;
 	
-		if (db_sql.is_sql(type_)) output = db_sql.execute_query_static(type_, source_, query_, return_data_, cols_, db_static.get_username(), db_static.get_password(), db_static.get_db_name(), db_static.get_host(), db_static.get_max_pool()); 
+		if (type_.equals(db_quicker_mysql.TYPE)) output = db_quicker_mysql.execute(source_, query_type_, cols_, vals_, where_, max_rows_, order_, cols_info_); 
 	
 		return output;
 	}
 	
+	public static ArrayList<HashMap<String, String>> execute_query(String type_, String source_, String query_, boolean return_data_, String[] cols_) { return db_static.execute_query(type_, source_, query_, return_data_, cols_); }
+
 	private static Object get_val(String col_, HashMap<String, String> item_, String type_) 
 	{ 
 		Object output = null;

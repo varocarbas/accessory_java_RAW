@@ -61,7 +61,7 @@ public abstract class db_quicker_mysql
 	public static ArrayList<Boolean> select_some_booleans(String source_, String col_, String where_cols_, int max_rows_, String order_cols_) { return db_quicker.select_some_booleans(TYPE, source_, col_, where_cols_, max_rows_, order_cols_); }
 
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] cols_, String where_cols_, int max_rows_, String order_cols_) { return db_quicker.select(TYPE, source_, cols_, where_cols_, max_rows_, order_cols_); }
-
+	
 	public static int select_count(String source_, String where_cols_) { return db_quicker.select_count(TYPE, source_, where_cols_); }
 
 	public static void insert_update(String source_, String any_col_, HashMap<String, String> vals_, String where_cols_) { db_quicker.insert_update(TYPE, source_, any_col_, vals_, where_cols_); }
@@ -70,5 +70,10 @@ public abstract class db_quicker_mysql
 	
 	public static void update(String source_, HashMap<String, String> vals_, String where_cols_) { db_quicker.update(TYPE, source_, vals_, where_cols_); }
 
-	static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_) { return db_quicker.execute_query(TYPE, source_, query_, return_data_, cols_); }
+	static ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	{
+		String query = db_mysql.get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, false, true);
+
+		return (strings.is_ok(query) ? db_quicker.execute_query(TYPE, source_, query, db.query_returns_data(type_), cols_) : new ArrayList<HashMap<String, String>>());
+	}
 }

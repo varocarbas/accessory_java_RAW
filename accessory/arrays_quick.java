@@ -23,7 +23,7 @@ public abstract class arrays_quick
 	{
 		for (int i = 0; i < array_.length; i++)
 		{
-			if (array_[i].equals(value_)) return i;
+			if (array_[i] != null && array_[i].equals(value_)) return i;
 		}
 		
 		return arrays.WRONG_I;
@@ -56,6 +56,17 @@ public abstract class arrays_quick
 		
 		return array_;
 	}
+
+	public static boolean[] add(boolean[] array_, boolean value_) { return add(array_, array_.length, value_); }
+
+	public static boolean[] add(boolean[] array_, int i_, boolean value_)
+	{
+		if (i_ >= array_.length) array_ = redim(array_, i_ + 1);
+		
+		array_[i_] = value_;
+		
+		return array_;
+	}
 	
 	public static String[] redim(String[] array_) { return redim(array_, array_.length + 1); }
 	
@@ -64,6 +75,10 @@ public abstract class arrays_quick
 	public static int[] redim(int[] array_) { return redim(array_, array_.length + 1); }
 	
 	public static int[] redim(int[] array_, int new_size_) { return Arrays.copyOf(array_, new_size_); }
+	
+	public static boolean[] redim(boolean[] array_) { return redim(array_, array_.length + 1); }
+	
+	public static boolean[] redim(boolean[] array_, int new_size_) { return Arrays.copyOf(array_, new_size_); }
 
 	public static double[] get_1d(double[][] array_, int i_) { return Arrays.copyOfRange(array_[i_], 0, array_[i_].length); }
 }

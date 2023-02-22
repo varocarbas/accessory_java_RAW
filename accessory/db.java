@@ -70,7 +70,7 @@ public abstract class db
 	public static final String DEFAULT_HOST = "localhost";
 	public static final String DEFAULT_CREDENTIALS_TYPE = _types.remove_type(DEFAULT_TYPE, _types.CONFIG_DB_SETUP_TYPE);
 	public static final boolean DEFAULT_CREDENTIALS_MEMORY = true;
-	
+		
 	static String[] SETUP_IDS = new String[0];
 	static String[] SOURCES = new String[0];
 	static String[] FIELDS = new String[0];
@@ -79,6 +79,7 @@ public abstract class db
 
 	static String _cur_source = strings.DEFAULT; //Only updated by the user, as a way to keep using the same source without having to expressly provide it.
 	static String _cur_type = DEFAULT_TYPE; //Automatically updated every time a new DB type is used.
+	static String _last_query = null;
 	
 	private static int[] SOURCES0 = new int[0];
 	private static db_field[] FIELDS0 = new db_field[0];
@@ -451,6 +452,26 @@ public abstract class db
 
 	public static String get_value(String source_, String input_) { return get_valid_instance(source_).get_value(input_); }
 
+	public static String get_quote_variable() { return get_quote_variable(get_current_source()); } 
+
+	public static String get_quote_variable(String source_) { return get_valid_instance(source_).get_quote_variable(); } 
+
+	public static String get_quote_value() { return get_quote_value(get_current_source()); }
+
+	public static String get_quote_value(String source_) { return get_valid_instance(source_).get_quote_value(); }
+
+	public static String get_keyword_where() { return get_keyword_where(get_current_source()); }
+
+	public static String get_keyword_where(String source_) { return get_valid_instance(source_).get_keyword_where(); }
+
+	public static String get_keyword_order() { return get_keyword_order(get_current_source()); }
+
+	public static String get_keyword_order(String source_) { return get_valid_instance(source_).get_keyword_order(); }
+
+	public static String get_keyword_max_rows() { return get_keyword_max_rows(get_current_source()); }
+
+	public static String get_keyword_max_rows(String source_) { return get_valid_instance(source_).get_keyword_max_rows(); }
+
 	public static HashMap<String, Object> get_data_type(String data_type_) { return get_data_type(get_current_source(), data_type_); }
 
 	public static HashMap<String, Object> get_data_type(String source_, String data_type_) { return get_valid_instance(source_).get_data_type(data_type_); }
@@ -772,6 +793,8 @@ public abstract class db
 		return (i > arrays.WRONG_I ? DEFAULTS[i] : false);
 	}
 
+	public static String get_last_query() { return _last_query; }
+	
 	static String[] populate_all_queries_data() { return new String[] { QUERY_SELECT, QUERY_SELECT_COUNT, QUERY_TABLE_EXISTS }; }
 
 	static void update_is_ok(String source_, boolean is_ok_, boolean is_static_) 
@@ -1032,6 +1055,40 @@ public abstract class db
 	static int[] get_source_min_max(String source_) { return get_source_min_max(source_, false); }
 	
 	static int get_source_fields_tot(int[] min_max_) { return (min_max_ != null ? min_max_[1] - min_max_[0] + 1 : 0); }
+
+	static ArrayList<HashMap<String, String>> execute(String source_, String what_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	{
+		String source = execute_start(source_, what_);
+		if (!strings.is_ok(source)) return null;
+
+		return db.get_valid_instance(source).execute(source, what_, cols_, vals_, where_, max_rows_, order_, cols_info_);
+	}
+
+	static ArrayList<HashMap<String, String>> execute_query(String type_, String source_, String query_, boolean return_data_, String[] cols_) 
+	{ 
+		ArrayList<HashMap<String, String>> output = null;
+		
+		if (db_sql.is_sql(type_)) output = db_sql.execute_query(source_, query_, return_data_, cols_); 
+	
+		return output;
+	}
+
+	private static String execute_start(String source_, String what_)
+	{
+		String output = null;
+		
+		String source = db.check_source_error(source_);
+		
+		if (strings.is_ok(source)) 
+		{
+			output = source;
+			
+			update_query_type(source_, what_);
+		}
+		else update_query_type(source_, strings.DEFAULT);
+		
+		return output;
+	}
 	
 	private static int get_field_i(String source_, String field_, boolean is_ini_) 
 	{ 

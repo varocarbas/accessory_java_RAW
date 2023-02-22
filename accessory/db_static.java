@@ -1,8 +1,7 @@
 package accessory;
 
-import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 
 abstract class db_static 
 {
@@ -113,13 +112,13 @@ abstract class db_static
 		return output;
 	}
 	
-	public static Connection connect(String type_, String source_, Properties properties_, String db_name_, String host_)
+	public static ArrayList<HashMap<String, String>> execute_query(String type_, String source_, String query_, boolean return_data_, String[] cols_)
 	{
-		Connection output = null;
+		ArrayList<HashMap<String, String>> output = null;
 		
-		if (strings.are_equal(type_, db.MYSQL)) output = db_mysql.connect_internal_static(source_, properties_, db_name_, host_, true);
-		
-		return output;		
+		if (db_sql.is_sql(type_)) output = db_sql.execute_query_static(type_, source_, query_, return_data_, cols_, get_username(), get_password(), get_db_name(), get_host(), get_max_pool()); 
+	
+		return output;
 	}
 
 	public static void manage_error(String type_error_, String query_, Exception e_, String message_)

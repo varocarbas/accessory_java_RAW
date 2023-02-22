@@ -125,6 +125,8 @@ public abstract class strings extends parent_static
 		return ((max_length_ < 1 || length <= max_length_) ? input_ : substring(input_, 0, max_length_));
 	}
 	
+	public static String substring(String input_, int start_) { return substring(input_, start_, 0); }	
+	
 	public static String substring(String input_, int start_, int length_)
 	{
 		String output = DEFAULT;
@@ -248,31 +250,56 @@ public abstract class strings extends parent_static
 
 		return output;
 	}
-
-	public static int index_of_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_)
+	
+	public static int index_of_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_) { return index_of_outside(needle_, haystack_, normalise_, start_, end_, 0); }
+	
+	public static int index_of_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_, int start_i_)
 	{
-		if (!is_ok(start_, true) || !is_ok(end_, true)) return index_of(needle_, haystack_, normalise_);
+		if (!contains(start_, haystack_, normalise_) || !contains(end_, haystack_, normalise_)) return strings.index_of(needle_, haystack_, start_i_, normalise_);
 
-		int output = 0;
+		int output = WRONG_I;
 
+		int start_i = (start_i_ > 0 ? start_i_ : 0);
+		
 		while (true)
 		{
-			output = index_of(needle_, haystack_, output, normalise_);
+			output = index_of(needle_, haystack_, start_i, normalise_);
 			if (output < 0) return output;
 
-			int start = index_of(start_, haystack_, normalise_);
-			if (start >= 0 && start < output)
-			{
-				int end = index_of(end_, haystack_, output, normalise_);
-				if (end >= 0 && end > output) 
+			int count = 1;
+			
+			while (count <= 2)
+			{	
+				String needle = (count == 1 ? start_ : end_);
+				
+				int i = WRONG_I;
+				
+				while (true)
 				{
-					output++;
+					i = index_of(needle, haystack_, start_i, normalise_);
+					if (i < 0 || (count == 1 && i >= output)) return output;
+					
+					if (count == 2 && i <= get_end_i(output, needle_.length())) 
+					{
+						count = 0;
+						
+						break;
+					}
 
-					continue;
+					if 
+					(
+						i > 0 && strings.substring(haystack_, i - 1, 1).equals("\\") &&
+						(i == 1 || !strings.substring(haystack_, i - 2, 1).equals("\\"))
+					) 
+					{ 
+						start_i++; 
+					}
+					else break;
 				}
-			}
-
-			return output;
+								
+				start_i = i + 1;
+				count++;
+			}			
 		}
 	}
 
@@ -504,7 +531,9 @@ public abstract class strings extends parent_static
 	public static String replace(String needle_, String haystack_, String replacement_) { return remove_escape_replace(needle_, haystack_, replacement_, _types.ACTION_REPLACE); }
 
 	public static String replace(String[] needles_, String haystack_, String replacement_) { return remove_escape_replace_many(needles_, haystack_, replacement_, _types.ACTION_REPLACE); }
-	
+
+	public static int get_end_i(int start_i_, int length_) { return ((start_i_ > WRONG_I && length_ > 0) ? start_i_ + length_ - 1 : WRONG_I); }
+
 	static boolean is_ok(String string_, boolean minimal_) { return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0)); }
 
 	static HashMap<Boolean, String[]> populate_all_booleans()

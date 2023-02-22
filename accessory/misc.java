@@ -20,7 +20,10 @@ public abstract class misc extends parent_static
 	public static final String SEPARATOR_NAME = "_";	
 	public static final String SEPARATOR_KEYVAL = ": ";
 	public static final String SEPARATOR_ITEM = ", ";
-
+	
+	public static final String REPLACEABLE_START = "{'";
+	public static final String REPLACEABLE_END = "'}";
+	
 	public static final int MAX_SECS_SOUND_SHORT = 5;
 
 	public static void pause_loop() { pause_tiny(); }

@@ -21,32 +21,21 @@ class db_mysql extends parent_db
 	private static final String QUOTE_VARIABLE = "`";
 	private static final String QUOTE_VALUE = "'";
 
+	private static final String KEYWORD_WHERE = "where";
+	private static final String KEYWORD_ORDER = "order";
+	private static final String KEYWORD_MAX_ROWS = "max_rows";
+	
 	private static final int DEFAULT_SIZE_NUMBER = 8;
 	private static final int DEFAULT_SIZE_DECIMALS = numbers.DEFAULT_DECIMALS;
 	private static final int DEFAULT_SIZE_VARCHAR = strings.DEFAULT_SIZE;
 	private static final int DEFAULT_SIZE_TEXT = strings.SIZE_BIG;
 	private static final int DEFAULT_SIZE_TIMESTAMP = dates.get_length(dates.FORMAT_TIMESTAMP);
 
-	public static ArrayList<HashMap<String, String>> execute_static(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_, String type_quicker_)
+	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
-		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();	
-		
-		boolean is_quicker = strings.is_ok(type_quicker_);
-		
-		if (is_quicker) db_quicker.update_query_type(type_);
-		
-		String query = get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, !is_quicker, is_quicker);
-		if (!strings.is_ok(query)) return output;
+		String query = get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, true, false);
 
-		boolean return_data = db.query_returns_data(type_);
-
-		if (!is_quicker) output = db_sql.execute_query(source_, query, return_data, cols_);
-		else
-		{
-			if (type_quicker_.equals(db_quicker_mysql.TYPE)) output = db_quicker_mysql.execute_query(source_, query, return_data, cols_);
-		}
-		
-		return output;
+		return (strings.is_ok(query) ? db_sql.execute_query(source_, query, db.query_returns_data(type_), cols_) : new ArrayList<HashMap<String, String>>());
 	}
 
 	public ArrayList<HashMap<String, String>> execute_query(String source_, String query_)
@@ -131,8 +120,6 @@ class db_mysql extends parent_db
 	}
 
 	public String sanitise_string(String input_) { return strings.escape(new String[] { "'", "\"" }, input_); }
-
-	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_) { return execute_static(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, null); }
 	
 	public HashMap<String, Object> get_data_type(String data_type_) { return get_data_type_static(data_type_); }
 
@@ -146,6 +133,16 @@ class db_mysql extends parent_db
 
 	public String get_variable(String input_) { return get_variable_static(input_); } 
 
+	public String get_quote_value() { return QUOTE_VALUE; }
+
+	public String get_quote_variable() { return QUOTE_VARIABLE; }
+	
+	public String get_keyword_where() { return KEYWORD_WHERE; }
+	
+	public String get_keyword_order() { return KEYWORD_ORDER; }
+	
+	public String get_keyword_max_rows() { return KEYWORD_MAX_ROWS; }
+	
 	public String get_select_count_col() { return get_select_count_col_static(); }
 
 	public void backup_db_to_file(String any_source_) { backup_restore_db(any_source_, true); }
@@ -175,6 +172,105 @@ class db_mysql extends parent_db
 		LocalDateTime date = dates.get_newest(arrays.to_array(arrays.get_values_hashmap(all)));
 		
 		return ((date != null) ? paths.build(new String[] { dir, (String)arrays.get_key(all, date) }, true) : output);		
+	}
+
+	static String get_query(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_, boolean perform_checks_, boolean is_static_)
+	{	
+		String query = strings.DEFAULT;
+		if (perform_checks_ && !db_sql.params_are_ok(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, is_static_)) return query;
+
+		boolean is_ok = false;
+		String table = db.get_table(source_);
+
+		if (type_.equals(db.QUERY_SELECT))
+		{
+			query = "SELECT ";
+			query += (arrays.is_ok(cols_) ? get_query_cols(cols_) : "*");     	
+			query += " FROM " + get_variable_static(table);
+
+			if (strings.is_ok(where_)) query += " WHERE " + where_;
+			if (strings.is_ok(order_)) query += " ORDER BY " + order_;
+			if (max_rows_ > 0) query += " LIMIT " + max_rows_;	
+
+			is_ok = true;
+		}
+		else if (type_.equals(db.QUERY_INSERT))
+		{
+			query = "INSERT INTO " + get_variable_static(table); 
+			String temp = get_query_cols(vals_, _keys.KEY);
+
+			if (strings.is_ok(temp)) 
+			{
+				query += "(" + temp + ")";
+
+				temp = get_query_cols(vals_, _keys.VALUE);
+				if (strings.is_ok(temp)) 
+				{
+					query += " VALUES (" + temp + ")"; 
+					is_ok = true;
+				}      		
+			} 
+		}
+		else if (type_.equals(db.QUERY_UPDATE))
+		{
+			query = "UPDATE " + get_variable_static(table); 
+
+			String temp = get_query_cols(vals_, _keys.FURTHER);
+			if (strings.is_ok(temp)) 
+			{
+				query += " SET " + temp;
+				is_ok = true;     		
+			}
+
+			if (strings.is_ok(where_)) query += " WHERE " + where_;
+		}
+		else if (type_.equals(db.QUERY_DELETE))
+		{
+			query = "DELETE FROM " + get_variable_static(table);
+			query += " WHERE " + where_;
+
+			is_ok = true;
+		}
+		else if (type_.equals(db.QUERY_TABLE_EXISTS))
+		{
+			query = get_query_table_exists(table);			
+		
+			is_ok = true;
+		}
+		else if (type_.equals(db.QUERY_TABLE_CREATE))
+		{
+			query = get_query_create_table(table, cols_info_);
+			
+			is_ok = strings.is_ok(query);
+		}
+		else if (type_.equals(db.QUERY_TABLE_DROP))
+		{
+			query = get_query_drop_table(table);	
+			
+			is_ok = true;
+		}
+		else if (type_.equals(db.QUERY_TABLE_TRUNCATE))
+		{
+			query = "TRUNCATE TABLE " + get_variable_static(table);	
+			
+			is_ok = true;
+		}
+		else if (type_.equals(db.QUERY_SELECT_COUNT))
+		{
+			query = "SELECT " + get_select_count_col_static() + " FROM " + get_variable_static(table);			
+			if (strings.is_ok(where_)) query += " WHERE " + where_;
+			
+			is_ok = true;
+		}
+
+		if (!is_ok)
+		{
+			db.manage_error(source_, db.ERROR_QUERY, null, null, null, is_static_);
+
+			query = strings.DEFAULT;
+		}
+
+		return query;
 	}
 	
 	protected static Connection connect_internal_static(String source_, Properties properties_, String db_name_, String host_, boolean is_static_) 
@@ -294,105 +390,6 @@ class db_mysql extends parent_db
 		else if (data.is_number(type)) size = DEFAULT_SIZE_NUMBER;
 
 		return size;
-	}
-
-	private static String get_query(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_, boolean perform_checks_, boolean is_static_)
-	{	
-		String query = strings.DEFAULT;
-		if (perform_checks_ && !db_sql.params_are_ok(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, is_static_)) return query;
-
-		boolean is_ok = false;
-		String table = db.get_table(source_);
-
-		if (type_.equals(db.QUERY_SELECT))
-		{
-			query = "SELECT ";
-			query += (arrays.is_ok(cols_) ? get_query_cols(cols_) : "*");     	
-			query += " FROM " + get_variable_static(table);
-
-			if (strings.is_ok(where_)) query += " WHERE " + where_;
-			if (strings.is_ok(order_)) query += " ORDER BY " + order_;
-			if (max_rows_ > 0) query += " LIMIT " + max_rows_;	
-
-			is_ok = true;
-		}
-		else if (type_.equals(db.QUERY_INSERT))
-		{
-			query = "INSERT INTO " + get_variable_static(table); 
-			String temp = get_query_cols(vals_, _keys.KEY);
-
-			if (strings.is_ok(temp)) 
-			{
-				query += "(" + temp + ")";
-
-				temp = get_query_cols(vals_, _keys.VALUE);
-				if (strings.is_ok(temp)) 
-				{
-					query += " VALUES (" + temp + ")"; 
-					is_ok = true;
-				}      		
-			} 
-		}
-		else if (type_.equals(db.QUERY_UPDATE))
-		{
-			query = "UPDATE " + get_variable_static(table); 
-
-			String temp = get_query_cols(vals_, _keys.FURTHER);
-			if (strings.is_ok(temp)) 
-			{
-				query += " SET " + temp;
-				is_ok = true;     		
-			}
-
-			if (strings.is_ok(where_)) query += " WHERE " + where_;
-		}
-		else if (type_.equals(db.QUERY_DELETE))
-		{
-			query = "DELETE FROM " + get_variable_static(table);
-			query += " WHERE " + where_;
-
-			is_ok = true;
-		}
-		else if (type_.equals(db.QUERY_TABLE_EXISTS))
-		{
-			query = get_query_table_exists(table);			
-		
-			is_ok = true;
-		}
-		else if (type_.equals(db.QUERY_TABLE_CREATE))
-		{
-			query = get_query_create_table(table, cols_info_);
-			
-			is_ok = strings.is_ok(query);
-		}
-		else if (type_.equals(db.QUERY_TABLE_DROP))
-		{
-			query = get_query_drop_table(table);	
-			
-			is_ok = true;
-		}
-		else if (type_.equals(db.QUERY_TABLE_TRUNCATE))
-		{
-			query = "TRUNCATE TABLE " + get_variable_static(table);	
-			
-			is_ok = true;
-		}
-		else if (type_.equals(db.QUERY_SELECT_COUNT))
-		{
-			query = "SELECT " + get_select_count_col_static() + " FROM " + get_variable_static(table);			
-			if (strings.is_ok(where_)) query += " WHERE " + where_;
-			
-			is_ok = true;
-		}
-
-		if (!is_ok)
-		{
-			db.manage_error(source_, db.ERROR_QUERY, null, null, null, is_static_);
-
-			query = strings.DEFAULT;
-		}
-
-		return query;
 	}
 
 	private static String get_query_cols(String[] array_)

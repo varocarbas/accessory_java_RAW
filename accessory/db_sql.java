@@ -64,6 +64,8 @@ abstract class db_sql
 	{
 		db.update_is_ok(source_, false, is_static_);
 
+		db._last_query = query_;
+		
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
 		if (conn_ == null) return output;
 		
@@ -123,9 +125,18 @@ abstract class db_sql
 	{
 		Properties properties = get_properties_static(username_, password_, max_pool_);
 
-		return (properties != null ? db_static.connect(type_, source_, properties, db_name_, host_) : null);
+		return (properties != null ? connect_static_internal(type_, source_, properties, db_name_, host_) : null);
 	}
 
+	private static Connection connect_static_internal(String type_, String source_, Properties properties_, String db_name_, String host_) 
+	{
+		Connection output = null;
+		
+		if (strings.are_equal(type_, db.MYSQL)) output = db_mysql.connect_internal_static(source_, properties_, db_name_, host_, true);
+		
+		return output;	
+	}
+	
 	private static Properties get_properties(String source_) 
 	{
 		HashMap<String, String> credentials = db.get_credentials(source_);
