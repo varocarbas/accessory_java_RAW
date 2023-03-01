@@ -250,7 +250,7 @@ public abstract class parent_ini_db
 		
 		db_quick.populate_cols_ini();
 		
-		db_quick.populate_quicker_ini();
+		db_quicker.populate_types_tables_ini();
 	}
 	
 	private String get_db_name_default(String db_) { return get_default_common(db_, null, null, null); }

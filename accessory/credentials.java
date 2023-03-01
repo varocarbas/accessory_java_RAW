@@ -18,6 +18,8 @@ public abstract class credentials extends parent_static
 	public static final String USER = _keys.USER;
 	public static final String USERNAME = _keys.USERNAME;
 	public static final String PASSWORD = _keys.PASSWORD;
+	public static final int USERNAME_I = 0;
+	public static final int PASSWORD_I = 1;
 	
 	public static final String DEFAULT_ID = "credentials";
 	public static final String DEFAULT_USER = _defaults.USER;
@@ -30,6 +32,14 @@ public abstract class credentials extends parent_static
 	private static final String SEPARATOR = misc.SEPARATOR_NAME;
 
 	public static String get_path(String id_, String user_, boolean is_encrypted_) { return get_path(id_, user_, is_encrypted_, null); }
+	
+	public static String get_username(HashMap<String, String> credentials_) { return ((credentials_ != null && credentials_.containsKey(USERNAME)) ? credentials_.get(USERNAME) : strings.DEFAULT); }
+
+	public static String get_username(String[] credentials_) { return ((credentials_ != null && credentials_.length > USERNAME_I) ? credentials_[USERNAME_I] : strings.DEFAULT); }
+	
+	public static String get_password(HashMap<String, String> credentials_) { return ((credentials_ != null && credentials_.containsKey(PASSWORD)) ? credentials_.get(PASSWORD) : strings.DEFAULT); }
+
+	public static String get_password(String[] credentials_) { return ((credentials_ != null && credentials_.length > PASSWORD_I) ? credentials_[PASSWORD_I] : strings.DEFAULT); }
 	
 	public static String encrypt_string(String id_, String user_, String plain_) { return encrypt_decrypt_string(id_, user_, plain_, true); }
 	

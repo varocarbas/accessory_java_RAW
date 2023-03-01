@@ -33,11 +33,22 @@ class db_mysql extends parent_db
 
 	public ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
 	{
-		String query = get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, true, false);
+		String query = get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, false);
 
-		return (strings.is_ok(query) ? db_sql.execute_query(source_, query, db.query_returns_data(type_), cols_) : new ArrayList<HashMap<String, String>>());
+		return (strings.is_ok(query) ? execute_query_static(source_, query, db.query_returns_data(type_), cols_) : new ArrayList<HashMap<String, String>>());
 	}
+	
+	public static ArrayList<HashMap<String, String>> execute_quicker(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
+	{
+		String query = get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, true);
 
+		return (strings.is_ok(query) ? execute_query_quicker(source_, query, db.query_returns_data(type_), cols_) : new ArrayList<HashMap<String, String>>());
+	}
+	
+	public static ArrayList<HashMap<String, String>> execute_query_static(String source_, String query_, boolean return_data_, String[] cols_) { return db_sql.execute_query(source_, query_, return_data_, cols_); }
+
+	public static ArrayList<HashMap<String, String>> execute_query_quicker(String source_, String query_, boolean return_data_, String[] cols_) { return db_sql.execute_query_quicker(db_quicker_mysql.TYPE, source_, query_, return_data_, cols_, db_quicker_mysql.get_username(), db_quicker_mysql.get_password(), db_quicker_mysql.get_db_name(), db_quicker_mysql.get_host(), db_quicker_mysql.get_max_pool()); }
+	
 	public ArrayList<HashMap<String, String>> execute_query(String source_, String query_)
 	{
 		String type = db.check_query_type(strings.substring_before(" ", query_, true));
@@ -174,13 +185,14 @@ class db_mysql extends parent_db
 		return ((date != null) ? paths.build(new String[] { dir, (String)arrays.get_key(all, date) }, true) : output);		
 	}
 
-	static String get_query(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_, boolean perform_checks_, boolean is_static_)
+	static String get_query(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_, boolean is_quicker_)
 	{	
 		String query = strings.DEFAULT;
-		if (perform_checks_ && !db_sql.params_are_ok(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, is_static_)) return query;
+		if (!is_quicker_ && !db_sql.params_are_ok(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, is_quicker_)) return query;
 
 		boolean is_ok = false;
-		String table = db.get_table(source_);
+		
+		String table = (is_quicker_ ? db_quicker.get_table(source_) : db.get_table(source_));
 
 		if (type_.equals(db.QUERY_SELECT))
 		{
@@ -265,7 +277,7 @@ class db_mysql extends parent_db
 
 		if (!is_ok)
 		{
-			db.manage_error(source_, db.ERROR_QUERY, null, null, null, is_static_);
+			db.manage_error(source_, db.ERROR_QUERY, null, null, null, is_quicker_);
 
 			query = strings.DEFAULT;
 		}
@@ -640,14 +652,14 @@ class db_mysql extends parent_db
 			return;
 		}
 		
-		HashMap<String, String> credentials = db.get_credentials(any_source_);
-		String username = (String)arrays.get_value(credentials, accessory.credentials.USERNAME);
-		String password = (String)arrays.get_value(credentials, accessory.credentials.PASSWORD);
+		String[] temp = db.get_credentials(any_source_);
+		String username = credentials.get_username(temp);
+		String password = credentials.get_password(temp);
 
 		error_info.put("username", strings.to_string(username));
 		error_info.put("password", strings.to_string(password));
 
-		if (!arrays.is_ok(credentials) || !strings.is_ok(username))
+		if (!strings.is_ok(username))
 		{
 			db.manage_error(any_source_, type_error, error_info);
 			

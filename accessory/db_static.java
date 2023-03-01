@@ -1,6 +1,5 @@
 package accessory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 abstract class db_static 
@@ -54,10 +53,10 @@ abstract class db_static
 	{
 		populate_count_col(source_);
 		
-		HashMap<String, String> credentials = db.get_credentials(source_);
+		String[] temp = db.get_credentials(source_);
 	
-		String username = (String)arrays.get_value(credentials, accessory.credentials.USERNAME);
-		String password = (String)arrays.get_value(credentials, accessory.credentials.PASSWORD);
+		String username = credentials.get_username(temp);
+		String password = credentials.get_password(temp);
 	
 		String db_name = db.get_db_name(db.get_db(source_));
 		
@@ -109,15 +108,6 @@ abstract class db_static
 	
 		if (output) update_conn_info(source_);
 		
-		return output;
-	}
-	
-	public static ArrayList<HashMap<String, String>> execute_query(String type_, String source_, String query_, boolean return_data_, String[] cols_)
-	{
-		ArrayList<HashMap<String, String>> output = null;
-		
-		if (db_sql.is_sql(type_)) output = db_sql.execute_query_static(type_, source_, query_, return_data_, cols_, get_username(), get_password(), get_db_name(), get_host(), get_max_pool()); 
-	
 		return output;
 	}
 

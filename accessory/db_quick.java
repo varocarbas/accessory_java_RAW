@@ -8,21 +8,12 @@ import java.util.Map.Entry;
 public abstract class db_quick 
 {		
 	static String[] _cols = new String[0];
-	
-	private static ArrayList<String> QUICKER_MYSQL = null;
 		
 	public static boolean is_ok(String source_) { return (is_quicker(source_) ? db_quicker.is_ok() : db.is_ok(source_)); }
 
-	public static boolean is_quicker(String source_) { return is_quicker_mysql(source_); }
+	public static boolean is_quicker(String source_) { return db_quicker.is_ok(source_); }
 	
-	public static boolean is_quicker_mysql(String source_) 
-	{
-		boolean output = false;
-		
-		if (QUICKER_MYSQL.contains(source_)) output = true; 
-		
-		return output;
-	}
+	public static boolean is_quicker_mysql(String source_) { return db_quicker.is_mysql(source_); }
 	
 	public static void update_conn_info(String source_)
 	{
@@ -47,7 +38,7 @@ public abstract class db_quick
 	{	
 		boolean output = db.change_table_name_queries(source_, name_); 
 
-		if (output) update_conn_info(source_);
+		if (output && is_quicker(source_)) db_quicker.update_table(source_, name_);
 		
 		return output;
 	}
@@ -56,11 +47,13 @@ public abstract class db_quick
 	{	
 		boolean output = db.change_col_name_queries(source_, field_, name_); 
 
-		if (output) update_conn_info(source_);
+		if (output) db_quick.populate_col(source_, field_);
 		
 		return output;
 	}
-
+	
+	public static String get_table(String source_) { return (is_quicker(source_) ? db_quicker.get_table(source_) : db.get_table(source_)); }
+	
 	public static String get_col(String source_, String field_) 
 	{ 
 		int i = db.get_field_i(source_, field_);
@@ -268,22 +261,6 @@ public abstract class db_quick
 		if (is_quicker_mysql(source_)) db_quicker_mysql.update(source_, vals_, where_cols_); 
 		else db.update_quick(source_, vals_, where_cols_);		
 	}
-
-	static void populate_quicker_ini()
-	{
-		if (QUICKER_MYSQL == null) QUICKER_MYSQL = new ArrayList<String>();
- 
-		for (String source: db.SOURCES) 
-		{
-			String type = db.get_valid_type(source);
-			if (!strings.is_ok(type)) continue;
-			
-			if (strings.are_equal(type, db_quicker_mysql.TYPE)) 
-			{
-				if (!QUICKER_MYSQL.contains(source)) QUICKER_MYSQL.add(source);
-			}
-		}
-	}
 	
 	static void populate_cols_ini()
 	{
@@ -317,11 +294,14 @@ public abstract class db_quick
 	{
 		if (!arrays.is_ok(fields_)) return;
 		
-		for (Entry<String, db_field> item: fields_.entrySet())
-		{
-			String field = item.getKey();
-
-			_cols = arrays_quick.add(_cols, db.get_field_i(source_, field), db.get_col(source_, field));
-		}
+		for (Entry<String, db_field> item: fields_.entrySet()) { populate_col(source_, item.getKey()); }
+	}
+	
+	private static void populate_col(String source_, String field_)
+	{
+		int i = db.get_field_i(source_, field_);
+		String col = db.get_col(source_, field_);
+		
+		if (i > arrays.WRONG_I && strings.is_ok(col)) _cols = arrays_quick.add(_cols, i, col);
 	}
 }

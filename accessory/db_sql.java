@@ -50,7 +50,7 @@ abstract class db_sql
 
 	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_) { return execute_query(source_, query_, return_data_, cols_, connect(source_), false); }
 	
-	public static ArrayList<HashMap<String, String>> execute_query_static(String type_, String source_, String query_, boolean return_data_, String[] cols_, String username_, String password_, String db_name_, String host_, String max_pool_) { return execute_query(source_, query_, return_data_, cols_, connect_static(type_, source_, username_, password_, db_name_, host_, max_pool_), true); }
+	public static ArrayList<HashMap<String, String>> execute_query_quicker(String type_, String source_, String query_, boolean return_data_, String[] cols_, String username_, String password_, String db_name_, String host_, String max_pool_) { return execute_query(source_, query_, return_data_, cols_, connect_static(type_, source_, username_, password_, db_name_, host_, max_pool_), true); }
 
 	public static String get_backup_file_extension() { return paths.EXTENSION_SQL; }
 	
@@ -139,10 +139,11 @@ abstract class db_sql
 	
 	private static Properties get_properties(String source_) 
 	{
-		HashMap<String, String> credentials = db.get_credentials(source_);
-
-		String username = (String)arrays.get_value(credentials, accessory.credentials.USERNAME);
-		String password = (String)arrays.get_value(credentials, accessory.credentials.PASSWORD);
+		String[] temp = db.get_credentials(source_);
+		
+		String username = credentials.get_username(temp);
+		String password = credentials.get_password(temp);
+		
 		String max_pool = db.get_max_pool(db.get_valid_setup(source_));
 
 		return get_properties_static(username, password, max_pool);

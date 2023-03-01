@@ -70,10 +70,7 @@ public abstract class db_quicker_mysql
 	
 	public static void update(String source_, HashMap<String, String> vals_, String where_cols_) { db_quicker.update(TYPE, source_, vals_, where_cols_); }
 
-	static ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_)
-	{
-		String query = db_mysql.get_query(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_, false, true);
+	static ArrayList<HashMap<String, String>> execute(String source_, String type_, String[] cols_, HashMap<String, String> vals_, String where_, int max_rows_, String order_, HashMap<String, db_field> cols_info_) { return db_mysql.execute_quicker(source_, type_, cols_, vals_, where_, max_rows_, order_, cols_info_); }
 
-		return (strings.is_ok(query) ? db_quicker.execute_query(TYPE, source_, query, db.query_returns_data(type_), cols_) : new ArrayList<HashMap<String, String>>());
-	}
+	static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_) { return db_mysql.execute_query_quicker(source_, query_, return_data_, cols_); }
 }

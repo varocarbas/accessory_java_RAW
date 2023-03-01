@@ -88,7 +88,7 @@ public abstract class db
 	
 	private static int FIELDS_TOT = -1;
 	
-	private static HashMap<String, String> _credentials = new HashMap<String, String>();
+	private static String[] _credentials = null;
 	
 	public static String get_cur_source() { return _cur_source; }
 	
@@ -174,6 +174,8 @@ public abstract class db
 		vals.put(USERNAME, username_);
 		vals.put(PASSWORD, password_);
 		vals.put(CREDENTIALS_ENCRYPTED, false);
+		
+		if (credentials_in_memory(source_)) update_credentials_memory(username_, password_);
 		
 		return update_vals(get_setup(source_), vals);
 	}
@@ -899,9 +901,9 @@ public abstract class db
 		return output;
 	}
 
-	static HashMap<String, String> get_credentials(String source_)
+	static String[] get_credentials(String source_)
 	{
-		if (arrays.is_ok(_credentials) && credentials_in_memory(source_)) return new HashMap<String, String>(_credentials);
+		if (arrays.is_ok(_credentials) && credentials_in_memory(source_)) return arrays_quick.get_new(_credentials);
 			
 		String setup = get_valid_setup(source_);
 		
@@ -925,11 +927,11 @@ public abstract class db
 		
 		if (!arrays.is_ok(temp)) return null;
 		
-		_credentials = new HashMap<String, String>(temp);
+		update_credentials_memory(temp.get(credentials.USERNAME), temp.get(credentials.PASSWORD));
 		
-		return new HashMap<String, String>(_credentials);
+		return arrays_quick.get_new(_credentials);
 	}
-
+	
 	static parent_db get_valid_instance(String source_) 
 	{ 
 		String source = check_source(source_);
@@ -1190,5 +1192,13 @@ public abstract class db
 		if (!arrays.is_ok(fields) || !strings.is_ok(field_)) return null;
 
 		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field_, val_, fields);
+	}
+	
+	private static void update_credentials_memory(String username_, String password_)
+	{
+		if (_credentials == null) _credentials = new String[2];
+		
+		_credentials[credentials.USERNAME_I] = username_;
+		_credentials[credentials.PASSWORD_I] = password_;
 	}
 }

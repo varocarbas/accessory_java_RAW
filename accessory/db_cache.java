@@ -23,6 +23,8 @@ public abstract class db_cache extends parent_static
 	private static boolean[] _returns = new boolean[0];
 	private static boolean[] _are_quick = new boolean[0];
 	
+	private static String _source = null;
+	
 	public static boolean id_is_ok(int id_) { return (id_ >= 0 && id_ < _queries.length); }
 
 	public static String[] get_queries() { return arrays_quick.get_new(_queries); }
@@ -36,14 +38,26 @@ public abstract class db_cache extends parent_static
 		if (!arrays.is_ok(ids_)) return;
 		
 		String[] queries = arrays_quick.get_new(_queries);
+		String[] sources = arrays_quick.get_new(_sources);
+		String[] types = arrays_quick.get_new(_types);
+		boolean[] returns = arrays_quick.get_new(_returns);
+		boolean[] are_quick = arrays_quick.get_new(_are_quick);
 		
 		_queries = new String[0];
+		_sources = new String[0];
+		_types = new String[0];
+		_returns = new boolean[0];
+		_are_quick = new boolean[0];
 		
 		for (int i = 0; i < queries.length; i++)
 		{
 			if (arrays_quick.value_exists(ids_, i)) continue;
 			
 			_queries = arrays_quick.add(_queries, queries[i]);
+			_sources = arrays_quick.add(_sources, sources[i]);
+			_types = arrays_quick.add(_types, types[i]);
+			_returns = arrays_quick.add(_returns, returns[i]);
+			_are_quick = arrays_quick.add(_are_quick, are_quick[i]);
 		}
 	}
 	
@@ -52,7 +66,9 @@ public abstract class db_cache extends parent_static
 		String output = query_;
 		
 		if (!strings.is_ok(col_)) return output;
-			
+		
+		_source = source_;
+		
 		String placeholder = get_placeholder(id_);
 	
 		int start_i = db_cache.get_table_i(source_, query_);
@@ -63,7 +79,7 @@ public abstract class db_cache extends parent_static
 			int i = get_i_end_variable(db.get_variable(source_, col_), output, start_i);			
 			if (i <= strings.WRONG_I) break;
 			
-			int[] is = get_is(source_, output, i + 1);
+			int[] is = get_is(output, i + 1);
 			if (is == null) break;
 				
 			output = strings.substring(output, 0, is[0]) + placeholder + strings.substring(output, is[1] + 1);
@@ -81,6 +97,8 @@ public abstract class db_cache extends parent_static
 		int output = WRONG_ID;
 		if (!strings.are_ok(new String[] { source_, query_, db_type_ })) return output;
 
+		_source = source_;
+		
 		String query = get_query_add(source_, query_);
 		if (!strings.is_ok(query)) return output;
 		
@@ -99,6 +117,8 @@ public abstract class db_cache extends parent_static
 		if (!id_is_ok(id_)) return output;
 
 		String source = _sources[id_];
+		_source = source;
+		
 		String query = get_query_execute(source, _queries[id_], changing_vals_);
 		String type = _types[id_];
 		
@@ -115,6 +135,8 @@ public abstract class db_cache extends parent_static
 		ArrayList<HashMap<String, String>> output = null;
 
 		String source = _sources[id_];
+		_source = source;
+		
 		String query = get_query_execute(source, _queries[id_], changing_vals_);
 		String type = _types[id_];
 		
@@ -130,6 +152,8 @@ public abstract class db_cache extends parent_static
 
 	private static String get_query_execute(String source_, String query_, HashMap<String, HashMap<Integer, String>> changing_vals_)
 	{	
+		_source = source_;
+		
 		int table_i = get_table_i(source_, query_);
 		if (table_i <= strings.WRONG_I) return null;
 		
@@ -184,7 +208,7 @@ public abstract class db_cache extends parent_static
 	private static String get_query_execute_common(String source_, String query_, int[] is_, HashMap<Integer, String> changing_vals_)
 	{
 		String output = query_;
-		if (!is_are_ok(is_)) return output;
+		if (!strings.is_are_ok(is_)) return output;
 		
 		String haystack = strings.substring(output, is_[0], (is_[1] - is_[0] + 1));
 		if (!strings.is_ok(haystack)) return output;
@@ -216,56 +240,19 @@ public abstract class db_cache extends parent_static
 		return is;
 	}
 
-	private static int[] get_is(String source_, String haystack_, int start_i_) 
+	private static int[] get_is(String haystack_, int start_i_) 
 	{ 
-		String quote = db.get_quote_value(source_);
+		String quote = db.get_quote_value(_source);
 		
 		return get_is(new String[] { quote, quote }, haystack_, false, start_i_, true); 
 	}
 	
-	private static int[] get_is(String[] needles_, String haystack_, boolean normalise_, int start_i_, boolean end_i_included_) 
+	public static int[] get_is(String[] needles_, String haystack_, boolean normalise_, int start_i_, boolean find_include_end_) 
 	{
-		int[] output = new int[2];
+		String start_end = get_start_end();
 		
-		int start_i = start_i_;
-		
-		int i2 = -1;
-		
-		int max_i = needles_.length - 1;
-		int last_i = haystack_.length() - 1;
-		int end_i = last_i;
-		
-		for (int i = 0; i <= max_i; i++)
-		{
-			if (i == 0 && needles_[i] == null) continue;
-			
-			int temp = get_i_internal(needles_[i], haystack_, normalise_, start_i);
-			
-			if (i > 0 && i < max_i) 
-			{
-				if (temp > strings.WRONG_I && temp < end_i) end_i = temp;
-				
-				continue;
-			}
-			else if (temp <= strings.WRONG_I && (i == 0 || end_i_included_)) return null;
-			
-			i2++;
-			output[i2] = temp;
-			
-			start_i = temp + 1;
-		}
-		
-		if (output[0] <= strings.WRONG_I) output[0] = (start_i_ > 0 ? start_i_ : 0);
-		
-		if (needles_[0] == null) output[1] = end_i;
-		
-		if (output[1] < output[0]) output[1] = last_i;
-		else if (!end_i_included_) output[1]--;
-		
-		return output;
+		return strings.get_is(needles_, haystack_, normalise_, start_end, start_end, start_i_, find_include_end_);
 	}
-
-	private static boolean is_are_ok(int[] is_) { return (is_ != null && is_[0] > strings.WRONG_I && is_[1] > strings.WRONG_I); }
 	
 	private static int get_i_end_variable(String needle_, String haystack_, int start_i_) { return get_i(needle_, haystack_, false, start_i_, false); }
 
@@ -273,12 +260,14 @@ public abstract class db_cache extends parent_static
 
 	private static int get_i(String needle_, String haystack_, boolean normalise_, int start_i_, boolean return_start_) 
 	{ 
-		int output = get_i_internal(needle_, haystack_, normalise_, start_i_);
+		String start_end = get_start_end();
+		
+		int output = strings.get_i(needle_, haystack_, normalise_, start_end, start_end, start_i_);
 		
 		if (output > strings.WRONG_I && !return_start_) output = strings.get_end_i(output, needle_.length());
 		
 		return output; 
 	}
 	
-	private static int get_i_internal(String needle_, String haystack_, boolean normalise_, int start_i_) { return strings.index_of_outside(needle_, haystack_, normalise_, db.get_quote_value(), db.get_quote_value(), start_i_); }
+	private static String get_start_end() { return db.get_quote_value(_source); }
 }

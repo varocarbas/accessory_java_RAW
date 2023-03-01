@@ -5,6 +5,21 @@ import java.util.HashMap;
 
 abstract class db_quicker 
 {	
+	private static String[] MYSQL = new String[0];
+	
+	static String[] _tables = new String[0];
+	
+	public static boolean is_ok(String source_) { return is_mysql(source_); }
+	
+	public static boolean is_mysql(String source_) 
+	{
+		boolean output = false;
+		
+		if (arrays_quick.value_exists(MYSQL, source_)) output = true; 
+		
+		return output;
+	}
+	
 	public static void is_ok(boolean is_ok_) { db_static.is_ok(is_ok_); }
 	
 	public static boolean is_ok() { return db_static.is_ok(); }
@@ -37,6 +52,15 @@ abstract class db_quicker
 	
 	public static boolean change_col_name_queries(String source_, String field_, String name_) { return db_static.change_col_name_queries(source_, field_, name_); }
 	
+	public static String get_table(String source_) 
+	{ 
+		int i = db.get_source_i(source_);
+		
+		return (i > arrays.WRONG_I ? _tables[i] : db.get_table(source_)); 
+	}
+	
+	public static void update_table(String source_, String table_) { populate_table(source_, table_, arrays.WRONG_I); }
+
 	public static boolean input_is_ok(Object input_) { return db_quick.input_is_ok(input_); }
 
 	public static boolean exists(String type_, String source_, String where_cols_) 
@@ -391,8 +415,41 @@ abstract class db_quicker
 		return output;
 	}
 	
-	public static ArrayList<HashMap<String, String>> execute_query(String type_, String source_, String query_, boolean return_data_, String[] cols_) { return db_static.execute_query(type_, source_, query_, return_data_, cols_); }
+	public static ArrayList<HashMap<String, String>> execute_query(String type_, String source_, String query_, boolean return_data_, String[] cols_) 
+	{ 
+		ArrayList<HashMap<String, String>> output = null;
+		
+		if (type_.equals(db_quicker_mysql.TYPE)) output = db_quicker_mysql.execute_query(source_, query_, return_data_, cols_); 
+	
+		return output; 
+	}
+	
+	public static void populate_types_tables_ini()
+	{
+		for (int i = 0; i < db.SOURCES.length; i++) 
+		{
+			String source = db.SOURCES[i];
+			if (!strings.is_ok(source)) continue;
+			
+			populate_table(source, db.get_table(source), i);
+			
+			String type = db.get_valid_type(source);
+			if (!strings.is_ok(type)) continue;
+			
+			if (strings.are_equal(type, db_quicker_mysql.TYPE)) 
+			{
+				if (!arrays_quick.value_exists(MYSQL, source)) MYSQL = arrays_quick.add(MYSQL, source);
+			}
+		}
+	}
 
+	private static void populate_table(String source_, String table_, int i_)
+	{
+		int i = (i_ > arrays.WRONG_I ? i_ : db.get_source_i(source_));
+		
+		if (i > arrays.WRONG_I && strings.is_ok(table_)) _tables = arrays_quick.add(_tables, i, table_);
+	}
+	
 	private static Object get_val(String col_, HashMap<String, String> item_, String type_) 
 	{ 
 		Object output = null;
