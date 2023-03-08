@@ -133,6 +133,8 @@ public class db_where extends parent
 
 	public db_where(String source_, String field_col_, String operand_, Object value_, boolean is_literal_, String link_, boolean is_quick_) { instantiate(source_, field_col_, operand_, value_, is_literal_, link_, is_quick_); }
 
+	public String serialise() { return toString(); }
+	
 	public String toString()
 	{
 		String output = strings.DEFAULT;
@@ -152,8 +154,8 @@ public class db_where extends parent
 		{
 			operand = " " + (is_like ? operand_like_to_string(_temp_operand) : operand_not_like_to_string(_temp_operand)) + " ";
 					
-			if (strings.matches_any(_temp_operand, new String[] { OPERAND_LIKE_START, OPERAND_LIKE_BOTH, OPERAND_NOT_LIKE_START, OPERAND_NOT_LIKE_BOTH }, false)) value = "%" + value;
-			if (strings.matches_any(_temp_operand, new String[] { OPERAND_LIKE_END, OPERAND_LIKE_BOTH, OPERAND_NOT_LIKE_END, OPERAND_NOT_LIKE_BOTH }, false)) value += "%";
+			if (strings.matches_any(new String[] { OPERAND_LIKE_START, OPERAND_LIKE_BOTH, OPERAND_NOT_LIKE_START, OPERAND_NOT_LIKE_BOTH }, _temp_operand, false)) value = "%" + value;
+			if (strings.matches_any(new String[] { OPERAND_LIKE_END, OPERAND_LIKE_BOTH, OPERAND_NOT_LIKE_END, OPERAND_NOT_LIKE_BOTH }, _temp_operand, false)) value += "%";
 		}
 		else operand = operand_to_string(_temp_operand);
 		

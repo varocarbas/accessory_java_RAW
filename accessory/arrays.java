@@ -12,6 +12,10 @@ import java.util.Map.Entry;
 
 public abstract class arrays extends parent_static 
 {
+	public static final String SEPARATOR_ARRAY = misc.SEPARATOR_ITEM;
+	public static final String SEPARATOR_HASHMAP_1 = SEPARATOR_ARRAY;
+	public static final String SEPARATOR_HASHMAP_2 = misc.SEPARATOR_KEYVAL;
+
 	public static final int WRONG_I = -1;
 
 	public static final int DEFAULT_SIZE = 5;
@@ -958,7 +962,7 @@ public abstract class arrays extends parent_static
 		if (!is_array && !is_arraylist) return output;
 
 		output = "";
-		String separator = (strings.is_ok(separator_) ? separator_ : misc.SEPARATOR_ITEM);
+		String separator = (strings.is_ok(separator_) ? separator_ : SEPARATOR_ARRAY);
 		boolean first_time = true;
 
 		if (generic.are_equal(type, Byte[].class)) output = strings.from_bytes_base64((Byte[])input_);
@@ -994,8 +998,8 @@ public abstract class arrays extends parent_static
 		if (!is_ok(input_) || !generic.are_equal(generic.get_class(input_), HashMap.class)) return strings.DEFAULT;
 
 		String output = "";
-		String separator1 = (strings.is_ok(sep_items_) ? sep_items_ : misc.SEPARATOR_ITEM);
-		String separator2 = (strings.is_ok(sep_keyval_) ? sep_keyval_ : misc.SEPARATOR_KEYVAL);
+		String separator1 = (strings.is_ok(sep_items_) ? sep_items_ : SEPARATOR_HASHMAP_1);
+		String separator2 = (strings.is_ok(sep_keyval_) ? sep_keyval_ : SEPARATOR_HASHMAP_2);
 
 		boolean first_time = true;
 

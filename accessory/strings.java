@@ -26,7 +26,9 @@ public abstract class strings extends parent_static
 	public static final int SIZE_BIG = 500;
 
 	public static final int START_I = 0;
-	public static final int END_I = 0;
+	public static final int END_I = 1;
+	public static final int BEFORE_I = START_I;
+	public static final int AFTER_I = END_I;
 	
 	public static final String CONFIG_ENCODING = _types.CONFIG_STRINGS_ENCODING;
 
@@ -49,7 +51,7 @@ public abstract class strings extends parent_static
 	}
 	
 	public static boolean is_ok(String string_) { return is_ok(string_, false); }
-
+	
 	public static boolean are_ok(String[] strings_)
 	{
 		if (!arrays.is_ok(strings_)) return false;
@@ -76,10 +78,6 @@ public abstract class strings extends parent_static
 
 	public static String normalise(String string_) { return normalise(string_, false); }
 
-	public static boolean matches_all(String string_, String[] targets_, boolean normalise_) { return matches(string_, targets_, normalise_, true); }
-
-	public static boolean matches_any(String string_, String[] targets_, boolean normalise_) { return matches(string_, targets_, normalise_, false); }
-
 	public static boolean are_equal(String string1_, String string2_)
 	{
 		boolean is_ok1 = is_ok(string1_, true);
@@ -90,21 +88,14 @@ public abstract class strings extends parent_static
 
 	public static boolean are_equivalent(String string1_, String string2_) { return are_equal(normalise(string1_), normalise(string2_)); }
 
-	public static boolean contains_any(ArrayList<String> needles_, String haystack_, boolean normalise_) { return contains_any(arrays.to_array(needles_), haystack_, normalise_); }
-	
-	public static boolean contains_any(String[] needles_, String haystack_, boolean normalise_) 
-	{ 
-		boolean output = false;
-		if (!arrays.is_ok(needles_) || !is_ok(haystack_)) return output;
-		
-		for (String needle: needles_)
-		{
-			if (contains(needle, haystack_, normalise_)) return true;
-		}
-		
-		return output; 
-	}
+	public static boolean matches_all(String[] needles_, String haystack_, boolean normalise_) { return matches_contains(needles_, haystack_, normalise_, true, true); }
 
+	public static boolean matches_any(String[] needles_, String haystack_, boolean normalise_) { return matches_contains(needles_, haystack_, normalise_, false, true); }
+
+	public static boolean contains_all(String[] needles_, String haystack_, boolean normalise_) { return matches_contains(needles_, haystack_, normalise_, true, false); }
+
+	public static boolean contains_any(String[] needles_, String haystack_, boolean normalise_) { return matches_contains(needles_, haystack_, normalise_, false, false); }
+	
 	public static boolean contains_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_) { return (index_of_outside(needle_, haystack_, normalise_, start_, end_) > WRONG_I); }
 
 	public static boolean contains(String needle_, String haystack_, boolean normalise_) { return (index_of(needle_, haystack_, normalise_) >= 0); }
@@ -256,7 +247,38 @@ public abstract class strings extends parent_static
 
 	public static int get_end_i(int start_i_, int length_) { return ((start_i_ > WRONG_I && length_ > 0) ? start_i_ + length_ - 1 : WRONG_I); }
 
-	public static boolean is_are_ok(int[] is_) { return (is_ != null && is_[START_I] > strings.WRONG_I && is_[END_I] >= is_[START_I]); }
+	public static boolean is_are_ok(int[] is_) { return is_are_ok(is_, WRONG_I); }
+
+	public static boolean is_are_ok(int[] is_, int max_i_) { return (is_ != null && is_[START_I] > WRONG_I && is_[END_I] >= is_[START_I] && (max_i_ <= WRONG_I || (is_[START_I] <= max_i_ && is_[END_I] <= max_i_))); }
+
+	public static boolean before_after_is_ok(int[] before_after_) { return (before_after_ != null && before_after_[START_I] > strings.WRONG_I && before_after_[END_I] >= before_after_[START_I]); }
+
+	public static String[] get_before_after(String[] needles_, String haystack_, boolean normalise_, String start_, String end_, int start_i_, boolean find_include_end_) { return get_before_after(haystack_, get_is(needles_, haystack_, normalise_, start_, end_, start_i_, find_include_end_)); }
+	
+	public static String[] get_before_after(String input_, int[] is_)
+	{
+		int max_i = get_length(input_) - 1;
+		if (!is_are_ok(is_) || is_[1] > max_i) return null;
+		
+		String[] output = new String[2];
+		
+		output[BEFORE_I] = strings.substring(input_, 0, is_[START_I]);
+		output[AFTER_I] = strings.substring(input_, is_[END_I] + 1);
+		
+		return output;
+	}
+	
+	public static String get_substring(String input_, int[] is_, String start_, String end_, boolean including_start_end_) 
+	{
+		int start_length = get_length(start_);
+		int end_length = get_length(end_);
+		
+		if (!is_are_ok(is_) || start_length <= 0 || end_length <= 0) return DEFAULT;
+		
+		int length = is_[END_I] - is_[START_I];
+		
+		return (including_start_end_ ? substring(input_, is_[START_I], length + end_length) : substring(input_, is_[START_I] + start_length, length - start_length)); 
+	}
 	
 	public static int[] get_is(String[] needles_, String haystack_, boolean normalise_, String start_, String end_, int start_i_, boolean find_include_end_) 
 	{
@@ -590,7 +612,7 @@ public abstract class strings extends parent_static
 	public static String replace(String needle_, String haystack_, String replacement_) { return remove_escape_replace(needle_, haystack_, replacement_, _types.ACTION_REPLACE); }
 
 	public static String replace(String[] needles_, String haystack_, String replacement_) { return remove_escape_replace_many(needles_, haystack_, replacement_, _types.ACTION_REPLACE); }
-
+	
 	static boolean is_ok(String string_, boolean minimal_) { return (minimal_ ? (string_ != null) : (get_length(string_, true) > 0)); }
 
 	static HashMap<Boolean, String[]> populate_all_booleans()
@@ -726,16 +748,20 @@ public abstract class strings extends parent_static
 		return string;
 	}
 
-	private static boolean matches(String string_, String[] targets_, boolean normalise_, boolean all_)
+	private static boolean matches_contains(String[] needles_, String haystack_, boolean normalise_, boolean is_all_, boolean is_matches_)
 	{
-		if (!is_ok(string_, true) || !arrays.is_ok(targets_)) return false;
+		if (!is_ok(haystack_, true) || !arrays.is_ok(needles_)) return false;
 
 		boolean is_ok = true;
 
-		for (String target: targets_)
+		for (String needle: needles_)
 		{
-			is_ok = (normalise_ ? are_equivalent(string_, target) : are_equal(string_, target));
-			if ((all_ && !is_ok) || (!all_ && is_ok)) break;
+			is_ok = false;
+			
+			if (is_matches_) is_ok = (normalise_ ? are_equivalent(needle, haystack_) : are_equal(needle, haystack_));
+			else is_ok = contains(needle, haystack_, normalise_);
+			
+			if ((is_all_ && !is_ok) || (!is_all_ && is_ok)) break;
 		}
 
 		return is_ok;

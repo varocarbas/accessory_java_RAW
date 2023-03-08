@@ -82,7 +82,7 @@ public abstract class db
 	static String _last_query = null;
 	
 	private static int[] SOURCES0 = new int[0];
-	private static db_field[] FIELDS0 = new db_field[0];
+	private static String[] FIELDS_INFO = new String[0];
 	private static Object[][] SETUPS = new Object[0][0];
 	private static boolean[] DEFAULTS = new boolean[0];
 	
@@ -526,7 +526,7 @@ public abstract class db
 	{ 
 		int i = get_field_i(source_, field_);		
 
-		return (i > arrays.WRONG_I ? new db_field(FIELDS0[i]) : null); 
+		return (i > arrays.WRONG_I ? db_field.unserialise(FIELDS_INFO[i]) : null); 
 	}
 
 	public static String check_field(String source_, String field_)
@@ -998,7 +998,7 @@ public abstract class db
 		
 		int tot = FIELDS_TOT + fields_.size();
 		
-		FIELDS0 = (i > 0 ? arrays.redim(FIELDS0, tot) : new db_field[tot]);
+		FIELDS_INFO = (i > 0 ? arrays.redim(FIELDS_INFO, tot) : new String[tot]);
 		FIELDS = (i > 0 ? arrays.redim(FIELDS, tot) : new String[tot]);
 		
 		int i2 = FIELDS_TOT;
@@ -1014,7 +1014,7 @@ public abstract class db
 				return false;
 			}
 			
-			FIELDS0[i2] = new db_field(field);
+			FIELDS_INFO[i2] = new db_field(field).serialise();
 			FIELDS[i2] = item.getKey();
 			
 			i2++;
@@ -1048,7 +1048,7 @@ public abstract class db
 				i++;
 				((String[])output)[i] = FIELDS[i2];
 			}
-			else ((HashMap<String, db_field>)output).put(FIELDS[i2], new db_field(FIELDS0[i2]));
+			else ((HashMap<String, db_field>)output).put(FIELDS[i2], db_field.unserialise(FIELDS_INFO[i2]));
 		}
 		
 		return output;

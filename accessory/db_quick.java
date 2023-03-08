@@ -10,7 +10,9 @@ public abstract class db_quick
 	static String[] _cols = new String[0];
 		
 	public static boolean is_ok(String source_) { return (is_quicker(source_) ? db_quicker.is_ok() : db.is_ok(source_)); }
-
+	
+	public static String get_select_count_col(String source_, String type_) { return (is_quicker(source_) ? db_quicker.get_select_count_col(type_) : db.get_select_count_col(source_)); }
+	
 	public static boolean is_quicker(String source_) { return db_quicker.is_ok(source_); }
 	
 	public static boolean is_quicker_mysql(String source_) { return db_quicker.is_mysql(source_); }
@@ -284,7 +286,12 @@ public abstract class db_quick
 	{ 
 		ArrayList<HashMap<String, String>> output = null;
 		
-		if (is_quicker(source_)) output = db_quicker.execute_query(type_, source_, query_, return_data_, cols_);
+		if (is_quicker(source_)) 
+		{
+			db_quicker.initialise();
+			
+			output = db_quicker.execute_query(type_, source_, query_, return_data_, cols_);
+		}
 		else output = db.execute_query(type_, source_, query_, return_data_, cols_);
 	
 		return output;

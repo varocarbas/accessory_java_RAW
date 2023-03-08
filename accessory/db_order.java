@@ -65,6 +65,8 @@ public class db_order extends parent
 
 	public db_order(String source_, String field_col_else_, String order_, boolean is_field_col_, boolean is_quick_) { instantiate(source_, field_col_else_, order_, is_field_col_, is_quick_); }
 
+	public String serialise() { return toString(); }
+	
 	public String toString()
 	{	
 		if (!is_ok(_source, _field_col_else, _order, _is_field_col, _is_quick)) return strings.DEFAULT;

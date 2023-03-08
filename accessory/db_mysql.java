@@ -9,7 +9,10 @@ import java.util.Properties;
 import java.util.Map.Entry;
 
 class db_mysql extends parent_db
-{	
+{
+	public static final String QUOTE_VARIABLE = "`";
+	public static final String QUOTE_VALUE = "'";
+
 	private static final String VARCHAR = _types.DB_MYSQL_DATA_VARCHAR;
 	private static final String TEXT = _types.DB_MYSQL_DATA_TEXT;
 	private static final String INT = _types.DB_MYSQL_DATA_INT;
@@ -17,9 +20,6 @@ class db_mysql extends parent_db
 	private static final String BIGINT = _types.DB_MYSQL_DATA_BIGINT;
 	private static final String DECIMAL = _types.DB_MYSQL_DATA_DECIMAL;
 	private static final String TIMESTAMP = _types.DB_MYSQL_DATA_TIMESTAMP;
-
-	private static final String QUOTE_VARIABLE = "`";
-	private static final String QUOTE_VALUE = "'";
 
 	private static final String KEYWORD_WHERE = "where";
 	private static final String KEYWORD_ORDER = "order";
@@ -49,6 +49,8 @@ class db_mysql extends parent_db
 
 	public static ArrayList<HashMap<String, String>> execute_query_quicker(String source_, String query_, boolean return_data_, String[] cols_) { return db_sql.execute_query_quicker(db_quicker_mysql.TYPE, source_, query_, return_data_, cols_, db_quicker_mysql.get_username(), db_quicker_mysql.get_password(), db_quicker_mysql.get_db_name(), db_quicker_mysql.get_host(), db_quicker_mysql.get_max_pool()); }
 	
+	public static String get_select_count_col_static() { return "COUNT(*)"; }
+
 	public ArrayList<HashMap<String, String>> execute_query(String source_, String query_)
 	{
 		String type = db.check_query_type(strings.substring_before(" ", query_, true));
@@ -385,8 +387,6 @@ class db_mysql extends parent_db
 
 		return max;
 	}
-	
-	private static String get_select_count_col_static() { return "COUNT(*)"; }
 	
 	private static long get_default_size_static(String data_type_)
 	{

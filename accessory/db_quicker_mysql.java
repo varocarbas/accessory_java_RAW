@@ -12,7 +12,7 @@ public abstract class db_quicker_mysql
 	
 	public static boolean is_ok() { return db_quicker.is_ok(); }
 	
-	public static String get_count_col(String source_) { return db_quicker.get_count_col(source_); }
+	public static String get_select_count_col() { return db_mysql.get_select_count_col_static(); }
 
 	public static String get_username() { return db_quicker.get_username(); }
 
@@ -36,7 +36,7 @@ public abstract class db_quicker_mysql
 	
 	public static boolean change_col_name_queries(String source_, String field_, String name_) { return db_quicker.change_col_name_queries(source_, field_, name_); }
 	
-	public static boolean exists(String source_, String where_cols_) { return db_quicker.exists(TYPE, source_, where_cols_); }
+	public static boolean exists(String source_, String where_cols_) { return db_quicker.exists(TYPE, source_, get_select_count_col(), where_cols_); }
 
 	public static String select_one_string(String source_, String col_, String where_cols_, String order_cols_) { return db_quicker.select_one_string(TYPE, source_, col_, where_cols_, order_cols_); }
 
@@ -62,9 +62,9 @@ public abstract class db_quicker_mysql
 
 	public static ArrayList<HashMap<String, String>> select(String source_, String[] cols_, String where_cols_, int max_rows_, String order_cols_) { return db_quicker.select(TYPE, source_, cols_, where_cols_, max_rows_, order_cols_); }
 	
-	public static int select_count(String source_, String where_cols_) { return db_quicker.select_count(TYPE, source_, where_cols_); }
+	public static int select_count(String source_, String where_cols_) { return db_quicker.select_count(TYPE, source_, get_select_count_col(), where_cols_); }
 
-	public static void insert_update(String source_, String any_col_, HashMap<String, String> vals_, String where_cols_) { db_quicker.insert_update(TYPE, source_, any_col_, vals_, where_cols_); }
+	public static void insert_update(String source_, String any_col_, HashMap<String, String> vals_, String where_cols_) { db_quicker.insert_update(TYPE, source_, get_select_count_col(), any_col_, vals_, where_cols_); }
 
 	public static void insert(String source_, HashMap<String, String> vals_) { db_quicker.insert(TYPE, source_, vals_); }
 	

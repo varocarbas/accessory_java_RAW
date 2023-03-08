@@ -61,7 +61,10 @@ public class crypto extends parent
 	private SecretKey _key = null;
 	private byte[] _iv = null;
 
+	public String serialise() { return toString(); }
+	
 	public String toString() { return strings.DEFAULT; }
+
 	public boolean is_ok() { return _is_ok; }
 	
 	public static boolean is_ok_last() { return _is_ok_last; }

@@ -358,6 +358,48 @@ public abstract class generic extends parent_static
 	{ 
 		return get_class_variables_constants(class_, ignore_names_, valid_classes_, false, false, false, only_non_static_, return_values_, false); 
 	}
+		
+	public static String[] get_string_equivalents(Class<?> class_)
+	{
+		Class<?>[] classes = get_equivalents(class_);
+		if (classes == null) return null;
+		
+		String[] output = new String[classes.length];
+		
+		for (int i = 0; i < classes.length; i++) { output[i] = strings.to_string(classes[i]); }
+		
+		return output;
+	}
+	
+	public static Class<?>[] get_equivalents(Class<?> class_)
+	{
+		if (class_ == null) return null;
+		
+		ArrayList<Class<?>> output = new ArrayList<Class<?>>();
+		
+		output.add(class_);
+		
+		for (Entry<Class<?>, Class<?>[]> item: get_all_class_equivalents().entrySet())
+		{
+			Class<?> class2 = item.getKey();
+			Class<?>[] classes = item.getValue();
+			
+			if (class2.equals(class_)) output.addAll(arrays.to_arraylist(classes));
+			else if (arrays.value_exists(classes, class_))
+			{
+				output.add(class2);
+				
+				for (Class<?> class3: classes) 
+				{ 
+					if (class3.equals(class_)) continue;
+					
+					output.add(class3); 
+				}
+			}
+		}
+		
+		return arrays.to_array(output);
+	}
 	
 	static boolean is_ok(double[] input_, boolean minimal_) { return arrays.is_ok(input_, minimal_); }
 

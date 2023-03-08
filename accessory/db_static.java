@@ -6,7 +6,6 @@ abstract class db_static
 {
 	private static boolean _is_ok = false;
 	private static String _query_type = strings.DEFAULT;
-	private static String _count_col = null;
 	
 	private static String _username = strings.DEFAULT;
 	private static String _password = null;
@@ -22,13 +21,6 @@ abstract class db_static
 	public static void update_query_type(String query_type_) { _query_type = query_type_; }
 	
 	public static String get_query_type() { return _query_type; }
-
-	public static String get_count_col(String source_) 
-	{ 
-		if (!strings.is_ok(_count_col)) populate_count_col(source_);
-		
-		return _count_col; 
-	}
 
 	public static String get_username() { return _username; }
 
@@ -51,8 +43,6 @@ abstract class db_static
 	
 	public static void update_conn_info(String source_)
 	{
-		populate_count_col(source_);
-		
 		String[] temp = db.get_credentials(source_);
 	
 		String username = credentials.get_username(temp);
@@ -134,6 +124,4 @@ abstract class db_static
 		
 		errors.manage(type_error_, e_, info);
 	}
-	
-	private static void populate_count_col(String source_) { _count_col = db.get_select_count_col(source_); }
 }

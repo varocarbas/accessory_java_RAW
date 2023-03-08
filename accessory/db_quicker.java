@@ -8,7 +8,9 @@ abstract class db_quicker
 	private static String[] MYSQL = new String[0];
 	
 	static String[] _tables = new String[0];
-	
+
+	public static void initialise() { db_static.initialise(); }
+
 	public static boolean is_ok(String source_) { return is_mysql(source_); }
 	
 	public static boolean is_mysql(String source_) 
@@ -23,13 +25,20 @@ abstract class db_quicker
 	public static void is_ok(boolean is_ok_) { db_static.is_ok(is_ok_); }
 	
 	public static boolean is_ok() { return db_static.is_ok(); }
-
+	
+	public static String get_select_count_col(String type_) 
+	{ 
+		String output = strings.DEFAULT;
+		
+		if (type_.equals(db_quicker_mysql.TYPE)) output = db_quicker_mysql.get_select_count_col();
+		
+		return output; 
+	}
+	
 	public static void update_query_type(String query_type_) { db_static.update_query_type(query_type_); }
 
 	public static String get_query_type() { return db_static.get_query_type(); }
-
-	public static String get_count_col(String source_) { return db_static.get_count_col(source_); }
-
+	
 	public static String get_username() { return db_static.get_username(); }
 
 	public static String get_password() { return db_static.get_password(); }
@@ -62,14 +71,14 @@ abstract class db_quicker
 	public static void update_table(String source_, String table_) { populate_table(source_, table_, arrays.WRONG_I); }
 
 	public static boolean input_is_ok(Object input_) { return db_quick.input_is_ok(input_); }
-
-	public static boolean exists(String type_, String source_, String where_cols_) 
+	
+	public static boolean exists(String type_, String source_, String count_col_, String where_cols_) 
 	{
-		db_static.initialise();
+		initialise();
 
 		boolean output = false;
 		
-		try { output = (select_count(type_, source_, where_cols_) > 0); }
+		try { output = (select_count(type_, source_, count_col_, where_cols_) > 0); }
 		catch (Exception e) 
 		{ 
 			output = false;
@@ -82,7 +91,7 @@ abstract class db_quicker
 
 	public static String select_one_string(String type_, String source_, String col_, String where_cols_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		String output = db.WRONG_STRING;
 
@@ -104,7 +113,7 @@ abstract class db_quicker
 
 	public static double select_one_decimal(String type_, String source_, String col_, String where_cols_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		double output = db.WRONG_DECIMAL;
 		
@@ -126,7 +135,7 @@ abstract class db_quicker
 
 	public static long select_one_long(String type_, String source_, String col_, String where_cols_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		long output = db.WRONG_LONG;
 		
@@ -148,7 +157,7 @@ abstract class db_quicker
 
 	public static int select_one_int(String type_, String source_, String col_, String where_cols_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		int output = db.WRONG_INT;
 		
@@ -170,7 +179,7 @@ abstract class db_quicker
 
 	public static boolean select_one_boolean(String type_, String source_, String col_, String where_cols_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		boolean output = db.WRONG_BOOLEAN;
 		
@@ -192,7 +201,7 @@ abstract class db_quicker
 	
 	public static HashMap<String, String> select_one(String type_, String source_, String[] cols_, String where_cols_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		HashMap<String, String> output = new HashMap<String, String>();
 		
@@ -214,7 +223,7 @@ abstract class db_quicker
 
 	public static ArrayList<String> select_some_strings(String type_, String source_, String col_, String where_cols_, int max_rows_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		ArrayList<String> output = new ArrayList<String>();
 		
@@ -239,7 +248,7 @@ abstract class db_quicker
 
 	public static ArrayList<Double> select_some_decimals(String type_, String source_, String col_, String where_cols_, int max_rows_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		ArrayList<Double> output = new ArrayList<Double>();
 		
@@ -264,7 +273,7 @@ abstract class db_quicker
 
 	public static ArrayList<Long> select_some_longs(String type_, String source_, String col_, String where_cols_, int max_rows_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		ArrayList<Long> output = new ArrayList<Long>();
 		
@@ -289,7 +298,7 @@ abstract class db_quicker
 
 	public static ArrayList<Integer> select_some_ints(String type_, String source_, String col_, String where_cols_, int max_rows_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		ArrayList<Integer> output = new ArrayList<Integer>();
 		
@@ -314,7 +323,7 @@ abstract class db_quicker
 
 	public static ArrayList<Boolean> select_some_booleans(String type_, String source_, String col_, String where_cols_, int max_rows_, String order_cols_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		ArrayList<Boolean> output = new ArrayList<Boolean>();
 		
@@ -339,7 +348,7 @@ abstract class db_quicker
 
 	public static ArrayList<HashMap<String, String>> select(String type_, String source_, String[] cols_, String where_cols_, int max_rows_, String order_cols_) 
 	{	
-		db_static.initialise();
+		initialise();
 
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
 
@@ -354,19 +363,17 @@ abstract class db_quicker
 		return output; 
 	}
 
-	public static int select_count(String type_, String source_, String where_cols_) 
+	public static int select_count(String type_, String source_, String count_col_, String where_cols_) 
 	{	
-		db_static.initialise();
+		initialise();
 		
 		int output = 0;
 
 		try 
 		{ 
-			String col = db_static.get_count_col(source_);
-			
 			ArrayList<HashMap<String, String>> temp = execute(type_, source_, db.QUERY_SELECT_COUNT, db.DEFAULT_FIELDS_COLS, null, where_cols_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); 
 
-			if (temp != null && temp.size() > 0) output = Integer.parseInt(temp.get(0).get(col));
+			if (temp != null && temp.size() > 0) output = Integer.parseInt(temp.get(0).get(count_col_));
 		}		
 		catch (Exception e) 
 		{
@@ -378,13 +385,13 @@ abstract class db_quicker
 		return output; 
 	}
 
-	public static void insert_update(String type_, String source_, String any_col_, HashMap<String, String> vals_, String where_cols_) 
+	public static void insert_update(String type_, String source_, String count_col_, String any_col_, HashMap<String, String> vals_, String where_cols_) 
 	{	
-		db_static.initialise();
+		initialise();
 		
 		try
 		{
-			if (exists(type_, source_, where_cols_)) update(type_, source_, vals_, where_cols_);
+			if (exists(type_, source_, count_col_, where_cols_)) update(type_, source_, vals_, where_cols_);
 			else insert(type_, source_, vals_);
 		}
 		catch (Exception e) { manage_error(type_, strings.to_string(source_), e, null, strings.to_string(any_col_), null, strings.to_string(where_cols_), null, db.WRONG_INT, vals_); }		
@@ -392,7 +399,7 @@ abstract class db_quicker
 
 	public static void insert(String type_, String source_, HashMap<String, String> vals_) 
 	{ 
-		db_static.initialise();
+		initialise();
 		
 		try { execute(type_, source_, db.QUERY_INSERT, null, vals_, db.DEFAULT_WHERE, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 		catch (Exception e) { manage_error(type_, strings.to_string(source_), e, null, null, null, null, null, db.WRONG_INT, vals_); }		
@@ -400,7 +407,7 @@ abstract class db_quicker
 	
 	public static void update(String type_, String source_, HashMap<String, String> vals_, String where_cols_) 
 	{
-		db_static.initialise();
+		initialise();
 
 		try { execute(type_, source_, db.QUERY_UPDATE, null, vals_, where_cols_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER, null); }
 		catch (Exception e) { manage_error(type_, strings.to_string(source_), e, null, null, null, strings.to_string(where_cols_), null, db.WRONG_INT, vals_); }		

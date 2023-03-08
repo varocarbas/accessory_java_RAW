@@ -44,6 +44,8 @@ public class _alls extends parent_first
 
 	public static String[] DB_FIELD_TYPES_NO_SIZE = null;
 	
+	public static String[] DB_FIELD_SERIALISATION_LABELS = null;
+	
 	public static String[] CONFIG_NOT_UPDATE = null;
 
 	public static String[] CRYPTO_WHATS = null;
@@ -81,6 +83,8 @@ public class _alls extends parent_first
 
 		DB_FIELD_TYPES_NO_SIZE = db_field.populate_all_types_no_size();
 
+		DB_FIELD_SERIALISATION_LABELS = db_field.populate_all_serialisation_labels();
+		
 		CONFIG_NOT_UPDATE = config.populate_all_not_update();
 		
 		CRYPTO_WHATS = crypto.populate_all_whats();

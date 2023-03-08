@@ -341,7 +341,7 @@ public class _types extends parent_types
 
 			for (String val: item.getValue())
 			{
-				if (strings.matches_any(subtype_, new String[] { key, val }, true)) return key;
+				if (strings.matches_any(new String[] { key, val }, subtype_, true)) return key;
 			}
 		}
 

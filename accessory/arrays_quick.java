@@ -37,6 +37,10 @@ public abstract class arrays_quick
 
 	public static boolean[] get_new(boolean[] input_) { return Arrays.copyOfRange(input_, 0, input_.length); }
 
+	public static double[] get_new(double[] input_) { return Arrays.copyOfRange(input_, 0, input_.length); }
+
+	public static double[][] get_new(double[][] input_) { return Arrays.copyOfRange(input_, 0, input_.length); }
+
 	public static String[] add(String[] array_, String value_) { return add(array_, array_.length, value_); }
 	
 	public static String[] add(String[] array_, int i_, String value_)

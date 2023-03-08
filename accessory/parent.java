@@ -8,6 +8,8 @@ public abstract class parent
 	public abstract String toString();
 	public abstract boolean is_ok();
 
+	public abstract String serialise();
+
 	public static boolean is_ok(parent input_) { return (input_ == null ? false : input_.is_ok()); }
 
 	public static String to_string(parent input_) { return (input_ != null ? input_.toString() : strings.DEFAULT); }

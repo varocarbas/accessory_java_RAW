@@ -41,10 +41,12 @@ public class size extends parent
 
 	public int get_decimals() { return _decimals; }
 
+	public String serialise() { return toString(); }
+	
 	public String toString() { return toString(true); }
 
 	public boolean equals(size size2_) { return (!is_ok(size2_) ? false : (_min == size2_._min && _max == size2_._max && _decimals == size2_._decimals)); }
-
+	
 	public boolean is_ok() { return is_ok(_min, _max, _decimals); }
 
 	public String toString(boolean is_main_)

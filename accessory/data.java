@@ -70,6 +70,8 @@ public class data extends parent
 
 	public size get_size() { return _size; }
 
+	public String serialise() { return toString(); }
+	
 	public String toString()
 	{
 		String output = (strings.is_ok(_type) ? _type : "");

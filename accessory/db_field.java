@@ -14,6 +14,12 @@ public class db_field extends parent
 	public static final String TIMESTAMP = _types.DB_FIELD_FURTHER_TIMESTAMP;
 	public static final String AUTO_INCREMENT = _types.DB_FIELD_FURTHER_AUTO_INCREMENT;
 
+	public static final String SERIALISATION_LABEL_TYPE = "type";
+	public static final String SERIALISATION_LABEL_SIZE = "size";
+	public static final String SERIALISATION_LABEL_DECIMALS = "decimals";
+	public static final String SERIALISATION_LABEL_DEFAULT = "default";
+	public static final String SERIALISATION_LABEL_FURTHER = "further";
+	
 	public static final int MAX_DECIMALS = size.MAX_DECIMALS;
 	public static final int MIN_DECIMALS = size.MIN_DECIMALS;
 
@@ -120,6 +126,35 @@ public class db_field extends parent
 		return new data(type_, new size(-1 * temp, temp, decimals_));
 	}
 
+	public static db_field unserialise(String serialised_)
+	{
+		db_field output = null;
+		
+		HashMap<String, String> vals = serialisation.get_unserialised_item_values(serialised_, db_field.get_all_serialisation_labels());
+
+		if (arrays.is_ok(vals))
+		{
+			output = new db_field
+			(
+				vals.get(db_field.SERIALISATION_LABEL_TYPE), (long)serialisation.parse_value
+				(
+					vals.get(db_field.SERIALISATION_LABEL_SIZE), long.class
+				), 
+				(int)serialisation.parse_value
+				(
+					vals.get(db_field.SERIALISATION_LABEL_DECIMALS), int.class
+				), 
+				serialisation.parse_value
+				(
+					vals.get(db_field.SERIALISATION_LABEL_DEFAULT)
+				), 
+				(String[])serialisation.parse_array(vals.get(db_field.SERIALISATION_LABEL_FURTHER), String[].class)
+			);			
+		}
+	
+		return output;
+	}
+	
 	public db_field(db_field input_) { instantiate(input_); }
 
 	public db_field(String type_) { instantiate(type_, DEFAULT_SIZE, DEFAULT_DECIMALS, null, null); }
@@ -143,7 +178,20 @@ public class db_field extends parent
 	public Object get_default() { return _default; }
 
 	public String[] get_further() { return _further; }
-
+	
+	public String serialise() 
+	{ 
+		HashMap<String, Object> items = new HashMap<String, Object>();
+		
+		items.put(SERIALISATION_LABEL_TYPE, data.check_type(_type));
+		items.put(SERIALISATION_LABEL_SIZE, _size);
+		items.put(SERIALISATION_LABEL_DECIMALS, _decimals);
+		items.put(SERIALISATION_LABEL_DEFAULT, (!generic.are_equal(_default, WRONG_DEFAULT) ? _default : null));
+		items.put(SERIALISATION_LABEL_FURTHER, (_further != null ? serialisation.get_string_array(_further) : null));
+		
+		return serialisation.serialise(null, items);
+	}
+	
 	public String toString()
 	{
 		String output = strings.to_string(data.check_type(_type));		
@@ -156,7 +204,7 @@ public class db_field extends parent
 
 		if (!generic.are_equal(_default, WRONG_DEFAULT)) output += misc.SEPARATOR_ITEM + strings.to_string(_default);
 		
-		if (_further != null) output += misc.SEPARATOR_ITEM + arrays.to_string(_further, null);
+		if (_further != null) output += misc.SEPARATOR_ITEM + arrays.to_string(_further, misc.SEPARATOR_ITEM);
 
 		return (strings.is_ok(output) ? (misc.BRACKET_MAIN_OPEN + output + misc.BRACKET_MAIN_CLOSE) : strings.DEFAULT);
 	}
@@ -179,6 +227,10 @@ public class db_field extends parent
 	public static String[] get_all_types_no_size() { return _alls.DB_FIELD_TYPES_NO_SIZE; }
 
 	static String[] populate_all_types_no_size() { return new String[] { data.TIMESTAMP, data.BOOLEAN, data.TINYINT, data.INT, data.LONG }; }
+
+	static String[] populate_all_serialisation_labels() { return new String[] { SERIALISATION_LABEL_TYPE, SERIALISATION_LABEL_SIZE, SERIALISATION_LABEL_DECIMALS, SERIALISATION_LABEL_DEFAULT, SERIALISATION_LABEL_FURTHER }; }
+
+	private static String[] get_all_serialisation_labels() { return _alls.DB_FIELD_SERIALISATION_LABELS; }
 
 	private void instantiate(db_field input_)
 	{
