@@ -388,7 +388,7 @@ abstract class db_quicker
 	public static void insert_update(String type_, String source_, String count_col_, String any_col_, HashMap<String, String> vals_, String where_cols_) 
 	{	
 		initialise();
-		
+
 		try
 		{
 			if (exists(type_, source_, count_col_, where_cols_)) update(type_, source_, vals_, where_cols_);

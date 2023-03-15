@@ -58,6 +58,43 @@ public abstract class db_cache
 	
 	public static String get_placeholder(int id_) { return (START + PLACEHOLDER_KEY + Integer.toString(id_) + END); }
 
+	public static int add_query(String source_, String query_, boolean return_data_) { return add_query(source_, query_, null, db_cache.WRONG_ID, return_data_); }
+	
+	public static int add_query(String source_, String query_, String col_, int col_id_, boolean return_data_)
+	{
+		String query = (col_id_ != db_cache.WRONG_ID ? db_cache_mysql.add_placeholders(source_, query_, col_, col_id_) : query_);
+	
+		return db_cache_mysql.add(source_, query, return_data_, true);
+	}
+
+	public static String get_query_select_count(String source_, String where_)
+	{
+		String output = "SELECT COUNT(*) FROM " + get_variable(source_, db.get_table(source_));
+		
+		if (strings.is_ok(where_)) output += " WHERE " + where_;
+
+		return output;
+	}
+	
+	public static String get_variable(String source_, String variable_) { return db.get_variable(source_, variable_); }
+	
+	public static String get_value(String source_) { return get_value(source_, null); }
+	
+	public static String get_value(String source_, String value_) { return db.get_value(source_, (value_ == null ? "placeholder" : value_)); }
+	
+	public static HashMap<Integer, String> add_changing_val(int col_id_, String val_) { return add_changing_val(col_id_, val_, null); }
+	
+	public static HashMap<Integer, String> add_changing_val(int col_id_, String val_, HashMap<Integer, String> changing_vals_) 
+	{ 
+		HashMap<Integer, String> output = (changing_vals_ != null ? new HashMap<Integer, String>(changing_vals_) : new HashMap<Integer, String>());
+		
+		output.put(col_id_, val_);
+		
+		return output; 
+	}
+	
+	public static int get_col_id(String col_, String[] cols_) { return arrays_quick.get_i(cols_, col_); }
+	
 	static int add(String source_, String query_, String db_type_, boolean return_data_, boolean is_quick_, String quote_value_, String quote_variable_)
 	{
 		int output = WRONG_ID;
@@ -117,6 +154,19 @@ public abstract class db_cache
 			start_i = i;
 		}
 		
+		return output;
+	}
+	
+	static boolean exists_simple(int id_select_count_query_, HashMap<Integer, String> changing_vals_, String type_, String quote_value_, String select_count_col_) { return (select_count_simple(id_select_count_query_, changing_vals_, type_, quote_value_, select_count_col_) > 0); }
+	
+	static int select_count_simple(int id_, HashMap<Integer, String> changing_vals_, String type_, String quote_value_, String select_count_col_) 
+	{ 
+		int output = 0;
+
+		ArrayList<HashMap<String, String>> temp = execute_simple(id_, null, changing_vals_, type_, quote_value_);
+
+		if (temp != null && temp.size() > 0) output = Integer.parseInt(temp.get(0).get(select_count_col_));
+
 		return output;
 	}
 	

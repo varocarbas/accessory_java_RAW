@@ -618,6 +618,20 @@ public abstract class db
 	}
 	
 	public static String[] get_cols(HashMap<String, String> fields_cols_) { return (arrays.is_ok(fields_cols_) ? arrays.to_array(arrays.get_values_hashmap(fields_cols_)) : null); }
+
+	public static String[] get_cols(String source_) 
+	{
+		String[] fields = (String[])get_source_fields(source_, true, false);
+		
+		int tot = arrays.get_size(fields);
+		if (tot == 0) return null;
+		
+		String[] output = new String[tot];
+		
+		for (int i = 0; i < tot; i++) { output[i] = get_col(source_, fields[i]); }
+	
+		return output;
+	}
 	
 	public static String get_table(String source_)
 	{
