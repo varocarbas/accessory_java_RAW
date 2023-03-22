@@ -60,6 +60,23 @@ public abstract class db_info
 	
 	public static HashMap<String, String> get(boolean decrypt_) { return get_all(decrypt_); }
 	
+	public static HashMap<String, String> get(String[] decrypted_keys_) 
+	{ 
+		HashMap<String, String> output = get_all(true); 
+		if (!arrays.is_ok(decrypted_keys_) || !arrays.is_ok(output)) return output;
+		
+		HashMap<String, String> output2 = new HashMap<String, String>();
+		
+		for (String key: decrypted_keys_)
+		{
+			if (!strings.is_ok(key) || !output.containsKey(key)) continue;
+
+			output2.put(key, output.get(key));
+		}
+		
+		return output2;
+	}
+	
 	public static HashMap<String, String> get_all(boolean decrypt_) { return get_internal(db.DEFAULT_WHERE, decrypt_); }
 
 	public static HashMap<String, String> get_encrypted(boolean decrypt_) { return get_internal(get_where_is_enc(true), decrypt_); }
