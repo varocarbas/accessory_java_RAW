@@ -80,6 +80,7 @@ public abstract class db
 	static String _cur_source = strings.DEFAULT; //Only updated by the user, as a way to keep using the same source without having to expressly provide it.
 	static String _cur_type = DEFAULT_TYPE; //Automatically updated every time a new DB type is used.
 	static String _last_query = null;
+	static boolean _print_all_queries = false;
 	
 	private static int[] SOURCES0 = new int[0];
 	private static String[] FIELDS_INFO = new String[0];
@@ -810,6 +811,8 @@ public abstract class db
 	}
 
 	public static String get_last_query() { return _last_query; }
+	
+	public static void print_all_queries(boolean print_all_queries_) { _print_all_queries = print_all_queries_; }
 	
 	static String[] populate_all_queries_data() { return new String[] { QUERY_SELECT, QUERY_SELECT_COUNT, QUERY_TABLE_EXISTS }; }
 

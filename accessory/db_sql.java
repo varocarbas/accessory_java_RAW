@@ -66,6 +66,8 @@ abstract class db_sql
 
 		db._last_query = query_;
 		
+		if (db._print_all_queries) generic.to_screen(query_);
+		
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
 		if (conn_ == null) return output;
 		

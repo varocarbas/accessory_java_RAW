@@ -59,6 +59,10 @@ public abstract class generic extends parent_static
 
 	public static boolean is_db_order(Object input_) { return is_common(input_, new Class<?>[] { db_order.class }, false); }
 
+	public static boolean is_xy(Class<?> input_) { return is_common(input_, new Class<?>[] { xy.class }, true); }
+
+	public static boolean is_xy(Object input_) { return is_common(input_, new Class<?>[] { xy.class }, false); }
+
 	public static boolean is_string(Class<?> input_) { return is_common(input_, new Class<?>[] { String.class }, true); }
 
 	public static boolean is_string(Object input_) { return is_common(input_, new Class<?>[] { String.class }, false); }
@@ -208,6 +212,7 @@ public abstract class generic extends parent_static
 		else if (input_ instanceof db_field) type = db_field.class;
 		else if (input_ instanceof db_where) type = db_where.class;
 		else if (input_ instanceof db_order) type = db_order.class;
+		else if (input_ instanceof xy) type = xy.class;
 		else if (input_ instanceof HashMap<?, ?>) type = HashMap.class;
 		else if (input_ instanceof ArrayList<?>) type = ArrayList.class;
 		else if (input_ instanceof double[]) type = double[].class;
@@ -435,7 +440,8 @@ public abstract class generic extends parent_static
 		classes.add(db_field.class);
 		classes.add(db_where.class);
 		classes.add(db_order.class);
-
+		classes.add(xy.class);
+		
 		classes.add(String.class);
 		classes.add(Boolean.class);
 		classes.add(boolean.class);

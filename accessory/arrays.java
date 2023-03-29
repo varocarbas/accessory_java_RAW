@@ -643,6 +643,7 @@ public abstract class arrays extends parent_static
 		else if (generic.are_equal(type, db_field.class)) output = (x[])input_.toArray(new db_field[size]);
 		else if (generic.are_equal(type, db_where.class)) output = (x[])input_.toArray(new db_where[size]);
 		else if (generic.are_equal(type, db_order.class)) output = (x[])input_.toArray(new db_order[size]);
+		else if (generic.are_equal(type, xy.class)) output = (x[])input_.toArray(new xy[size]);
 		else if (generic.are_equal(type, Object.class)) output = (x[])input_.toArray(new Object[size]);
 		else if (generic.are_equal(type, HashMap.class)) output = (x[])input_.toArray(new HashMap[size]);
 		else if (generic.are_equal(type, ArrayList.class)) output = (x[])input_.toArray(new ArrayList[size]);
