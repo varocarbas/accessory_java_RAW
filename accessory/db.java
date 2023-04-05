@@ -90,6 +90,7 @@ public abstract class db
 	private static int FIELDS_TOT = -1;
 	
 	private static String[] _credentials = null;
+	private static String _credentials_setup = null;
 	
 	public static String get_cur_source() { return _cur_source; }
 	
@@ -813,6 +814,8 @@ public abstract class db
 	public static String get_last_query() { return _last_query; }
 	
 	public static void print_all_queries(boolean print_all_queries_) { _print_all_queries = print_all_queries_; }
+
+	public static HashMap<String, String> get_credentials(String source_, String user_, boolean encrypted_) { return credentials.get_username_password(get_encryption_id(source_), user_, encrypted_, _types.CONFIG_CREDENTIALS_WHERE_FILE); }
 	
 	static String[] populate_all_queries_data() { return new String[] { QUERY_SELECT, QUERY_SELECT_COUNT, QUERY_TABLE_EXISTS }; }
 
@@ -917,10 +920,11 @@ public abstract class db
 
 		return output;
 	}
-
+	
 	static String[] get_credentials(String source_)
 	{
-		if (arrays.is_ok(_credentials) && credentials_in_memory(source_)) return arrays_quick.get_new(_credentials);
+		boolean in_memory = credentials_in_memory(source_);
+		if (in_memory && _credentials != null) return arrays_quick.get_new(_credentials);
 			
 		String setup = get_valid_setup(source_);
 		
@@ -937,16 +941,22 @@ public abstract class db
 			boolean stored_in_files = crypto.is_stored_in_files();
 			if (!stored_in_files) crypto.store_in_files();
 			
-			temp = credentials.get_username_password(get_encryption_id(source_), user, encrypted, _types.CONFIG_CREDENTIALS_WHERE_FILE);
+			temp = get_credentials(source_, user, encrypted);
 
 			if (!stored_in_files) crypto.store_in_db();
 		}
-		
 		if (!arrays.is_ok(temp)) return null;
 		
-		update_credentials_memory(temp.get(credentials.USERNAME), temp.get(credentials.PASSWORD));
+		String[] credentials = get_credentials(temp.get(accessory.credentials.USERNAME), temp.get(accessory.credentials.PASSWORD));
+
+		if (in_memory)
+		{
+			update_credentials_memory(credentials);
+			
+			if (_credentials_setup == null) _credentials_setup = setup;
+		}
 		
-		return arrays_quick.get_new(_credentials);
+		return credentials;
 	}
 	
 	static parent_db get_valid_instance(String source_) 
@@ -1092,6 +1102,17 @@ public abstract class db
 		return output;
 	}
 
+	static boolean credentials_in_memory(String source_) 
+	{ 
+		String setup = get_valid_setup(source_);
+		
+		boolean output = config.get_boolean(setup, CREDENTIALS_MEMORY); 
+	
+		if (output && _credentials_setup != null && !_credentials_setup.equals(setup)) output = false;
+		
+		return output;
+	}
+
 	private static String execute_start(String source_, String what_)
 	{
 		String output = null;
@@ -1140,8 +1161,6 @@ public abstract class db
 	}
 	
 	private static void create_table(String source_, HashMap<String, db_field> fields_, boolean drop_it_) { db_queries.create_table(source_, fields_, drop_it_); }
-
-	private static boolean credentials_in_memory(String source_) { return config.get_boolean(get_valid_setup(source_), CREDENTIALS_MEMORY); }
 	
 	private static String[] get_all_queries_data() { return _alls.DB_QUERIES_DATA; }
 
@@ -1211,11 +1230,17 @@ public abstract class db
 		return adapt_input(source, ((arrays.is_ok(old_) ? new HashMap<String, String>(old_) : new HashMap<String, String>())), field_, val_, fields);
 	}
 	
-	private static void update_credentials_memory(String username_, String password_)
+	private static void update_credentials_memory(String username_, String password_) { update_credentials_memory(get_credentials(username_, password_)); }
+	
+	private static void update_credentials_memory(String[] credentials_) { _credentials = arrays_quick.get_new(credentials_); }
+	
+	private static String[] get_credentials(String username_, String password_)
 	{
-		if (_credentials == null) _credentials = new String[2];
+		String[] output = new String[2];
+	
+		output[credentials.USERNAME_I] = username_;
+		output[credentials.PASSWORD_I] = password_;
 		
-		_credentials[credentials.USERNAME_I] = username_;
-		_credentials[credentials.PASSWORD_I] = password_;
+		return output;
 	}
 }

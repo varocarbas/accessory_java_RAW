@@ -84,7 +84,7 @@ class _ini_db extends parent_ini_db
 
 	private HashMap<String, Object[]> add_source_crypto(String db_, HashMap<String, Object[]> sources_)
 	{
-		String source = db_crypto.SOURCE;
+		String source = db_crypto.get_source();
 		boolean default_fields = true;
 
 		HashMap<String, db_field> info = new HashMap<String, db_field>();

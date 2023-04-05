@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 //Use the methods in this class very carefully! No checks of any sort are performed.
+//Note that the setup information (e.g., host or credentials) isn't being checked either.
+//These methods can only be used with sources associated with a setup where CONFIG_DB_SETUP_CREDENTIALS_MEMORY is true.
 public abstract class db_quicker_mysql 
 {
 	public static final String TYPE = db.MYSQL;

@@ -78,6 +78,9 @@ public class _types extends parent_types
 	//CONFIG_DB_SETUP_CREDENTIALS_USER is a generic ID which is required to encrypt credentials.
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_USER = "config_db_setup_credentials_user";
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED = "config_db_setup_credentials_encrypted";
+	
+	//The CONFIG_DB_SETUP_CREDENTIALS_MEMORY value will be ignored in all the setups after the first one (i.e., its credentials being used to make a DB query).
+	//In any case, it is expected to be false in setups other than the main/default one.
 	public static final String CONFIG_DB_SETUP_CREDENTIALS_MEMORY = "config_db_setup_credentials_memory";
 
 	public static final String CONFIG_DB_DEFAULT = "config_db_default";

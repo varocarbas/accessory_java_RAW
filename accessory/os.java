@@ -2,7 +2,7 @@ package accessory;
 
 import java.util.HashMap;
 
-public abstract class os 
+public abstract class os extends parent_static 
 {
 	public static final int WRONG_PROCESS_ID = -1;
 	public static final int WRONG_WINDOW_ID = -1;
@@ -23,6 +23,8 @@ public abstract class os
 	
 	public static int get_process_id(String app_, String[] keywords_, String[] keywords_ignore_)
 	{
+		method_start();
+		
 		int output = WRONG_PROCESS_ID;
 
 		if (!is_windows()) 
@@ -31,6 +33,8 @@ public abstract class os
 			
 			if (output <= os_unix.WRONG_PROCESS_ID) output = WRONG_PROCESS_ID;
 		}
+		
+		if (output > WRONG_PROCESS_ID) method_end();
 
 		return output;
 	}
@@ -39,10 +43,14 @@ public abstract class os
 
 	public static String[] get_running_processes(String app_, String[] keywords_, String[] keywords_ignore_, boolean only_commands_)
 	{
+		method_start();
+		
 		String[] output = null;
 
 		if (!is_windows()) output = os_unix.get_running_processes(app_, keywords_, keywords_ignore_, only_commands_);
 
+		method_end();
+		
 		return output;
 	}
 
@@ -50,10 +58,14 @@ public abstract class os
 
 	public static String[] get_running_windows(String[] keywords_, String[] keywords_ignore_, boolean only_titles_)
 	{
+		method_start();
+		
 		String[] output = null;
 
 		if (!is_windows()) output = os_unix.get_running_windows(keywords_, keywords_ignore_, only_titles_);
 
+		method_end();
+		
 		return output;
 	}
 
@@ -61,6 +73,8 @@ public abstract class os
 	
 	public static int get_running_window_id_app(String app_, String[] keywords_, String[] keywords_ignore_)
 	{
+		method_start();
+		
 		int output = WRONG_WINDOW_ID;
 		if (!strings.is_ok(app_)) return output;
 		
@@ -71,11 +85,15 @@ public abstract class os
 			if (output <= os_linux.WRONG_WINDOW_ID) output = WRONG_WINDOW_ID;
 		}
 
+		if (output > WRONG_WINDOW_ID) method_end();
+		
 		return output;
 	}
 	
 	public static int get_running_window_id(int process_id_)
 	{
+		method_start();
+		
 		int output = WRONG_WINDOW_ID;
 		if (process_id_ <= WRONG_PROCESS_ID) return output;
 		
@@ -86,11 +104,15 @@ public abstract class os
 			if (output <= os_linux.WRONG_WINDOW_ID) output = WRONG_WINDOW_ID;
 		}
 
+		if (output > WRONG_WINDOW_ID) method_end();
+		
 		return output;
 	}
 	
 	public static int get_running_window_id(String title_)
 	{
+		method_start();
+		
 		int output = WRONG_WINDOW_ID;
 		if (!strings.is_ok(title_)) return output;
 		
@@ -101,6 +123,8 @@ public abstract class os
 			if (output <= os_linux.WRONG_WINDOW_ID) output = WRONG_WINDOW_ID;
 		}
 
+		if (output > WRONG_WINDOW_ID) method_end();
+		
 		return output;
 	}
 	
@@ -109,11 +133,15 @@ public abstract class os
 	public static boolean click_running_window_app(String app_, String[] keywords_, String[] keywords_ignore_, xy xy_) { return click_running_window(get_running_window_id_app(app_, keywords_, keywords_ignore_), xy_); }
 	
 	public static boolean click_running_window(int window_id_, xy xy_) 
-	{ 
+	{
+		method_start();
+		
 		boolean output = false;
 		if (window_id_ <= WRONG_WINDOW_ID) return output;
 
 		if (is_linux()) output = os_linux.click_running_window(window_id_, xy_);
+
+		if (output) method_end();
 		
 		return output;
 	}
@@ -134,10 +162,14 @@ public abstract class os
 	
 	public static boolean fill_running_form(int window_id_, String[] inputs_, xy[] xys_, int waiting_secs_)
 	{
+		method_start();
+		
 		boolean output = false;
 		if (window_id_ <= WRONG_WINDOW_ID || !arrays.is_ok(inputs_)) return output;
 		
 		if (is_linux()) output = os_linux.fill_running_form(window_id_, inputs_, xys_, waiting_secs_);
+		
+		if (output) method_end();
 		
 		return output;
 	}
@@ -146,12 +178,20 @@ public abstract class os
 	
 	public static void kill_app(String app_, String[] keywords_, String[] keywords_to_ignore_) 
 	{
+		method_start();
+		
 		if (!is_windows()) os_unix.kill_app(app_, keywords_, keywords_to_ignore_);
+	
+		method_end();
 	}
 	
 	public static void kill_process(int process_id_)
 	{
+		method_start();
+		
 		if (!is_windows()) os_unix.kill_process(process_id_);
+	
+		method_end();
 	}
 	
 	public static boolean execute_command(String command_) { return execute_command(command_, true); }	
@@ -162,6 +202,8 @@ public abstract class os
 
 	public static Object execute_command(String[] args_, boolean wait_for_it_, boolean return_outputs_) 
 	{
+		method_start();
+		
 		Object output = (return_outputs_ ? null : false);
 
 		if (!arrays.is_ok(args_)) return output;
@@ -178,12 +220,11 @@ public abstract class os
 				try { is_ok = (process.exitValue() == 0); }
 				catch (IllegalThreadStateException e) { is_ok = true; }
 			}
+
+			if (return_outputs_) output = io.get_lines((is_ok ? process.getInputStream() : process.getErrorStream()));
+			else output = is_ok;
 			
-			if (is_ok)
-			{
-				if (return_outputs_) output = io.get_lines(process.getInputStream());
-				else output = true;				
-			}
+			if (is_ok) method_end();
 		} 
 		catch (Exception e) 
 		{ 
@@ -192,7 +233,7 @@ public abstract class os
 			info.put("args", strings.to_string(args_));
 			info.put("wait_for_it", wait_for_it_);
 
-			errors.manage(ERROR_EXECUTE, e, info); 
+			manage_error(ERROR_EXECUTE, e, info); 
 		}
 
 		return output;

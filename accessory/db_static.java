@@ -43,6 +43,8 @@ abstract class db_static
 	
 	public static void update_conn_info(String source_)
 	{
+		if (!db.credentials_in_memory(source_)) return;
+		
 		String[] temp = db.get_credentials(source_);
 	
 		String username = credentials.get_username(temp);

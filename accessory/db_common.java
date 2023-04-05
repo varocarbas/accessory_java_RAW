@@ -306,7 +306,7 @@ public abstract class db_common
 	
 	public static db_field get_field_date(String format_) { return new db_field(data.STRING, dates.get_length(format_), db_field.WRONG_DECIMALS, dates.get_default(format_), null); }
 
-	static String[] populate_all_sources_inbuilt() { return new String[] { db_tests.SOURCE, db_credentials.SOURCE, db_crypto.SOURCE, db_info.SOURCE }; }
+	static String[] populate_all_sources_inbuilt() { return new String[] { db_tests.SOURCE, db_credentials.SOURCE, db_crypto.get_source(), db_info.SOURCE }; }
 
 	static void populate_is_quick_ini()
 	{
@@ -314,7 +314,7 @@ public abstract class db_common
 		
 		for (String source: db.SOURCES) 
 		{
-			if (!IS_QUICK.contains(source)) IS_QUICK.add(source);
+			if (!IS_QUICK.contains(source)) is_quick(source, true);
 		}
 	}
 }
