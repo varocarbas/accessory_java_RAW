@@ -18,10 +18,10 @@ public abstract class db_crypto
 	public static final String WHAT_KEY = crypto.WHAT_KEY;
 	public static final String WHAT_IV = crypto.WHAT_IV;
 	public static final String WHAT_ALGO = crypto.WHAT_ALGO;
+
+	public static final String DEFAULT_SOURCE = _types.CONFIG_CRYPTO_DB_SOURCE;
 	
 	static boolean _is_quick = db_common.DEFAULT_IS_QUICK;
-
-	private static final String DEFAULT_SOURCE = _types.CONFIG_CRYPTO_DB_SOURCE;
 	
 	private static String _source = DEFAULT_SOURCE;
 	
@@ -134,5 +134,17 @@ public abstract class db_crypto
 		String id = db_common.adapt_string(id_, MAX_SIZE_ID);
 		
 		return (strings.is_ok(id) ? (new db_where(source, db_common.get_field_quick_col(source, ID), db_where.OPERAND_EQUAL, id, true, db_where.DEFAULT_LINK, _is_quick)).toString() : strings.DEFAULT); 
+	}
+	
+	public static HashMap<String, db_field> get_fields_info()
+	{
+		HashMap<String, db_field> info = new HashMap<String, db_field>();
+
+		info.put(ID, db_common.get_field_string(MAX_SIZE_ID, true));
+		info.put(ALGO, db_common.get_field_string(MAX_SIZE_ALGO));
+		info.put(IV, db_common.get_field_string(MAX_SIZE_IV));
+		info.put(KEY, db_common.get_field_string_big());
+
+		return info;
 	}
 }

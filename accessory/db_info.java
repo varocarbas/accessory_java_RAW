@@ -6,8 +6,6 @@ import java.util.Map.Entry;
 
 public abstract class db_info
 {
-	public static final String SOURCE = _types.CONFIG_INFO_DB_SOURCE;
-	
 	public static final String KEY = _types.CONFIG_INFO_DB_FIELD_KEY;
 	public static final String VALUE = _types.CONFIG_INFO_DB_FIELD_VALUE;
 	public static final String IS_ENC = _types.CONFIG_INFO_DB_FIELD_IS_ENC;
@@ -16,9 +14,24 @@ public abstract class db_info
 	public static final int MAX_SIZE_VALUE = 200;
 
 	public static final String ENCRYPTION_ID = "info";
+
+	public static final String DEFAULT_SOURCE = _types.CONFIG_INFO_DB_SOURCE;
 	
 	static boolean _is_quick = db_common.DEFAULT_IS_QUICK;
 	
+	private static String _source = DEFAULT_SOURCE;
+	
+	public static String get_source() { return _source; }
+	
+	public static boolean update_source(String compatible_source_)
+	{
+		boolean output = db.source_is_ok(compatible_source_);
+		
+		if (output) _source = compatible_source_; 	
+		
+		return output;
+	}
+		
 	@SuppressWarnings("unchecked")
 	public static boolean add(HashMap<String, String> vals_, boolean is_enc_, boolean encrypt_, boolean truncate_)
 	{
@@ -30,6 +43,8 @@ public abstract class db_info
 		Object all_vals = adapt_vals(vals_, is_enc_, encrypt_, !truncate_);
 		if (!arrays.is_ok(all_vals)) return output;
 
+		String source = get_source();
+		
 		int count_wrong = 0;
 		
 		for (Object vals: (_is_quick ? (ArrayList<HashMap<String, String>>)all_vals : (ArrayList<HashMap<String, Object>>)all_vals))
@@ -38,15 +53,15 @@ public abstract class db_info
 			
 			if (_is_quick) 
 			{
-				db_quick.insert(SOURCE, (HashMap<String, String>)vals);
+				db_quick.insert(source, (HashMap<String, String>)vals);
 				
-				is_ok = db_quick.is_ok(SOURCE);
+				is_ok = db_quick.is_ok(source);
 			}
 			else 
 			{
-				db.insert(SOURCE, (HashMap<String, Object>)vals);
+				db.insert(source, (HashMap<String, Object>)vals);
 				
-				is_ok = db.is_ok(SOURCE);
+				is_ok = db.is_ok(source);
 			}
 			
 			if (!is_ok) count_wrong++;			
@@ -83,13 +98,31 @@ public abstract class db_info
 	
 	public static HashMap<String, String> get_decrypted() { return get_internal(get_where_is_enc(false), false); }
 	
-	public static void truncate() { db.truncate_table(SOURCE); }
+	public static void truncate() { db.truncate_table(get_source()); }
 	
-	public static String get_where_is_enc(boolean is_enc_) { return (new db_where(SOURCE, db_common.get_field_quick_col(SOURCE, IS_ENC), db_where.OPERAND_EQUAL, db_common.get_val(SOURCE, is_enc_), true, db_where.DEFAULT_LINK, _is_quick)).toString(); }
+	public static String get_where_is_enc(boolean is_enc_) 
+	{ 
+		String source = get_source();
+		
+		return (new db_where(source, db_common.get_field_quick_col(source, IS_ENC), db_where.OPERAND_EQUAL, db_common.get_val(source, is_enc_), true, db_where.DEFAULT_LINK, _is_quick)).toString(); 
+	}
+	
+	public static HashMap<String, db_field> get_fields_info()
+	{
+		HashMap<String, db_field> info = new HashMap<String, db_field>();
+
+		info.put(KEY, db_common.get_field_string(MAX_SIZE_KEY, true));
+		info.put(VALUE, db_common.get_field_string(MAX_SIZE_VALUE));
+		info.put(IS_ENC, db_common.get_field_is_enc());
+
+		return info;
+	}
 	
 	private static HashMap<String, String> get_internal(String where_, boolean decrypt_)
 	{
-		ArrayList<HashMap<String, String>> all_vals = (_is_quick ? db_quick.select(SOURCE, db_quick.get_cols(SOURCE), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER) : db.select(SOURCE, db_common.get_fields(SOURCE), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER));
+		String source = get_source();
+		
+		ArrayList<HashMap<String, String>> all_vals = (_is_quick ? db_quick.select(source, db_quick.get_cols(source), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER) : db.select(source, db_common.get_fields(source), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER));
 		if (!arrays.is_ok(all_vals)) return null;
 	
 		HashMap<String, String> output = new HashMap<String, String>();
@@ -98,9 +131,9 @@ public abstract class db_info
 		
 		for (HashMap<String, String> vals: all_vals)
 		{
-			String key = vals.get(db_common.get_field_quick_col(SOURCE, KEY));
-			String value = vals.get(db_common.get_field_quick_col(SOURCE, VALUE));
-			boolean is_enc = (boolean)db.adapt_output_internal(vals.get(db_common.get_field_quick_col(SOURCE, IS_ENC)), data.BOOLEAN);
+			String key = vals.get(db_common.get_field_quick_col(source, KEY));
+			String value = vals.get(db_common.get_field_quick_col(source, VALUE));
+			boolean is_enc = (boolean)db.adapt_output_internal(vals.get(db_common.get_field_quick_col(source, IS_ENC)), data.BOOLEAN);
 		
 			boolean is_ok = true;
 			
@@ -162,6 +195,8 @@ public abstract class db_info
 		}
 		else outputs = (ArrayList<HashMap<String, Object>>)arrays.get_new((ArrayList<HashMap<String, Object>>)outputs_);
 
+		String source = get_source();
+		
 		for (Entry<String, String> item: vals_.entrySet())
 		{
 			String key = item.getKey();
@@ -170,9 +205,9 @@ public abstract class db_info
 			if (_is_quick)
 			{
 				HashMap<String, String> output = new HashMap<String, String>();				
-				output.put(db_quick.get_col(SOURCE, KEY), key);
-				output.put(db_quick.get_col(SOURCE, VALUE), value);
-				output.put(db_quick.get_col(SOURCE, IS_ENC), is_enc_quick);	
+				output.put(db_quick.get_col(source, KEY), key);
+				output.put(db_quick.get_col(source, VALUE), value);
+				output.put(db_quick.get_col(source, IS_ENC), is_enc_quick);	
 
 				outputs_quick.add(output);
 			}

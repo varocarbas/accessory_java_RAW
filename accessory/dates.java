@@ -51,6 +51,7 @@ public abstract class dates extends parent_static
 	public static final int DEFAULT_SIZE_DAYS = 50;
 	public static final int DEFAULT_SIZE_HOURS = 10;
 	public static final int DEFAULT_OFFSET = 0;
+	public static final boolean DEFAULT_APPLY_OFFSET = false;
 
 	private static int _offset = DEFAULT_OFFSET;
 	
@@ -79,6 +80,8 @@ public abstract class dates extends parent_static
 		return ((day == DayOfWeek.SATURDAY) || (day == DayOfWeek.SUNDAY)); 
 	}
 
+	public static boolean are_equal(LocalDate date1_, LocalDate date2_) { return (date1_ != null && date2_ != null && date1_.getDayOfYear() == date2_.getDayOfYear()); }
+	
 	public static int get_offset() { return _offset; }
 
 	public static void update_offset() { update_offset(DEFAULT_OFFSET); }
@@ -135,7 +138,7 @@ public abstract class dates extends parent_static
 
 	public static String get_now_string(String format_, int offset_) { return get_formatter(format_).format(get_now(offset_)); }
 
-	public static boolean target_met(LocalDateTime start_, long target_) { return target_met(start_, DEFAULT_UNIT_DATE_TIME, target_); }
+	public static boolean target_met(LocalDateTime start_, long target_) { return target_met(start_, DEFAULT_UNIT_DATE_TIME, target_, DEFAULT_APPLY_OFFSET); }
 
 	public static String update_timestamp(long increase_) { return update_timestamp(to_string(get_now(), DEFAULT_FORMAT_TIMESTAMP), increase_); }
 
@@ -170,23 +173,23 @@ public abstract class dates extends parent_static
 
 	public static boolean target_met(LocalDate start_, long target_) { return target_met(start_, DEFAULT_UNIT_DATE, target_); }
 
-	public static boolean target_met(LocalTime start_, long target_) { return target_met(start_, DEFAULT_UNIT_TIME, target_); }
+	public static boolean target_met(LocalTime start_, long target_) { return target_met(start_, DEFAULT_UNIT_TIME, target_, DEFAULT_APPLY_OFFSET); }
 
-	public static boolean target_met(LocalDateTime start_, String unit_, long target_) { return (get_diff(start_, get_now(), unit_) >= target_); }
+	public static boolean target_met(LocalDateTime start_, String unit_, long target_, boolean apply_offset_) { return (get_diff(start_, get_now((apply_offset_ ? _offset : DEFAULT_OFFSET)), unit_) >= target_); }
 
 	public static boolean target_met(LocalDate start_, String unit_, long target_) { return (get_diff(start_, get_now_date(), unit_) >= target_); }
 
-	public static boolean target_met(LocalTime start_, String unit_, long target_) { return (get_diff(start_, get_now_time(), unit_) >= target_); }
+	public static boolean target_met(LocalTime start_, String unit_, long target_, boolean apply_offset_) { return (get_diff(start_, get_now_time((apply_offset_ ? _offset : DEFAULT_OFFSET)), unit_) >= target_); }
 
-	public static boolean passed(LocalDateTime input_) { return passed(input_, false); }
+	public static boolean passed(LocalDateTime input_) { return passed(input_, DEFAULT_APPLY_OFFSET); }
 
 	public static boolean passed(LocalDateTime input_, boolean apply_offset_) { return (get_diff(input_, get_now((apply_offset_ ? _offset : DEFAULT_OFFSET)), UNIT_SECONDS) > 0); }
 
-	public static boolean passed(LocalDate input_) { return passed(input_, false); }
+	public static boolean passed(LocalDate input_) { return passed(input_, DEFAULT_APPLY_OFFSET); }
 
 	public static boolean passed(LocalDate input_, boolean apply_offset_) { return (get_diff(input_, get_now_date((apply_offset_ ? _offset : DEFAULT_OFFSET)), UNIT_DAYS) > 0); }
 
-	public static boolean passed(LocalTime input_) { return passed(input_, false); }
+	public static boolean passed(LocalTime input_) { return passed(input_, DEFAULT_APPLY_OFFSET); }
 
 	public static boolean passed(LocalTime input_, boolean apply_offset_) { return (get_diff(input_, get_now_time((apply_offset_ ? _offset : DEFAULT_OFFSET)), UNIT_SECONDS) > 0); }
 
@@ -350,19 +353,19 @@ public abstract class dates extends parent_static
 		return (date_time == null ? false : get_now_date(DEFAULT_OFFSET).compareTo(date_time.toLocalDate()) == 0);
 	}
 
-	public static LocalTime time_from_string(String input_) { return time_from_string(input_, false); }
+	public static LocalTime time_from_string(String input_) { return time_from_string(input_, DEFAULT_APPLY_OFFSET); }
 
 	public static LocalTime time_from_string(String input_, boolean apply_offset_) { return time_from_string(input_, DEFAULT_FORMAT_TIME, apply_offset_); }
 
 	public static LocalTime time_from_string(String input_, String format_, boolean apply_offset_) { return to_time(from_string(input_, format_, apply_offset_)); }
 
-	public static LocalDate date_from_string(String input_) { return date_from_string(input_, false); }
+	public static LocalDate date_from_string(String input_) { return date_from_string(input_, DEFAULT_APPLY_OFFSET); }
 
 	public static LocalDate date_from_string(String input_, boolean apply_offset_) { return date_from_string(input_, DEFAULT_FORMAT_DATE, apply_offset_); }
 
 	public static LocalDate date_from_string(String input_, String format_, boolean apply_offset_) { return to_date(from_string(input_, format_, apply_offset_)); }
 
-	public static LocalDateTime from_string(String input_, String format_) { return from_string(input_, format_, false); }
+	public static LocalDateTime from_string(String input_, String format_) { return from_string(input_, format_, DEFAULT_APPLY_OFFSET); }
 
 	public static LocalDateTime from_string(String input_, String format_, boolean apply_offset_) { return from_string(input_, format_, apply_offset_, false); }
 

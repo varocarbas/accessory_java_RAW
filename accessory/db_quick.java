@@ -22,9 +22,9 @@ public abstract class db_quick
 		if (is_quicker(source_)) db_quicker.update_conn_info(source_);
 	}
 	
-	public static void update_conn_info(String source_, String username_, String password_, String db_name_, String host_, String user_, String max_pool_)
+	public static void update_conn_info(String source_, String username_, String password_, String db_name_, String host_, String user_, String max_pool_, String connect_timeout_, String socket_timeout_)
 	{
-		if (is_quicker(source_)) db_quicker.update_conn_info(username_, password_, db_name_, host_, user_, max_pool_);
+		if (is_quicker(source_)) db_quicker.update_conn_info(username_, password_, db_name_, host_, user_, max_pool_, connect_timeout_, socket_timeout_);
 	}
 	
 	public static boolean change_db_name_queries(String source_, String name_) 

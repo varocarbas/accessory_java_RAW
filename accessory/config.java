@@ -39,6 +39,12 @@ public abstract class config extends parent_static
 
 	public static boolean update_strings(String key_, Object val_) { return update(_types.CONFIG_STRINGS, key_, val_); }
 
+	public static Object get_os(String key_) { return get(_types.CONFIG_OS, key_); }
+
+	public static boolean get_os_boolean(String key_) { return get_boolean(_types.CONFIG_OS, key_); }
+
+	public static boolean update_os(String key_, Object val_) { return update(_types.CONFIG_OS, key_, val_); }
+
 	public static boolean update(String type_, String key_, Object val_) { return update_matches(type_, key_, val_, true, false); }
 
 	public static HashMap<String, Boolean> update(String type_, HashMap<String, Object> vals_) { return update_matches(type_, vals_, false); }

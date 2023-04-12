@@ -25,12 +25,16 @@ public abstract class db_quicker_mysql
 	public static String get_host() { return db_quicker.get_host(); }
 
 	public static String get_max_pool() { return db_quicker.get_max_pool(); }
+
+	public static String get_connect_timeout() { return db_quicker.get_connect_timeout(); }
+
+	public static String get_socket_timeout() { return db_quicker.get_socket_timeout(); }
 	
 	public static boolean conn_info_is_ok() { return db_quicker.conn_info_is_ok(); }
 	
 	public static void update_conn_info(String source_) { db_quicker.update_conn_info(source_); }
 	
-	public static void update_conn_info(String username_, String password_, String db_name_, String host_, String user_, String max_pool_) { db_quicker.update_conn_info(username_, password_, db_name_, host_, user_, max_pool_); }
+	public static void update_conn_info(String username_, String password_, String db_name_, String host_, String user_, String max_pool_, String connect_timeout_, String socket_timeout_) { db_quicker.update_conn_info(username_, password_, db_name_, host_, user_, max_pool_, connect_timeout_, socket_timeout_); }
 	
 	public static boolean change_db_name_queries(String source_, String name_) { return db_quicker.change_db_name_queries(source_, name_); }
 	

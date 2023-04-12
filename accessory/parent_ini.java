@@ -63,8 +63,8 @@ public abstract class parent_ini
 		
 		DBS_SETUP = new HashMap<String, Object>();
 		
-		if (strings.is_ok(user_)) DBS_SETUP = parent_ini_db.get_setup_vals(null, user_, dbs_host_, dbs_encrypted_);
-		else if (strings.is_ok(dbs_username_) && dbs_password_ != null) DBS_SETUP = parent_ini_db.get_setup_vals(null, dbs_username_, dbs_password_, dbs_host_);
+		if (strings.is_ok(user_)) DBS_SETUP = db.get_setup_vals(null, user_, dbs_host_, dbs_encrypted_);
+		else if (strings.is_ok(dbs_username_) && dbs_password_ != null) DBS_SETUP = db.get_setup_vals(null, dbs_username_, dbs_password_, dbs_host_);
 
 		populate_all_internal(name_, includes_legacy_);
 	}

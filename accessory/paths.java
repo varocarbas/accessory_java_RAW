@@ -38,7 +38,16 @@ public abstract class paths extends parent_static
 		
 		return (file.exists() && file.isFile()); 
 	}
-
+	
+	public static boolean dir_exists(String path_) 
+	{ 
+		if (!strings.is_ok(path_)) return false;
+		
+		File file = new File(path_);
+		
+		return (file.exists() && file.isDirectory()); 
+	}
+	
 	public static boolean exists(String path_) { return (strings.is_ok(path_) && (new File(path_)).exists()); }
 	
 	public static boolean is_file(String path_) { return (strings.is_ok(path_) && (new File(path_)).isFile()); }
@@ -104,9 +113,9 @@ public abstract class paths extends parent_static
 
 	public static String get_sound_path(String file_) { return (strings.is_ok(file_) ? build(new String[] { get_dir(DIR_SOUNDS), file_ }, true) : strings.DEFAULT); }
 	
-	public static String get_dir(String type_) { return get_update_dir(type_, null, true); }
+	public static String get_dir(String type_) { return (String)get_update_dir(type_, null, true); }
 
-	public static void update_dir(String type_, String val_) { get_update_dir(type_, val_, false); }
+	public static boolean update_dir(String type_, String val_) { return (boolean)get_update_dir(type_, val_, false); }
 
 	public static String get_file_full(String name_, String extension_)
 	{
@@ -195,15 +204,15 @@ public abstract class paths extends parent_static
 		return build(arrays.to_array(parts), false);
 	}
 
-	private static String get_update_dir(String type_, String val_, boolean is_get_)
+	private static Object get_update_dir(String type_, String val_, boolean is_get_)
 	{
-		String output = strings.DEFAULT;
+		Object output = (is_get_ ? strings.DEFAULT : false);
 
 		String type = _types.check_type(type_, DIR);
 		if (!strings.is_ok(type)) return output;
 
 		if (is_get_) output = (String)config.get_basic(type);
-		else config.update_basic(type, val_);
+		else if (dir_exists(val_)) output = config.update_basic(type, val_);
 
 		return output;
 	}

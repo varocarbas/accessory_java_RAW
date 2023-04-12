@@ -26,12 +26,12 @@ abstract class os_linux
 		
 		int max_i_xys = arrays.get_size(xys_) - 1;
 		
-		boolean use_coordinates = (max_i_xys >= 0);
+		boolean use_coordinates = (can_move_mouse() && max_i_xys >= 0);
 		
 		if (use_coordinates && max_i_xys < max_i) return false;
 		
-		boolean click_submit = (max_i_xys > max_i);
-		
+		boolean click_submit = (use_coordinates && max_i_xys > max_i);
+
 		xy xy = null;
 				
 		boolean is_first = true;		
@@ -55,8 +55,20 @@ abstract class os_linux
 			wait_secs(waiting_secs_);
 		}
 
-		return fill_running_form_input(window_id_, "Return", true, (click_submit ? new xy(xys_[i]) : null));
+		boolean output = false;
+		
+		if (click_submit) output = fill_running_form_input(window_id_, "Return", true, new xy(xys_[i]));
+		else
+		{
+			if (fill_running_form_input(window_id_, "Tab", true, null)) wait_secs();
+			
+			output = fill_running_form_input(window_id_, "Return", true, null);
+		}
+		
+		return output;
 	}
+	
+	public static boolean can_move_mouse() { return !os.is_virtual_machine(); }
 	
 	private static boolean fill_running_form_input(int window_id_, String input_, boolean is_key_, xy xy_)
 	{
@@ -76,6 +88,8 @@ abstract class os_linux
 	
 	private static boolean move(int window_id_, xy xy_, boolean click_)
 	{
+		if (!can_move_mouse()) return false;
+		
 		String command = get_command_xdotool_move(window_id_, xy_, click_);
 		
 		return (strings.is_ok(command) ? os_unix.execute_bash(command, true) : false);
@@ -117,18 +131,15 @@ abstract class os_linux
 		
 		String input = input_;		
 		
-		if (is_key_) 
-		{
-			output += "key ";
-		}
+		if (is_key_) output += "key ";
 		else
 		{
-			output += "type ";
+			output += "type --delay 0 ";
 			
 			input = "'" + input + "'";
 		}
 		
-		output += "--delay 0 " + input;
+		output += input;
 		
 		return output; 
 	}

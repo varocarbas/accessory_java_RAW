@@ -53,7 +53,7 @@ public class _types extends parent_types
 	public static final String CONFIG_BASIC_DIR_BACKUPS_DBS = "config_basic_dir_backups_dbs";
 	public static final String CONFIG_BASIC_DIR_BACKUPS_FILES = "config_basic_dir_backups_files";
 	public static final String CONFIG_BASIC_DIR_INFO = "config_basic_dir_info";
-	
+
 	//--- CONFIG_DB variables deal with the generic, common configuration of DBs. Specific CONFIG constants
 	//have to be added to manage each DB's specific information like, for example, sources and fields.
 
@@ -70,6 +70,8 @@ public class _types extends parent_types
 	public static final String CONFIG_DB_SETUP = "config_db_setup";
 	public static final String CONFIG_DB_SETUP_MAX_POOL = "config_db_setup_max_pool";
 	public static final String CONFIG_DB_SETUP_HOST = "config_db_setup_host";
+	public static final String CONFIG_DB_SETUP_CONNECT_TIMEOUT = "config_db_setup_connect_timeout";
+	public static final String CONFIG_DB_SETUP_SOCKET_TIMEOUT = "config_db_setup_socket_timeout";
 	public static final String CONFIG_DB_SETUP_TYPE = "config_db_setup_type";
 	public static final String CONFIG_DB_SETUP_TYPE_MYSQL = "config_db_setup_type_mysql";
 	public static final String CONFIG_DB_SETUP_CREDENTIALS = "config_db_setup_credentials"; 
@@ -156,6 +158,12 @@ public class _types extends parent_types
 	
 	public static final String CONFIG_STRINGS = "config_strings";
 	public static final String CONFIG_STRINGS_ENCODING = "config_strings_encoding";
+	
+	public static final String CONFIG_OS = "config_os";
+	
+	//The boolean flag associated with CONFIG_BASIC_IS_VIRTUAL_MACHINE is meant to account for restrictions which are
+	//common in most virtualisation setups. For example, some applications may be unable to automate mouse movements.
+	public static final String CONFIG_OS_IS_VIRTUAL_MACHINE = "config_os_is_virtual_machine";
 	//------
 
 	public static final String DB = "db";

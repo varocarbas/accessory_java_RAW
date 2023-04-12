@@ -50,7 +50,7 @@ abstract class db_sql
 
 	public static ArrayList<HashMap<String, String>> execute_query(String source_, String query_, boolean return_data_, String[] cols_) { return execute_query(source_, query_, return_data_, cols_, connect(source_), false); }
 	
-	public static ArrayList<HashMap<String, String>> execute_query_quicker(String type_, String source_, String query_, boolean return_data_, String[] cols_, String username_, String password_, String db_name_, String host_, String max_pool_) { return execute_query(source_, query_, return_data_, cols_, connect_static(type_, source_, username_, password_, db_name_, host_, max_pool_), true); }
+	public static ArrayList<HashMap<String, String>> execute_query_quicker(String type_, String source_, String query_, boolean return_data_, String[] cols_, String username_, String password_, String db_name_, String host_, String max_pool_, String connect_timeout_, String socket_timeout_) { return execute_query(source_, query_, return_data_, cols_, connect_static(type_, source_, username_, password_, db_name_, host_, max_pool_, connect_timeout_, socket_timeout_), true); }
 
 	public static String get_backup_file_extension() { return paths.EXTENSION_SQL; }
 	
@@ -65,7 +65,7 @@ abstract class db_sql
 		db.update_is_ok(source_, false, is_static_);
 
 		db._last_query = query_;
-		
+
 		if (db._print_all_queries) generic.to_screen(query_);
 		
 		ArrayList<HashMap<String, String>> output = new ArrayList<HashMap<String, String>>();
@@ -123,18 +123,18 @@ abstract class db_sql
 		return (properties != null ? db.get_valid_instance(source_).connect(source_, properties) : null);
 	}
 
-	private static Connection connect_static(String type_, String source_, String username_, String password_, String db_name_, String host_, String max_pool_) 
+	private static Connection connect_static(String type_, String source_, String username_, String password_, String db_name_, String host_, String max_pool_, String connect_timeout_, String socket_timeout_) 
 	{
 		Properties properties = get_properties_static(username_, password_, max_pool_);
 
-		return (properties != null ? connect_static_internal(type_, source_, properties, db_name_, host_) : null);
+		return (properties != null ? connect_static_internal(type_, source_, properties, db_name_, host_, connect_timeout_, socket_timeout_) : null);
 	}
 
-	private static Connection connect_static_internal(String type_, String source_, Properties properties_, String db_name_, String host_) 
+	private static Connection connect_static_internal(String type_, String source_, Properties properties_, String db_name_, String host_, String connect_timeout_, String socket_timeout_) 
 	{
 		Connection output = null;
 		
-		if (strings.are_equal(type_, db.MYSQL)) output = db_mysql.connect_internal_static(source_, properties_, db_name_, host_, true);
+		if (strings.are_equal(type_, db.MYSQL)) output = db_mysql.connect_internal_static(source_, properties_, db_name_, host_, connect_timeout_, socket_timeout_, true);
 		
 		return output;	
 	}

@@ -4,12 +4,19 @@ import java.util.HashMap;
 
 public abstract class os extends parent_static 
 {
+	public static final String CONFIG_IS_VIRTUAL_MACHINE = _types.CONFIG_OS_IS_VIRTUAL_MACHINE;
+
 	public static final int WRONG_PROCESS_ID = -1;
 	public static final int WRONG_WINDOW_ID = -1;
 
-	public static final int DEFAULT_FORM_WAITING_SECS = 5;
+	public static final int DEFAULT_FORM_WAITING_SECS = 15;
+	public static final boolean DEFAULT_IS_VIRTUAL_MACHINE = false;
 	
 	public static final String ERROR_EXECUTE = _types.ERROR_OS_EXECUTE;
+	
+	public static boolean is_virtual_machine() { return config.get_os_boolean(CONFIG_IS_VIRTUAL_MACHINE); }
+	
+	public static void is_virtual_machine(boolean is_virtual_machine_) { config.update_os(CONFIG_IS_VIRTUAL_MACHINE, is_virtual_machine_); }
 
 	public static boolean is_windows() { return _basic.is_windows(); }
 
@@ -18,6 +25,15 @@ public abstract class os extends parent_static
 	public static String get_dir_separator() { return _basic.get_dir_separator(); }
 
 	public static boolean app_is_running(String app_, String[] keywords_, String[] keywords_ignore_) { return arrays.is_ok(get_running_processes(app_, keywords_, keywords_ignore_, false)); }
+
+	public static boolean can_move_mouse() 
+	{
+		boolean output = false;
+		
+		if (is_linux()) output = os_linux.can_move_mouse();
+		
+		return output; 
+	}
 
 	public static int get_process_id(String app_) { return get_process_id(app_, null, null); }
 	
@@ -211,7 +227,7 @@ public abstract class os extends parent_static
 		try 
 		{
 			boolean is_ok = false;
-		
+
 			Process process = Runtime.getRuntime().exec(args_);
 			
 			if (wait_for_it_) is_ok = (process.waitFor() == 0);

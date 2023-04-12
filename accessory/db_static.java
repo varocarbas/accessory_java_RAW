@@ -13,6 +13,8 @@ abstract class db_static
 	private static String _host = db.DEFAULT_HOST;
 	private static String _user = null;
 	private static String _max_pool = db.DEFAULT_MAX_POOL;
+	private static String _connect_timeout = db.DEFAULT_CONNECT_TIMEOUT;
+	private static String _socket_timeout = db.DEFAULT_SOCKET_TIMEOUT;
 
 	public static void is_ok(boolean is_ok_) { _is_ok = is_ok_; }
 	
@@ -32,6 +34,10 @@ abstract class db_static
 
 	public static String get_max_pool() { return _max_pool; }
 
+	public static String get_connect_timeout() { return _connect_timeout; }
+
+	public static String get_socket_timeout() { return _socket_timeout; }
+	
 	public static void initialise()
 	{
 		_is_ok = false;
@@ -57,11 +63,13 @@ abstract class db_static
 		String user = db.get_user(setup);
 		
 		String max_pool = db.get_max_pool(setup);
+		String connect_timeout = db.get_connect_timeout(setup);
+		String socket_timeout = db.get_socket_timeout(setup);
 	
-		update_conn_info(username, password, db_name, host, user, max_pool);
+		update_conn_info(username, password, db_name, host, user, max_pool, connect_timeout, socket_timeout);
 	}
 	
-	public static void update_conn_info(String username_, String password_, String db_name_, String host_, String user_, String max_pool_)
+	public static void update_conn_info(String username_, String password_, String db_name_, String host_, String user_, String max_pool_, String connect_timeout_, String socket_timeout_)
 	{
 		if (strings.is_ok(username_)) _username = username_;	
 		
@@ -74,6 +82,10 @@ abstract class db_static
 		if (strings.is_ok(user_)) _user = user_;
 		
 		if (strings.is_int(max_pool_)) _max_pool = max_pool_;
+		
+		if (strings.is_int(connect_timeout_)) _connect_timeout = connect_timeout_;
+		
+		if (strings.is_int(socket_timeout_)) _socket_timeout = socket_timeout_;
 	}
 	
 	public static boolean change_db_name_queries(String source_, String name_) 

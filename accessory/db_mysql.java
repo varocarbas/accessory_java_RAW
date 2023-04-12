@@ -47,7 +47,7 @@ class db_mysql extends parent_db
 	
 	public static ArrayList<HashMap<String, String>> execute_query_static(String source_, String query_, boolean return_data_, String[] cols_) { return db_sql.execute_query(source_, query_, return_data_, cols_); }
 
-	public static ArrayList<HashMap<String, String>> execute_query_quicker(String source_, String query_, boolean return_data_, String[] cols_) { return db_sql.execute_query_quicker(db_quicker_mysql.TYPE, source_, query_, return_data_, cols_, db_quicker_mysql.get_username(), db_quicker_mysql.get_password(), db_quicker_mysql.get_db_name(), db_quicker_mysql.get_host(), db_quicker_mysql.get_max_pool()); }
+	public static ArrayList<HashMap<String, String>> execute_query_quicker(String source_, String query_, boolean return_data_, String[] cols_) { return db_sql.execute_query_quicker(db_quicker_mysql.TYPE, source_, query_, return_data_, cols_, db_quicker_mysql.get_username(), db_quicker_mysql.get_password(), db_quicker_mysql.get_db_name(), db_quicker_mysql.get_host(), db_quicker_mysql.get_max_pool(), db_quicker_mysql.get_connect_timeout(), db_quicker_mysql.get_socket_timeout()); }
 	
 	public static String get_select_count_col_static() { return "COUNT(*)"; }
 
@@ -287,11 +287,11 @@ class db_mysql extends parent_db
 		return query;
 	}
 	
-	protected static Connection connect_internal_static(String source_, Properties properties_, String db_name_, String host_, boolean is_static_) 
+	protected static Connection connect_internal_static(String source_, Properties properties_, String db_name_, String host_, String connect_timeout_, String socket_timeout_, boolean is_static_) 
 	{
 		Connection conn = null;
 
-		String url = get_connect_url(source_, db_name_, host_, is_static_);
+		String url = get_connect_url(source_, db_name_, host_, connect_timeout_, socket_timeout_, is_static_);
 		if (!strings.is_ok(url)) return conn;
 
 		try { conn = DriverManager.getConnection(url, properties_); } 
@@ -305,9 +305,14 @@ class db_mysql extends parent_db
 		return conn;
 	} 
 	
-	protected Connection connect_internal(String source_, Properties properties_) { return connect_internal_static(source_, properties_, db.get_db_name(db.get_db(source_)), db.get_host(db.get_valid_setup(source_)), false); }
+	protected Connection connect_internal(String source_, Properties properties_) 
+	{ 
+		String setup = db.get_valid_setup(source_);
+		
+		return connect_internal_static(source_, properties_, db.get_db_name(db.get_db(source_)), db.get_host(setup), db.get_connect_timeout(setup), db.get_socket_timeout(setup), false); 
+	}
 
-	private static String get_connect_url(String source_, String db_name_, String host_, boolean is_static_)
+	private static String get_connect_url(String source_, String db_name_, String host_, String connect_timeout_, String socket_timeout_, boolean is_static_)
 	{   
 		String output = strings.DEFAULT;
 		
@@ -321,6 +326,7 @@ class db_mysql extends parent_db
 			output = "jdbc:mysql://" + host_ + ":3306/" + db_name_;
 			output += "?useUnicode=true&useJDBCCompliantTimezoneShift=true";
 			output += "&useLegacyDatetimeCode=false&serverTimezone=UTC";
+			output += "&connectTimeout=" + connect_timeout_ + "&socketTimeout=" + socket_timeout_;
 		}
 		
 		return output;

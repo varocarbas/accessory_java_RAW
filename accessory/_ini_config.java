@@ -12,20 +12,22 @@ class _ini_config extends parent_ini_config
 
 	protected void populate_all_internal()
 	{
-		populate_generic_basic();
+		populate_basic();
 		
-		populate_generic_credentials();
+		populate_credentials();
 		
-		populate_generic_crypto();
+		populate_crypto();
 		
-		populate_generic_logs();
+		populate_logs();
 		
-		populate_generic_numbers();
+		populate_numbers();
 		
-		populate_generic_strings();
+		populate_strings();
+		
+		populate_os();
 	}
 
-	private static void populate_generic_basic()
+	private static void populate_basic()
 	{
 		String type = _types.CONFIG_BASIC;
 
@@ -34,7 +36,7 @@ class _ini_config extends parent_ini_config
 		for (String subtype: _types.get_subtypes(_types.CONFIG_BASIC_DIR)) { config.update_ini(type, subtype, paths.get_default_dir(subtype)); }
 	}
 
-	private boolean populate_generic_credentials()
+	private boolean populate_credentials()
 	{
 		String type = _types.CONFIG_CREDENTIALS;
 
@@ -48,7 +50,7 @@ class _ini_config extends parent_ini_config
 		return populate(type, null, vals);
 	}
 
-	private boolean populate_generic_crypto()
+	private boolean populate_crypto()
 	{
 		String type = _types.CONFIG_CRYPTO;
 
@@ -62,7 +64,7 @@ class _ini_config extends parent_ini_config
 		return populate(type, null, vals);
 	}
 
-	private boolean populate_generic_logs()
+	private boolean populate_logs()
 	{
 		String type = _types.CONFIG_LOGS;
 
@@ -74,7 +76,7 @@ class _ini_config extends parent_ini_config
 		return populate(type, null, vals);
 	}	
 
-	private boolean populate_generic_numbers()
+	private boolean populate_numbers()
 	{
 		String type = _types.CONFIG_NUMBERS;
 
@@ -84,12 +86,22 @@ class _ini_config extends parent_ini_config
 		return populate(type, null, vals);
 	}
 
-	private boolean populate_generic_strings()
+	private boolean populate_strings()
 	{
 		String type = _types.CONFIG_STRINGS;
 
 		HashMap<String, Object> vals = new HashMap<String, Object>();
 		vals.put(strings.CONFIG_ENCODING, strings.DEFAULT_ENCODING);
+
+		return populate(type, null, vals);
+	}
+
+	private boolean populate_os()
+	{
+		String type = _types.CONFIG_OS;
+
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+		vals.put(os.CONFIG_IS_VIRTUAL_MACHINE, os.DEFAULT_IS_VIRTUAL_MACHINE);
 
 		return populate(type, null, vals);
 	}

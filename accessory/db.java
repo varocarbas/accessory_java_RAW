@@ -6,11 +6,14 @@ import java.util.Map.Entry;
 
 public abstract class db
 {
+	public static final String DB = _types.CONFIG_DB;
 	public static final String NAME = _types.CONFIG_DB_NAME;
+	public static final String SETUP = _types.CONFIG_DB_SETUP;
 	public static final String HOST = _types.CONFIG_DB_SETUP_HOST;
 	public static final String USERNAME = _types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME;
 	public static final String PASSWORD = _types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD;
 	public static final String USER = _types.CONFIG_DB_SETUP_CREDENTIALS_USER;
+	public static final String CREDENTIALS = _types.CONFIG_DB_SETUP_CREDENTIALS;
 	public static final String CREDENTIALS_USERNAME = USERNAME;
 	public static final String CREDENTIALS_PASSWORD = PASSWORD;
 	public static final String CREDENTIALS_USER = USER;
@@ -18,9 +21,10 @@ public abstract class db
 	public static final String CREDENTIALS_MEMORY = _types.CONFIG_DB_SETUP_CREDENTIALS_MEMORY;
 	public static final String MAX_POOL = _types.CONFIG_DB_SETUP_MAX_POOL;
 	public static final String TYPE = _types.CONFIG_DB_SETUP_TYPE;
+	public static final String CONNECT_TIMEOUT = _types.CONFIG_DB_SETUP_CONNECT_TIMEOUT;
+	public static final String SOCKET_TIMEOUT = _types.CONFIG_DB_SETUP_SOCKET_TIMEOUT;
 	public static final String MYSQL = _types.CONFIG_DB_SETUP_TYPE_MYSQL;
 	public static final String TYPE_MYSQL = MYSQL;
-	public static final String SETUP = _types.CONFIG_DB_SETUP;
 	
 	public static final String FIELD_ID = _types.CONFIG_DB_DEFAULT_FIELD_ID;
 	public static final String FIELD_TIMESTAMP = _types.CONFIG_DB_DEFAULT_FIELD_TIMESTAMP;
@@ -66,8 +70,10 @@ public abstract class db
 	public static final String DEFAULT_SETUP = _types.CONFIG_DB;
 	public static final String DEFAULT_TYPE = _types.CONFIG_DB_SETUP_TYPE_MYSQL;
 
-	public static final String DEFAULT_MAX_POOL = "500";
 	public static final String DEFAULT_HOST = "localhost";
+	public static final String DEFAULT_MAX_POOL = "500";
+	public static final String DEFAULT_CONNECT_TIMEOUT = "5000";
+	public static final String DEFAULT_SOCKET_TIMEOUT = "20000";
 	public static final String DEFAULT_CREDENTIALS_TYPE = _types.remove_type(DEFAULT_TYPE, _types.CONFIG_DB_SETUP_TYPE);
 	public static final boolean DEFAULT_CREDENTIALS_MEMORY = true;
 		
@@ -817,6 +823,61 @@ public abstract class db
 
 	public static HashMap<String, String> get_credentials(String source_, String user_, boolean encrypted_) { return credentials.get_username_password(get_encryption_id(source_), user_, encrypted_, _types.CONFIG_CREDENTIALS_WHERE_FILE); }
 	
+	public static HashMap<String, Object> get_setup_vals(String db_name_, String setup_, String user_, String host_, boolean encrypted_) { return add_db_to_setup(db_name_, get_setup_vals(setup_, user_, host_, encrypted_));	}
+
+	public static HashMap<String, Object> get_setup_vals(String setup_, String user_, String host_, boolean encrypted_)
+	{
+		HashMap<String, Object> vals = get_setup_vals_default();
+
+		if (strings.is_ok(setup_)) vals.put(SETUP, setup_);
+		if (strings.is_ok(user_)) vals.put(CREDENTIALS_USER, user_); 
+		if (strings.is_ok(host_)) vals.put(HOST, host_); 
+
+		vals.put(CREDENTIALS_ENCRYPTED, encrypted_);
+
+		return vals;	
+	}
+
+	public static HashMap<String, Object> get_setup_vals(String db_name_, String setup_, String username_, String password_, String host_) { return add_db_to_setup(db_name_, get_setup_vals(setup_, username_, password_, host_));	}
+
+	public static HashMap<String, Object> get_setup_vals(String setup_, String username_, String password_, String host_)
+	{
+		HashMap<String, Object> vals = get_setup_vals_default();
+
+		if (strings.is_ok(setup_)) vals.put(SETUP, setup_);
+		if (strings.is_ok(username_)) vals.put(CREDENTIALS_USERNAME, username_); 
+		if (password_ != null) vals.put(CREDENTIALS_PASSWORD, password_); 
+		if (strings.is_ok(host_)) vals.put(HOST, host_); 
+
+		vals.put(CREDENTIALS_ENCRYPTED, false);
+
+		return vals;	
+	}
+
+	public static HashMap<String, Object> get_setup_vals_default()
+	{
+		HashMap<String, Object> vals = new HashMap<String, Object>();
+
+		vals.put(SETUP, DEFAULT_SETUP);
+		vals.put(TYPE, DEFAULT_TYPE);
+		vals.put(MAX_POOL, DEFAULT_MAX_POOL);
+		vals.put(HOST, DEFAULT_HOST);
+		vals.put(CREDENTIALS_MEMORY, DEFAULT_CREDENTIALS_MEMORY);
+		vals.put(CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT);
+		vals.put(SOCKET_TIMEOUT, DEFAULT_SOCKET_TIMEOUT);
+		
+		return vals;
+	}
+
+	public static boolean setup_vals_are_ok(HashMap<String, Object> setup_vals_)
+	{
+		if (!arrays.keys_exist(setup_vals_, SETUP_IDS)) return false;
+		
+		if (!strings.are_ok(new String[] { (String)setup_vals_.get(DB), (String)setup_vals_.get(SETUP), (String)setup_vals_.get(TYPE) })) return false;
+
+		return true;
+	}
+
 	static String[] populate_all_queries_data() { return new String[] { QUERY_SELECT, QUERY_SELECT_COUNT, QUERY_TABLE_EXISTS }; }
 
 	static void update_is_ok(String source_, boolean is_ok_, boolean is_static_) 
@@ -839,6 +900,10 @@ public abstract class db
 
 	static String get_max_pool(String setup_) { return (String)config.get(setup_, MAX_POOL); }
 
+	static String get_connect_timeout(String setup_) { return (String)config.get(setup_, CONNECT_TIMEOUT); }
+
+	static String get_socket_timeout(String setup_) { return (String)config.get(setup_, SOCKET_TIMEOUT); }
+	
 	static String get_user(String setup_) { return (String)config.get(setup_, CREDENTIALS_USER); }
 
 	static void manage_error(String source_, String message_) { manage_error(source_, ERROR_INFO, message_); }
@@ -986,7 +1051,7 @@ public abstract class db
 	{	
 		if (!strings.is_ok(source_)) return false;
 
-		if (!_ini_db.setup_vals_are_ok(setup_vals_))
+		if (!setup_vals_are_ok(setup_vals_))
 		{
 			manage_error(source_, ERROR_SOURCE, null, null, "Wrong setup vals for source " + source_);
 
@@ -1112,7 +1177,14 @@ public abstract class db
 		
 		return output;
 	}
-
+	
+	static void perform_first_actions()
+	{
+		INSTANCE = _keys.get_key(_types.WHAT_INSTANCE);
+		
+		SETUP_IDS = new String[] { DB, SETUP, TYPE, INSTANCE };		
+	}
+	
 	private static String execute_start(String source_, String what_)
 	{
 		String output = null;
@@ -1242,5 +1314,14 @@ public abstract class db
 		output[credentials.PASSWORD_I] = password_;
 		
 		return output;
+	}
+
+	private static HashMap<String, Object> add_db_to_setup(String db_name_, HashMap<String, Object> vals_)
+	{
+		HashMap<String, Object> vals = new HashMap<String, Object>(vals_);
+
+		if (strings.is_ok(db_name_)) vals.put(_types.CONFIG_DB_NAME, db_name_);
+		
+		return vals;	
 	}
 }
