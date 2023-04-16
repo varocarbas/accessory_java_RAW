@@ -32,6 +32,10 @@ abstract class os_linux
 		
 		boolean click_submit = (use_coordinates && max_i_xys > max_i);
 
+		os_unix.execute_bash("setxkbmap us", true);
+		
+		wait_secs(waiting_secs_);
+		
 		xy xy = null;
 				
 		boolean is_first = true;		
@@ -55,15 +59,9 @@ abstract class os_linux
 			wait_secs(waiting_secs_);
 		}
 
-		boolean output = false;
+		boolean output = fill_running_form_input(window_id_, "Return", true, (click_submit ? new xy(xys_[i]) : null));
 		
-		if (click_submit) output = fill_running_form_input(window_id_, "Return", true, new xy(xys_[i]));
-		else
-		{
-			if (fill_running_form_input(window_id_, "Tab", true, null)) wait_secs();
-			
-			output = fill_running_form_input(window_id_, "Return", true, null);
-		}
+		wait_secs();
 		
 		return output;
 	}

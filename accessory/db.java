@@ -72,8 +72,8 @@ public abstract class db
 
 	public static final String DEFAULT_HOST = "localhost";
 	public static final String DEFAULT_MAX_POOL = "500";
-	public static final String DEFAULT_CONNECT_TIMEOUT = "5000";
-	public static final String DEFAULT_SOCKET_TIMEOUT = "20000";
+	public static final String DEFAULT_CONNECT_TIMEOUT = "15000";
+	public static final String DEFAULT_SOCKET_TIMEOUT = "60000";
 	public static final String DEFAULT_CREDENTIALS_TYPE = _types.remove_type(DEFAULT_TYPE, _types.CONFIG_DB_SETUP_TYPE);
 	public static final boolean DEFAULT_CREDENTIALS_MEMORY = true;
 		

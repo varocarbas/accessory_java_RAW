@@ -1,15 +1,16 @@
 package accessory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class os extends parent_static 
 {
 	public static final String CONFIG_IS_VIRTUAL_MACHINE = _types.CONFIG_OS_IS_VIRTUAL_MACHINE;
-
+	
 	public static final int WRONG_PROCESS_ID = -1;
 	public static final int WRONG_WINDOW_ID = -1;
 
-	public static final int DEFAULT_FORM_WAITING_SECS = 15;
+	public static final int DEFAULT_FORM_WAITING_SECS = 30;
 	public static final boolean DEFAULT_IS_VIRTUAL_MACHINE = false;
 	
 	public static final String ERROR_EXECUTE = _types.ERROR_OS_EXECUTE;
@@ -220,10 +221,14 @@ public abstract class os extends parent_static
 	{
 		method_start();
 		
-		Object output = (return_outputs_ ? null : false);
+		Object output = (return_outputs_ ? new ArrayList<String>() : false);
 
 		if (!arrays.is_ok(args_)) return output;
 
+		HashMap<String, Object> error_info = new HashMap<String, Object>();
+		error_info.put("args", strings.to_string(args_));
+		error_info.put("wait_for_it", wait_for_it_);
+	
 		try 
 		{
 			boolean is_ok = false;
@@ -237,20 +242,25 @@ public abstract class os extends parent_static
 				catch (IllegalThreadStateException e) { is_ok = true; }
 			}
 
-			if (return_outputs_) output = io.get_lines((is_ok ? process.getInputStream() : process.getErrorStream()));
+			if (return_outputs_) 
+			{
+				if (is_ok) output = io.get_lines(process.getInputStream());
+			}
 			else output = is_ok;
 			
 			if (is_ok) method_end();
+			else
+			{
+				ArrayList<String> error = io.get_lines(process.getErrorStream());
+				
+				if (return_outputs_) output = arrays.get_new(error);
+				
+				error_info.put(errors.MESSAGE, strings.to_string(error));
+
+				manage_error(ERROR_EXECUTE, null, error_info); 
+			}
 		} 
-		catch (Exception e) 
-		{ 
-			HashMap<String, Object> info = new HashMap<String, Object>();
-
-			info.put("args", strings.to_string(args_));
-			info.put("wait_for_it", wait_for_it_);
-
-			manage_error(ERROR_EXECUTE, e, info); 
-		}
+		catch (Exception e) { manage_error(ERROR_EXECUTE, e, error_info); }
 
 		return output;
 	}

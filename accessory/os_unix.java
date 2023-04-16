@@ -2,7 +2,7 @@ package accessory;
 
 import java.util.ArrayList;
 
-abstract class os_unix 
+public abstract class os_unix 
 {
 	public static final int WRONG_PROCESS_ID = -1;
 
