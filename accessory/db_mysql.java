@@ -675,7 +675,7 @@ class db_mysql extends parent_db
 		String command = app + " -u '" + username + "' -p'" + password + "' '" + db_name + "' " + pipe + " '" + path + "'";			
 		
 		boolean is_ok = false;		
-		if (!os.is_windows()) is_ok = os_unix.execute_bash(command, true);
+		if (!os.is_windows()) is_ok = os_linux.execute_bash(command, true);
 		
 		is_ok(is_ok);
 	}

@@ -12,6 +12,8 @@ public abstract class os extends parent_static
 
 	public static final int DEFAULT_FORM_WAITING_SECS = 30;
 	public static final boolean DEFAULT_IS_VIRTUAL_MACHINE = false;
+	public static final boolean DEFAULT_EXECUTE_WAIT = true;
+	public static final boolean DEFAULT_EXECUTE_RETURN_OUTPUTS = false;
 	
 	public static final String ERROR_EXECUTE = _types.ERROR_OS_EXECUTE;
 	
@@ -79,9 +81,12 @@ public abstract class os extends parent_static
 		
 		String[] output = null;
 
-		if (!is_windows()) output = os_unix.get_running_windows(keywords_, keywords_ignore_, only_titles_);
-
-		method_end();
+		if (!is_windows()) 
+		{
+			output = os_unix.get_running_windows(keywords_, keywords_ignore_, only_titles_);
+			
+			if (os_unix.is_ok()) method_end();
+		}
 		
 		return output;
 	}
@@ -99,11 +104,10 @@ public abstract class os extends parent_static
 		{
 			output = os_linux.get_running_window_id_app(app_, keywords_, keywords_ignore_);
 			
-			if (output <= os_linux.WRONG_WINDOW_ID) output = WRONG_WINDOW_ID;
+			if (os_linux.is_ok()) method_end();
+			else output = WRONG_WINDOW_ID;
 		}
 
-		if (output > WRONG_WINDOW_ID) method_end();
-		
 		return output;
 	}
 	
@@ -118,10 +122,9 @@ public abstract class os extends parent_static
 		{
 			output = os_linux.get_running_window_id(process_id_);
 			
-			if (output <= os_linux.WRONG_WINDOW_ID) output = WRONG_WINDOW_ID;
+			if (os_linux.is_ok()) method_end();
+			else output = WRONG_WINDOW_ID;
 		}
-
-		if (output > WRONG_WINDOW_ID) method_end();
 		
 		return output;
 	}
@@ -137,10 +140,9 @@ public abstract class os extends parent_static
 		{
 			output = os_linux.get_running_window_id(title_);
 			
-			if (output <= os_linux.WRONG_WINDOW_ID) output = WRONG_WINDOW_ID;
+			if (os_linux.is_ok()) method_end();
+			else output = WRONG_WINDOW_ID;
 		}
-
-		if (output > WRONG_WINDOW_ID) method_end();
 		
 		return output;
 	}
@@ -156,9 +158,12 @@ public abstract class os extends parent_static
 		boolean output = false;
 		if (window_id_ <= WRONG_WINDOW_ID) return output;
 
-		if (is_linux()) output = os_linux.click_running_window(window_id_, xy_);
-
-		if (output) method_end();
+		if (is_linux()) 
+		{
+			output = os_linux.click_running_window(window_id_, xy_);
+			
+			if (os_linux.is_ok()) method_end();
+		}
 		
 		return output;
 	}
@@ -184,9 +189,12 @@ public abstract class os extends parent_static
 		boolean output = false;
 		if (window_id_ <= WRONG_WINDOW_ID || !arrays.is_ok(inputs_)) return output;
 		
-		if (is_linux()) output = os_linux.fill_running_form(window_id_, inputs_, xys_, waiting_secs_);
-		
-		if (output) method_end();
+		if (is_linux()) 
+		{
+			output = os_linux.fill_running_form(window_id_, inputs_, xys_, waiting_secs_);
+			
+			if (os_linux.is_ok()) method_end();
+		}
 		
 		return output;
 	}
@@ -197,27 +205,37 @@ public abstract class os extends parent_static
 	{
 		method_start();
 		
-		if (!is_windows()) os_unix.kill_app(app_, keywords_, keywords_to_ignore_);
-	
-		method_end();
+		if (!is_windows()) 
+		{
+			os_unix.kill_app(app_, keywords_, keywords_to_ignore_);
+		
+			if (os_unix.is_ok()) method_end();
+		}
 	}
 	
 	public static void kill_process(int process_id_)
 	{
 		method_start();
 		
-		if (!is_windows()) os_unix.kill_process(process_id_);
-	
-		method_end();
+		if (!is_windows()) 
+		{
+			os_unix.kill_process(process_id_);
+			
+			if (!os_unix.is_ok()) method_end();
+		}
 	}
 	
-	public static boolean execute_command(String command_) { return execute_command(command_, true); }	
+	public static boolean execute_command(String command_) { return execute_command(command_, DEFAULT_EXECUTE_WAIT); }	
 	
-	public static boolean execute_command(String command_, boolean wait_for_it_) { return (strings.is_ok(command_) ? execute_command(new String[] { command_ }, wait_for_it_) : false); }	
+	public static boolean execute_command(String command_, boolean wait_for_it_) { return (is_linux() ? os_linux.execute_bash(command_, wait_for_it_) : execute_command_internal(command_, wait_for_it_)); }	
+	
+	public static boolean execute_command(String[] args_, boolean wait_for_it_) { return (boolean)execute_command(args_, wait_for_it_, DEFAULT_EXECUTE_RETURN_OUTPUTS); }	
 
-	public static boolean execute_command(String[] args_, boolean wait_for_it_) { return (boolean)execute_command(args_, wait_for_it_, false); }	
+	public static Object execute_command(String[] args_, boolean wait_for_it_, boolean return_outputs_) { return (is_linux() ? os_linux.execute_bash(args_, wait_for_it_, return_outputs_) : execute_command_internal(args_, wait_for_it_, return_outputs_)); }
 
-	public static Object execute_command(String[] args_, boolean wait_for_it_, boolean return_outputs_) 
+	static boolean execute_command_internal(String command_, boolean wait_for_it_) { return (strings.is_ok(command_) ? execute_command(new String[] { command_ }, wait_for_it_) : false); }
+
+	static Object execute_command_internal(String[] args_, boolean wait_for_it_, boolean return_outputs_) 
 	{
 		method_start();
 		

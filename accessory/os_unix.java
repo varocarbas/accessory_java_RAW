@@ -2,7 +2,7 @@ package accessory;
 
 import java.util.ArrayList;
 
-public abstract class os_unix 
+abstract class os_unix extends parent_static 
 {
 	public static final int WRONG_PROCESS_ID = -1;
 
@@ -13,28 +13,73 @@ public abstract class os_unix
 	public static void kill_app(String app_or_dir_, String[] keywords_, String[] keywords_to_ignore_) 
 	{
 		String[] processes = get_running_processes(app_or_dir_, keywords_, keywords_to_ignore_, false);
-		if (!arrays.is_ok(processes)) return;
+		if (!is_ok() || !arrays.is_ok(processes)) return;
+	
+		boolean is_ok = false;
 		
-		for (String process: processes) { kill_process(get_running_process_id(process)); }
+		for (String process: processes) 
+		{ 
+			kill_process(get_running_process_id(process)); 
+		
+			if (!is_ok && is_ok()) is_ok = true;
+		}
+	
+		_is_ok = is_ok;
 	}
 
 	public static void kill_process(int process_id_) 
 	{ 
+		method_start();
+		
 		if (process_id_ <= WRONG_PROCESS_ID) return;
 		
-		execute_bash("kill -9 " + process_id_, true); 
+		execute_bash("kill -9 " + process_id_, true, os.DEFAULT_EXECUTE_RETURN_OUTPUTS); 
 	}
 
-	public static boolean execute_bash(String command_, boolean wait_for_it_) { return (boolean)execute_bash(command_, wait_for_it_, false); }
-
-	public static Object execute_bash(String command_, boolean wait_for_it_, boolean return_outputs_) { return (strings.is_ok(command_) ? os.execute_command(new String[] { "/bin/bash", "-c" , command_ }, wait_for_it_, return_outputs_) : false); }
+	public static Object execute_bash(String command_, boolean wait_for_it_, boolean return_outputs_) 
+	{
+		method_start();
+		
+		return (strings.is_ok(command_) ? execute_bash(new String[] { command_ }, wait_for_it_, return_outputs_) : (return_outputs_ ? null : false));
+	}
+	
+	public static Object execute_bash(String[] args_, boolean wait_for_it_, boolean return_outputs_) 
+	{
+		method_start();
+		
+		Object output = (return_outputs_ ? null : false);
+		
+		if (arrays.is_ok(args_))
+		{
+			ArrayList<String> temp = new ArrayList<String>();
+			
+			temp.add("/bin/bash");
+			temp.add("-c");
+			
+			for (String arg: args_) 
+			{ 
+				if (!strings.is_ok(arg)) continue;
+				
+				temp.add(arg); 
+			}
+			
+			if (temp.size() > 2)
+			{
+				output = os.execute_command_internal(arrays.to_array(temp), wait_for_it_, return_outputs_);
+				
+				if (os.is_ok()) method_end();
+			}
+		}
+	
+		return output;
+	}
 	
 	public static int get_process_id(String app_or_dir_, String[] keywords_, String[] keywords_ignore_)
 	{
 		int output = WRONG_PROCESS_ID;
 		
 		String[] processes = get_running_processes(app_or_dir_, keywords_, keywords_ignore_, false);	
-		if (arrays.get_size(processes) != 1) return output;
+		if (arrays.get_size(processes) < 1) return output;
 		
 		return get_running_process_id(processes[0]);
 	}
@@ -61,16 +106,30 @@ public abstract class os_unix
 		return get_running_processes_windows(command, keywords, keywords_ignore, only_commands_, true);
 	}
 
-	public static String get_running_process_command(String process_, boolean only_start_) { return get_process_info(process_, I_PROCESS_COMMAND, only_start_); }
+	public static String get_running_process_command(String process_, boolean only_start_) 
+	{ 
+		method_start();
+		
+		String output = get_process_info(process_, I_PROCESS_COMMAND, only_start_); 
+	
+		if (output != null) method_end();
+		
+		return output;
+	}
 
 	public static String[] get_running_windows(String[] keywords_, String[] keywords_ignore_, boolean only_titles_) { return get_running_processes_windows("wmctrl -l", keywords_, keywords_ignore_, only_titles_, false); }
 
 	@SuppressWarnings("unchecked")
 	private static String[] get_running_processes_windows(String command_, String[] keywords_, String[] keywords_ignore_, boolean only_command_title_, boolean are_processes_)
-	{		
+	{	
 		ArrayList<String> output = (ArrayList<String>)execute_bash(command_, true, true); 
-		if (!arrays.is_ok(output) || (!only_command_title_ && (keywords_ == null && keywords_ignore_ == null))) return arrays.to_array(output);
-
+		if (!is_ok() || !arrays.is_ok(output) || (!only_command_title_ && (keywords_ == null && keywords_ignore_ == null))) 
+		{
+			_is_ok = false;
+			
+			return arrays.to_array(output);
+		}
+		
 		for (String item: new ArrayList<String>(output))
 		{
 			String item2 = get_running_command_title(item, are_processes_);
