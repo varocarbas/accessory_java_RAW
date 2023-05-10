@@ -20,10 +20,10 @@ public abstract class db_crypto
 	public static final String WHAT_ALGO = crypto.WHAT_ALGO;
 
 	public static final String DEFAULT_SOURCE = _types.CONFIG_CRYPTO_DB_SOURCE;
-	
-	static boolean _is_quick = db_common.DEFAULT_IS_QUICK;
-	
+		
 	private static String _source = DEFAULT_SOURCE;
+	
+	public static boolean is_quick() { return db_common.is_quick(get_source()); }
 	
 	public static String get_source() { return _source; }
 	
@@ -32,7 +32,7 @@ public abstract class db_crypto
 		boolean output = db.source_is_ok(compatible_source_);
 		
 		if (output) _source = compatible_source_; 	
-		
+
 		return output;
 	}
 	
@@ -52,7 +52,7 @@ public abstract class db_crypto
 		
 		String source = get_source();
 		
-		if (_is_quick) 
+		if (is_quick()) 
 		{
 			String col_id = db_quick.get_col(source, ID);
 			
@@ -91,14 +91,14 @@ public abstract class db_crypto
 		String where = get_where_id(id_);
 		
 		String source = get_source();
-		
-		if (_is_quick) temp = db_quick.select_one(source, db_quick.get_cols(source), where, db.DEFAULT_ORDER);
+	
+		if (is_quick()) temp = db_quick.select_one(source, db_quick.get_cols(source), where, db.DEFAULT_ORDER);
 		else temp = db.select_one(source, db_common.get_fields(source), where, db.DEFAULT_ORDER);
-		
+
 		if (!arrays.is_ok(temp)) return output;
 				
 		String algo = temp.get(db_common.get_field_quick_col(source, ALGO));
-		if (!strings.is_ok(algo)) algo = crypto.get_algo_cipher_or_default();
+		if (!crypto.algo_is_ok(algo)) algo = crypto.get_algo_cipher_or_default();
 		
 		SecretKey key = null;
 		try { key = (SecretKey)strings.to_object(temp.get(db_common.get_field_quick_col(source, KEY))); }
@@ -106,7 +106,7 @@ public abstract class db_crypto
 		
 		byte[] iv = strings.to_bytes_base64(temp.get(db_common.get_field_quick_col(source, IV)));
 		
-		if (strings.is_ok(algo) && key != null && iv != null) 
+		if (crypto.algo_is_ok(algo) && crypto.key_is_ok(key) && crypto.iv_is_ok(iv)) 
 		{
 			output = new HashMap<String, Object>();
 			
@@ -114,7 +114,7 @@ public abstract class db_crypto
 			output.put(WHAT_KEY, key);
 			output.put(WHAT_IV, iv);	
 		}
-					
+			
 		return output;
 	}
 	
@@ -133,7 +133,7 @@ public abstract class db_crypto
 		
 		String id = db_common.adapt_string(id_, MAX_SIZE_ID);
 		
-		return (strings.is_ok(id) ? (new db_where(source, db_common.get_field_quick_col(source, ID), db_where.OPERAND_EQUAL, id, true, db_where.DEFAULT_LINK, _is_quick)).toString() : strings.DEFAULT); 
+		return (strings.is_ok(id) ? (new db_where(source, db_common.get_field_quick_col(source, ID), db_where.OPERAND_EQUAL, id, true, db_where.DEFAULT_LINK, is_quick())).toString() : strings.DEFAULT); 
 	}
 	
 	public static HashMap<String, db_field> get_fields_info()

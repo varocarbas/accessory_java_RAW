@@ -328,7 +328,7 @@ class db_mysql extends parent_db
 			output += "&useLegacyDatetimeCode=false&serverTimezone=UTC";
 			output += "&connectTimeout=" + connect_timeout_ + "&socketTimeout=" + socket_timeout_;
 		}
-		
+
 		return output;
 	}
 

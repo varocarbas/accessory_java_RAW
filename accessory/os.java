@@ -62,13 +62,10 @@ public abstract class os extends parent_static
 
 	public static String[] get_running_processes(String app_, String[] keywords_, String[] keywords_ignore_, boolean only_commands_)
 	{
-		method_start();
-		
 		String[] output = null;
 
 		if (!is_windows()) output = os_unix.get_running_processes(app_, keywords_, keywords_ignore_, only_commands_);
-
-		method_end();
+		else method_start();
 		
 		return output;
 	}
@@ -77,16 +74,10 @@ public abstract class os extends parent_static
 
 	public static String[] get_running_windows(String[] keywords_, String[] keywords_ignore_, boolean only_titles_)
 	{
-		method_start();
-		
 		String[] output = null;
 
-		if (!is_windows()) 
-		{
-			output = os_unix.get_running_windows(keywords_, keywords_ignore_, only_titles_);
-			
-			if (os_unix.is_ok()) method_end();
-		}
+		if (!is_windows()) output = os_unix.get_running_windows(keywords_, keywords_ignore_, only_titles_);
+		else method_start();
 		
 		return output;
 	}
@@ -104,8 +95,7 @@ public abstract class os extends parent_static
 		{
 			output = os_linux.get_running_window_id_app(app_, keywords_, keywords_ignore_);
 			
-			if (os_linux.is_ok()) method_end();
-			else output = WRONG_WINDOW_ID;
+			if (!os_linux.is_ok()) output = WRONG_WINDOW_ID;
 		}
 
 		return output;
@@ -122,8 +112,7 @@ public abstract class os extends parent_static
 		{
 			output = os_linux.get_running_window_id(process_id_);
 			
-			if (os_linux.is_ok()) method_end();
-			else output = WRONG_WINDOW_ID;
+			if (!os_linux.is_ok()) output = WRONG_WINDOW_ID;
 		}
 		
 		return output;
@@ -140,8 +129,7 @@ public abstract class os extends parent_static
 		{
 			output = os_linux.get_running_window_id(title_);
 			
-			if (os_linux.is_ok()) method_end();
-			else output = WRONG_WINDOW_ID;
+			if (!os_linux.is_ok()) output = WRONG_WINDOW_ID;
 		}
 		
 		return output;
@@ -158,12 +146,7 @@ public abstract class os extends parent_static
 		boolean output = false;
 		if (window_id_ <= WRONG_WINDOW_ID) return output;
 
-		if (is_linux()) 
-		{
-			output = os_linux.click_running_window(window_id_, xy_);
-			
-			if (os_linux.is_ok()) method_end();
-		}
+		if (is_linux()) output = os_linux.click_running_window(window_id_, xy_);
 		
 		return output;
 	}
@@ -189,12 +172,7 @@ public abstract class os extends parent_static
 		boolean output = false;
 		if (window_id_ <= WRONG_WINDOW_ID || !arrays.is_ok(inputs_)) return output;
 		
-		if (is_linux()) 
-		{
-			output = os_linux.fill_running_form(window_id_, inputs_, xys_, waiting_secs_);
-			
-			if (os_linux.is_ok()) method_end();
-		}
+		if (is_linux()) output = os_linux.fill_running_form(window_id_, inputs_, xys_, waiting_secs_);
 		
 		return output;
 	}
@@ -203,26 +181,14 @@ public abstract class os extends parent_static
 	
 	public static void kill_app(String app_, String[] keywords_, String[] keywords_to_ignore_) 
 	{
-		method_start();
-		
-		if (!is_windows()) 
-		{
-			os_unix.kill_app(app_, keywords_, keywords_to_ignore_);
-		
-			if (os_unix.is_ok()) method_end();
-		}
+		if (!is_windows()) os_unix.kill_app(app_, keywords_, keywords_to_ignore_);
+		else method_start();
 	}
 	
 	public static void kill_process(int process_id_)
 	{
-		method_start();
-		
-		if (!is_windows()) 
-		{
-			os_unix.kill_process(process_id_);
-			
-			if (!os_unix.is_ok()) method_end();
-		}
+		if (!is_windows()) os_unix.kill_process(process_id_);
+		else method_start();
 	}
 	
 	public static boolean execute_command(String command_) { return execute_command(command_, DEFAULT_EXECUTE_WAIT); }	
@@ -246,7 +212,7 @@ public abstract class os extends parent_static
 		HashMap<String, Object> error_info = new HashMap<String, Object>();
 		error_info.put("args", strings.to_string(args_));
 		error_info.put("wait_for_it", wait_for_it_);
-	
+		
 		try 
 		{
 			boolean is_ok = false;

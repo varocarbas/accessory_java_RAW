@@ -48,6 +48,8 @@ public class crypto extends parent
 	public static final String DEFAULT_FILES_EXTENSION = strings.DEFAULT;
 	public static final boolean DEFAULT_LOG_INFO = false;	
 	
+	private static final boolean DEFAULT_USE_ID = true;
+	
 	private static boolean _is_ok_last = false;
 	
 	private boolean _is_ok = false;
@@ -60,7 +62,7 @@ public class crypto extends parent
 	private String _algo_key = DEFAULT_ALGO_KEY;
 	private SecretKey _key = null;
 	private byte[] _iv = null;
-
+	
 	public String serialise() { return toString(); }
 	
 	public String toString() { return strings.DEFAULT; }
@@ -117,15 +119,76 @@ public class crypto extends parent
 
 	public static HashMap<String, String> decrypt(HashMap<String, String> inputs_, String id_, boolean keys_too_) { return encrypt_decrypt(inputs_, id_, keys_too_, false); }
 	
-	public static String encrypt(String input_, String id_) { return encrypt_decrypt(input_, id_, true); }
+	public static String encrypt(String input_, String id_) { return encrypt_decrypt(input_, id_, true, true); }
 
-	public static String decrypt(String input_, String id_) { return encrypt_decrypt(input_, id_, false); }
+	public static String decrypt(String input_, String id_) { return encrypt_decrypt(input_, id_, false, true); }
+	
+	public static String encrypt(String input_, HashMap<String, Object> params_) { return encrypt_decrypt(input_, params_, true, false); }
 
-	public void encrypt()
+	public static String decrypt(String input_, HashMap<String, Object> params_) { return encrypt_decrypt(input_, params_, false, false); }
+	
+	public static boolean algo_is_ok(String algo_) { return strings.is_ok(algo_); }
+	
+	public static boolean key_is_ok(SecretKey key_) { return (key_ != null); }
+	
+	public static boolean iv_is_ok(byte[] iv_) { return arrays.is_ok(iv_); }
+
+	public static String get_algo_cipher(HashMap<String, Object> params_) 
+	{ 
+		String output = null;
+		
+		try
+		{
+			Object temp = arrays.get_value(params_, WHAT_ALGO);
+			
+			if (temp != null) output = (String)temp;
+		}
+		catch (Exception e) { }
+		
+		return output; 
+	}
+	
+	public static SecretKey get_key(HashMap<String, Object> params_) 
+	{ 
+		SecretKey output = null;
+		
+		try
+		{
+			Object temp = arrays.get_value(params_, WHAT_KEY);
+			
+			if (temp != null) output = (SecretKey)temp;
+		}
+		catch (Exception e) { }
+		
+		return output; 
+	}
+	
+	public static byte[] get_iv(HashMap<String, Object> params_) 
+	{ 
+		byte[] output = null;
+		
+		try
+		{
+			Object temp = arrays.get_value(params_, WHAT_IV);
+			
+			if (temp != null) output = (byte[])temp;
+		}
+		catch (Exception e) { }
+		
+		return output; 
+	}
+		
+	public static HashMap<String, Object> get_params(String encryption_id_) { return (is_stored_in_files() ? get_from_files(encryption_id_) : get_from_db(encryption_id_)); }
+	
+	static String[] populate_all_whats() { return new String[] { WHAT_ALGO_CIPHER, WHAT_KEY, WHAT_IV }; }
+
+	private void encrypt() { encrypt(DEFAULT_USE_ID); }
+	
+	private void encrypt(boolean use_id_)
 	{
 		try 
 		{
-			if (!encrypt_internal()) return;
+			if (!encrypt_internal(use_id_)) return;
 
 			_out = strings.from_bytes_base64(_cipher_enc.doFinal(_in.getBytes()));
 		
@@ -134,11 +197,13 @@ public class crypto extends parent
 		catch (Exception e) { manage_error(ERROR_ENCRYPT, e); }
 	}
 
-	public void decrypt()
+	private void decrypt() { decrypt(DEFAULT_USE_ID); }
+	
+	private void decrypt(boolean use_id_)
 	{
 		try 
 		{
-			if (!decrypt_internal()) return;
+			if (!decrypt_internal(use_id_)) return;
 
 			byte[] temp = strings.to_bytes_base64(_in);
 			if (temp == null) return;
@@ -149,8 +214,6 @@ public class crypto extends parent
 		} 
 		catch (Exception e) { manage_error(ERROR_DECRYPT, e); }
 	}
-
-	static String[] populate_all_whats() { return new String[] { WHAT_ALGO_CIPHER, WHAT_KEY, WHAT_IV }; }
 
 	private static String[] get_all_whats() { return _alls.CRYPTO_WHATS; }
 
@@ -224,14 +287,15 @@ public class crypto extends parent
 		return outputs;
 	}
 
-	private static String encrypt_decrypt(String input_, String id_, boolean is_encrypt_)
+	@SuppressWarnings("unchecked")
+	private static String encrypt_decrypt(String input_, Object id_or_params_, boolean is_encrypt_, boolean use_id_)
 	{
-		crypto instance = new crypto(input_, id_);
-		
+		crypto instance = (use_id_ ? new crypto(input_, (String)id_or_params_) : new crypto(input_, (HashMap<String, Object>)id_or_params_));
+
 		if (instance.is_ok()) 
 		{
-			if (is_encrypt_) instance.encrypt();
-			else instance.decrypt();
+			if (is_encrypt_) instance.encrypt(use_id_);
+			else instance.decrypt(use_id_);
 		}
 
 		return (instance.is_ok() ? instance._out : strings.DEFAULT);	
@@ -239,8 +303,29 @@ public class crypto extends parent
 	
 	private static String get_path(String id_, String what_) { return paths.build(new String[] { paths.get_dir(paths.DIR_CRYPTO), paths.get_file_full((strings.is_ok(id_) ? id_ : DEFAULT_ID) + misc.SEPARATOR_NAME + what_, get_files_extension()) }, true); }
 	
-	private crypto(String in_, String id_) { instantiate(in_, id_); }
+	private static HashMap<String, Object> get_from_db(String id_) { return db_crypto.get(id_); }
+	
+	private static HashMap<String, Object> get_from_files(String id_)
+	{
+		String algo = (String)get_from_file(WHAT_ALGO_CIPHER, id_);
+		SecretKey key = (SecretKey)get_from_file(WHAT_KEY, id_);
+		byte[] iv = (byte[])get_from_file(WHAT_IV, id_);
+		
+		if (!algo_is_ok(algo) || !key_is_ok(key) || !iv_is_ok(iv)) return null;
 
+		HashMap<String, Object> output = new HashMap<String, Object>();
+		
+		output.put(WHAT_ALGO_CIPHER, algo);
+		output.put(WHAT_KEY, key);
+		output.put(WHAT_IV, iv);				
+
+		return output;
+	}
+
+	private crypto(String in_, String id_) { instantiate(in_, id_, true); }
+	
+	private crypto(String in_, HashMap<String, Object> params_) { instantiate(in_, params_, false); }
+	
 	private void log_encryption_info()
 	{
 		HashMap<String, String> info = new HashMap<String, String>();
@@ -277,9 +362,9 @@ public class crypto extends parent
 		return output;
 	}
 
-	private boolean encrypt_internal() { return (start_enc_dec(true) && update_cipher_enc()); }
+	private boolean encrypt_internal(boolean use_id_) { return (start_enc_dec(true, use_id_) && update_cipher_enc(use_id_)); }
 
-	private boolean update_cipher_enc()
+	private boolean update_cipher_enc(boolean use_id_)
 	{	
 		if (_cipher_enc != null) return true;
 
@@ -290,9 +375,9 @@ public class crypto extends parent
 		
 		try
 		{	
-			_key = get_key();
+			if (use_id_) _key = get_key();
 
-			if (_key == null) 
+			if (!key_is_ok(_key)) 
 			{
 				manage_error(ERROR_KEY);
 
@@ -303,9 +388,9 @@ public class crypto extends parent
 			
 			_cipher_enc.init(Cipher.ENCRYPT_MODE, _key, new SecureRandom());	
 			
-			_iv = _cipher_enc.getIV();
+			if (use_id_) _iv = _cipher_enc.getIV();
 			
-			if (!arrays.is_ok(_iv)) 
+			if (!iv_is_ok(_iv)) 
 			{
 				manage_error(ERROR_IV);
 
@@ -324,7 +409,7 @@ public class crypto extends parent
 		return is_ok;
 	}
 
-	private boolean decrypt_internal() { return (start_enc_dec(false) && update_cipher_dec()); }
+	private boolean decrypt_internal(boolean use_id_) { return (start_enc_dec(false, use_id_) && update_cipher_dec()); }
 
 	private boolean update_cipher_dec()
 	{	
@@ -345,85 +430,106 @@ public class crypto extends parent
 		return is_ok;
 	}
 
-	private boolean start_enc_dec(boolean is_enc_)
+	private boolean start_enc_dec(boolean is_enc_, boolean use_id_)
 	{
 		update_is_ok(false);
 		
-		if (!is_ok_common(_in, _id, false)) return false;
-		
+		if (!use_id_ || !is_ok_common(_in, _id, false, true)) return !use_id_;
+
 		if (is_enc_)
 		{
 			_algo_cipher = get_algo_cipher_or_default();
-			if (!strings.is_ok(_algo_cipher)) return manage_error(ERROR_ALGO_CIPHER);
+			if (!algo_is_ok(_algo_cipher)) return manage_error(ERROR_ALGO_CIPHER);
 
 			_algo_key = get_algo_key_or_default();		
-			if (!strings.is_ok(_algo_key)) return manage_error(ERROR_ALGO_KEY);
+			if (!algo_is_ok(_algo_key)) return manage_error(ERROR_ALGO_KEY);
 		}
-		else 
+		else
 		{
-			HashMap<String, Object> items = retrieve();
+			HashMap<String, Object> items = retrieve(_id);
 			if (items == null) return manage_error(ERROR_RETRIEVE);
 			
-			_algo_cipher = (String)items.get(WHAT_ALGO_CIPHER);
-			if (!strings.is_ok(_algo_cipher)) return manage_error(ERROR_RETRIEVE_ALGO_CIPHER);
+			_algo_cipher = get_algo_cipher(items);
+			if (!algo_is_ok(_algo_cipher)) return manage_error(ERROR_RETRIEVE_ALGO_CIPHER);
 			
-			_key = (SecretKey)items.get(WHAT_KEY);
-			if (_key == null) return manage_error(ERROR_RETRIEVE_KEY);
+			_key = get_key(items);
+			if (!key_is_ok(_key)) return manage_error(ERROR_RETRIEVE_KEY);
 					
-			_iv = (byte[])items.get(WHAT_IV);
-			if (_iv == null) return manage_error(ERROR_RETRIEVE_IV);
+			_iv = get_iv(items);
+			if (!iv_is_ok(_iv)) return manage_error(ERROR_RETRIEVE_IV);
 		}
-				
+		
 		return true;
 	}
 	
-	private HashMap<String, Object> retrieve()
+	private HashMap<String, Object> retrieve(String id_)
 	{
-		HashMap<String, Object> output = null;
+		HashMap<String, Object> output = (is_stored_in_files() ? retrieve_from_files(id_) : get_from_db(id_));
 		
-		if (is_stored_in_files()) output = retrieve_from_files();
-		else 
+		if (output == null) manage_error(ERROR_RETRIEVE);
+		
+		return output;
+	}
+	
+	private HashMap<String, Object> retrieve_from_files(String id_)
+	{
+		HashMap<String, Object> output = new HashMap<String, Object>();
+
+		for (String what: get_all_whats())
 		{
-			output = db_crypto.get(_id);
+			Object item = null;
 			
-			if (output == null) manage_error(ERROR_RETRIEVE);
+			if (what.equals(WHAT_ALGO_CIPHER))
+			{
+				String algo = (String)get_from_file(what, id_);
+				
+				if (algo_is_ok(algo)) item = algo;
+			}
+			else if (what.equals(WHAT_KEY))
+			{
+				SecretKey key = (SecretKey)get_from_file(what, id_);
+				
+				if (key_is_ok(key)) item = key;
+			}
+			else if (what.equals(WHAT_IV))
+			{
+				byte[] iv = (byte[])get_from_file(what, id_);
+				
+				if (iv_is_ok(iv)) item = iv;
+			}
+			
+			if (item == null)
+			{			
+				manage_error(what, false);
+				
+				return null;
+			}
+			
+			output.put(what, item);
 		}
 		
 		return output;
 	}
-	
-	private HashMap<String, Object> retrieve_from_files()
-	{
-		String algo = (String)retrieve_from_file(WHAT_ALGO_CIPHER);
-		if (!strings.is_ok(algo)) algo = DEFAULT_ALGO_CIPHER;
 
-		SecretKey key = (SecretKey)retrieve_from_file(WHAT_KEY);
-		byte[] iv = (byte[])retrieve_from_file(WHAT_IV);
-		
-		if (!strings.is_ok(algo) || key == null || iv == null) return null;
-
-		HashMap<String, Object> output = new HashMap<String, Object>();
-		
-		output.put(WHAT_ALGO_CIPHER, algo);
-		output.put(WHAT_KEY, key);
-		output.put(WHAT_IV, iv);				
-
-		return output;
-	}
-	
-	private Object retrieve_from_file(String what_)
+	private static Object get_from_file(String what_, String id_)
 	{
 		Object output = null;
 
 		boolean is_ok = true;
 		
-		String path = get_path(_id, what_);
+		String path = get_path(id_, what_);
 		
 		if (what_.equals(WHAT_ALGO_CIPHER))
 		{
-			output = io.file_to_string(path, true);
+			String temp = io.file_to_string(path, true);
+			if (!algo_is_ok(temp)) temp = DEFAULT_ALGO_CIPHER;
 			
-			is_ok = true;
+			if (algo_is_ok(temp))
+			{
+				output = temp;
+				
+				is_ok = true;
+			}
 		}
 		else if (what_.equals(WHAT_KEY))
 		{
@@ -446,15 +552,8 @@ public class crypto extends parent
 			
 			is_ok = (io.is_ok() && arrays.is_ok(output));
 		}
-
-		if (!is_ok) 
-		{
-			output = null;
-			
-			manage_error(what_, false);
-		}
 		
-		return output;
+		return (is_ok ? output : null);
 	}
 
 	private boolean store() 
@@ -566,36 +665,54 @@ public class crypto extends parent
 		_iv = null;
 	}
 
-	private void instantiate(String in_, String id_)
+	private void instantiate(String in_, Object id_or_params_, boolean use_id_)
 	{
 		instantiate_common();
 		
-		if (!is_ok_common(in_, id_, true)) return;
+		if (!is_ok_common(in_, id_or_params_, true, use_id_)) return;
 		
-		populate(in_, id_);
+		populate(in_, id_or_params_, use_id_);
 	}
 
-	private boolean is_ok_common(String in_, String id_, boolean is_start_) 
+	@SuppressWarnings("unchecked")
+	private boolean is_ok_common(String in_, Object id_or_params_, boolean is_start_, boolean use_id_) 
 	{ 
 		update_is_ok(false);
 		
 		boolean is_ok = (in_ != null); 
 	
-		if (!is_start_)
+		if (use_id_)
 		{
-			if (!strings.is_ok(id_)) _id = DEFAULT_ID;
+			if (!is_start_)
+			{
+				if (!strings.is_ok((String)id_or_params_)) _id = DEFAULT_ID;
+				
+				if (!strings.is_ok(_id)) is_ok = false;
+			}		
+		}
+		else 
+		{
+			HashMap<String, Object> temp = (HashMap<String, Object>)id_or_params_;
+			if (!arrays.is_ok(temp)) return false;
 			
-			if (!strings.is_ok(_id)) is_ok = false;
+			_algo_cipher = get_algo_cipher(temp);
+			_key = get_key(temp);
+			_iv = get_iv(temp);
+			
+			_algo_key = get_algo_key_or_default();
+			
+			if (!algo_is_ok(_algo_key) || !algo_is_ok(_algo_cipher) || !key_is_ok(_key) || !iv_is_ok(_iv)) is_ok = false;
 		}
 		
 		return is_ok;
 	}
 	
-	private void populate(String in_, String id_)
+	private void populate(String in_, Object id_or_params_, boolean use_id_)
 	{
 		update_is_ok(true);
 
 		_in = in_;
-		_id = id_;
+		
+		if (use_id_) _id = (String)id_or_params_;
 	}
 }

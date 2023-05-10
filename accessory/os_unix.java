@@ -70,7 +70,7 @@ abstract class os_unix extends parent_static
 				if (os.is_ok()) method_end();
 			}
 		}
-	
+
 		return output;
 	}
 	

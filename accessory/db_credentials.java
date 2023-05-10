@@ -13,8 +13,8 @@ public abstract class db_credentials
 	public static final String USERNAME = _types.CONFIG_CREDENTIALS_DB_FIELD_USERNAME;
 	public static final String PASSWORD = _types.CONFIG_CREDENTIALS_DB_FIELD_PASSWORD;
 	public static final String IS_ENC = _types.CONFIG_CREDENTIALS_DB_FIELD_IS_ENC;
-		
-	static boolean _is_quick = db_common.DEFAULT_IS_QUICK;
+	
+	public static boolean is_quick() { return db_common.is_quick(SOURCE); }
 	
 	static boolean update_info(String id_, String user_, HashMap<String, String> vals_)
 	{
@@ -31,7 +31,7 @@ public abstract class db_credentials
 		vals.put(USER, user_);
 		vals.put(IS_ENC, true);
 		
-		if (_is_quick)
+		if (is_quick())
 		{
 			HashMap<String, String> vals2 = new HashMap<String, String>();
 			
@@ -56,7 +56,7 @@ public abstract class db_credentials
 		String field_col = db_common.get_field_quick_col(SOURCE, (is_username_ ? USERNAME : PASSWORD));
 		String where = get_db_where(id_, user_, is_encrypted_);
 		
-		return (_is_quick ? db_quick.select_one_string(SOURCE, field_col, where, db.DEFAULT_ORDER) : db.select_one_string(SOURCE, field_col, where, db.DEFAULT_ORDER)); 
+		return (is_quick() ? db_quick.select_one_string(SOURCE, field_col, where, db.DEFAULT_ORDER) : db.select_one_string(SOURCE, field_col, where, db.DEFAULT_ORDER)); 
 	}
 	
 	private static String get_db_where(String id_, String user_, boolean is_encrypted_) { return db_where.to_string(new db_where[] { new db_where(SOURCE, ID, id_), new db_where(SOURCE, USER, user_), new db_where(SOURCE, IS_ENC, is_encrypted_) }); }

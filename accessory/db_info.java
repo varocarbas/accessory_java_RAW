@@ -17,10 +17,10 @@ public abstract class db_info
 
 	public static final String DEFAULT_SOURCE = _types.CONFIG_INFO_DB_SOURCE;
 	
-	static boolean _is_quick = db_common.DEFAULT_IS_QUICK;
-	
 	private static String _source = DEFAULT_SOURCE;
 	
+	public static boolean is_quick() { return db_common.is_quick(get_source()); }
+
 	public static String get_source() { return _source; }
 	
 	public static boolean update_source(String compatible_source_)
@@ -47,11 +47,11 @@ public abstract class db_info
 		
 		int count_wrong = 0;
 		
-		for (Object vals: (_is_quick ? (ArrayList<HashMap<String, String>>)all_vals : (ArrayList<HashMap<String, Object>>)all_vals))
+		for (Object vals: (is_quick() ? (ArrayList<HashMap<String, String>>)all_vals : (ArrayList<HashMap<String, Object>>)all_vals))
 		{
 			boolean is_ok = false;
 			
-			if (_is_quick) 
+			if (is_quick()) 
 			{
 				db_quick.insert(source, (HashMap<String, String>)vals);
 				
@@ -104,7 +104,7 @@ public abstract class db_info
 	{ 
 		String source = get_source();
 		
-		return (new db_where(source, db_common.get_field_quick_col(source, IS_ENC), db_where.OPERAND_EQUAL, db_common.get_val(source, is_enc_), true, db_where.DEFAULT_LINK, _is_quick)).toString(); 
+		return (new db_where(source, db_common.get_field_quick_col(source, IS_ENC), db_where.OPERAND_EQUAL, db_common.get_val(source, is_enc_), true, db_where.DEFAULT_LINK, is_quick())).toString(); 
 	}
 	
 	public static HashMap<String, db_field> get_fields_info()
@@ -122,12 +122,14 @@ public abstract class db_info
 	{
 		String source = get_source();
 		
-		ArrayList<HashMap<String, String>> all_vals = (_is_quick ? db_quick.select(source, db_quick.get_cols(source), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER) : db.select(source, db_common.get_fields(source), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER));
+		ArrayList<HashMap<String, String>> all_vals = (is_quick() ? db_quick.select(source, db_quick.get_cols(source), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER) : db.select(source, db_common.get_fields(source), where_, db.DEFAULT_MAX_ROWS, db.DEFAULT_ORDER));
 		if (!arrays.is_ok(all_vals)) return null;
 	
 		HashMap<String, String> output = new HashMap<String, String>();
 	
 		int count_wrong = 0;
+		
+		HashMap<String, Object> params = crypto.get_params(ENCRYPTION_ID);
 		
 		for (HashMap<String, String> vals: all_vals)
 		{
@@ -139,10 +141,10 @@ public abstract class db_info
 			
 			if (decrypt_ && is_enc)
 			{
-				key = crypto.decrypt(key, ENCRYPTION_ID);
+				key = crypto.decrypt(key, params);
 				if (!crypto.is_ok_last()) is_ok = false;
-				
-				value = crypto.decrypt(value, ENCRYPTION_ID);
+
+				value = crypto.decrypt(value, params);
 				if (!crypto.is_ok_last()) is_ok = false;
 			}
 			
@@ -187,7 +189,7 @@ public abstract class db_info
 
 		String is_enc_quick = null;
 
-		if (_is_quick) 
+		if (is_quick()) 
 		{
 			outputs_quick = (ArrayList<HashMap<String, String>>)arrays.get_new((ArrayList<HashMap<String, String>>)outputs_);
 			
@@ -202,7 +204,7 @@ public abstract class db_info
 			String key = item.getKey();
 			String value = item.getValue();
 			
-			if (_is_quick)
+			if (is_quick())
 			{
 				HashMap<String, String> output = new HashMap<String, String>();				
 				output.put(db_quick.get_col(source, KEY), key);
@@ -222,7 +224,7 @@ public abstract class db_info
 			}			
 		}
 		
-		return (_is_quick ? outputs_quick : outputs);
+		return (is_quick() ? outputs_quick : outputs);
 	}
 	
 	private static HashMap<String, String> add_existing(HashMap<String, String> vals_, HashMap<String, String> existing_)

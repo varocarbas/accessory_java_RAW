@@ -15,27 +15,9 @@ public abstract class os_linux extends parent_static
 	
 	public static boolean execute_bash(String command_, boolean wait_for_it_) { return (boolean)execute_bash(command_, wait_for_it_, os.DEFAULT_EXECUTE_RETURN_OUTPUTS); }
 	
-	public static Object execute_bash(String command_, boolean wait_for_it_, boolean return_outputs_) 
-	{ 
-		method_start();
-		
-		Object output = os_unix.execute_bash(command_, wait_for_it_, return_outputs_); 
-		
-		if (os_unix.is_ok()) method_end();
-		
-		return output; 
-	}
+	public static Object execute_bash(String command_, boolean wait_for_it_, boolean return_outputs_) { return os_unix.execute_bash(command_, wait_for_it_, return_outputs_); }
 
-	public static Object execute_bash(String[] args_, boolean wait_for_it_, boolean return_outputs_) 
-	{ 
-		method_start();
-
-		Object output = os_unix.execute_bash(args_, wait_for_it_, return_outputs_); 
-		
-		if (os_unix.is_ok()) method_end();
-		
-		return output;
-	}
+	public static Object execute_bash(String[] args_, boolean wait_for_it_, boolean return_outputs_) { return os_unix.execute_bash(args_, wait_for_it_, return_outputs_); }
 
 	public static String get_home() { return get_variable(VARIABLE_HOME); }
 
@@ -45,16 +27,10 @@ public abstract class os_linux extends parent_static
 
 	static int get_running_window_id(int process_id_) 
 	{
-		method_start();
-		
 		int output = WRONG_WINDOW_ID;
 		
-		if (process_id_ > WRONG_PROCESS_ID) 
-		{
-			output = get_running_window_id(process_id_, false);
-			
-			method_end();
-		}
+		if (process_id_ > WRONG_PROCESS_ID) output = get_running_window_id(process_id_, false);
+		else method_start();
 		
 		return output;
 	}

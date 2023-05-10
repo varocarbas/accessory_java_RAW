@@ -127,7 +127,12 @@ public abstract class paths extends parent_static
 		return output;
 	}
 
-	public static String get_dir_home() { return normalise_dir((os.is_linux() ? os_linux.get_home() : System.getProperty("user.home"))); }	
+	public static String get_dir_home() 
+	{ 
+		if (strings.is_ok(HOME)) return HOME;
+		
+		return normalise_dir((os.is_linux() ? os_linux.get_home() : System.getProperty("user.home"))); 
+	}	
 
 	public static ArrayList<String> get_all_files(String dir_)
 	{
