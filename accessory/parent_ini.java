@@ -17,9 +17,9 @@ public abstract class parent_ini
 	protected HashMap<String, Object> DBS_SETUP = null;
 	protected String[] TYPES_TO_IGNORE = null;
 	
-	protected boolean INCLUDES_LEGACY = false;
-	protected String NAME = _defaults.APP_NAME;
-	protected String USER = _defaults.USER;
+	protected boolean INCLUDES_LEGACY = _ini.DEFAULT_INCLUDES_LEGACY;
+	protected String NAME = _ini.DEFAULT_NAME;
+	protected String USER = _ini.DEFAULT_USER;
 
 	protected boolean _populated = false;
 	
@@ -68,8 +68,6 @@ public abstract class parent_ini
 
 		populate_all_internal(name_, includes_legacy_);
 	}
-
-	private Object get_setup_val(String key_) { return arrays.get_value(DBS_SETUP, key_); }
 	
 	private void populate_all_internal(String name_, boolean includes_legacy_) 
 	{
@@ -164,9 +162,9 @@ public abstract class parent_ini
 					
 					args = new Object[] 
 					{ 
-						get_setup_val(_types.CONFIG_DB_SETUP_CREDENTIALS_USER), get_setup_val(_types.CONFIG_DB_SETUP_CREDENTIALS_USERNAME), 
-						get_setup_val(_types.CONFIG_DB_SETUP_CREDENTIALS_PASSWORD), get_setup_val(_types.CONFIG_DB_SETUP_HOST), 
-						get_setup_val(_types.CONFIG_DB_SETUP_CREDENTIALS_ENCRYPTED) 
+						_ini.get_dbs_setup_val(DBS_SETUP, _ini.DBS_SETUP_CREDENTIALS_USER), _ini.get_dbs_setup_val(DBS_SETUP, _ini.DBS_SETUP_CREDENTIALS_USERNAME), 
+						_ini.get_dbs_setup_val(DBS_SETUP, _ini.DBS_SETUP_CREDENTIALS_PASSWORD), _ini.get_dbs_setup_val(DBS_SETUP, _ini.DBS_SETUP_HOST), 
+						_ini.get_dbs_setup_val(DBS_SETUP, _ini.DBS_SETUP_CREDENTIALS_ENCRYPTED) 
 					};					
 				}
 				else if (count == 2)

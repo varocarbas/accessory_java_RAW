@@ -63,7 +63,7 @@ public abstract class credentials extends parent_static
 	public static String get_string_from_file(String id_, String user_, boolean is_encrypted_) 
 	{ 
 		HashMap<String, String> id_user = get_id_user(id_, user_);
-		
+
 		String id = id_user.get(ID);
 		String user = id_user.get(USER);
 		

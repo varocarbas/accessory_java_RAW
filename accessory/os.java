@@ -193,18 +193,18 @@ public abstract class os extends parent_static
 	
 	public static boolean execute_command(String command_) { return execute_command(command_, DEFAULT_EXECUTE_WAIT); }	
 	
-	public static boolean execute_command(String command_, boolean wait_for_it_) { return (is_linux() ? os_linux.execute_bash(command_, wait_for_it_) : execute_command_internal(command_, wait_for_it_)); }	
+	public static boolean execute_command(String command_, boolean wait_for_it_) { return execute_command_internal(command_, wait_for_it_); }	
 	
-	public static boolean execute_command(String[] args_, boolean wait_for_it_) { return (boolean)execute_command(args_, wait_for_it_, DEFAULT_EXECUTE_RETURN_OUTPUTS); }	
+	public static boolean execute_command(String[] args_, boolean wait_for_it_) { return (boolean)execute_command_internal(args_, wait_for_it_, DEFAULT_EXECUTE_RETURN_OUTPUTS); }	
 
-	public static Object execute_command(String[] args_, boolean wait_for_it_, boolean return_outputs_) { return (is_linux() ? os_linux.execute_bash(args_, wait_for_it_, return_outputs_) : execute_command_internal(args_, wait_for_it_, return_outputs_)); }
+	public static Object execute_command(String[] args_, boolean wait_for_it_, boolean return_outputs_) { return execute_command_internal(args_, wait_for_it_, return_outputs_); }
 
-	static boolean execute_command_internal(String command_, boolean wait_for_it_) { return (strings.is_ok(command_) ? execute_command(new String[] { command_ }, wait_for_it_) : false); }
+	static boolean execute_command_internal(String command_, boolean wait_for_it_) { return (boolean)execute_command_internal(new String[] { command_ }, wait_for_it_, DEFAULT_EXECUTE_RETURN_OUTPUTS); }
 
 	static Object execute_command_internal(String[] args_, boolean wait_for_it_, boolean return_outputs_) 
 	{
 		method_start();
-		
+
 		Object output = (return_outputs_ ? new ArrayList<String>() : false);
 
 		if (!arrays.is_ok(args_)) return output;

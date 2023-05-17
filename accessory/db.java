@@ -1173,7 +1173,7 @@ public abstract class db
 		
 		boolean output = config.get_boolean(setup, CREDENTIALS_MEMORY); 
 	
-		if (output && _credentials_setup != null && !_credentials_setup.equals(setup)) output = false;
+		if (output && _credentials_setup != null && !_credentials_setup.equals(setup)) output = false; 
 		
 		return output;
 	}

@@ -10,4 +10,6 @@ public abstract class db_tests
 	public static final String BOOLEAN = _types.CONFIG_TESTS_DB_FIELD_BOOLEAN;
 
 	public static boolean is_quick() { return db_common.is_quick(SOURCE); }
+	
+	public static void is_quick(boolean is_quick_) { db_common.is_quick(SOURCE, is_quick_); }
 }

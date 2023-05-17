@@ -1,7 +1,9 @@
 package accessory;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -133,8 +135,10 @@ public abstract class paths extends parent_static
 		
 		return normalise_dir((os.is_linux() ? os_linux.get_home() : System.getProperty("user.home"))); 
 	}	
+	
+	public static ArrayList<String> get_all_files(String dir_) { return get_all_files(dir_, null); }
 
-	public static ArrayList<String> get_all_files(String dir_)
+	public static ArrayList<String> get_all_files(String dir_, String[] keywords_)
 	{
 		ArrayList<String> output = new ArrayList<String>();
 		if (!strings.is_ok(dir_)) return output;
@@ -142,47 +146,29 @@ public abstract class paths extends parent_static
 		File[] all = new File(dir_).listFiles();
 		if (all == null || all.length == 0) return output;
 		
+		boolean check_keywords = arrays.is_ok(keywords_);
+		
 		for (File item: all) 
 		{ 
-			if (item.isFile()) output.add(item.getName()); 
+			if (!item.isFile()) continue;
+			
+			String file = item.getName();
+			if (check_keywords && !strings.contains_all(keywords_, file, true)) continue;
+			
+			output.add(file); 
 		}
 		
 		return output;
 	}
 	
-	public static HashMap<String, LocalDateTime> get_timestamps(String dir_, String[] keywords_)
-	{
-		HashMap<String, LocalDateTime> output = new HashMap<String, LocalDateTime>();
-		
-		ArrayList<String> files = get_all_files(dir_);
-		if (!arrays.is_ok(files)) return output;
-		
-		boolean check_keywords = arrays.is_ok(keywords_);
-		
-		for (String file: files)
-		{
-			if (check_keywords)
-			{
-				boolean skip = false;
-				
-				for (String keyword: keywords_)
-				{
-					if (!strings.contains(keyword, file, true))
-					{
-						skip = true;
-						
-						break;
-					}
-				}
-				
-				if (skip) continue;
-			}
-
-			output.put(file, dates.get_timestamp(file, true));
-		}
-		
-		return output;
-	}
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, LocalDateTime> get_timestamps(String dir_, String[] keywords_) { return (HashMap<String, LocalDateTime>)get_dates_times(dir_, keywords_, dates.DEFAULT_FORMAT_TIMESTAMP); }
+	
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, LocalDate> get_dates(String dir_, String[] keywords_) { return (HashMap<String, LocalDate>)get_dates_times(dir_, keywords_, dates.DEFAULT_FORMAT_DATE); }
+	
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, LocalTime> get_times(String dir_, String[] keywords_) { return (HashMap<String, LocalTime>)get_dates_times(dir_, keywords_, dates.DEFAULT_FORMAT_TIME); }
 	
 	static String get_default_dir(String type_)
 	{
@@ -223,4 +209,54 @@ public abstract class paths extends parent_static
 	}
 
 	private static String get_dir_app_default() { return normalise_dir(System.getProperty("user.dir")); }
+
+	@SuppressWarnings("unchecked")
+	private static Object get_dates_times(String dir_, String[] keywords_, String format_)
+	{	
+		Object output = null;
+	
+		boolean is_date_time = dates.is_date_time(format_);
+		boolean is_date = dates.is_date(format_);
+		boolean is_time = dates.is_time(format_);
+		
+		if (is_date_time) output = new HashMap<String, LocalDateTime>();
+		else if (is_date) output = new HashMap<String, LocalDate>();
+		else if (is_time) output = new HashMap<String, LocalTime>();
+		
+		if (!is_date_time && !is_date && !is_time) return output;
+		
+		ArrayList<String> files = get_all_files(dir_);
+		if (!arrays.is_ok(files)) return output;
+
+		boolean check_keywords = arrays.is_ok(keywords_);
+		
+		for (String file: files)
+		{
+			if (check_keywords)
+			{
+				boolean skip = false;
+				
+				for (String keyword: keywords_)
+				{
+					if (!strings.contains(keyword, file, true))
+					{
+						skip = true;
+						
+						break;
+					}
+				}
+				
+				if (skip) continue;
+			}
+
+			Object item = dates.get(file, format_, true);
+			if (item == null) continue;
+			
+			if (is_date_time) ((HashMap<String, LocalDateTime>)output).put(file, (LocalDateTime)item);
+			else if (is_date) ((HashMap<String, LocalDate>)output).put(file, (LocalDate)item);
+			else if (is_time) ((HashMap<String, LocalTime>)output).put(file, (LocalTime)item);
+		}
+		
+		return output;
+	}
 }

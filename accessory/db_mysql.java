@@ -181,7 +181,7 @@ class db_mysql extends parent_db
 		
 		String dir = paths.get_dir(paths.DIR_BACKUPS_DBS);
 		HashMap<String, LocalDateTime> all = paths.get_timestamps(dir, new String[] { db_name, db_sql.get_backup_file_extension() });
-		
+
 		LocalDateTime date = dates.get_newest(arrays.to_array(arrays.get_values_hashmap(all)));
 		
 		return ((date != null) ? paths.build(new String[] { dir, (String)arrays.get_key(all, date) }, true) : output);		

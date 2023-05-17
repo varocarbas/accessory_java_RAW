@@ -16,6 +16,8 @@ public abstract class db_credentials
 	
 	public static boolean is_quick() { return db_common.is_quick(SOURCE); }
 	
+	public static void is_quick(boolean is_quick_) { db_common.is_quick(SOURCE, is_quick_); }
+	
 	static boolean update_info(String id_, String user_, HashMap<String, String> vals_)
 	{
 		boolean output = false;

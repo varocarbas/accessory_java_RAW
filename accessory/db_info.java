@@ -20,6 +20,8 @@ public abstract class db_info
 	private static String _source = DEFAULT_SOURCE;
 	
 	public static boolean is_quick() { return db_common.is_quick(get_source()); }
+	
+	public static void is_quick(boolean is_quick_) { db_common.is_quick(get_source(), is_quick_); }
 
 	public static String get_source() { return _source; }
 	

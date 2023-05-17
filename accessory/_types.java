@@ -166,6 +166,10 @@ public class _types extends parent_types
 	public static final String CONFIG_OS_IS_VIRTUAL_MACHINE = "config_os_is_virtual_machine";
 	//------
 
+	public static final String INI_INFO = "ini_info";
+	public static final String INI_INFO_INCLUDES_LEGACY = "ini_info_includes_legacy";
+	public static final String INI_INFO_APP_NAME = "ini_info_app_name";
+	
 	public static final String DB = "db";
 	public static final String DB_QUICKER = "db_quicker";
 	public static final String DB_QUICKER_MYSQL = "db_quicker_mysql";
