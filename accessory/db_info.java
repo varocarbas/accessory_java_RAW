@@ -29,7 +29,7 @@ public abstract class db_info
 	{
 		boolean output = db.source_is_ok(compatible_source_);
 		
-		if (output) _source = compatible_source_; 	
+		if (output) _source = compatible_source_;
 		
 		return output;
 	}

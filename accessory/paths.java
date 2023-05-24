@@ -32,6 +32,8 @@ public abstract class paths extends parent_static
 	public static final String EXTENSION_WAV = ".wav";
 	public static final String EXTENSION_SQL = ".sql";
 
+	public static final boolean DEFAULT_ADD_DIR = false;
+	
 	public static boolean file_exists(String path_) 
 	{ 
 		if (!strings.is_ok(path_)) return false;
@@ -136,9 +138,13 @@ public abstract class paths extends parent_static
 		return normalise_dir((os.is_linux() ? os_linux.get_home() : System.getProperty("user.home"))); 
 	}	
 	
-	public static ArrayList<String> get_all_files(String dir_) { return get_all_files(dir_, null); }
+	public static ArrayList<String> get_all_files(String dir_) { return get_all_files(dir_, DEFAULT_ADD_DIR); }
 
-	public static ArrayList<String> get_all_files(String dir_, String[] keywords_)
+	public static ArrayList<String> get_all_files(String dir_, boolean add_dir_) { return get_all_files(dir_, null, add_dir_); }
+
+	public static ArrayList<String> get_all_files(String dir_, String[] keywords_) { return get_all_files(dir_, keywords_, DEFAULT_ADD_DIR); }
+	
+	public static ArrayList<String> get_all_files(String dir_, String[] keywords_, boolean add_dir_)
 	{
 		ArrayList<String> output = new ArrayList<String>();
 		if (!strings.is_ok(dir_)) return output;
@@ -153,22 +159,30 @@ public abstract class paths extends parent_static
 			if (!item.isFile()) continue;
 			
 			String file = item.getName();
-			if (check_keywords && !strings.contains_all(keywords_, file, true)) continue;
+			String path = (add_dir_ ? build(new String[] { dir_, file }, true) : file);
+
+			if (check_keywords && !strings.contains_all(keywords_, path, true)) continue;
 			
-			output.add(file); 
+			output.add(path); 
 		}
 		
 		return output;
 	}
-	
+
+	public static HashMap<String, LocalDateTime> get_timestamps(String dir_, String[] keywords_) { return get_timestamps(dir_, keywords_, DEFAULT_ADD_DIR); }
+
 	@SuppressWarnings("unchecked")
-	public static HashMap<String, LocalDateTime> get_timestamps(String dir_, String[] keywords_) { return (HashMap<String, LocalDateTime>)get_dates_times(dir_, keywords_, dates.DEFAULT_FORMAT_TIMESTAMP); }
-	
+	public static HashMap<String, LocalDateTime> get_timestamps(String dir_, String[] keywords_, boolean add_dir_) { return (HashMap<String, LocalDateTime>)get_dates_times(dir_, keywords_, dates.DEFAULT_FORMAT_TIMESTAMP, add_dir_); }
+
+	public static HashMap<String, LocalDate> get_dates(String dir_, String[] keywords_) { return get_dates(dir_, keywords_, DEFAULT_ADD_DIR); }
+
 	@SuppressWarnings("unchecked")
-	public static HashMap<String, LocalDate> get_dates(String dir_, String[] keywords_) { return (HashMap<String, LocalDate>)get_dates_times(dir_, keywords_, dates.DEFAULT_FORMAT_DATE); }
-	
+	public static HashMap<String, LocalDate> get_dates(String dir_, String[] keywords_, boolean add_dir_) { return (HashMap<String, LocalDate>)get_dates_times(dir_, keywords_, dates.DEFAULT_FORMAT_DATE, add_dir_); }
+
+	public static HashMap<String, LocalTime> get_times(String dir_, String[] keywords_) { return get_times(dir_, keywords_, DEFAULT_ADD_DIR); }
+
 	@SuppressWarnings("unchecked")
-	public static HashMap<String, LocalTime> get_times(String dir_, String[] keywords_) { return (HashMap<String, LocalTime>)get_dates_times(dir_, keywords_, dates.DEFAULT_FORMAT_TIME); }
+	public static HashMap<String, LocalTime> get_times(String dir_, String[] keywords_, boolean add_dir_) { return (HashMap<String, LocalTime>)get_dates_times(dir_, keywords_, dates.DEFAULT_FORMAT_TIME, add_dir_); }
 	
 	static String get_default_dir(String type_)
 	{
@@ -211,7 +225,7 @@ public abstract class paths extends parent_static
 	private static String get_dir_app_default() { return normalise_dir(System.getProperty("user.dir")); }
 
 	@SuppressWarnings("unchecked")
-	private static Object get_dates_times(String dir_, String[] keywords_, String format_)
+	private static Object get_dates_times(String dir_, String[] keywords_, String format_, boolean add_dir_)
 	{	
 		Object output = null;
 	
@@ -252,9 +266,11 @@ public abstract class paths extends parent_static
 			Object item = dates.get(file, format_, true);
 			if (item == null) continue;
 			
-			if (is_date_time) ((HashMap<String, LocalDateTime>)output).put(file, (LocalDateTime)item);
-			else if (is_date) ((HashMap<String, LocalDate>)output).put(file, (LocalDate)item);
-			else if (is_time) ((HashMap<String, LocalTime>)output).put(file, (LocalTime)item);
+			String path = (add_dir_ ? build(new String[] { dir_, file }, true) : file);
+			
+			if (is_date_time) ((HashMap<String, LocalDateTime>)output).put(path, (LocalDateTime)item);
+			else if (is_date) ((HashMap<String, LocalDate>)output).put(path, (LocalDate)item);
+			else if (is_time) ((HashMap<String, LocalTime>)output).put(path, (LocalTime)item);
 		}
 		
 		return output;

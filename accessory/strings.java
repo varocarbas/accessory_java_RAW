@@ -251,7 +251,7 @@ public abstract class strings extends parent_static
 
 	public static boolean is_are_ok(int[] is_, int max_i_) { return (is_ != null && is_[START_I] > WRONG_I && is_[END_I] >= is_[START_I] && (max_i_ <= WRONG_I || (is_[START_I] <= max_i_ && is_[END_I] <= max_i_))); }
 
-	public static boolean before_after_is_ok(int[] before_after_) { return (before_after_ != null && before_after_[START_I] > strings.WRONG_I && before_after_[END_I] >= before_after_[START_I]); }
+	public static boolean before_after_is_ok(int[] before_after_) { return (before_after_ != null && before_after_[START_I] > WRONG_I && before_after_[END_I] >= before_after_[START_I]); }
 
 	public static String[] get_before_after(String[] needles_, String haystack_, boolean normalise_, String start_, String end_, int start_i_, boolean find_include_end_) { return get_before_after(haystack_, get_is(needles_, haystack_, normalise_, start_, end_, start_i_, find_include_end_)); }
 	
@@ -262,8 +262,8 @@ public abstract class strings extends parent_static
 		
 		String[] output = new String[2];
 		
-		output[BEFORE_I] = strings.substring(input_, 0, is_[START_I]);
-		output[AFTER_I] = strings.substring(input_, is_[END_I] + 1);
+		output[BEFORE_I] = substring(input_, 0, is_[START_I]);
+		output[AFTER_I] = substring(input_, is_[END_I] + 1);
 		
 		return output;
 	}
@@ -867,7 +867,7 @@ public abstract class strings extends parent_static
 	private static byte[] to_bytes(String input_, boolean use_base64_) 
 	{
 		byte[] output = null;
-		if (!strings.is_ok(input_)) return output;
+		if (!is_ok(input_)) return output;
 		
 		if (use_base64_)
 		{

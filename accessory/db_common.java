@@ -226,6 +226,8 @@ public abstract class db_common
 
 	public static double adapt_number(double val_, int max_) { return adapt_number(val_, max_, false); }
 	
+	public static String adapt_string(String val_) { return adapt_string(val_, DEFAULT_SIZE_STRING); }
+	
 	public static String adapt_string(String val_, int max_) 
 	{
 		int max = get_max_length(max_);
@@ -292,9 +294,11 @@ public abstract class db_common
 	
 	public static db_field get_field_string(boolean is_unique_) { return get_field_string(DEFAULT_SIZE_STRING, is_unique_); }
 	
-	public static db_field get_field_string(int size_, boolean is_unique_) { return get_field_string(size_, is_unique_, null); }
+	public static db_field get_field_string(int size_, boolean is_unique_) { return get_field_string(size_, is_unique_, null, false); }
 	
-	public static db_field get_field_string(int size_, boolean is_unique_, String default_) { return new db_field(data.STRING, size_, db_field.WRONG_DECIMALS, (strings.is_ok(default_) ? default_ : db_field.WRONG_DEFAULT), (is_unique_ ? new String[] { db_field.KEY_UNIQUE } : null)); }
+	public static db_field get_field_string(int size_, boolean is_unique_, String default_) { return get_field_string(size_, is_unique_, default_, false); }
+	
+	public static db_field get_field_string(int size_, boolean is_unique_, String default_, boolean is_encrypted_) { return new db_field(data.STRING, (is_encrypted_ ? crypto.get_default_length(size_, null) : size_), db_field.WRONG_DECIMALS, (strings.is_ok(default_) ? default_ : db_field.WRONG_DEFAULT), (is_unique_ ? new String[] { db_field.KEY_UNIQUE } : null)); }
 	
 	public static db_field get_field_string_big() { return new db_field(data.STRING_BIG, 0, db_field.WRONG_DECIMALS, null, null); }
 

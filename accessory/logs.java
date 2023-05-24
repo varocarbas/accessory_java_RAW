@@ -20,7 +20,7 @@ public abstract class logs extends parent_static
 	public static final String WHAT_FURTHER = dates.WHAT_FURTHER;
 	
 	public static final String TIMESTAMP_SCREEN = dates.FORMAT_TIME_FULL;
-	public static final String TIMESTAMP_FILE_NAME = dates.FORMAT_TIMESTAMP;
+	public static final String TIMESTAMP_FILE_NAME = dates.FORMAT_DATE;
 	public static final String TIMESTAMP_FILE_CONTENTS = dates.FORMAT_TIMESTAMP;
 	
 	public static final boolean DEFAULT_OUT_SCREEN = true;
@@ -117,11 +117,11 @@ public abstract class logs extends parent_static
 
 		String dir = get_dir(are_errors_);
 		
-		if (soonest_ == null) return paths.get_all_files(dir, keywords);
+		if (soonest_ == null) return paths.get_all_files(dir, keywords, true);
 		
 		ArrayList<String> output = new ArrayList<String>();
 		
-		HashMap<String, LocalDate> all = paths.get_dates(dir, keywords);
+		HashMap<String, LocalDate> all = paths.get_dates(dir, keywords, true);
 		if (!arrays.is_ok(all)) return output;
 
 		for (Entry<String, LocalDate> item: all.entrySet())
@@ -134,7 +134,7 @@ public abstract class logs extends parent_static
 		return output;
 	}
 	
-	public static HashMap<String, Object> parse_file_line(String line_) { return dates.get_now_from_string(line_, TIMESTAMP_FILE_CONTENTS, true); }
+	public static HashMap<String, Object> parse_file_line(String line_) { return dates.get_now_from_string(line_, TIMESTAMP_FILE_CONTENTS, false); }
 	
 	public static Object get_date_time(HashMap<String, Object> item_) { return dates.get_now_date_time(item_); }
 

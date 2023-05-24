@@ -180,6 +180,17 @@ public class crypto extends parent
 		
 	public static HashMap<String, Object> get_params(String encryption_id_) { return (is_stored_in_files() ? get_from_files(encryption_id_) : get_from_db(encryption_id_)); }
 	
+	public static int get_default_length(int length_, String algo_)
+	{
+		int output = length_;
+		
+		//String algo = (strings.is_ok(algo_) ? algo_ : DEFAULT_ALGO_CIPHER);
+		
+		if (length_ > 0) output = 2 * length_;
+		
+		return output;
+	}
+	
 	static String[] populate_all_whats() { return new String[] { WHAT_ALGO_CIPHER, WHAT_KEY, WHAT_IV }; }
 
 	private void encrypt() { encrypt(DEFAULT_USE_ID); }
