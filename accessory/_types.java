@@ -306,6 +306,7 @@ public class _types extends parent_types
 	public static final String ERROR_FILE_WRITE = "error_file_write";
 	public static final String ERROR_FILE_READ = "error_file_read";
 	public static final String ERROR_FILE_DELETE = "error_file_delete";
+	public static final String ERROR_STREAM = "error_stream";
 	public static final String ERROR_STRING = "error_string";
 	public static final String ERROR_GENERIC = "error_generic";
 	public static final String ERROR_GENERIC_METHOD = "error_generic_method";	

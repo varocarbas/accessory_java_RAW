@@ -23,7 +23,8 @@ public abstract class io extends parent_static
 	public static final String ERROR_WRITE = _types.ERROR_FILE_WRITE;
 	public static final String ERROR_READ = _types.ERROR_FILE_READ;
 	public static final String ERROR_DELETE = _types.ERROR_FILE_DELETE;
-		
+	public static final String ERROR_STREAM = _types.ERROR_STREAM;
+	
 	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{
 		method_start();
@@ -61,7 +62,7 @@ public abstract class io extends parent_static
 
 		boolean is_first = true;
 		
-		try (BufferedReader reader = get_reader(path_))
+		try (BufferedReader reader = get_reader_internal(path_))
 		{
 			while (reader != null && reader.ready()) 
 			{ 
@@ -297,7 +298,7 @@ public abstract class io extends parent_static
 	{
 		ArrayList<String> lines = null;
 
-		try { lines = get_lines(get_stream(path_), path_); }
+		try { lines = get_lines(get_stream_internal(path_), path_); }
 		catch (Exception e) 
 		{
 			lines = null;
@@ -310,13 +311,62 @@ public abstract class io extends parent_static
 	
 	public static ArrayList<String> get_lines(InputStream input_) { return get_lines(input_, null); }
 
+	public static BufferedReader get_reader(String path_) 
+	{ 
+		method_start();
+		
+		BufferedReader output = null;
+		
+		try { output = get_reader_internal(get_stream_internal(path_)); }
+		catch (Exception e) 
+		{
+			manage_error_io(ERROR_STREAM, e, path_); 
+			
+			output = null; 
+		}
+
+		method_end();
+		
+		return output;
+	}
+
+	public static BufferedReader get_reader(InputStream stream_) 
+	{
+		method_start();
+		
+		BufferedReader output = get_reader_internal(stream_);
+		
+		method_end();
+		
+		return output; 
+	}
+
+	public static InputStream get_stream(String path_) 
+	{ 
+		method_start();
+		
+		InputStream output = null;
+		
+		try { output = get_stream_internal(path_); }
+		catch (Exception e) 
+		{
+			manage_error_io(ERROR_STREAM, e, path_); 
+			
+			output = null; 
+		}
+
+		method_end();
+		
+		return output;
+	}
+
 	private static ArrayList<String> get_lines(InputStream input_, String path_)
 	{
 		if (input_ == null) return null;
 		
 		ArrayList<String> lines = new ArrayList<String>();
 	
-		try (BufferedReader reader = get_reader(input_))
+		try (BufferedReader reader = get_reader_internal(input_))
 		{
 			while (reader.ready()) { lines.add(get_line(reader)); }
 		}
@@ -329,7 +379,7 @@ public abstract class io extends parent_static
 		
 		return lines;
 	}
-
+	
 	private static String[] file_web_to_array(String path_url_, boolean is_file_)
 	{
 		method_start();
@@ -379,13 +429,7 @@ public abstract class io extends parent_static
 
 		method_end();
 	}	
-
-	private static BufferedReader get_reader(String path_) throws Exception { return get_reader(get_stream(path_)); }
-
-	private static BufferedReader get_reader(InputStream stream_) { return (stream_ == null ? null : new BufferedReader(new InputStreamReader(stream_, strings.get_encoding()))); }
-
-	private static InputStream get_stream(String path_) throws Exception { return (paths.file_exists(path_) ? new FileInputStream(path_) : null); }
-
+	
 	private static String get_line(BufferedReader reader_) throws Exception { return reader_.readLine().trim(); }
 
 	private static void manage_error_io(String type_, Exception e_, String path_)
@@ -395,4 +439,10 @@ public abstract class io extends parent_static
 
 		manage_error(type_, e_, info);
 	}
+
+	private static BufferedReader get_reader_internal(InputStream stream_) { return (stream_ == null ? null : new BufferedReader(new InputStreamReader(stream_, strings.get_encoding()))); }
+
+	private static BufferedReader get_reader_internal(String path_) throws Exception { return get_reader(get_stream_internal(path_)); }
+
+	private static InputStream get_stream_internal(String path_) throws Exception { return (paths.file_exists(path_) ? new FileInputStream(path_) : null); }
 }

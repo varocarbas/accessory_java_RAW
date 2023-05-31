@@ -96,7 +96,7 @@ public abstract class strings extends parent_static
 
 	public static boolean contains_any(String[] needles_, String haystack_, boolean normalise_) { return matches_contains(needles_, haystack_, normalise_, false, false); }
 	
-	public static boolean contains_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_) { return (index_of_outside(needle_, haystack_, normalise_, start_, end_) > WRONG_I); }
+	public static boolean contains_outside(String needle_, String haystack_, boolean normalise_, String start_, String end_) { return (i_is_ok(index_of_outside(needle_, haystack_, normalise_, start_, end_))); }
 
 	public static boolean contains(String needle_, String haystack_, boolean normalise_) { return (index_of(needle_, haystack_, normalise_) >= 0); }
 
@@ -170,7 +170,7 @@ public abstract class strings extends parent_static
 				}
 			}
 
-			String out = substring_between(haystack_, i, temp, true);
+			String out = substring_between(haystack_, i, temp);
 			if (normalise_out_) out = normalise(out);			
 			output.add(out);
 			
@@ -201,10 +201,12 @@ public abstract class strings extends parent_static
 		}
 	}	
 
-	public static String substring_between(String string_, int start_, int end_, boolean end_excluded_)
+	public static String substring_between(String string_, int start_, int end_) { return substring_between(string_, start_, end_, 0); }
+	
+	public static String substring_between(String string_, int start_, int end_, int end_length_)
 	{
 		int length = end_ - start_;
-		if (!end_excluded_) length++;
+		if (end_length_ > 0) length += end_length_;
 
 		return substring(string_, start_, length);
 	}
@@ -244,26 +246,67 @@ public abstract class strings extends parent_static
 
 		return output;
 	}
+	
+	public static int[] get_is(int start_i_, int end_i_) 
+	{
+		int[] is = null;
+		
+		if (is_are_ok(start_i_, end_i_))
+		{
+			is = new int[END_I + 1];
+			
+			is[START_I] = start_i_;
+			is[END_I] = end_i_;
+		}
+		
+		return is; 
+	}
+	
+	public static int get_start_i(int[] is_) { return get_start_end_i(is_, true); }
+	
+	public static int get_end_i(int[] is_) { return get_start_end_i(is_, false); }
 
-	public static int get_end_i(int start_i_, int length_) { return ((start_i_ > WRONG_I && length_ > 0) ? start_i_ + length_ - 1 : WRONG_I); }
+	public static int get_end_i(int start_i_, int length_) { return ((i_is_ok(start_i_) && length_ > 0) ? start_i_ + length_ - 1 : WRONG_I); }
 
 	public static boolean is_are_ok(int[] is_) { return is_are_ok(is_, WRONG_I); }
 
-	public static boolean is_are_ok(int[] is_, int max_i_) { return (is_ != null && is_[START_I] > WRONG_I && is_[END_I] >= is_[START_I] && (max_i_ <= WRONG_I || (is_[START_I] <= max_i_ && is_[END_I] <= max_i_))); }
+	public static boolean is_are_ok(int[] is_, int max_i_) { return is_are_ok(get_start_i(is_), get_end_i(is_), max_i_); }
 
-	public static boolean before_after_is_ok(int[] before_after_) { return (before_after_ != null && before_after_[START_I] > WRONG_I && before_after_[END_I] >= before_after_[START_I]); }
+	public static boolean is_are_ok(int start_i_, int end_i_) { return is_are_ok(start_i_, end_i_, WRONG_I); }
+
+	public static boolean is_are_ok(int start_i_, int end_i_, int max_i_) { return (i_is_ok(start_i_, max_i_) && i_is_ok(end_i_, max_i_) && end_i_ >= start_i_); }
+
+	public static boolean i_is_ok(int i_) { return i_is_ok(i_, WRONG_I); }
+
+	public static boolean i_is_ok(int i_, int max_i_) { return (i_ > WRONG_I && (max_i_ <= WRONG_I || i_ <= max_i_)); }	
+		
+	public static int get_before_i(int[] before_after_) { return get_before_after_i(before_after_, true); }
+	
+	public static int get_after_i(int[] before_after_) { return get_before_after_i(before_after_, false); }
+
+	public static boolean before_after_is_ok(int[] before_after_) { return is_are_ok(get_before_i(before_after_), get_after_i(before_after_)); }
 
 	public static String[] get_before_after(String[] needles_, String haystack_, boolean normalise_, String start_, String end_, int start_i_, boolean find_include_end_) { return get_before_after(haystack_, get_is(needles_, haystack_, normalise_, start_, end_, start_i_, find_include_end_)); }
 	
-	public static String[] get_before_after(String input_, int[] is_)
+	public static String[] get_before_after(String input_, int[] is_) { return get_before_after(input_, get_start_i(is_), get_end_i(is_), 0); }
+	
+	public static String[] get_before_after(String input_, int start_i_, int end_i_) { return get_before_after(input_, start_i_, end_i_, 0); }
+	
+	public static String[] get_before_after(String input_, int start_i_, int end_i_, int end_length_)
 	{
+		String[] output = null;
+		
 		int max_i = get_length(input_) - 1;
-		if (!is_are_ok(is_) || is_[1] > max_i) return null;
+		if (!is_are_ok(start_i_, end_i_, max_i)) return output;
 		
-		String[] output = new String[2];
+		output = new String[AFTER_I + 1];
 		
-		output[BEFORE_I] = substring(input_, 0, is_[START_I]);
-		output[AFTER_I] = substring(input_, is_[END_I] + 1);
+		output[BEFORE_I] = substring(input_, 0, start_i_);
+		
+		int start = end_i_ + 1;
+		if (end_length_ > 0) start += end_length_;
+		
+		output[AFTER_I] = substring(input_, start);
 		
 		return output;
 	}
@@ -279,7 +322,7 @@ public abstract class strings extends parent_static
 		
 		return (including_start_end_ ? substring(input_, is_[START_I], length + end_length) : substring(input_, is_[START_I] + start_length, length - start_length)); 
 	}
-	
+
 	public static int[] get_is(String[] needles_, String haystack_, boolean normalise_, String start_, String end_, int start_i_, boolean find_include_end_) 
 	{
 		int[] output_wrong = null;
@@ -287,7 +330,7 @@ public abstract class strings extends parent_static
 		
 		int[] output = new int[] { WRONG_I, WRONG_I };
 		
-		int start_i = (start_i_ > WRONG_I ? start_i_ : 0);
+		int start_i = (i_is_ok(start_i_) ? start_i_ : 0);
 		int max_i = needles_.length - 1;
 		
 		int last_i = haystack_.length() - 1;
@@ -303,11 +346,11 @@ public abstract class strings extends parent_static
 			
 			if (i > 0 && i < max_i) 
 			{
-				if (temp > WRONG_I && temp < end_i) end_i = temp;
+				if (i_is_ok(temp) && temp < end_i) end_i = temp;
 				
 				continue;
 			}
-			else if (temp <= WRONG_I && (i == 0 || find_include_end_)) return output_wrong;
+			else if (!i_is_ok(temp) && (i == 0 || find_include_end_)) return output_wrong;
 			
 			i2++;
 			output[i2] = temp;
@@ -316,16 +359,16 @@ public abstract class strings extends parent_static
 		}
 		
 		if (needles_[0] == null) output[END_I] = end_i;
-		else if (find_include_end_ && output[END_I] <= WRONG_I) return output_wrong;
+		else if (find_include_end_ && !i_is_ok(output[END_I])) return output_wrong;
 		
-		if (!find_include_end_ && output[END_I] > WRONG_I) output[END_I]--;
+		if (!find_include_end_ && i_is_ok(output[END_I])) output[END_I]--;
 		
-		if (output[START_I] <= WRONG_I) 
+		if (!i_is_ok(output[START_I])) 
 		{
-			if (output[END_I] <= WRONG_I) return output_wrong;
+			if (!i_is_ok(output[END_I])) return output_wrong;
 			else output[START_I] = (start_i_ > 0 ? start_i_ : 0);
 		}
-		else if (output[END_I] <= WRONG_I) output[END_I] = last_i;
+		else if (!i_is_ok(output[END_I])) output[END_I] = last_i;
 		
 		return output;
 	}
@@ -897,7 +940,7 @@ public abstract class strings extends parent_static
 	private static String substring_before_after(String needle_, String haystack_, boolean normalise_, boolean is_before_)
 	{
 		int i = index_of(needle_, haystack_, normalise_);
-		if (i == WRONG_I) return DEFAULT;
+		if (!i_is_ok(i)) return DEFAULT;
 
 		if (!is_before_) i = i + needle_.length() - 1;
 		
@@ -906,7 +949,7 @@ public abstract class strings extends parent_static
 
 	private static String substring_before_after(String string_, int i_, boolean is_before_)
 	{
-		if (i_ <= WRONG_I) return DEFAULT;
+		if (!i_is_ok(i_)) return DEFAULT;
 
 		int start = 0;
 		int length = i_;
@@ -941,4 +984,10 @@ public abstract class strings extends parent_static
 
 		return String.join(needle_, (String[])arrays.get_range(temp, start_i, size));
 	}
+
+	private static int get_start_end_i(int[] is_, boolean is_start_) { return get_i_common(is_, (is_start_ ? START_I : END_I)); }
+	
+	private static int get_before_after_i(int[] before_after_, boolean is_before_) { return get_i_common(before_after_, (is_before_ ? BEFORE_I : AFTER_I)); }
+	
+	private static int get_i_common(int[] inputs_, int i_) { return (arrays.key_exists(inputs_, i_) ? inputs_[i_] : WRONG_I); }
 }
