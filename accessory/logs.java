@@ -107,32 +107,29 @@ public abstract class logs extends parent_static
 
 	public static String get_dir(boolean is_error_) { return paths.get_dir(is_error_ ? paths.DIR_LOGS_ERRORS : paths.DIR_LOGS_ACTIVITY); }
 
-	public static ArrayList<String> get_generated_paths(String id_, boolean are_errors_) { return get_generated_paths(id_, are_errors_, null); }
-
-	public static ArrayList<String> get_generated_paths(String id_, boolean are_errors_, long max_days_before_) { return get_generated_paths(id_, are_errors_, (max_days_before_ >= 0 ? dates.get_now_date().minusDays(max_days_before_) : null)); }
+	@SuppressWarnings("unchecked")
+	public static ArrayList<String> get_generated_paths_new(String id_, boolean are_errors_, long days_from_today_) { return (ArrayList<String>)get_generated_paths_dates_new(id_, are_errors_, days_from_today_, true); }
 	
-	public static ArrayList<String> get_generated_paths(String id_, boolean are_errors_, LocalDate soonest_)
-	{
-		String[] keywords = (strings.is_ok(id_) ? new String[] { id_ } : null);
+	@SuppressWarnings("unchecked")
+	public static ArrayList<String> get_generated_paths_new(String id_, boolean are_errors_, LocalDate soonest_) { return (ArrayList<String>)get_generated_paths_dates_new(id_, are_errors_, soonest_, true); }
 
-		String dir = get_dir(are_errors_);
-		
-		if (soonest_ == null) return paths.get_all_files(dir, keywords, true);
-		
-		ArrayList<String> output = new ArrayList<String>();
-		
-		HashMap<String, LocalDate> all = paths.get_dates(dir, keywords, true);
-		if (!arrays.is_ok(all)) return output;
+	@SuppressWarnings("unchecked")
+	public static ArrayList<String> get_generated_paths_old(String id_, boolean are_errors_, long days_from_first_) { return (ArrayList<String>)get_generated_paths_dates_old(id_, are_errors_, days_from_first_, true); }
+	
+	@SuppressWarnings("unchecked")
+	public static ArrayList<String> get_generated_paths_old(String id_, boolean are_errors_, LocalDate latest_) { return (ArrayList<String>)get_generated_paths_dates_old(id_, are_errors_, latest_, true); }
 
-		for (Entry<String, LocalDate> item: all.entrySet())
-		{
-			if (dates.is_before(item.getValue(), soonest_)) continue;
-			
-			output.add(item.getKey());
-		}
-		
-		return output;
-	}
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, LocalDate> get_generated_dates_new(String id_, boolean are_errors_, long days_from_today_) { return (HashMap<String, LocalDate>)get_generated_paths_dates_new(id_, are_errors_, days_from_today_, false); }
+	
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, LocalDate> get_generated_dates_new(String id_, boolean are_errors_, LocalDate soonest_) { return (HashMap<String, LocalDate>)get_generated_paths_dates_new(id_, are_errors_, soonest_, false); }
+
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, LocalDate> get_generated_dates_old(String id_, boolean are_errors_, long days_from_first_) { return (HashMap<String, LocalDate>)get_generated_paths_dates_old(id_, are_errors_, days_from_first_, false); }
+	
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, LocalDate> get_generated_dates_old(String id_, boolean are_errors_, LocalDate latest_) { return (HashMap<String, LocalDate>)get_generated_paths_dates_old(id_, are_errors_, latest_, false); }
 	
 	public static HashMap<String, Object> parse_file_line(String line_) { return dates.get_now_from_string(line_, TIMESTAMP_FILE_CONTENTS, false); }
 	
@@ -148,4 +145,78 @@ public abstract class logs extends parent_static
 	}
 	
 	private static boolean out_is_enabled(String type_) { return config.get_logs_boolean(type_); }
+	
+	private static Object get_generated_paths_dates_new(String id_, boolean are_errors_, long days_from_today_, boolean is_paths_) { return get_generated_paths_dates_common(id_, are_errors_, (days_from_today_ >= 0 ? dates.get_now_date().minusDays(days_from_today_) : null), is_paths_, true); }
+	
+	private static Object get_generated_paths_dates_new(String id_, boolean are_errors_, LocalDate soonest_, boolean is_paths_) { return get_generated_paths_dates_common(id_, are_errors_, soonest_, is_paths_, true); }
+	
+	private static Object get_generated_paths_dates_old(String id_, boolean are_errors_, long days_from_first_, boolean is_paths_) 
+	{ 
+		Object output = null;
+		
+		String[] keywords = (strings.is_ok(id_) ? new String[] { id_ } : null);
+
+		String dir = get_dir(are_errors_);
+
+		HashMap<String, LocalDate> dates = paths.get_dates(dir, keywords, true);
+		
+		LocalDate latest = null;
+		
+		if (arrays.is_ok(dates))
+		{
+			LocalDate start = null;
+			
+			for (Entry<String, LocalDate> item: dates.entrySet())
+			{
+				LocalDate date = item.getValue();
+				
+				if (start == null || accessory.dates.is_before(date, start)) start = date;
+			}
+			
+			if (start != null) latest = start.plusDays(days_from_first_);
+		}
+		
+		if (latest == null) output = (is_paths_ ? paths.get_all_files(dir, keywords, true) : dates);
+		else output = get_generated_paths_dates_internal(latest, false, dates, is_paths_);
+	
+		return output;
+	}
+	
+	private static Object get_generated_paths_dates_old(String id_, boolean are_errors_, LocalDate latest_, boolean is_paths_) { return get_generated_paths_dates_common(id_, are_errors_, latest_, is_paths_, false); }
+		
+	private static Object get_generated_paths_dates_common(String id_, boolean are_errors_, LocalDate soonest_latest_, boolean is_paths_, boolean is_soonest_)
+	{
+		Object output = null;
+		
+		String[] keywords = (strings.is_ok(id_) ? new String[] { id_ } : null);
+
+		String dir = get_dir(are_errors_);
+
+		HashMap<String, LocalDate> dates = paths.get_dates(dir, keywords, true);
+		
+		if (soonest_latest_ == null) output = (is_paths_ ? paths.get_all_files(dir, keywords, true) : dates);
+		else output = get_generated_paths_dates_internal(soonest_latest_, is_soonest_, dates, is_paths_);
+	
+		return output;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Object get_generated_paths_dates_internal(LocalDate target_, boolean is_soonest_, HashMap<String, LocalDate> dates_, boolean is_paths_)
+	{
+		Object output = (is_paths_ ? new ArrayList<String>() : new HashMap<String, LocalDate>());
+		if (!arrays.is_ok(dates_)) return output;
+		
+		for (Entry<String, LocalDate> item: dates_.entrySet())
+		{
+			String path = item.getKey();
+			LocalDate date = item.getValue();
+			
+			if ((is_soonest_ && dates.is_before(date, target_)) || (!is_soonest_ && dates.is_after(date, target_))) continue;
+			
+			if (is_paths_) ((ArrayList<String>)output).add(path);
+			else ((HashMap<String, LocalDate>)output).put(path, date);
+		}
+		
+		return output;
+	}
 }

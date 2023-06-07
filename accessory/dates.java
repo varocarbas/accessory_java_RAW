@@ -95,6 +95,13 @@ public abstract class dates extends parent_static
 		return ((before_.getYear() == after_.getYear()) ? (before_.getDayOfYear() < after_.getDayOfYear()) : true);
 	}
 	
+	public static boolean is_after(LocalDate after_, LocalDate before_) 
+	{ 
+		if (after_ == null || before_ == null || (after_.getYear() < before_.getYear())) return false;
+
+		return ((after_.getYear() == before_.getYear()) ? (after_.getDayOfYear() > before_.getDayOfYear()) : true);
+	}
+	
 	public static int get_offset() { return _offset; }
 
 	public static void update_offset() { update_offset(DEFAULT_OFFSET); }
