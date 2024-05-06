@@ -24,6 +24,8 @@ public abstract class io extends parent_static
 	public static final String ERROR_READ = _types.ERROR_FILE_READ;
 	public static final String ERROR_DELETE = _types.ERROR_FILE_DELETE;
 	public static final String ERROR_STREAM = _types.ERROR_STREAM;
+	public static final String ERROR_DIR_CREATE = _types.ERROR_DIR_CREATE;
+	public static final String ERROR_DIR_DELETE = _types.ERROR_DIR_DELETE;
 	
 	public static void array_to_file(String path_, String[] vals_, boolean append_)
 	{
@@ -359,7 +361,48 @@ public abstract class io extends parent_static
 		
 		return output;
 	}
-
+	
+	public static void create_dir(String path_)
+	{
+		method_start();
+		
+		if (!strings.is_ok(path_)) return;
+		
+		try { Files.createDirectories(Paths.get(path_)); } 
+		catch (Exception e) { manage_error_io(ERROR_DIR_CREATE, e, path_); }
+		
+		method_end();
+	}
+	
+	public static void delete_dir(String path_)
+	{
+		method_start();
+		
+		if (!strings.is_ok(path_)) return;
+		
+		try 
+		{ 
+			File item = new File(path_); 
+			
+			delete_dir_internal(item);
+		} 
+		catch (Exception e) { manage_error_io(ERROR_DIR_DELETE, e, path_); }
+		
+		method_end();
+	}
+	
+	private static void delete_dir_internal(File item_)
+	{
+		File[] items = item_.listFiles();
+		
+		if (items != null)
+		{
+			for (File item: items) { delete_dir_internal(item); }			
+		}
+		
+		item_.delete();
+	}
+	
 	private static ArrayList<String> get_lines(InputStream input_, String path_)
 	{
 		if (input_ == null) return null;

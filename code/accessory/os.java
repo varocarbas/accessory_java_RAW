@@ -14,6 +14,7 @@ public abstract class os extends parent_static
 	public static final boolean DEFAULT_IS_VIRTUAL_MACHINE = false;
 	public static final boolean DEFAULT_EXECUTE_WAIT = true;
 	public static final boolean DEFAULT_EXECUTE_RETURN_OUTPUTS = false;
+	public static final boolean DEFAULT_EXECUTE_RETURN_ERROR = true;
 	
 	public static final String ERROR_EXECUTE = _types.ERROR_OS_EXECUTE;
 	
@@ -195,13 +196,17 @@ public abstract class os extends parent_static
 	
 	public static boolean execute_command(String command_, boolean wait_for_it_) { return execute_command_internal(command_, wait_for_it_); }	
 	
-	public static boolean execute_command(String[] args_, boolean wait_for_it_) { return (boolean)execute_command_internal(args_, wait_for_it_, DEFAULT_EXECUTE_RETURN_OUTPUTS); }	
+	public static boolean execute_command(String[] args_, boolean wait_for_it_) { return (boolean)execute_command_internal(args_, wait_for_it_, DEFAULT_EXECUTE_RETURN_OUTPUTS, DEFAULT_EXECUTE_RETURN_ERROR); }	
 
-	public static Object execute_command(String[] args_, boolean wait_for_it_, boolean return_outputs_) { return execute_command_internal(args_, wait_for_it_, return_outputs_); }
+	public static Object execute_command(String[] args_, boolean wait_for_it_, boolean return_outputs_) { return execute_command(args_, wait_for_it_, return_outputs_, DEFAULT_EXECUTE_RETURN_ERROR); }
 
-	static boolean execute_command_internal(String command_, boolean wait_for_it_) { return (boolean)execute_command_internal(new String[] { command_ }, wait_for_it_, DEFAULT_EXECUTE_RETURN_OUTPUTS); }
+	public static Object execute_command(String[] args_, boolean wait_for_it_, boolean return_outputs_, boolean return_error_) { return execute_command_internal(args_, wait_for_it_, return_outputs_, return_error_); }
 
-	static Object execute_command_internal(String[] args_, boolean wait_for_it_, boolean return_outputs_) 
+	static boolean execute_command_internal(String command_, boolean wait_for_it_) { return (boolean)execute_command_internal(new String[] { command_ }, wait_for_it_, DEFAULT_EXECUTE_RETURN_OUTPUTS, DEFAULT_EXECUTE_RETURN_ERROR); }
+
+	static Object execute_command_internal(String[] args_, boolean wait_for_it_, boolean return_outputs_) { return execute_command_internal(args_, wait_for_it_, return_outputs_, DEFAULT_EXECUTE_RETURN_ERROR); }
+	
+	static Object execute_command_internal(String[] args_, boolean wait_for_it_, boolean return_outputs_, boolean return_error_) 
 	{
 		method_start();
 
@@ -212,7 +217,7 @@ public abstract class os extends parent_static
 		HashMap<String, Object> error_info = new HashMap<String, Object>();
 		error_info.put("args", strings.to_string(args_));
 		error_info.put("wait_for_it", wait_for_it_);
-		
+
 		try 
 		{
 			boolean is_ok = false;
@@ -237,7 +242,7 @@ public abstract class os extends parent_static
 			{
 				ArrayList<String> error = io.get_lines(process.getErrorStream());
 				
-				if (return_outputs_) output = arrays.get_new(error);
+				if (return_outputs_ && return_error_) output = arrays.get_new(error);
 				
 				error_info.put(errors.MESSAGE, strings.to_string(error));
 

@@ -255,7 +255,8 @@ public abstract class numbers extends parent_static
 	
 	private static double round(double val_, int decimals_, RoundingMode mode_)
 	{
-		if (decimals_ == 0) return val_;
+		double output = val_;
+		if (decimals_ == 0) return output;
 	
 		RoundingMode mode = mode_;
 		if (mode == null) mode = DEFAULT_ROUND_MODE;
@@ -263,7 +264,13 @@ public abstract class numbers extends parent_static
 		int decimals = decimals_;
 		if (decimals < 0 || decimals > MAX_DECIMALS) decimals = DEFAULT_ROUND_DECIMALS;
 	
-		return (new BigDecimal(val_)).setScale(decimals, mode_).doubleValue();
+		try
+		{
+			output = (new BigDecimal(val_)).setScale(decimals, mode_).doubleValue();
+		}
+		catch (Exception e) { output = val_; }
+		
+		return output;
 	}
 	
 	private static String to_string_decimal_integer(double input_)
