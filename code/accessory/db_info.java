@@ -10,8 +10,8 @@ public abstract class db_info
 	public static final String VALUE = _types.CONFIG_INFO_DB_FIELD_VALUE;
 	public static final String IS_ENC = _types.CONFIG_INFO_DB_FIELD_IS_ENC;
 
-	public static final int MAX_SIZE_KEY = 200;
-	public static final int MAX_SIZE_VALUE = 200;
+	public static final int MAX_SIZE_KEY = 1000;
+	public static final int MAX_SIZE_VALUE = 1000;
 
 	public static final String ENCRYPTION_ID = "info";
 
@@ -113,8 +113,8 @@ public abstract class db_info
 	{
 		HashMap<String, db_field> info = new HashMap<String, db_field>();
 
-		info.put(KEY, db_common.get_field_string(MAX_SIZE_KEY, true));
-		info.put(VALUE, db_common.get_field_string(MAX_SIZE_VALUE));
+		info.put(KEY, db_common.get_field_string_big());
+		info.put(VALUE, db_common.get_field_string_big());
 		info.put(IS_ENC, db_common.get_field_is_enc());
 
 		return info;
