@@ -3,9 +3,9 @@
 Library containing a set of miscellaneous resources accessorily used by most of my Java code. 
 
 Optional external dependencies:
-- MySQL Java connector (v. 8.0.21 or above) to use the DB features.
+- MySQL Java connector to use the DB features.
 
-Tested with OpenJDK 11.0.15.
+Tested from versions: OpenJDK 11.0.15 and MySQL 8.0.21.
 
 Articles about this code:
 - [Encryption -- accessory_java](https://gist.github.com/varocarbas/c0edd30b4e731780794b25fc9f0e3e5e).
